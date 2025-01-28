@@ -384,7 +384,7 @@ class Attach
      * @param bool  $quarantine Save this record in a private table for later review?
      * @return UploadStatus
      */
-    public function doEdits(&$deletes, array $aid_list, int $pid = 0, bool $quarantine = false): UploadStatus
+    public function doEdits(array &$deletes, array $aid_list, int $pid = 0, bool $quarantine = false): UploadStatus
     {
         $return = UploadStatus::Success;
         $deletes = [];

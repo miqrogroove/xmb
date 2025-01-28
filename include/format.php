@@ -113,27 +113,17 @@ function iso8601_date($year=0, $month=0, $day=0)
 }
 
 /**
+ * Convert a shorthand INI number value to an int.
+ *
  * @since 1.9.11
+ * @param string $ininame The PHP INI directive name.
+ * @return int The converted INI value.
  */
-function phpShorthandValue($ininame)
+function phpShorthandValue(string $ininame): int
 {
     $rawstring = trim(ini_get($ininame));
-    $rchr = strtoupper(substr($rawstring, -1));
-    $value = (int) $rawstring;
-    switch ($rchr) {
-    case 'G':
-        $value *= 1073741824;
-        break;
-    case 'M':
-        $value *= 1048576;
-        break;
-    case 'K':
-        $value *= 1024;
-        break;
-    default:
-        break;
-    }
-    return $value;
+
+    return ini_parse_quantity($rawstring);
 }
 
 /**

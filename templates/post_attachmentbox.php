@@ -2,7 +2,7 @@
  <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['attachment'] ?></td>
  <td bgcolor="<?= $THEME['altbg2'] ?>" id="uploads">
   <input type="hidden" name="MAX_FILE_SIZE" value="<?= $SETTINGS['maxattachsize'] ?>" />
-  <input type="file" name="attach1" size="20" /><?= $attachlimits ?>
+  <input type="file" name="attach1" size="20" /> <?= $lang['attachmaxsize'] ?> <?= $maxsize ?>.  <?= $lang['attachmaxdims'] ?> <?= $SETTINGS['max_image_size'] ?>.
  </td>
 </tr>
 <tr class="tablerow" id="multiattachrow" style="display: none;">
@@ -15,7 +15,7 @@
  <!--//--><![CDATA[//><!--
   var uploadBoxCount = 1;
   var uploadBoxMax = <?= $maxuploads ?>;
-  var uploadTotalLimits = '<?= $lang['attachmaxtotal'] ?>';
+  var uploadTotalLimits = '<?= $lang['attachmaxtotal'] ?> <?= $maxtotal ?>';
 
   if (uploadBoxMax > 1) {
     document.getElementById('multiattachrow').removeAttribute('style');

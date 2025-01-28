@@ -654,17 +654,23 @@ class SQL
     }
 
     /**
-     * SQL command
+     * Update the lastpost value for a thread.
      *
      * @since 1.9.12
+     * @param int $tid The existing thread ID.
+     * @param string $lastpost The new value for lastpost.
+     * @param bool $quarantine Save this record in a private table for later review?
+     * @param bool $newReply Need to increment the reply count?  Not intended for use with the quarantine system.
      */
-    public function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false)
+    public function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false, bool $newReply = false)
     {
         $this->db->escape_fast($lastpost);
 
         $table = $quarantine ? $this->tablepre . 'hold_threads' : $this->tablepre . 'threads';
 
-        $this->db->query("UPDATE $table SET lastpost = '$lastpost' WHERE tid = $tid");
+        $replies = $newReply ? 'replies = replies + 1,' : '';
+
+        $this->db->query("UPDATE $table SET $replies lastpost = '$lastpost' WHERE tid = $tid");
     }
 
     /**
@@ -730,17 +736,31 @@ class SQL
      * @param int $postcount Optional.
      * @param int $threadcount Optional.
      * @param int $oldThreadCount Optional.  Specify the last-seen value of forums.threads to help avoid update races.
+     * @param int $fup Optional.  Specify a 2nd fid value, usually when the forum's parent needs to be updated at the same time.
+     * @param bool $newReply Optional.  Need to increment the posts count?  Ignored if postcount arg supplied.
      */
-    public function setForumCounts(int $fid, string $lastpost, ?int $postcount = null, ?int $threadcount = null, ?int $oldThreadCount = null)
-    {
+    public function setForumCounts(
+        int $fid,
+        string $lastpost,
+        ?int $postcount = null,
+        ?int $threadcount = null,
+        ?int $oldThreadCount = null,
+        ?int $fup = null,
+        ?bool $newReply = false,
+    ) {
         $this->db->escape_fast($lastpost);
 
         $counts = '';
         $where = "WHERE fid = $fid";
 
-        if (! is_null($postcount)) $counts .= "posts = $postcount, ";
+        if (is_null($postcount)) {
+            if ($newReply) $counts .= 'posts = posts + 1, ';
+        } else {
+            $counts .= "posts = $postcount, ";
+        }
         if (! is_null($threadcount)) $counts .= "threads = $threadcount, ";
         if (! is_null($oldThreadCount)) $where .= " AND threads = $oldThreadCount";
+        if (! is_null($fup)) $where .= " OR fid = $fup";
 
         $this->db->query("UPDATE " . $this->tablepre . "forums SET $counts lastpost = '$lastpost' $where");
     }
@@ -999,6 +1019,21 @@ class SQL
         } else {
             $result = '';
         }
+        return $result;
+    }
+
+    /**
+     * Retrieve posts from a specific thread.
+     *
+     * @since 1.10.00
+     */
+    public function getPostsByTID(int $tid, int $ppp, bool $ascending = true): array
+    {
+        $order = $ascending ? 'ASC' : 'DESC';
+        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "posts WHERE tid = $tid ORDER BY dateline $order, pid $order LIMIT $ppp");
+        $result = $this->db->fetch_all($query);
+        $this->db->free_result($query);
+
         return $result;
     }
 

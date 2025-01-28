@@ -497,6 +497,40 @@ class Core
     }
 
     /**
+     * Converts simple tags like [pid]1234[/pid] to storeable tags like [pid=1234&tid=567]Example Thread[/pid]
+     *
+     * @since 1.9.11
+     * @param string $message Read/Write Variable.  Returns the post text with converted tags.
+     */
+    function postLinkBBcode(string &$message) {
+        $items = [];
+        $pattern = "@\\[pid](\\d+)\\[/pid]@si";
+        preg_match_all($pattern, $message, $results, PREG_SET_ORDER);
+        if (count($results) == 0) {
+            return;
+        }
+        foreach ($results as $result) {
+            $items[] = $result[1];
+        }
+
+        $pids = implode(', ', $items);
+        $query = $this->db->query("SELECT p.pid, p.tid, p.subject, t.subject AS tsubject, t.fid FROM " . $this->vars->tablepre . "posts AS p LEFT JOIN " . $this->vars->tablepre . "threads AS t USING (tid) WHERE pid IN ($pids)");
+        while ($row = $this->db->fetch_array($query)) {
+            $perms = $this->checkForumPermissions($this->forums->getForum((int) $row['fid']));
+            if ($perms[$this->vars::PERMS_VIEW] && $perms[$this->vars::PERMS_PASSWORD]) {
+                if ($row['subject'] != '') {
+                    $subject = stripslashes($row['subject']);
+                } else {
+                    $subject = stripslashes($row['tsubject']);
+                }
+                $pattern = "[pid]{$row['pid']}[/pid]";
+                $replacement = "[pid={$row['pid']}&amp;tid={$row['tid']}]{$subject}[/pid]";
+                $message = str_replace($pattern, $replacement, $message);
+            }
+        }
+    }
+
+    /**
      * Check whether the specified moderator is privileged according a specific forum's list of moderators.
      *
      * @since 1.0
@@ -819,19 +853,18 @@ class Core
      */
     public function smilieinsert(string $type = 'normal'): string
     {
-        $SETTINGS = &$this->vars->settings;
         $counter = 0;
         $smilie = [];
         $sms = [];
-        $smcols = intval($SETTINGS['smcols']);
-        $smtotal = intval($SETTINGS['smtotal']);
+        $smcols = (int) $this->vars->settings['smcols'];
+        $smtotal = (int) $this->vars->settings['smtotal'];
         if ($type == 'quick') {
             $smcols = 4;
             $smtotal = 16;
         } elseif ($type == 'full') {
             $smtotal = 0;
         }
-        $enabled = $this->smile->isAnySmilieInstalled() && $SETTINGS['smileyinsert'] == 'on' && $smcols > 0;
+        $enabled = $this->smile->isAnySmilieInstalled() && $this->vars->settings['smileyinsert'] == 'on' && $smcols > 0;
 
         if (! $enabled) return '';
         
@@ -1104,6 +1137,22 @@ class Core
         bool $showfooter = true
     ): string {
         return $this->error($msg, $showheader, $prepend, $append, $redirect, $die, $return_as_string, $showfooter, isError: false);
+    }
+
+    /**
+     * Returns a themed error message.
+     *
+     * @since 1.9.10
+     */
+    function softerror($msg): string {
+        return $this->error(
+            $msg,
+            showheader: false,
+            append: '<br />',
+            die: false,
+            return_as_string: true,
+            showfooter: false,
+        );
     }
 
     /**
@@ -1698,12 +1747,12 @@ class Core
      * @since 1.9.11
      * @param array $forum
      * @param int $bitfield Enumerated by X_PERMS_RAW* constants.  Other X_PERMS_* values will not work!
-     * @return bool
+     * @return int
      */
-    function getOneForumPerm(array $forum, int $bitfield): bool
+    function getOneForumPerm(array $forum, int $bitfield): int
     {
         $pp = explode(',', $forum['postperm']);
-        return $pp[$bitfield];
+        return (int) $pp[$bitfield];
     }
 
     /**
@@ -2083,5 +2132,33 @@ class Core
             header('HTTP/1.0 403 Forbidden');
             $this->message($this->vars->lang['u2uadmin_noperm']);
         }
+    }
+
+    /**
+     * Process and return the post_attachmentbox template.
+     *
+     * @since 1.10.00
+     * @param int $currentAttachCount The number of files already attached to the post.
+     * @return The attachmentbox HTML.
+     */
+    public function makeAttachmentBox(int $currentAttachCount): string
+    {
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
+
+        $maxuploads = (int) $this->vars->settings['filesperpost'] - $currentAttachCount;
+        if ($maxuploads <= 0) return '';
+        $max_dos_limit = (int) ini_get('max_file_uploads');
+        if ($max_dos_limit > 0) $maxuploads = min($maxuploads, $max_dos_limit);
+        $template->maxuploads = $maxuploads;
+
+        $template->maxsize = $this->attach->getSizeFormatted(min(phpShorthandValue('upload_max_filesize'), (int) $this->vars->settings['maxattachsize']));
+
+        $max_dos_size = phpShorthandValue('post_max_size');
+        $max_xmb_size = (int) $this->vars->settings['filesperpost'] * (int) $this->vars->settings['maxattachsize'];
+        $maxtotal = (0 == $max_dos_size) ? $max_xmb_size : min($max_dos_size, $max_xmb_size);
+        $template->maxtotal = $this->attach->getSizeFormatted($maxtotal);
+        
+        return $template->process('post_attachmentbox.php');
     }
 }
