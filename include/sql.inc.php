@@ -1620,13 +1620,15 @@ class SQL
      * @param int $vote_id The related vote_desc.vote_id value.
      * @param int $user_id The voter's numeric member ID.
      * @param string $user_ip The voter's IP address.
-     * @return int Poll ID number.
+     * @return bool Whether or not a record was added.
      */
     public function addVoter(int $vote_id, int $user_id, string $user_ip)
     {
         $this->db->escape_fast($user_ip);
 
         $this->db->query("INSERT INTO " . $this->tablepre . "vote_voters (vote_id, vote_user_id, vote_user_ip) VALUES ($vote_id, $user_id, '$user_ip')");
+
+        return ($this->db->affected_rows() == 1);
     }
 
     /**
@@ -2013,5 +2015,25 @@ class SQL
         $this->db->free_result($query);
 
         return $result;
+    }
+
+    /**
+     * Add a U2U message record.
+     *
+     * @since 1.10.00
+     */
+    function addU2U(string $to, string $from, string $type, string $owner, string $folder, string $subject, string $message, string $isRead, string $isSent, int $timestamp)
+    {
+        $this->db->escape_fast($to);
+        $this->db->escape_fast($from);
+        $this->db->escape_fast($owner);
+        $this->db->escape_fast($folder);
+        $this->db->escape_fast($subject);
+        $this->db->escape_fast($message);
+        if (false === array_search($type, ['incoming', 'outgoing', 'draft'])) throw new InvalidArgumentException('Unexpected value for the $type parameter.');
+        if ($isRead !== 'yes' && $isRead !== 'no') throw new InvalidArgumentException('Unexpected value for the $isRead parameter.');
+        if ($isSent !== 'yes' && $isSent !== 'no') throw new InvalidArgumentException('Unexpected value for the $isSent parameter.');
+
+        $this->db->query("INSERT INTO " . $this->tablepre . "u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', $timestamp, '$isRead', '$isSent')");
     }
 }

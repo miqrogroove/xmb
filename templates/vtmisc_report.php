@@ -1,4 +1,4 @@
-<form method="post" name="input" action="vtmisc.php?action=report">
+<form method="post" name="input" action="<?= $full_url ?>vtmisc.php?action=report">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>

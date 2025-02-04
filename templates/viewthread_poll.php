@@ -1,5 +1,5 @@
 <form method="post" name="poll" action="<?= $full_url?>vtmisc.php?action=votepoll&amp;fid=<?= $fid ?>&amp;tid=<?= $tid ?>">
-<input type="hidden" name="token" value="" />
+<input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">

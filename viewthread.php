@@ -35,6 +35,7 @@ $forums = \XMB\Services\forums();
 $sqlSvc = \XMB\Services\sql();
 $smile = \XMB\Services\smile();
 $template = \XMB\Services\template();
+$token = \XMB\Services\token();
 $vars = \XMB\Services\vars();
 $full_url = $vars->full_url;
 $lang = &$vars->lang;
@@ -121,13 +122,13 @@ if ($goto == 'lastpost') {
     if ($db->num_rows($tidtest) == 1) {
         $post = $db->fetch_array($tidtest);
         $posts = $sqlSvc->countPosts($quarantine, $tid, '', (int) $post['dateline']);
-        $page = quickpage($posts, $vars->ppp);
+        $page = $core->quickpage($posts, $vars->ppp);
         if ($page == 1) {
             $page = '';
         } else {
             $page = "&page=$page";
         }
-        redirect("{$full_url}viewthread.php?tid=$tid$page#pid$pid", timeout: 0);
+        $core->redirect("{$full_url}viewthread.php?tid=$tid$page#pid$pid", timeout: 0);
     } else {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnothread']);
@@ -357,6 +358,8 @@ if ($action == '') {
     }
 
     if ($vote_id > 0) {
+        $subTemplate->token = '';
+
         if (X_MEMBER) {
             $query = $db->query("SELECT COUNT(vote_id) AS cVotes FROM " . $vars->tablepre . "vote_voters WHERE vote_id = $vote_id AND vote_user_id=" . intval($vars->self['uid']));
             if ($query) {
@@ -410,6 +413,8 @@ if ($action == '') {
             }
             $subTemplate->buttoncode = '';
         } else {
+            $subTemplate->token = $token->create('View Thread/Poll Vote', (string) $vote_id, $vars::NONCE_FORM_EXP);
+
             $subTemplate->results = "- [<a href='{$full_url}viewthread.php?tid=$tid&amp;viewresults=yes'><font color='" . $vars->theme['cattext'] . "'>{$lang['viewresults']}</font></a>]";
             $query = $db->query("SELECT vote_option_id, vote_option_text FROM " . $vars->tablepre . "vote_results WHERE vote_id = $vote_id");
             while($result = $db->fetch_array($query)) {
