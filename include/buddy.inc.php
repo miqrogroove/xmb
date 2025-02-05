@@ -28,9 +28,9 @@ if (!defined('IN_CODE')) {
 }
 
 function blistmsg($message, $redirect='', $exit=false) {
-    global $bordercolor, $tablewidth, $THEME, $tablespace, $altbg1, $css, $bbname, $lang;
-    global $charset, $text, $redirectjs;
+    global $THEME, $css, $bbname, $lang;
 
+    $redirectjs = '';
     if ($redirect != '') {
         redirect($redirect, 2);
     }
@@ -43,7 +43,7 @@ function blistmsg($message, $redirect='', $exit=false) {
 }
 
 function buddy_add($buddys) {
-    global $db, $lang, $xmbuser, $oToken, $full_url;
+    global $db, $lang, $xmbuser, $full_url;
 
     if (!is_array($buddys)) {
         $buddys = array($buddys);
@@ -78,8 +78,7 @@ function buddy_add($buddys) {
 }
 
 function buddy_edit() {
-    global $db, $lang, $xmbuser, $oToken;
-    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+    global $db, $lang, $xmbuser, $css, $bbname, $text, $THEME;
 
     $buddys = array();
     $q = $db->query("SELECT buddyname FROM ".X_PREFIX."buddys WHERE username='$xmbuser'");
@@ -97,8 +96,7 @@ function buddy_edit() {
 }
 
 function buddy_delete($delete) {
-    global $db, $lang, $xmbuser, $oToken, $full_url;
-    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+    global $db, $lang, $xmbuser, $full_url;
 
     foreach($delete as $key=>$buddy) {
         $db->query("DELETE FROM ".X_PREFIX."buddys WHERE buddyname='$buddy' AND username='$xmbuser'");
@@ -114,8 +112,7 @@ function buddy_delete($delete) {
 * @return    no return value, but will display a status report or a list of buddies and their online status
 */
 function buddy_addu2u() {
-    global $db, $lang, $xmbuser, $oToken, $onlinetime;
-    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+    global $db, $lang, $xmbuser, $onlinetime, $css, $bbname, $THEME;
 
     $buddys = array();
     $buddys['offline'] = '';
@@ -147,8 +144,7 @@ function buddy_addu2u() {
 }
 
 function buddy_display() {
-    global $db, $lang, $xmbuser, $oToken, $onlinetime;
-    global $charset, $css, $bbname, $text, $bordercolor, $THEME, $tablespace, $tablewidth, $cattext, $altbg1, $altbg2;
+    global $db, $lang, $xmbuser, $onlinetime, $css, $bbname, $THEME;
 
     $q = $db->query("SELECT b.buddyname, m.invisible, m.username, m.lastvisit FROM ".X_PREFIX."buddys b LEFT JOIN ".X_PREFIX."members m ON (b.buddyname=m.username) WHERE b.username='$xmbuser'");
     $buddys = array();
