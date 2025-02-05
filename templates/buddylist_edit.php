@@ -4,14 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
-<title><?= $bbname ?> - <?= $lang['textpowered'] ?></title>
-<script type="text/javascript" language="JavaScript" src="./js/buddylistedit.js"></script>
+<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
+<script type="text/javascript" language="JavaScript" src="<?= $full_url?>js/buddylistedit.js"></script>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
-<form method="post" action="buddy.php?action=delete">
+<form method="post" action="<?= $full_url ?>buddy.php?action=delete">
 <input type="hidden" name="token" value="" />
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
@@ -34,7 +34,7 @@
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
-<form method="post" action="buddy.php?action=add">
+<form method="post" action="<?= $full_url ?>buddy.php?action=add">
 <input type="hidden" name="token" value="" />
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>

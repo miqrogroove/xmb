@@ -22,55 +22,50 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('X_SCRIPT', 'buddy.php');
+declare(strict_types=1);
 
-require 'header.php';
-require XMB_ROOT.'include/buddy.inc.php';
+namespace XMB;
+
+require './header.php';
+
+$core = \XMB\Services\core();
+$db = \XMB\Services\db();
+$template = \XMB\Services\template();
+$vars = \XMB\Services\vars();
+
+require XMB_ROOT . 'include/buddy.inc.php';
 
 header('X-Robots-Tag: noindex');
 
-loadtemplates(
-'buddy_u2u_inv',
-'buddy_u2u_off',
-'buddy_u2u_on',
-'buddy_u2u',
-'buddylist',
-'buddylist_buddy_offline',
-'buddylist_buddy_online',
-'buddylist_edit',
-'buddylist_edit_buddy',
-'buddylist_message'
-);
-
 if (X_GUEST) {
-    redirect("{$full_url}misc.php?action=login", 0);
+    $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
     exit;
 }
 
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
-switch($action) {
+$buddy = new \XMB\BuddyManager($core, $db, $template, $vars);
+
+$action = getPhpInput('action', 'g');
+switch ($action) {
     case 'add':
-        $buddys = postedVar('buddys', '', TRUE, TRUE, FALSE, 'g');
-        if (empty($buddys)) {
-            $buddys = postedArray('buddys');
-        }
-        buddy_add($buddys);
+        $buddys = $core->postedArray('buddys', source: 'r');
+        $buddy->add($buddys);
         break;
     case 'edit':
-        buddy_edit();
+        $buddy->edit();
         break;
     case 'delete':
-        $delete = postedArray('delete');
+        $delete = $core->postedArray('delete');
         if ($delete) {
-            buddy_delete($delete);
+            $buddy->delete($delete);
         } else {
-            blistmsg($lang['nomember']);
+            $buddy->blistmsg($vars->lang['nomember']);
         }
         break;
     case 'add2u2u':
-        buddy_addu2u();
+        // This action is obscured by a client-side script.  It gets called from one of the u2u.php templates that invokes u2uheader.js::aBook().
+        // However, the route looks like it could be determined just as easily on the server side and provided as a normal link.
+        $buddy->addu2u();
         break;
     default:
-        buddy_display();
-        break;
+        $buddy->display();
 }

@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
-<script type="text/javascript" language="JavaScript" src="./js/buddy.js"></script>
-<title><?= $bbname ?> - <?= $lang['textbuddylist'] ?> - <?= $lang['textpowered'] ?></title>
+<script type="text/javascript" language="JavaScript" src="<?= $full_url ?>js/buddy.js"></script>
+<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textbuddylist'] ?> - <?= $lang['textpowered'] ?></title>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">

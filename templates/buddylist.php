@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
-<title><?= $bbname ?> - <?= $lang['textpowered'] ?></title>
-<script language="JavaScript" type="text/javascript" src="./js/popup.js"></script>
+<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
+<script language="JavaScript" type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
@@ -30,7 +30,7 @@
 </td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>"><strong><a href="buddy.php"><?= $lang['refreshbuddylist'] ?></a></strong></td>
+<td class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>"><strong><a href="<?= $full_url ?>buddy.php"><?= $lang['refreshbuddylist'] ?></a></strong></td>
 </tr>
 </table>
 </td>
@@ -42,7 +42,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
-<td class="ctrtablerow" bgcolor="<?= $THEME['altbg1'] ?>"><font class="mediumtxt"><a href="buddy.php?action=edit"><?= $lang['editbuddylist'] ?></a></font></td>
+<td class="ctrtablerow" bgcolor="<?= $THEME['altbg1'] ?>"><font class="mediumtxt"><a href="<?= $full_url ?>buddy.php?action=edit"><?= $lang['editbuddylist'] ?></a></font></td>
 </tr>
 </table>
 </td>
