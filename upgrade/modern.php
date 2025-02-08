@@ -22,23 +22,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// This file has been tested against PHP v4.4.6 for backward-compatible error reporting.
+declare(strict_types=1);
 
-if (! defined('X_VERSION_EXT')) {
-    define('X_VERSION', '1.10.00');
-    define('X_VERSION_EXT', '1.10.00-alpha');
-    define('X_VERSION_DATE', '20250208');
-    define('MYSQL_MIN_VER', '5.5.8');
-    define('PHP_MIN_VER', '8.2.0');
-    define('COPY_YEAR', '2001-2025');
+namespace XMB;
+
+// This file helps transition from the PHP 4 coding style to the PHP 7 style.  It is incompatible with PHP 4 and also doesn't conform to current standards.
+
+if (! defined('XMB_ROOT')) {
+    header('HTTP/1.0 403 Forbidden');
+    exit("Not allowed to run this file directly.");
 }
 
-$versioncompany = 'The XMB Group';
-$versionshort = X_VERSION;
-$versiongeneral = 'XMB ' . X_VERSION;
-$copyright = COPY_YEAR;
-$alpha = 'alpha';
-$beta = '';
-$gamma = '';
-$service_pack = '';
-$versionbuild = X_VERSION_DATE;
+require XMB_ROOT . 'upgrade/instructions.php';
+
+displayUpgrader($forced_display_off);

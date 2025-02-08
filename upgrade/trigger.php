@@ -114,7 +114,6 @@ if (!is_file('./upgrade.lib.php')) {
 
 $trigger_old_schema = (int) $vars->settings['schema_version'];
 
-require XMB_ROOT . 'include/schema.inc.php';
 require './upgrade.lib.php';
 
 $schema = new \XMB\Schema($db, $vars);
