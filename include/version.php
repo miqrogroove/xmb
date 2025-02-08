@@ -22,7 +22,9 @@
  *
  **/
 
-if (!defined('IN_CODE')) {
+// This file has been tested against PHP v4.4.6 for backward-compatible error reporting.
+
+if (! defined('ROOT')) {
     header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }

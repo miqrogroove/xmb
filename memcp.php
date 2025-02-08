@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2024, The XMB Group
+ * Copyright (c) 2001-2025, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -529,10 +529,9 @@ if ($action == 'profile') {
         $fids = permittedForums(forumCache(), 'thread', 'csv');
         if (strlen($fids) != 0) {
             $query = $db->query(
-                "SELECT t.tid, t.fid, t.icon, t.lastpost, t.subject, t.replies, r.uid AS lastauthor
+                "SELECT t.tid, t.fid, t.icon, t.lastpost, t.subject, t.replies
                  FROM ".X_PREFIX."favorites f
                  INNER JOIN ".X_PREFIX."threads t USING (tid)
-                 LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
                  WHERE f.username='$xmbuser' AND f.type='favorite' AND t.fid IN ($fids)
                  ORDER BY t.lastpost DESC"
             );
@@ -596,7 +595,13 @@ if ($action == 'profile') {
 } else if ($action == 'subscriptions') {
     $subadd = getInt('subadd');
     if (!$subadd && noSubmit('subsubmit')) {
-        $num = $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."favorites WHERE username='$xmbuser' AND type='subscription'"), 0);
+        $fids = permittedForums(forumCache(), 'thread', 'csv');
+        $num = $db->result($db->query(
+            "SELECT COUNT(*)
+             FROM ".X_PREFIX."favorites f
+             INNER JOIN ".X_PREFIX."threads t USING (tid)
+             WHERE f.username='$xmbuser' AND f.type='subscription' AND t.fid IN ($fids)"
+        ), 0);
         $mpage = multipage($num, $tpp, 'memcp.php?action=subscriptions');
         $multipage =& $mpage['html'];
         if (strlen($mpage['html']) != 0) {
@@ -607,11 +612,10 @@ if ($action == 'profile') {
         $header .= makenav($action);
 
         $query = $db->query(
-            "SELECT t.tid, t.fid, t.icon, t.lastpost, t.subject, t.replies, r.uid AS lastauthor
+            "SELECT t.tid, t.fid, t.icon, t.lastpost, t.subject, t.replies
              FROM ".X_PREFIX."favorites f
              INNER JOIN ".X_PREFIX."threads t USING (tid)
-             LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
-             WHERE f.username='$xmbuser' AND f.type='subscription'
+             WHERE f.username='$xmbuser' AND f.type='subscription' AND t.fid IN ($fids)
              ORDER BY t.lastpost DESC
              LIMIT {$mpage['start']}, $tpp"
         );

@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2024, The XMB Group
+ * Copyright (c) 2001-2025, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -161,8 +161,10 @@ assertEmptyOutputStream('config.php');
 if (!defined('DEBUG')) define('DEBUG', FALSE);
 if (!defined('LOG_MYSQL_ERRORS')) define('LOG_MYSQL_ERRORS', FALSE);
 
-require ROOT.'include/version.php';
-assertEmptyOutputStream('version.php');
+if (! defined('X_VERSION_EXT')) {
+    require ROOT . 'include/version.php';
+    assertEmptyOutputStream('version.php');
+}
 
 if (!$show_full_info) {
     $versionshort = '';
