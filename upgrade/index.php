@@ -45,8 +45,8 @@ if (ini_get('display_errors')) {
 require ROOT . 'include/version.php';
 if (version_compare(phpversion(), PHP_MIN_VER, '<')) {
     $message = 'XMB requires PHP version ' . PHP_MIN_VER . ' or higher to work properly.  Version ' . phpversion() . ' is running.';
-    echo "<br /><br />\n\n$message";
-    trigger_error("Attempted upgrade with obsolete PHP engine.  $message", E_USER_ERROR);
+    trigger_error("Attempted upgrade with obsolete PHP engine.  $message", E_USER_WARNING);
+    exit("<br /><br />\n\n$message");
 }
 
 // Proceed with modern scripting.
