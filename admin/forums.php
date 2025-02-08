@@ -32,6 +32,7 @@ require XMB_ROOT . 'header.php';
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $template = \XMB\Services\template();
+$theme = \XMB\Services\theme();
 $token = \XMB\Services\token();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
@@ -180,27 +181,16 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         }
     }
     $body .= $template->process('admin_forums_list_end.php');
-} else if ($fdetails && noSubmit('forumsubmit')) {
+} elseif ($fdetails && noSubmit('forumsubmit')) {
     $template->token = $token->create('Control Panel/Forums', (string) $fdetails, $vars::NONCE_FORM_EXP);
 
     $queryg = $db->query("SELECT * FROM " . $vars->tablepre . "forums WHERE fid='$fdetails'");
     $forum = $db->fetch_array($queryg);
 
-    $themelist = [];
-    $themelist[] = '<select name="themeforumnew">';
-    $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
-    $query = $db->query("SELECT themeid, name FROM " . $vars->tablepre . "themes ORDER BY name ASC");
-    while($themeinfo = $db->fetch_array($query)) {
-        if ($themeinfo['themeid'] == $forum['theme']) {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
-        } else {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
-        }
-    }
-    $db->free_result($query);
-
-    $themelist[] = '</select>';
-    $template->themelist = implode("\n", $themelist);
+    $template->themelist = $theme->selector(
+        nameAttr: 'themeforumnew',
+        selection: (int) $forum['theme'],
+    );
 
     if ($forum['allowsmilies'] == "yes") {
         $template->checked3 = $vars::cheHTML;

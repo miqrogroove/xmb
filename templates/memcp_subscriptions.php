@@ -1,4 +1,4 @@
-<form method="post" action="memcp.php?action=subscriptions">
+<form method="post" action="<?= $full_url ?>memcp.php?action=subscriptions">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>

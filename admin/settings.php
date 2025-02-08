@@ -35,6 +35,7 @@ $observer = \XMB\Services\observer();
 $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
+$themeMgr = \XMB\Services\theme();
 $token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
@@ -83,19 +84,11 @@ if (
 
     $template->langfileselect = $tran->createLangFileSelect($SETTINGS['langfile']);
 
-    $themelist = array();
-    $themelist[] = '<select name="themenew">';
-    $query = $db->query("SELECT themeid, name FROM " . $vars->tablepre . "themes ORDER BY name ASC");
-    while($themeinfo = $db->fetch_array($query)) {
-        if ($themeinfo['themeid'] == $SETTINGS['theme']) {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" ' . $vars::selHTML . '>'.$themeinfo['name'].'</option>';
-        } else {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
-        }
-    }
-    $db->free_result($query);
-    $themelist[] = '</select>';
-    $template->themelist = implode("\n", $themelist);
+    $template->themelist = $themeMgr->selector(
+        nameAttr: 'themenew',
+        selection: (int) $vars->settings['theme'],
+        allowDefault: false,
+    );
 
     if ('24' === $SETTINGS['timeformat']) {
         $template->check12 = '';

@@ -545,6 +545,22 @@ class SQL
     }
 
     /**
+     * Retrieve the list of all themes.
+     *
+     * @since 1.10.00
+     * @return array
+     */
+    public function getThemeNames(): array
+    {
+        $query = $this->db->query("SELECT themeid, name FROM " . $this->tablepre . "themes ORDER BY name ASC");
+
+        $result = $this->db->fetch_all($query);
+        $this->db->free_result($query);
+
+        return $result;
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12
@@ -1108,6 +1124,98 @@ class SQL
             $this->db->query("INSERT INTO $table SET tid = $tid, username = '$sqluser', type = '$sqltype'");
         }
         $this->db->free_result($query);
+    }
+
+    /**
+     * Retrieve the list of favorite threads for a user, sorted by recent posts.
+     *
+     * @since 1.10.00
+     * @param string $username
+     * @param array $fids Must be an array of numeric values representing the permitted forum FIDs.
+     * @param ?int $limit The maximum number of records to return, or null.
+     * @return array
+     */
+    public function getFavorites(string $username, array $fids, ?int $limit): array
+    {
+        $this->db->escape_fast($username);
+        $fids = array_map('intval', $fids);
+        $fids = implode(',', $fids);
+        
+        $limitSQL = is_null($limit) ? '' : "LIMIT $limit";
+
+        $query = $this->db->query("
+             SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies
+             FROM " . $this->tablepre . "favorites f
+             INNER JOIN " . $this->tablepre . "threads t USING (tid)
+             WHERE f.username = '$username' AND f.type = 'favorite' AND t.fid IN ($fids)
+             ORDER BY t.lastpost DESC
+             $limitSQL
+        ");
+
+        $result = $this->db->fetch_all($query);
+        $this->db->free_result($query);
+
+        return $result;
+    }
+
+    /**
+     * Retrieve the list of subscribed threads for a user, sorted by recent posts.
+     *
+     * @since 1.10.00
+     * @param string $username
+     * @param array $fids Must be an array of numeric values representing the permitted forum FIDs.
+     * @param int $start The first record to return from the matched records.
+     * @param int $limit The maximum number of records to return.
+     * @return array
+     */
+    public function getSubscriptions(string $username, array $fids, int $start, int $limit): array
+    {
+        $this->db->escape_fast($username);
+        $fids = array_map('intval', $fids);
+        $fids = implode(',', $fids);
+        
+        $limitSQL = is_null($limit) ? '' : "LIMIT $limit";
+
+        $query = $this->db->query("
+             SELECT t.tid, t.fid, t.lastpost, t.subject, t.icon, t.replies
+             FROM " . $this->tablepre . "favorites f
+             INNER JOIN " . $this->tablepre . "threads t USING (tid)
+             WHERE f.username = '$username' AND f.type = 'subscription' AND t.fid IN ($fids)
+             ORDER BY t.lastpost DESC
+             LIMIT $start, $limit
+        ");
+
+        $result = $this->db->fetch_all($query);
+        $this->db->free_result($query);
+
+        return $result;
+    }
+    
+    /**
+     * Count the number of valid subscriptions a user has.
+     *
+     * @since 1.10.00
+     * @param string $username
+     * @param array $fids Must be an array of numeric values representing the permitted forum FIDs.
+     * @return array
+     */
+    public function countSubscriptionsByUser(string $username, array $fids): int
+    {
+        $this->db->escape_fast($username);
+        $fids = array_map('intval', $fids);
+        $fids = implode(',', $fids);
+
+        $query = $this->db->query("
+             SELECT COUNT(*)
+             FROM " . $this->tablepre . "favorites f
+             INNER JOIN " . $this->tablepre . "threads t USING (tid)
+             WHERE f.username = '$username' AND f.type = 'subscription' AND t.fid IN ($fids)
+        ");
+
+        $result = (int) $this->db->result($query);
+        $this->db->free_result($query);
+
+        return $result;
     }
 
     /**
@@ -1999,7 +2107,7 @@ class SQL
     }
 
     /**
-     * Count the unread U2U messages for a member.
+     * Count the unread U2U messages for a user.
      *
      * @since 1.10.00
      * @param string $username
@@ -2018,11 +2126,31 @@ class SQL
     }
 
     /**
+     * Get the U2U Inbox messages for a user.
+     *
+     * @since 1.10.00
+     * @param string $username
+     * @param int $limit The maximum number of records to return.
+     * @return array
+     */
+    public function getU2UInbox(string $username, int $limit = 5): array
+    {
+        $this->db->escape_fast($username);
+
+        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "u2u WHERE owner = '$username' AND folder = 'Inbox' ORDER BY dateline DESC LIMIT $limit");
+
+        $result = $this->db->fetch_all($query);
+        $this->db->free_result($query);
+
+        return $result;
+    }
+
+    /**
      * Add a U2U message record.
      *
      * @since 1.10.00
      */
-    function addU2U(string $to, string $from, string $type, string $owner, string $folder, string $subject, string $message, string $isRead, string $isSent, int $timestamp)
+    public function addU2U(string $to, string $from, string $type, string $owner, string $folder, string $subject, string $message, string $isRead, string $isSent, int $timestamp)
     {
         $this->db->escape_fast($to);
         $this->db->escape_fast($from);
@@ -2035,5 +2163,29 @@ class SQL
         if ($isSent !== 'yes' && $isSent !== 'no') throw new InvalidArgumentException('Unexpected value for the $isSent parameter.');
 
         $this->db->query("INSERT INTO " . $this->tablepre . "u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', $timestamp, '$isRead', '$isSent')");
+    }
+
+    /**
+     * Retrieve the list of buddys for the specified user.
+     *
+     * @since 1.10.00
+     * @param string $username
+     * @return array
+     */
+    public function getBuddyList(string $username): array
+    {
+        $this->db->escape_fast($username);
+
+        $query = $this->db->query("
+            SELECT b.buddyname, m.invisible, m.username, m.lastvisit
+            FROM " . $this->tablepre . "buddys b
+            LEFT JOIN " . $this->tablepre . "members m ON (b.buddyname = m.username)
+            WHERE b.username = '$username'
+        ");
+
+        $result = $this->db->fetch_all($query);
+        $this->db->free_result($query);
+
+        return $result;
     }
 }

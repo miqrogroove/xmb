@@ -27,6 +27,7 @@ $forums = \XMB\Services\forums();
 $session = \XMB\Services\session();
 $smile = \XMB\Services\smile();
 $sql = \XMB\Services\sql();
+$theme = \XMB\Services\theme();
 $tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
 
@@ -560,16 +561,10 @@ switch($action) {
                 $currdate = gmdate($vars->timecode, $core->standardTime($vars->onlinetime));
                 $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
-                $themelist = array();
-                $themelist[] = '<select name="thememem">';
-                $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
-                $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
-                while($themeinfo = $db->fetch_array($query)) {
-                    $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
-                }
-                $themelist[] = '</select>';
-                $themelist = implode("\n", $themelist);
-                $db->free_result($query);
+                $themelist = $theme->selector(
+                    nameAttr: 'thememem',
+                    selection: null,
+                );
 
                 $langfileselect = $tran->createLangFileSelect($langfile);
 
@@ -814,7 +809,7 @@ switch($action) {
         }
 
         // Forum most active in
-        $fids = $core->permittedForums();
+        $fids = implode(',', $core->permittedFIDsForThreadView());
         if (strlen($fids) > 0) {
             $query = $db->query(
                 "SELECT fid, COUNT(*) AS posts

@@ -24,6 +24,7 @@
 
 $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
+$theme = \XMB\Services\theme();
 $tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
 
@@ -169,20 +170,10 @@ if (noSubmit('editsubmit')) {
     $currdate = gmdate($timecode, $vars->onlinetime + ($SETTINGS['addtime'] * 3600));
     $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
-    $themelist = array();
-    $themelist[] = '<select name="thememem">';
-    $themelist[] = '<option value="0">'.$lang['textusedefault'].'</option>';
-    $query = $db->query("SELECT themeid, name FROM ".X_PREFIX."themes ORDER BY name ASC");
-    while($themeinfo = $db->fetch_array($query)) {
-        if ($themeinfo['themeid'] === $member['theme']) {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'" '.$selHTML.'>'.$themeinfo['name'].'</option>';
-        } else {
-            $themelist[] = '<option value="'.intval($themeinfo['themeid']).'">'.$themeinfo['name'].'</option>';
-        }
-    }
-    $themelist[] = '</select>';
-    $themelist = implode("\n", $themelist);
-    $db->free_result($query);
+    $themelist = $theme->selector(
+        nameAttr: 'thememem',
+        selection: (int) $member['theme'],
+    );
 
     $langfileselect = $tran->createLangFileSelect($member['langfile']);
 

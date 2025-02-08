@@ -44,6 +44,11 @@ class Manager
         // Property promotion.
     }
     
+    /**
+     * Determines which theme to use for the current request.
+     *
+     * @since 1.10.00
+     */
     public function setTheme()
     {
         // Get themes, [fid, [tid]]
@@ -51,7 +56,7 @@ class Manager
         $forumtheme = 0;
         $fid = getInt('fid', 'r');
         $tid = getInt('tid', 'r');
-        if ($tid > 0 && $action != 'templates') {
+        if ($tid > 0) {
             $forum = $this->sql->getFIDFromTID($tid);
             if (count($forum) == 0) {
                 $tid = 0;
@@ -60,7 +65,7 @@ class Manager
                 $fid = (int) $forum['fid'];
                 $forumtheme = (int) $forum['theme'];
             }
-        } else if ($fid > 0) {
+        } elseif ($fid > 0) {
             $forum = $this->forums->getForum($fid);
             if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
                 $forumtheme = 0;
@@ -72,14 +77,14 @@ class Manager
         // Check which theme to use
         $validtheme = false;
         $themeuser = (int) ($this->vars->self['theme'] ?? 0);
-        if (!$validtheme && $themeuser > 0) {
+        if (! $validtheme && $themeuser > 0) {
             $theme = $themeuser;
             $row = sql()->getThemeByID($theme);
             if (! ($validtheme = (! empty($row)))) {
                 $this->sql->resetUserTheme((int) $self['uid']);
             }
         }
-        if (!$validtheme && $forumtheme > 0) {
+        if (! $validtheme && $forumtheme > 0) {
             $theme = $forumtheme;
             $row = $this->sql->getThemeByID($theme);
             if (! ($validtheme = (! empty($row)))) {
@@ -127,7 +132,7 @@ class Manager
     }
 
     /**
-     * Calculates extra theme strings that are dynamically generated for every hit.
+     * Calculates extra theme strings that are dynamically generated for every request.
      *
      * @since 1.9.12
      */
@@ -195,5 +200,30 @@ class Manager
         $css = ($cachedFs['qty'] + $add) . $cachedFs['unit'];
 
         return $css;
+    }
+
+    /**
+     * Generates the HTML for a theme select control based on all available themes.
+     *
+     * @since 1.10.00
+     * @param string $nameAttr The HTML name attribute for the selector element. Must be HTML encoded.
+     * @param ?int $selection The previously selected value, or null.
+     * @param bool $allowDefault Optional. When true, an extra value is provided to represent the default theme.
+     */
+    function selector(string $nameAttr, ?int $selection, bool $allowDefault = true)
+    {
+        $themelist = [
+            "<select name='$nameAttr'>",
+        ];
+        if ($allowDefault) $themelist[] = "<option value='0'>" . $this->vars->lang['textusedefault'] . "</option>";
+
+        $themes = $this->sql->getThemeNames();
+        foreach ($themes as $themeinfo) {
+            $selected = (int) $themeinfo['themeid'] === $selection ? $this->vars::selHTML : '';
+            $themelist[] = "<option value='{$themeinfo['themeid']}' $selected>{$themeinfo['name']}</option>";
+        }
+        $themelist[] = '</select>';
+
+        return implode("\n", $themelist);
     }
 }

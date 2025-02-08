@@ -30,6 +30,7 @@ use Exception;
 use RuntimeException;
 
 header('X-Frame-Options: deny');
+header('X-Robots-Tag: noindex');
 
 // Script constants
 define('XMB_UPGRADE', true);

@@ -49,7 +49,7 @@ if ($daysold < 1) {
 $srchfrom = vars()->onlinetime - (86400 * $daysold);
 
 $tids = array();
-$fids = permittedForums();
+$fids = implode(',', $core->permittedFIDsForThreadView());
 
 if (strlen($fids) == 0) {
     $threadcount = 0;
@@ -96,10 +96,9 @@ if ($threadcount == 0) {
     }
 
     $query = $db->query(
-        "SELECT t.*, t.replies+1 as posts, m.uid, r.uid AS lastauthor
+        "SELECT t.*, t.replies+1 as posts, m.uid
          FROM ".X_PREFIX."threads t
          LEFT JOIN ".X_PREFIX."members AS m ON t.author = m.username
-         LEFT JOIN ".X_PREFIX."members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
          WHERE t.lastpost > '$srchfrom' AND t.fid IN ($fids)
          ORDER BY t.lastpost DESC
          LIMIT {$mpage['start']}, $tpp"

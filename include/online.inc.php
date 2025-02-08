@@ -24,6 +24,7 @@
 
 function url_to_text($url)
 {
+    $core = \XMB\Services\core();
     $db = \XMB\Services\db();
     $forums = \XMB\Services\forums();
     $smile = \XMB\Services\smile();
@@ -34,11 +35,11 @@ function url_to_text($url)
     static $restrict = '';
 
     if ($restrict == '') {
-        $fids = permittedForums();
+        $fids = implode(',', $core->permittedFIDsForThreadView());
         if (strlen($fids) == 0) {
             $restrict = ' FALSE';
         } else {
-            $restrict = ' f.fid IN('.$fids.')';
+            $restrict = " f.fid IN($fids)";
         }
     }
 

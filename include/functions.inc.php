@@ -1389,19 +1389,21 @@ class Core
     function getStructuredForums(bool $usePerms = false): array
     {
         if ($usePerms) {
-            $forums = $this->permittedForums('forum', 'array');
+            $forums = $this->permittedForums('forum');
         } else {
             $forums = $this->forums->forumCache();
         }
 
         // This function guarantees the following subscripts exist, regardless of forum count.
-        $structured['group'] = array();
-        $structured['forum'] = array();
-        $structured['sub'] = array();
-        $structured['group']['0'] = array();
-        $structured['forum']['0'] = array();
+        $structured['group'] = [
+            '0' => [],
+        ];
+        $structured['forum'] = [
+            '0' => [],
+        ];
+        $structured['sub'] = [];
 
-        foreach($forums as $forum) {
+        foreach ($forums as $forum) {
             $structured[$forum['type']][$forum['fup']][$forum['fid']] = $forum;
         }
 
@@ -1409,30 +1411,33 @@ class Core
     }
 
     /**
-     * Creates an array of permitted forum arrays.
+     * Creates an array of permitted forum records containing FIDs permitted for the current user.
      *
      * @since 1.9.11
-     * @param object $forums DB query result, preferably from forumCache().
      * @param string $mode Whether to check for 'forum' listing permissions or 'thread' listing permissions.
-     * @param string $output If set to 'csv' causes the return value to be a CSV string of permitted forum IDs instead of an 'array' of arrays.
      * @param bool $check_parents Indicates whether each forum's permissions depend on the parent forum also being permitted.
      * @param string $user_status Optional masquerade value passed to checkForumPermissions().
      * @return array
      */
-    function permittedForums(string $mode = 'thread', string $output = 'csv', bool $check_parents = true, ?string $user_status = null): array
+    public function permittedForums(string $mode = 'thread', bool $check_parents = true, ?string $user_status = null): array
     {
         $permitted = [];
-        $fids['group'] = [];
-        $fids['forum'] = [];
-        $fids['sub'] = [];
+        $fids = [
+            'group' => [],
+            'forum' => [],
+            'sub' => [],
+        ];
 
         $forumcache = $this->forums->forumCache();
 
         foreach ($forumcache as $forum) {
             $perms = $this->checkforumpermissions($forum, $user_status);
             if ($mode == 'thread') {
+                // Forum groups are technically permitted. They need to be included in parent status checking later, but don't need to be included in the output.
                 if ($forum['type'] == 'group' || ($perms[$this->vars::PERMS_VIEW] && $perms[$this->vars::PERMS_PASSWORD])) {
-                    $permitted[] = $forum;
+                    if ($forum['type'] !== 'group') {
+                        $permitted[] = $forum;
+                    }
                     $fids[$forum['type']][] = $forum['fid'];
                 }
             } elseif ($mode == 'forum') {
@@ -1443,32 +1448,26 @@ class Core
             }
         }
 
-        if ($check_parents) { // Use the $fids array to see if each forum's parent is permitted.
-            $filtered = array();
-            $fids['forum'] = array();
-            $fids['sub'] = array();
-            foreach($permitted as $forum) {
+        if ($check_parents) {
+            // Rebuild the $fids['forum'] array using the enabled group list.
+            $filtered = [];
+            $fids['forum'] = [];
+            foreach ($permitted as $forum) {
                 if ($forum['type'] == 'group') {
                     $filtered[] = $forum;
                 } elseif ($forum['type'] == 'forum') {
-                    if (intval($forum['fup']) == 0) {
-                        $filtered[] = $forum;
-                        $fids['forum'][] = $forum['fid'];
-                    } elseif (array_search($forum['fup'], $fids['group']) !== FALSE) {
+                    if (intval($forum['fup']) == 0 || array_search($forum['fup'], $fids['group']) !== false) {
                         $filtered[] = $forum;
                         $fids['forum'][] = $forum['fid'];
                     }
                 }
             }
 
-            foreach($permitted as $forum) {
+            // Finish building the $filtered list by adding sub-forums with permitted parents.
+            foreach ($permitted as $forum) {
                 if ($forum['type'] == 'sub') {
-                    if (intval($forum['fup']) == 0) {
+                    if (intval($forum['fup']) == 0 || array_search($forum['fup'], $fids['forum']) !== false) {
                         $filtered[] = $forum;
-                        $fids['sub'][] = $forum['fid'];
-                    } elseif (array_search($forum['fup'], $fids['forum']) !== FALSE) {
-                        $filtered[] = $forum;
-                        $fids['sub'][] = $forum['fid'];
                     }
                 }
             }
@@ -1476,11 +1475,22 @@ class Core
             $permitted = $filtered;
         }
 
-        if ($output == 'csv') {
-            $permitted = implode(', ', array_merge($fids['group'], $fids['forum'], $fids['sub']));
-        }
-
         return $permitted;
+    }
+
+    /**
+     * Creates an array of permitted forum FIDs for the current user when viewing thread info.
+     *
+     * This method eliminates the need for any arguments and coerces all array values to int.
+     *
+     * @since 1.10.00
+     * @return array
+     */
+    public function permittedFIDsForThreadView(): array
+    {
+        $forums = $this->permittedForums();
+        $fids = array_column($forums, 'fid');
+        return array_map('intval', $fids);
     }
 
     /**

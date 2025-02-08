@@ -1,5 +1,5 @@
-<form method="post" action="memcp.php?action=profile" name="reg">
-<input type="hidden" name="token" value="" />
+<form method="post" action="<?= $full_url ?>memcp.php?action=profile" name="reg">
+<input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
@@ -45,19 +45,19 @@
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textbday'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><select name="month">
-<option value="" <?= $sel['0'] ?>>&nbsp;</option>
-<option value="1" <?= $sel['1'] ?>><?= $lang['textjan'] ?></option>
-<option value="2" <?= $sel['2'] ?>><?= $lang['textfeb'] ?></option>
-<option value="3" <?= $sel['3'] ?>><?= $lang['textmar'] ?></option>
-<option value="4" <?= $sel['4'] ?>><?= $lang['textapr'] ?></option>
-<option value="5" <?= $sel['5'] ?>><?= $lang['textmay'] ?></option>
-<option value="6" <?= $sel['6'] ?>><?= $lang['textjun'] ?></option>
-<option value="7" <?= $sel['7'] ?>><?= $lang['textjul'] ?></option>
-<option value="8" <?= $sel['8'] ?>><?= $lang['textaug'] ?></option>
-<option value="9" <?= $sel['9'] ?>><?= $lang['textsep'] ?></option>
-<option value="10" <?= $sel['10'] ?>><?= $lang['textoct'] ?></option>
-<option value="11" <?= $sel['11'] ?>><?= $lang['textnov'] ?></option>
-<option value="12" <?= $sel['12'] ?>><?= $lang['textdec'] ?></option>
+<option value="" <?= $sel[0] ?>>&nbsp;</option>
+<option value="1" <?= $sel[1] ?>><?= $lang['textjan'] ?></option>
+<option value="2" <?= $sel[2] ?>><?= $lang['textfeb'] ?></option>
+<option value="3" <?= $sel[3] ?>><?= $lang['textmar'] ?></option>
+<option value="4" <?= $sel[4] ?>><?= $lang['textapr'] ?></option>
+<option value="5" <?= $sel[5] ?>><?= $lang['textmay'] ?></option>
+<option value="6" <?= $sel[6] ?>><?= $lang['textjun'] ?></option>
+<option value="7" <?= $sel[7] ?>><?= $lang['textjul'] ?></option>
+<option value="8" <?= $sel[8] ?>><?= $lang['textaug'] ?></option>
+<option value="9" <?= $sel[9] ?>><?= $lang['textsep'] ?></option>
+<option value="10" <?= $sel[10] ?>><?= $lang['textoct'] ?></option>
+<option value="11" <?= $sel[11] ?>><?= $lang['textnov'] ?></option>
+<option value="12" <?= $sel[12] ?>><?= $lang['textdec'] ?></option>
 </select>
 <?= $dayselect ?>
 <input type="text" name="year" size="4" value="<?= $year ?>" /></td>

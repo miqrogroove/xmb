@@ -124,8 +124,8 @@ if ($perms[$vars::PERMS_THREAD]) {
 $template->subforums = '';
 if ($forum['type'] == 'forum') {
     $template->forumlist = '';
-    $permitted = $core->permittedForums('forum', 'array');
-    foreach($permitted as $sub) {
+    $permitted = $core->permittedForums('forum');
+    foreach ($permitted as $sub) {
         if ($sub['type'] == 'sub' && (int) $sub['fup'] == $fid) {
             $template->forumlist .= $core->forum($sub, 'forumdisplay_subforum', index_subforums: []);
         }
@@ -233,11 +233,10 @@ $template->threadlist = '';
 $threadsInFid = [];
 
 $querytop = $db->query(
-    "SELECT t.*, m.uid, r.uid AS lastauthor
+    "SELECT t.*, m.uid
      FROM " . $vars->tablepre . "threads AS t
      LEFT JOIN " . $vars->tablepre . "members AS m ON t.author = m.username
-     LEFT JOIN " . $vars->tablepre . "members AS r ON SUBSTRING_INDEX(SUBSTRING_INDEX(t.lastpost, '|', 2), '|', -1) = r.username
-     WHERE t.fid=$fid $criteria $cusdatesql
+     WHERE t.fid = $fid $criteria $cusdatesql
      ORDER BY topped $ascdesc, lastpost $ascdesc
      LIMIT $offset " . $vars->tpp
 );
@@ -264,7 +263,7 @@ if ($db->num_rows($querytop) == 0) {
     $db->free_result($query);
 }
 
-while($thread = $db->fetch_array($querytop)) {
+while ($thread = $db->fetch_array($querytop)) {
     null_string($thread['icon']);
     if ($thread['icon'] !== '' && file_exists($smdir.'/'.$thread['icon'])) {
         $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';

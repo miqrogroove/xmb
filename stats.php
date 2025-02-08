@@ -38,11 +38,11 @@ if ($SETTINGS['stats'] == 'off') {
 setCanonicalLink('stats.php');
 eval('$header = "'.template('header').'";');
 
-$fids = permittedForums();
+$fids = implode(',', $core->permittedFIDsForThreadView());
 if (strlen($fids) == 0) {
     $restrict = ' FALSE';
 } else {
-    $restrict = ' fid IN ('.$fids.')';
+    $restrict = " fid IN ($fids)";
 }
 
 $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");

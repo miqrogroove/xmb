@@ -28,7 +28,7 @@ namespace XMB;
 
 class BuddyManager
 {
-    public function __construct(private Core $core, private DBStuff $db, private Template $template, private Variables $vars)
+    public function __construct(private Core $core, private DBStuff $db, private SQL $sql, private Template $template, private Variables $vars)
     {
         // Property promotion.
     }
@@ -36,11 +36,12 @@ class BuddyManager
     /**
      * Display a message formatted for the buddy list popup window.
      *
+     * @since 1.9.1
      * @param string $message Message HTML
      * @param string $redirect Send the user to this URL after the default timeout.
      * @param bool $exit Should the script end now?
      */
-    function blistmsg(string $message, string $redirect = '', bool $exit = false)
+    public function blistmsg(string $message, string $redirect = '', bool $exit = false)
     {
         if ($redirect != '') {
             // Add redirect header, don't die yet.
@@ -56,11 +57,11 @@ class BuddyManager
     /**
      * Add a buddy.
      *
-     * @since ? Formerly known as buddy_add().
+     * @since 1.9.1 Formerly known as buddy_add().
      * @since 1.10.00
      * @param array $buddys Usernames, must be HTML and DB escaped.
      */
-    function add(array $buddys)
+    public function add(array $buddys)
     {
         $lang = &$this->vars->lang;
 
@@ -96,10 +97,10 @@ class BuddyManager
     /**
      * Display the editing page.
      *
-     * @since ? Formerly known as buddy_edit().
+     * @since 1.9.1 Formerly known as buddy_edit().
      * @since 1.10.00
      */
-    function edit()
+    public function edit()
     {
         $xmbuser = $this->vars->xmbuser;
 
@@ -122,11 +123,11 @@ class BuddyManager
     /**
      * Delete a buddy.
      *
-     * @since ? Formerly known as buddy_delete().
+     * @since 1.9.1 Formerly known as buddy_delete().
      * @since 1.10.00
      * @param array $delete Usernames, must be HTML and DB escaped.
      */
-    function delete(array $delete)
+    public function delete(array $delete)
     {
         $xmbuser = $this->vars->xmbuser;
 
@@ -139,28 +140,21 @@ class BuddyManager
     /**
     * buddy_addu2u() - Display a list of buddies with their online status
     *
-    * @since ? Formerly known as buddy_addu2u().
+    * @since 1.9.1 Formerly known as buddy_addu2u().
     * @since 1.10.00
     */
-    function addu2u()
+    public function addu2u()
     {
-        $xmbuser = $this->vars->xmbuser;
-
         $buddys = [
             'offline' => '',
             'online' => '',
         ];
 
-        $q = $this->db->query("
-            SELECT b.buddyname, m.invisible, m.username, m.lastvisit
-            FROM " . $this->vars->tablepre . "buddys b
-            LEFT JOIN " . $this->vars->tablepre . "members m ON (b.buddyname = m.username)
-            WHERE b.username = '$xmbuser'
-        ");
-        if ($this->db->num_rows($q) == 0) {
+        $buddyList = $this->sql->getBuddyList($this->vars->self['username']);
+        if (count($buddyList) == 0) {
             $this->blistmsg($this->vars->lang['no_buddies']);
         } else {
-            while ($buddy = $this->db->fetch_array($q)) {
+            foreach ($buddyList as $buddy) {
                 $this->template->buddyout = $buddy['buddyname'];
                 $this->template->recodename = recodeOut($buddy['buddyname']);
                 if ($this->vars->onlinetime - (int) $buddy['lastvisit'] <= X_ONLINE_TIMER) {
@@ -183,45 +177,51 @@ class BuddyManager
     }
 
     /**
-     * Display buddy list.
+     * Display the buddy list for the current user.
      *
-     * @since ? Formerly known as buddy_display().
+     * @since 1.9.1 Formerly known as buddy_display().
      * @since 1.10.00
      */
-    function display()
+    public function display()
     {
-        $xmbuser = $this->vars->xmbuser;
+        $this->template->buddys = $this->list();
+        $this->template->process('buddylist.php', echo: true);
+    }
 
-        $q = $this->db->query("
-            SELECT b.buddyname, m.invisible, m.username, m.lastvisit
-            FROM " . $this->vars->tablepre . "buddys b
-            LEFT JOIN " . $this->vars->tablepre . "members m ON (b.buddyname = m.username)
-            WHERE b.username = '$xmbuser'
-        ");
+    /**
+     * Generate the buddys HTML array for use as a list in other templates.
+     *
+     * @since 1.10.00
+     */
+    public function list(): array
+    {
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
+
         $buddys = [
             'offline' => '',
             'online' => '',
         ];
-        while ($buddy = $this->db->fetch_array($q)) {
-            $this->template->recodename = recodeOut($buddy['buddyname']);
-            $this->template->buddy = $buddy;
-            if ($this->vars->onlinetime - (int) $buddy['lastvisit'] <= $vars::ONLINE_TIMER) {
+        $buddyList = $this->sql->getBuddyList($this->vars->self['username']);
+        foreach ($buddyList as $buddy) {
+            $template->recodename = recodeOut($buddy['buddyname']);
+            $template->buddy = $buddy;
+            if ($this->vars->onlinetime - (int) $buddy['lastvisit'] <= $this->vars::ONLINE_TIMER) {
                 if ('1' === $buddy['invisible']) {
                     if (! X_ADMIN) {
-                        $buddys['offline'] .= $this->template->process('buddylist_buddy_offline.php');
+                        $buddys['offline'] .= $template->process('buddylist_buddy_offline.php');
                         continue;
                     } else {
-                        $this->template->buddystatus = $this->vars->lang['hidden'];
+                        $template->buddystatus = $this->vars->lang['hidden'];
                     }
                 } else {
-                    $this->template->buddystatus = $this->vars->lang['textonline'];
+                    $template->buddystatus = $this->vars->lang['textonline'];
                 }
-                $buddys['online'] .= $this->template->process('buddylist_buddy_online.php');
+                $buddys['online'] .= $template->process('buddylist_buddy_online.php');
             } else {
-                $buddys['offline'] .= $this->template->process('buddylist_buddy_offline.php');
+                $buddys['offline'] .= $template->process('buddylist_buddy_offline.php');
             }
         }
-        $this->template->buddys = $buddys;
-        $this->template->process('buddylist.php', echo: true);
+        return $buddys;
     }
 }

@@ -30,6 +30,7 @@ require './header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
 
@@ -42,7 +43,7 @@ if (X_GUEST) {
     exit;
 }
 
-$buddy = new \XMB\BuddyManager($core, $db, $template, $vars);
+$buddy = new \XMB\BuddyManager($core, $db, $sql, $template, $vars);
 
 $action = getPhpInput('action', 'g');
 switch ($action) {
