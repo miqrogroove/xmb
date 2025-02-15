@@ -57,7 +57,7 @@ class Manager
         $fid = getInt('fid', 'r');
         $tid = getInt('tid', 'r');
         if ($tid > 0) {
-            $forum = $this->sql->getFIDFromTID($tid);
+            $forum = $this->sql->getFIDFromTID($tid, getThemeIDToo: true);
             if (count($forum) == 0) {
                 $tid = 0;
                 $fid = 0;

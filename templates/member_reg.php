@@ -53,11 +53,11 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttpp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tpp" value="<?= $topicperpage ?>" size="4" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tpp" value="<?= $tpp ?>" size="4" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textppp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="ppp" value="<?= $postperpage ?>" size="4" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="ppp" value="<?= $ppp ?>" size="4" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textshowemail'] ?></td>
@@ -93,7 +93,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttimeformat'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="radio" value="24" name="timeformatnew" <?= $timeFormat24Checked ?>/>&nbsp;<?= $lang['text24hour'] ?>&nbsp;<input type="radio" value="12" name="timeformatnew" <?= $timeFormat12Checked ?> />&nbsp;<?= $lang['text12hour'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="radio" value="24" name="timeformatnew" <?= $check24 ?>/>&nbsp;<?= $lang['text24hour'] ?>&nbsp;<input type="radio" value="12" name="timeformatnew" <?= $check12 ?> />&nbsp;<?= $lang['text12hour'] ?></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['dateformat'] ?></td>

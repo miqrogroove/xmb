@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+$core = \XMB\Services\core();
 $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $theme = \XMB\Services\theme();
@@ -67,68 +68,19 @@ $https_only = 'on' == $SETTINGS['images_https_only'];
 $js_https_only = $https_only ? 'true' : 'false';
 
 if (noSubmit('editsubmit')) {
-    $sadminselect = $adminselect = $smodselect = '';
-    $modselect = $memselect = $banselect = '';
-    switch($member['status']) {
-    case 'Super Administrator':
-        $sadminselect = $selHTML;
-        break;
-    case 'Administrator':
-        $adminselect = $selHTML;
-        break;
-    case 'Super Moderator':
-        $smodselect = $selHTML;
-        break;
-    case 'Moderator':
-        $modselect = $selHTML;
-        break;
-    case 'Member':
-        $memselect = $selHTML;
-        break;
-    case 'Banned':
-        $banselect = $selHTML;
-        break;
-    default:
-        $memselect = $selHTML;
-        break;
-    }
+    $form = new \XMB\UserEditForm($member, $vars->self, $core, $theme, $tran, $vars);
+    $form->setOptionSelectors();
+    $form->setCallableElements();
+    $form->setAvatar();
+    $form->setBirthday();
+    $form->setStatus();
+    $form->setTextFields();
+    $form->setNumericFields();
+    $form->setMiscFields();
+
+    $subTemplate = $form->getTemplate();
 
     $custout = attrOut($member['customstatus']);
-
-    $checked = '';
-    if ($member['showemail'] == 'yes') {
-        $checked = $cheHTML;
-    }
-
-    $subschecked = '';
-    if ($member['sub_each_post'] == 'yes') {
-        $subschecked = $cheHTML;
-    }
-
-    $newschecked = '';
-    if ($member['newsletter'] == 'yes') {
-        $newschecked = $cheHTML;
-    }
-
-    $uou2uchecked = '';
-    if ($member['useoldu2u'] == 'yes') {
-        $uou2uchecked = $cheHTML;
-    }
-
-    $ogu2uchecked = '';
-    if ($member['saveogu2u'] == 'yes') {
-        $ogu2uchecked = $cheHTML;
-    }
-
-    $eouchecked = '';
-    if ($member['emailonu2u'] == 'yes') {
-        $eouchecked = $cheHTML;
-    }
-
-    $invchecked = '';
-    if ('1' === $member['invisible']) {
-        $invchecked = $cheHTML;
-    }
 
     $registerdate = gmdate($dateformat, core()->timeKludge((int) $member['regdate']));
 
@@ -170,56 +122,6 @@ if (noSubmit('editsubmit')) {
     $currdate = gmdate($timecode, $vars->onlinetime + ($SETTINGS['addtime'] * 3600));
     $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
-    $themelist = $theme->selector(
-        nameAttr: 'thememem',
-        selection: (int) $member['theme'],
-    );
-
-    $langfileselect = $tran->createLangFileSelect($member['langfile']);
-
-    $day = intval(substr($member['bday'], 8, 2));
-    $month = intval(substr($member['bday'], 5, 2));
-    $year = substr($member['bday'], 0, 4);
-
-    for($i = 0; $i <= 12; $i++) {
-        $sel[$i] = '';
-    }
-    $sel[$month] = $selHTML;
-
-    $dayselect = array();
-    $dayselect[] = '<select name="day">';
-    $dayselect[] = '<option value="">&nbsp;</option>';
-    for($num = 1; $num <= 31; $num++) {
-        if ($day == $num) {
-            $dayselect[] = '<option value="'.$num.'" '.$selHTML.'>'.$num.'</option>';
-        } else {
-            $dayselect[] = '<option value="'.$num.'">'.$num.'</option>';
-        }
-    }
-    $dayselect[] = '</select>';
-    $dayselect = implode("\n", $dayselect);
-
-    $u2uasel0 = $u2uasel1 = $u2uasel2 = '';
-    switch($member['u2ualert']) {
-        case 2:
-            $u2uasel2 = $selHTML;
-            break;
-        case 1:
-            $u2uasel1 = $selHTML;
-            break;
-        case 0:
-        default:
-            $u2uasel0 = $selHTML;
-            break;
-    }
-
-    $check12 = $check24 = '';
-    if ('24' === $member['timeformat']) {
-        $check24 = $cheHTML;
-    } else {
-        $check12 = $cheHTML;
-    }
-
     if ($SETTINGS['sigbbcode'] == 'on') {
         $bbcodeis = $lang['texton'];
     } else {
@@ -228,35 +130,7 @@ if (noSubmit('editsubmit')) {
 
     $htmlis = $lang['textoff'];
 
-    $avatar = '';
-    null_string($member['avatar']);
-    if ($SETTINGS['avastatus'] == 'on') {
-        if ($https_only && strpos($member['avatar'], ':') !== false && substr($member['avatar'], 0, 6) !== 'https:') {
-            $member['avatar'] = '';
-        }
-        eval('$avatar = "'.template('memcp_profile_avatarurl').'";');
-    }
-
-    if ($SETTINGS['avastatus'] == 'list')  {
-        $avatars = '<option value="" />'.$lang['textnone'].'</option>';
-        $dir1 = opendir(XMB_ROOT.'images/avatars');
-        while($avFile = readdir($dir1)) {
-            if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
-                $avatars .= '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
-            }
-        }
-        $avatars = str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars);
-        $avatarbox = '<select name="newavatar" onchange="document.images.avatarpic.src=this[this.selectedIndex].value;">'.$avatars.'</select>';
-        eval('$avatar = "'.template('memcp_profile_avatarlist').'";');
-        closedir($dir1);
-    }
-
     $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
-
-    $member['bio'] = decimalEntityDecode($member['bio']);
-    $member['location'] = decimalEntityDecode($member['location']);
-    $member['mood'] = decimalEntityDecode($member['mood']);
-    $member['sig'] = decimalEntityDecode($member['sig']);
 
     $userrecode = recodeOut($member['username']);
 
@@ -264,103 +138,19 @@ if (noSubmit('editsubmit')) {
     eval('$editpage = "'.$template.'";');
 } else {
     request_secure('Edit User Account', $member['uid']);
-    $status = postedVar('status');
-    $origstatus = $member['status'];
-    $query = $db->query("SELECT COUNT(uid) FROM ".X_PREFIX."members WHERE status='Super Administrator'");
-    $sa_count = (int) $db->result($query, 0);
-    $db->free_result($query);
-    if ($origstatus == 'Super Administrator' && $status != 'Super Administrator' && $sa_count == 1) {
-        error($lang['lastsadmin']);
-    }
+
+    $form = new \XMB\UserEditForm($member, $vars->self, $core, $theme, $tran, $vars);
+    $form->readBirthday();
+    $form->readAvatar();
+    $form->readCallables();
+    $form->readTextFields();
+    $form->readOptions();
+    $form->readNumericFields();
+    $form->readMiscFields();
+
     $cusstatus = postedVar('cusstatus', '', FALSE);
-    $langfilenew = postedVar('langfilenew');
-    $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
-    if ($db->num_rows($result) == 0) {
-        $langfilenew = $SETTINGS['langfile'];
-    }
 
-    $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
-    $thememem = formInt('thememem');
-    $tppnew = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
-    $pppnew = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
-
-    $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
-    $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-    if (strlen($dateformatnew) == 0 || $dateformatnew !== $dateformattest) {
-        $dateformatnew = $SETTINGS['dateformat'];
-    }
-    unset($dateformattest);
-
-    $timeformatnew = formInt('timeformatnew');
-    if ($timeformatnew != 12 && $timeformatnew != 24) {
-        $timeformatnew = $SETTINGS['timeformat'];
-    }
-
-    $newsubs = formYesNo('newsubs');
-    $saveogu2u = formYesNo('saveogu2u');
-    $emailonu2u = formYesNo('emailonu2u');
-    $useoldu2u = formYesNo('useoldu2u');
-    $invisible = formInt('newinv');
-    $showemail = formYesNo('newshowemail');
-    $newsletter = formYesNo('newnewsletter');
-    $u2ualert = formInt('u2ualert');
-    $year = formInt('year');
-    $month = formInt('month');
-    $day = formInt('day');
-    // For year of birth, reject all integers from 100 through 1899.
-    if ($year >= 100 && $year <= 1899) $year = 0;
-    $bday = iso8601_date($year, $month, $day);
-    $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
     $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
-    $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
-    $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
-    $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
-    $sig = postedVar('newsig', 'javascript', true, true, true);
-
-    if ($SETTINGS['avastatus'] == 'on') {
-        $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
-        $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-
-        $newavatarcheck = postedVar('newavatarcheck');
-
-        $max_size = explode('x', $SETTINGS['max_avatar_size']);
-
-        if (preg_match('/^' . get_img_regexp($https_only) . '$/i', $rawavatar) == 0) {
-            $avatar = '';
-        } elseif (ini_get('allow_url_fopen')) {
-            if ((int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
-                $size = @getimagesize($rawavatar);
-                if ($size === FALSE) {
-                    $avatar = '';
-                } elseif (($size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1]) && !X_SADMIN) {
-                    error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
-                }
-            }
-        } elseif ($newavatarcheck == "no") {
-            $avatar = '';
-        }
-        unset($rawavatar);
-    } elseif ($SETTINGS['avastatus'] == 'list') {
-        $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-        $dirHandle = opendir(XMB_ROOT.'images/avatars');
-        $filefound = FALSE;
-        while($avFile = readdir($dirHandle)) {
-            if ($rawavatar == './images/avatars/'.$avFile) {
-                if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
-                    $filefound = TRUE;
-                }
-            }
-        }
-        closedir($dirHandle);
-        unset($rawavatar);
-        if ($filefound) {
-            $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
-        } else {
-            $avatar = '';
-        }
-    } else {
-        $avatar = '';
-    }
 
     $db->query("UPDATE ".X_PREFIX."members SET status='$status', customstatus='$cusstatus', email='$email', site='$site',
     location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', avatar='$avatar',
@@ -368,14 +158,15 @@ if (noSubmit('editsubmit')) {
     dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u',
     useoldu2u='$useoldu2u', u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$user'");
 
-    $newpassword = $_POST['newpassword'];
-    if ($newpassword) {
-        $newpassword = md5($newpassword);
-        $db->query("UPDATE ".X_PREFIX."members SET password='$newpassword' WHERE username='$user'");
+    if (getRawString('newpassword') != '') {
+        $newPass = $core->assertPasswordPolicy('newpassword', 'newpassword');
+        $passMan = new \XMB\Password($sql);
+        $passMan->changePassword($rawuser, $newPass);
+        unset($newPass, $passMan);
 
         // Force logout and delete cookies.
-        $query = $db->query("DELETE FROM ".X_PREFIX."whosonline WHERE username='$user'");
-        $session->logoutAll($rawuser);
+        $sql->deleteWhosonline($rawuser);
+        $session->logoutAll($rawuser, isSelf: false);
     }
 
     $unlock = formYesNo('unlock');

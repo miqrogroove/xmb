@@ -33,6 +33,10 @@ class Variables
     public const int NONCE_MAX_AGE = 43200; // CAPTCHA expiration, in seconds.
     public const int NONCE_KEY_LEN = 12; // Size of captchaimages.imagestring.
     public const int ONLINE_TIMER = 600; // Visitors are offline after this many seconds.
+    public const int PASS_MIN_LENGTH = 8; // New passwords may not be shorter than this.
+    public const int PASS_MAX_LENGTH = 72; // Hash input maximum to avoid truncation.
+    public const int USERNAME_MIN_LENGTH = 3; // New usernames may not be shorter than this.
+    public const int USERNAME_MAX_LENGTH = 32; // Size of members.username.
     // permissions constants
     public const int PERMS_COUNT = 4; //Number of raw bit sets stored in postperm setting.
     // indexes used in permissions arrays

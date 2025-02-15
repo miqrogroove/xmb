@@ -17,14 +17,9 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textstatus'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><select name="status">
-<option value="Super Administrator" <?= $sadminselect ?>><?= $lang['superadmin'] ?></option>
-<option value="Administrator" <?= $adminselect ?>><?= $lang['textadmin'] ?></option>
-<option value="Super Moderator" <?= $smodselect ?>><?= $lang['textsupermod'] ?></option>
-<option value="Moderator" <?= $modselect ?>><?= $lang['textmod'] ?></option>
-<option value="Member" <?= $memselect ?>><?= $lang['textmem'] ?></option>
-<option value="Banned" <?= $banselect ?>><?= $lang['textbanned'] ?></option>
-</select></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>">
+<?= $userStatus ?>
+</td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['pwchange'] ?> - <?= $lang['optional'] ?></strong></font></td>
@@ -98,18 +93,18 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttpp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tppnew" size="4" value="<?= $member['tpp'] ?>" /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tppnew" size="4" value="<?= $tpp ?>" /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textppp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="pppnew" size="4" value="<?= $member['ppp'] ?>" /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="pppnew" size="4" value="<?= $ppp ?>" /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textoptions'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>">
 <input type="checkbox" name="newshowemail" value="yes" <?= $checked ?> /> <?= $lang['textshowemail'] ?><br />
 <input type="checkbox" name="newsubs" value="yes" <?= $subschecked ?> /> <?= $lang['subdefault'] ?><br />
-<input type="checkbox" name="newnewsletter" value="yes" <?= $newschecked ?> /> <?= $lang['textgetnews'] ?><br />
+<input type="checkbox" name="newsletter" value="yes" <?= $newschecked ?> /> <?= $lang['textgetnews'] ?><br />
 <input type="checkbox" name="newinv" value="1" <?= $invchecked ?> /> <?= $lang['textinvisible'] ?><br />
 <input type="checkbox" name="useoldu2u" value="yes" <?= $uou2uchecked ?> /> <?= $lang['textuseoldu2u'] ?><br />
 <input type="checkbox" name="saveogu2u" value="yes" <?= $ogu2uchecked ?> /> <?= $lang['textsaveog'] ?><br />

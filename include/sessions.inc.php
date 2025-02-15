@@ -28,11 +28,12 @@ namespace XMB\Session;
 
 use RuntimeException;
 use XMB\Core;
+use XMB\Password;
 use XMB\SQL;
 
 use function XMB\formYesNo;
 use function XMB\getPhpInput;
-use function XMB\postedVar;
+use function XMB\getRawString;
 
 /**
  * Session Data objects are used to pass results between functions.
@@ -161,22 +162,20 @@ class Manager
     /**
      * Deletes all tokens for all sessions after the user sets new credentials.
      *
-     * @param string $username If not specified, logs out the member linked to the current session.
+     * @param string $username
+     * @param bool $isSelf Whether the client should be cleared also.  For example, not when the admin is editing someone else's password.
      */
-    public function logoutAll(string $username = '')
+    public function logoutAll(string $username = '', bool $isSelf = true)
     {
         if ('' == $username) {
-            $current_client = true;
             if ('good' == $this->status) {
                 $username = $this->saved->member['username'];
             } else {
                 return;
             }
-        } else {
-            $current_client = false;
         }
         foreach($this->mechanisms as $session) {
-            $session->logoutAll($username, $current_client);
+            $session->logoutAll($username, $isSelf);
         }
     }
 
@@ -486,14 +485,14 @@ class FormsAndCookies implements Mechanism
         if (strlen($uinput) < self::USER_MIN_LEN) {
             return $data;
         }
-        
+
         $member = $this->sql->getMemberByName($uinput);
-        
+
         if (empty($member)) {
             $data->status = 'bad';
             return $data;
         }
-        
+
         $data->member = &$member;
         $data->status = 'good';
         $data->permanent = formYesNo('trust') == 'yes';
@@ -502,22 +501,22 @@ class FormsAndCookies implements Mechanism
 
     public function checkPassword(Data $data): Data
     {
-        $pinput = $_POST['password'];
+        $pinput = getRawString('password');
 
         if (empty($pinput)) {
             return new Data();
         }
-        
-        $pinput = md5($pinput);
 
-        if ($data->member['password'] !== $pinput) {
+        $passMan = new Password($this->sql);
+        $storedPass = $data->member['password'] !== '' ? $data->member['password'] : $data->member['password2'];
+
+        if (! $passMan->checkInput($pinput, $storedPass)) {
             $this->core->auditBadLogin($data->member);
             $data = new Data();
             $data->status = 'bad';
             return $data;
         }
-        
-        $data->member['password'] = '';
+
         return $data;
     }
 

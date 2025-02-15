@@ -35,6 +35,7 @@ $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $theme = \XMB\Services\theme();
+$token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
@@ -55,21 +56,36 @@ switch ($action) {
     case 'profile':
         $core->nav('<a href="' . $vars->full_url . 'memcp.php">'.$lang['textusercp'].'</a>');
         $core->nav($lang['texteditpro']);
+        if ($SETTINGS['subject_in_title'] == 'on') {
+            $template->threadSubject = $lang['texteditpro'] . ' - ';
+        }
         break;
     case 'subscriptions':
         $core->nav('<a href="' . $vars->full_url . 'memcp.php">'.$lang['textusercp'].'</a>');
         $core->nav($lang['textsubscriptions']);
+        if ($SETTINGS['subject_in_title'] == 'on') {
+            $template->threadSubject = $lang['textsubscriptions'] . ' - ';
+        }
         break;
     case 'favorites':
         $core->nav('<a href="' . $vars->full_url . 'memcp.php">'.$lang['textusercp'].'</a>');
         $core->nav($lang['textfavorites']);
+        if ($SETTINGS['subject_in_title'] == 'on') {
+            $template->threadSubject = $lang['textfavorites'] . ' - ';
+        }
         break;
     case 'devices':
         $core->nav('<a href="' . $vars->full_url . 'memcp.php">'.$lang['textusercp'].'</a>');
         $core->nav($lang['devices']);
+        if ($SETTINGS['subject_in_title'] == 'on') {
+            $template->threadSubject = $lang['devices'] . ' - ';
+        }
         break;
     default:
         $core->nav($lang['textusercp']);
+        if ($SETTINGS['subject_in_title'] == 'on') {
+            $template->threadSubject = $lang['textusercp'] . ' - ';
+        }
         break;
 }
 
@@ -85,196 +101,76 @@ if ($action == 'profile') {
     $header .= $template->process('memcp_nav.php');
 
     if (noSubmit('editsubmit')) {
-        $member = $vars->self;
-
-        $template->checked = $member['showemail'] == 'yes' ? $vars::cheHTML : '';
-        $template->subschecked = $member['sub_each_post'] == 'yes' ? $vars::cheHTML : '';
-        $template->newschecked = $member['newsletter'] == 'yes' ? $vars::cheHTML : '';
-        $template->uou2uchecked = $member['useoldu2u'] == 'yes' ? $vars::cheHTML : '';
-        $template->ogu2uchecked = $member['saveogu2u'] == 'yes' ? $vars::cheHTML : '';
-        $template->eouchecked = $member['emailonu2u'] == 'yes' ? $vars::cheHTML : '';
-        $template->invchecked = $member['invisible'] === '1' ? $vars::cheHTML : '';
+        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
+        $form->setOptions();
+        $form->setCallables();
+        $form->setBirthday();
+        $form->setNumericFields();
+        $form->setMiscFields();
+        
+        if ('on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ((int) $vars->self['postnum'] > 0 && 'no' == $vars->self['waiting_for_mod']) || X_STAFF) {
+            $form->setOptionalFields();
+            $subTemplate = $form->getTemplate();
+            $subTemplate->bbcodeis = $SETTINGS['sigbbcode'] == 'on' ? $lang['texton'] : $lang['textoff'];
+            $subTemplate->htmlis = $lang['textoff'];
+            $subTemplate->optional = $subTemplate->process('memcp_profile_optional.php');
+        } else {
+            $subTemplate = $form->getTemplate();
+            $subTemplate->optional = '';
+        }
 
         $currdate = gmdate($vars->timecode, $core->standardTime($vars->onlinetime));
-        $template->textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
+        $subTemplate->textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
-        $template->timezones = $core->timezone_control($member['timeoffset']);
+        $subTemplate->hUsername = $vars->self['username'];
+        $subTemplate->token = $token->create('User Control Panel/Edit Profile', $vars->self['uid'], $vars::NONCE_FORM_EXP);
 
-        $template->u2uasel0 = '';
-        $template->u2uasel1 = '';
-        $template->u2uasel2 = '';
-        switch ($member['u2ualert']) {
-            case '2':
-                $template->u2uasel2 = $vars::selHTML;
-                break;
-            case '1':
-                $template->u2uasel1 = $vars::selHTML;
-                break;
-            case '0':
-            default:
-                $template->u2uasel0 = $vars::selHTML;
-                break;
-        }
-
-        $template->themelist = $theme->selector(
-            nameAttr: 'thememem',
-            selection: (int) $member['theme'],
-        );
-
-        $template->langfileselect = $tran->createLangFileSelect($member['langfile']);
-
-        $day = intval(substr($member['bday'], 8, 2));
-        $month = intval(substr($member['bday'], 5, 2));
-        $template->year = substr($member['bday'], 0, 4);
-
-        $sel = array_fill(start_index: 0, count: 13, value: '');
-        $sel[$month] = $vars::selHTML;
-        $template->sel = $sel;
-
-        $template->dayselect = [
-            "<select name='day'>",
-            "<option value=''>&nbsp;</option>",
-        ];
-        for ($num = 1; $num <= 31; $num++) {
-            $selected = $day == $num ? $vars::selHTML : '';
-            $dayselect[] = "<option value='$num' $selected>$num</option>";
-        }
-        $dayselect[] = '</select>';
-        $template->dayselect = implode("\n", $dayselect);
-
-        $template->check12 = '';
-        $template->check24 = '';
-        if ('24' === $member['timeformat']) {
-            $template->check24 = $vars::cheHTML;
-        } else {
-            $template->check12 = $vars::cheHTML;
-        }
-
-        if ($SETTINGS['sigbbcode'] == 'on') {
-            $template->bbcodeis = $lang['texton'];
-        } else {
-            $template->bbcodeis = $lang['textoff'];
-        }
-
-        $template->htmlis = $lang['textoff'];
-
-        null_string($member['avatar']);
-        if ($SETTINGS['avastatus'] == 'on') {
-            if ($https_only && strpos($member['avatar'], ':') !== false && substr($member['avatar'], 0, 6) !== 'https:') {
-                $member['avatar'] = '';
-            }
-            $template->member = $member;
-            $template->avatar = $template->process('memcp_profile_avatarurl.php');
-        } elseif ($SETTINGS['avastatus'] == 'list')  {
-            $avatars = '<option value="" />'.$lang['textnone'].'</option>';
-            $dir1 = opendir(XMB_ROOT . 'images/avatars');
-            while ($avFile = readdir($dir1)) {
-                if (is_file(XMB_ROOT . 'images/avatars/' . $avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
-                    $avatars .= '<option value="' . $vars->full_url . 'images/avatars/' . $avFile . '" />' . $avFile . '</option>';
-                }
-            }
-            closedir($dir1);
-            $avatars = str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars);
-            $template->avatarbox = '<select name="newavatar" onchange="document.images.avatarpic.src=this[this.selectedIndex].value;">'.$avatars.'</select>';
-            $template->avatar = $template->process('memcp_profile_avatarlist.php');
-            unset($avatars, $template->avatarbox);
-        } else {
-            $template->avatar = '';
-        }
-
-        $member['bio'] = $core->rawHTMLsubject($member['bio']);
-        $member['location'] = $core->rawHTMLsubject($member['location']);
-        $member['mood'] = $core->rawHTMLsubject($member['mood']);
-        $member['sig'] = $core->rawHTMLsubject($member['sig']);
-
-        $template->member = $member;
-        if ('on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ((int) $vars->self['postnum'] > 0 && 'no' == $vars->self['waiting_for_mod']) || X_STAFF) {
-            $template->optional = $template->process('memcp_profile_optional.php');
-        } else {
-            $template->optional = '';
-        }
-
-        $template->hUsername = $vars->self['username'];
-        $template->token = $token->create('User Control Panel/Edit Profile', $vars->self['uid'], $vars::NONCE_FORM_EXP);
-
-        $mempage = $template->process('memcp_profile.php');
+        $mempage = $subTemplate->process('memcp_profile.php');
     }
 
     if (onSubmit('editsubmit')) {
         $core->request_secure('User Control Panel/Edit Profile', $vars->self['uid'], error_header: true);
-        if (! empty($_POST['newpassword'])) {
-            if (empty($_POST['oldpassword'])) {
-                error($lang['textpwincorrect']);
-            }
-            $member = $sql->getMemberByName($vars->self['username']);
-            if ($member['password'] !== md5($_POST['oldpassword'])) {
-                error($lang['textpwincorrect']);
-            }
-            unset($member);
-            if (empty($_POST['newpasswordcf'])) {
-                error($lang['pwnomatch']);
-            }
-            if ($_POST['newpassword'] !== $_POST['newpasswordcf']) {
-                error($lang['pwnomatch']);
-            }
 
-            $newpassword = md5($_POST['newpassword']);
-
-            $pwtxt = "password='$newpassword',";
+        if (getRawString('newpassword') != '') {
+            $storedPass = $vars->self['password'] !== '' ? $vars->self['password'] : $vars->self['password2'];
+            $passMan = new \XMB\Password($sql);
+            $oldPass = getRawString('oldpassword');
+            if ($oldPass == '') {
+                $core->error($lang['textnopassword']);
+            }
+            if (! $passMan->checkInput($oldPass, $storedPass)) {
+                $core->auditBadLogin($vars->self);
+                $core->error($lang['textpwincorrect']);
+            }
+            $newPass = $core->assertPasswordPolicy('newpassword', 'newpasswordcf');
+            $passMan->changePassword($vars->self['username'], $newPass);
+            unset($newPass, $passMan, $oldPass, $storedPass);
 
             // Force logout and delete cookies.
-            $query = $db->query("DELETE FROM " . $vars->tablepre . "whosonline WHERE username='$xmbuser'");
+            $sql->deleteWhosonline($vars->self['username']);
             $session->logoutAll();
-        } else {
-            $pwtxt = '';
         }
 
-        $langfilenew = postedVar('langfilenew');
-        $result = $db->query("SELECT devname FROM " . $vars->tablepre . "lang_base WHERE devname='$langfilenew'");
-        if ($db->num_rows($result) == 0) {
-            $langfilenew = $SETTINGS['langfile'];
-        }
+        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
+        $form->readBirthday();
+        $form->readCallables();
+        $form->readOptionalFields();
+        $form->readOptions();
+        $form->readNumericFields();
+        $form->readMiscFields();
 
-        $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
-        $thememem = formInt('thememem');
-        $tppnew = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
-        $pppnew = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
+        $edits = $form->getEdits();
 
-        $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
-        $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-        if (strlen($dateformatnew) == 0 || $dateformatnew !== $dateformattest) {
-            $dateformatnew = $SETTINGS['dateformat'];
-        }
-        unset($dateformattest);
+        $email = $core->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
 
-        $timeformatnew = formInt('timeformatnew');
-        if ($timeformatnew != 12 && $timeformatnew != 24) {
-            $timeformatnew = $SETTINGS['timeformat'];
-        }
-
-        $newsubs = formYesNo('newsubs');
-        $saveogu2u = formYesNo('saveogu2u');
-        $emailonu2u = formYesNo('emailonu2u');
-        $useoldu2u = formYesNo('useoldu2u');
-        $invisible = formInt('newinv');
-        $showemail = formYesNo('newshowemail');
-        $newsletter = formYesNo('newnewsletter');
-        $u2ualert = formInt('u2ualert');
-        $year = formInt('year');
-        $month = formInt('month');
-        $day = formInt('day');
-        // For year of birth, reject all integers from 100 through 1899.
-        if ($year >= 100 && $year <= 1899) $year = 0;
-        $bday = iso8601_date($year, $month, $day);
-        $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
-
-        if ($email !== $db->escape($vars->self['email'])) {
+        if ($email !== $vars->self['email']) {
             if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
-                $query = $db->query("SELECT COUNT(uid) FROM " . $vars->tablepre . "members WHERE email = '$email' AND username != '$xmbuser'");
-                $count1 = (int) $db->result($query,0);
+                $sqlEmail = $db->escape($email);
+                $query = $db->query("SELECT COUNT(uid) FROM " . $vars->tablepre . "members WHERE email = '$sqlEmail' AND username != '" . $vars->xmbuser . "'");
+                $count1 = (int) $db->result($query);
                 $db->free_result($query);
                 if ($count1 != 0) {
-                    error($lang['alreadyreg']);
+                    $core->error($lang['alreadyreg']);
                 }
             }
 
@@ -300,137 +196,57 @@ if ($action == 'profile') {
             $db->free_result($query);
 
             if ($efail) {
-                error($lang['emailrestricted']);
+                $core->error($lang['emailrestricted']);
             }
 
-            require XMB_ROOT.'include/validate-email.inc.php';
+            require XMB_ROOT . 'include/validate-email.inc.php';
             $test = new EmailAddressValidator();
-            $rawemail = postedVar('newemail', '', FALSE, FALSE);
+            $rawemail = getPhpInput('newemail');
             if (false === $test->check_email_address($rawemail)) {
-                error($lang['bademail']);
+                $core->error($lang['bademail']);
             }
         }
-
-        if ($SETTINGS['avastatus'] == 'on') {
-            $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
-            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-
-            $newavatarcheck = postedVar('newavatarcheck');
-
-            $max_size = explode('x', $SETTINGS['max_avatar_size']);
-
-            if (preg_match('/^' . get_img_regexp($https_only) . '$/i', $rawavatar) == 0) {
-                $avatar = '';
-            } elseif (ini_get('allow_url_fopen')) {
-                if ((int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
-                    $size = @getimagesize($rawavatar);
-                    if ($size === FALSE) {
-                        $avatar = '';
-                    } elseif (($size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1]) && !X_SADMIN) {
-                        error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
-                    }
-                }
-            } elseif ($newavatarcheck == "no") {
-                $avatar = '';
-            }
-            unset($rawavatar);
-        } elseif ($SETTINGS['avastatus'] == 'list') {
-            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-            $dirHandle = opendir(XMB_ROOT.'images/avatars');
-            $filefound = FALSE;
-            while($avFile = readdir($dirHandle)) {
-                if ($rawavatar == './images/avatars/'.$avFile) {
-                    if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
-                        $filefound = TRUE;
-                    }
-                }
-            }
-            closedir($dirHandle);
-            unset($rawavatar);
-            if ($filefound) {
-                $avatar = postedVar('newavatar', 'javascript', TRUE, TRUE, TRUE);
-            } else {
-                $avatar = '';
-            }
-        } else {
-            $avatar = '';
+        
+        if ($vars->self['email'] != $email) {
+            $edits['email'] = $email;
+        }
+        
+        if (count($edits) > 0) {
+            $sql->updateMember($vars->self['username'], $edits);
         }
 
-        if ('on' == $SETTINGS['regoptional'] || 'off' == $SETTINGS['quarantine_new_users'] || ((int) $vars->self['postnum'] > 0 && 'no' == $vars->self['waiting_for_mod']) || X_STAFF) {
-            $location = postedVar('newlocation', 'javascript', TRUE, TRUE, TRUE);
-            $site = postedVar('newsite', 'javascript', TRUE, TRUE, TRUE);
-            $bio = postedVar('newbio', 'javascript', TRUE, TRUE, TRUE);
-            $mood = postedVar('newmood', 'javascript', TRUE, TRUE, TRUE);
-            $sig = postedVar('newsig', 'javascript', TRUE, TRUE, TRUE);
-
-            if ($SETTINGS['resetsigs'] == 'on') {
-                if (strlen(trim($vars->self['sig'])) == 0) {
-                    if (strlen(trim($sig)) > 0) {
-                        $sql->setPostSigsByAuthor(true, $vars->self['username']);
-                    }
-                } elseif (strlen(trim($sig)) == 0) {
-                    $sql->setPostSigsByAuthor(false, $vars->self['username']);
-                }
-            }
-        } else {
-            $avatar = '';
-            $location = '';
-            $site = '';
-            $bio = '';
-            $mood = '';
-            $sig = '';
-        }
-
-        $db->query("UPDATE " . $vars->tablepre . "members SET $pwtxt email='$email', site='$site', location='$location', bio='$bio', sig='$sig', showemail='$showemail',
-            timeoffset='$timeoffset1', avatar='$avatar', theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew',
-            newsletter='$newsletter', timeformat='$timeformatnew', dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u',
-            emailonu2u='$emailonu2u', useoldu2u='$useoldu2u', u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$xmbuser'"
-        );
-
-        message($lang['usercpeditpromsg'], TRUE, '', '', $vars->full_url . 'memcp.php', true, false, true);
+        $core->message($lang['usercpeditpromsg'], redirect: $vars->full_url . 'memcp.php');
     }
 } elseif ($action == 'favorites') {
     $header = $template->process('header.php');
     $header .= $template->process('memcp_nav.php');
 
-    $favadd = getInt('favadd');
+    $favadd = onSubmit('favadd');
     if (noSubmit('favsubmit') && $favadd) {
-        if ($favadd == 0) {
-            error($lang['generic_missing']);
-        }
+        $favadd = getInt('favadd');
 
-        $query = $db->query("SELECT fid FROM " . $vars->tablepre . "threads WHERE tid=$favadd");
-        if ($db->num_rows($query) == 0) {
-            error($lang['privforummsg']);
+        $row = $sql->getFIDfromTID($favadd);
+        if (count($row) == 0) {
+            $core->error($lang['privforummsg']);
         }
-        $row = $db->fetch_array($query);
         $forum = $forums->getForum((int) $row['fid']);
-        $perms = checkForumPermissions($forum);
-        if (!($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
-            error($lang['privforummsg']);
+        $perms = $core->checkForumPermissions($forum);
+        if (! ($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
+            $core->error($lang['privforummsg']);
         }
         if ($forum['type'] == 'sub') {
             $perms = $core->checkForumPermissions($forums->getForum((int) $forum['fup']));
-            if (!($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
-                error($lang['privforummsg']);
+            if (! ($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
+                $core->error($lang['privforummsg']);
             }
         }
 
-        $query = $db->query("SELECT tid FROM " . $vars->tablepre . "favorites WHERE tid=$favadd AND username='$xmbuser' AND type='favorite'");
-        $favthread = $db->fetch_array($query);
-        $db->free_result($query);
+        $sql->addFavoriteIfMissing($favadd, $vars->self['username'], 'favorite');
 
-        if ($favthread) {
-            error($lang['favonlistmsg']);
-        }
-
-        $db->query("INSERT INTO " . $vars->tablepre . "favorites (tid, username, type) VALUES ($favadd, '$xmbuser', 'favorite')");
-        message($lang['favaddedmsg'], TRUE, '', '', $vars->full_url . 'memcp.php?action=favorites', true, false, true);
-    }
-
-    if (!$favadd && noSubmit('favsubmit')) {
+        $core->message($lang['favaddedmsg'], redirect: $vars->full_url . 'memcp.php?action=favorites');
+    } elseif (! $favadd && noSubmit('favsubmit')) {
         $favnum = 0;
-        $favs = '';
+        $template->favs = '';
         $fids = $core->permittedFIDsForThreadView();
         if (count($fids) != 0) {
             $query = $sql->getFavorites($vars->self['username'], $fids, limit: null);
@@ -446,38 +262,37 @@ if ($action == 'profile') {
                     $lastpostname = $lang['textanonymous'];
                 }
 
-                $lastreplydate = gmdate($dateformat, $core->timeKludge((int) $lastpost[0]));
-                $lastreplytime = gmdate($timecode, $core->timeKludge((int) $lastpost[0]));
-                $lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
-                $fav['subject'] = rawHTMLsubject(stripslashes($fav['subject']));
+                $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
+                $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
+                $template->lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
+                $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
 
                 if ($fav['icon'] != '') {
-                    $fav['icon'] = '<img src="'.$smdir.'/'.$fav['icon'].'" alt="" border="0" />';
+                    $fav['icon'] = '<img src="' . $vars->full_url . $smdir . '/' . $fav['icon'] . '" alt="" border="0" />';
                 } else {
                     $fav['icon'] = '';
                 }
+                $template->fav = $fav;
+                $template->forum = $forum;
 
                 $favnum++;
-                eval('$favs .= "'.template('memcp_favs_row').'";');
+                $template->favs .= $template->process('memcp_favs_row.php');
             }
             unset($query);
         }
 
-        $favsbtn = '';
         if ($favnum != 0) {
-            eval('$favsbtn = "'.template('memcp_favs_button').'";');
+            $template->favsbtn = $template->process('memcp_favs_button.php');
+        } else {
+            $template->favsbtn = '';
+            $template->favs = $template->process('memcp_favs_none.php');
         }
 
-        if ($favnum == 0) {
-            eval('$favs = "'.template('memcp_favs_none').'";');
-        }
-        eval('$mempage = "'.template('memcp_favs').'";');
-    }
-
-    if (!$favadd && onSubmit('favsubmit')) {
-        $query = $db->query("SELECT tid FROM " . $vars->tablepre . "favorites WHERE username='$xmbuser' AND type='favorite'");
-        $tids = array();
-        while($fav = $db->fetch_array($query)) {
+        $mempage = $template->process('memcp_favs.php');
+    } elseif (! $favadd && onSubmit('favsubmit')) {
+        $query = $db->query("SELECT tid FROM " . $vars->tablepre . "favorites WHERE username = '" . $vars->xmbuser . "' AND type = 'favorite'");
+        $tids = [];
+        while ($fav = $db->fetch_array($query)) {
             $delete = formInt('delete'.$fav['tid']);
             if ($delete == intval($fav['tid'])) {
                 $tids[] = $delete;
@@ -485,13 +300,12 @@ if ($action == 'profile') {
         }
         $db->free_result($query);
         if (count($tids) > 0) {
-            $tids = implode(', ', $tids);
-            $db->query("DELETE FROM " . $vars->tablepre . "favorites WHERE username='$xmbuser' AND tid IN ($tids) AND type='favorite'");
+            $sql->deleteFavorites($tids, $vars->self['username'], 'favorite');
         }
-        message($lang['favsdeletedmsg'], TRUE, '', '', $vars->full_url . 'memcp.php?action=favorites', true, false, true);
+        $core->message($lang['favsdeletedmsg'], redirect: $vars->full_url . 'memcp.php?action=favorites');
     }
 } elseif ($action == 'subscriptions') {
-    $subadd = getInt('subadd');
+    $subadd = onSubmit('subadd');
     if (! $subadd && noSubmit('subsubmit')) {
         $fids = $core->permittedFIDsForThreadView();
         $num = $sql->countSubscriptionsByUser($vars->self['username'], $fids);
@@ -530,6 +344,7 @@ if ($action == 'profile') {
                 $fav['icon'] = '';
             }
             $template->fav = $fav;
+            $template->forum = $forum;
             $template->subscriptions .= $template->process('memcp_subscriptions_row.php');
         }
 
@@ -542,29 +357,40 @@ if ($action == 'profile') {
 
         $mempage = $template->process('memcp_subscriptions.php');
     } elseif ($subadd && noSubmit('subsubmit')) {
-        $query = $db->query("SELECT COUNT(tid) FROM " . $vars->tablepre . "favorites WHERE tid='$subadd' AND username='$xmbuser' AND type='subscription'");
-        if ((int) $db->result($query, 0) == 1) {
-            $db->free_result($query);
-            error($lang['subonlistmsg'], TRUE);
-        } else {
-            $db->query("INSERT INTO " . $vars->tablepre . "favorites (tid, username, type) VALUES ('$subadd', '$xmbuser', 'subscription')");
-            message($lang['subaddedmsg'], TRUE, '', '', $vars->full_url . 'memcp.php?action=subscriptions', true, false, true);
+        $tid = getInt('subadd');
+
+        $row = $sql->getFIDfromTID($tid);
+        if (count($row) == 0) {
+            $core->error($lang['privforummsg']);
         }
+        $forum = $forums->getForum((int) $row['fid']);
+        $perms = $core->checkForumPermissions($forum);
+        if (! ($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
+            $core->error($lang['privforummsg']);
+        }
+        if ($forum['type'] == 'sub') {
+            $perms = $core->checkForumPermissions($forums->getForum((int) $forum['fup']));
+            if (! ($perms[$vars::PERMS_VIEW] && $perms[$vars::PERMS_PASSWORD])) {
+                $core->error($lang['privforummsg']);
+            }
+        }
+
+        $sql->addFavoriteIfMissing($tid, $vars->self['username'], 'subscription');
+        $core->message($lang['subaddedmsg'], redirect: $vars->full_url . 'memcp.php?action=subscriptions');
     } elseif (! $subadd && onSubmit('subsubmit')) {
-        $query = $db->query("SELECT tid FROM " . $vars->tablepre . "favorites WHERE username='$xmbuser' AND type='subscription'");
-        $tids = array();
+        $query = $db->query("SELECT tid FROM " . $vars->tablepre . "favorites WHERE username = '" . $vars->xmbuser . "' AND type = 'subscription'");
+        $tids = [];
         while ($sub = $db->fetch_array($query)) {
-            $delete = formInt('delete'.$sub['tid']);
+            $delete = formInt('delete' . $sub['tid']);
             if ($delete == intval($sub['tid'])) {
                 $tids[] = $delete;
             }
         }
         $db->free_result($query);
         if (count($tids) > 0) {
-            $tids = implode(', ', $tids);
-            $db->query("DELETE FROM " . $vars->tablepre . "favorites WHERE username='$xmbuser' AND tid IN ($tids) AND type='subscription'");
+            $sql->deleteFavorites($tids, $vars->self['username'], 'subscription');
         }
-        message($lang['subsdeletedmsg'], TRUE, '', '', $vars->full_url . 'memcp.php?action=subscriptions', true, false, true);
+        $core->message($lang['subsdeletedmsg'], redirect: $vars->full_url . 'memcp.php?action=subscriptions');
     }
 } elseif ($action == 'devices') {
     if (onSubmit('devicesubmit')) {
@@ -613,7 +439,6 @@ if ($action == 'profile') {
     
     $mempage = $template->process('memcp_devices.php');
 } else {
-    require XMB_ROOT . 'include/buddy.inc.php';
     $buddy = new \XMB\BuddyManager($core, $db, $sql, $template, $vars);
 
     $header = $template->process('header.php');

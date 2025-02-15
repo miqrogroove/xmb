@@ -74,6 +74,24 @@ function getPhpInput(string $varname, string $sourcearray = 'p'): string
 }
 
 /**
+ * Retrieves raw user input.
+ *
+ * This is rarely useful and should be limited to things like passwords and binary data.
+ *
+ * @since 1.10.00
+ */
+function getRawString(string $varname, string $sourcearray = 'p'): string
+{
+    $retval = getRawInput($varname, $sourcearray);
+
+    if (! is_string($retval)) {
+        $retval = '';
+    }
+
+    return $retval;
+}
+
+/**
  * Retrieve a string or array input without filtering.
  *
  * @since 1.10.00

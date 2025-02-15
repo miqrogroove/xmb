@@ -127,8 +127,8 @@ switch($action) {
     case 'logout':
         if ('logged-out' == $session->getStatus()) {
             $gone = $session->getMember();
-            $query = $db->query("DELETE FROM " . $vars->tablepre . "whosonline WHERE username='{$gone['username']}'");
-            $core->redirect($vars->full_url, 0);
+            $sql->deleteWhosonline($gone['username']);
+            $core->redirect($vars->full_url, timeout: 0);
         } else {
             $core->message($lang['notloggedin']);
         }

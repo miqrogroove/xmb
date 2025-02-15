@@ -34,6 +34,8 @@ class Translation
     private array $dirCache = [];
     private array $langCache = [];
 
+    private bool $dirCacheStatus = false;
+
     public function __construct(private Variables $vars) {
         // Property promotion
     }
@@ -78,21 +80,7 @@ class Translation
         $langkeys = array_unique(array_merge($langkeys, ['charset', 'language']));
 
         // First, cache the file list.
-        if (count($this->dirCache) == 0) {
-            $languages = scandir(XMB_ROOT . 'lang/');
-
-            if (false === $languages) {
-                $msg = 'Unable to read the /lang/ directory.  ';
-                if ($this->vars->debug) {
-                    $msg .= 'See error log for details.';
-                } else {
-                    $msg .= 'Enable debug mode in XMB conf.php for details.';
-                }
-                throw new RuntimeException($msg);
-            }
-
-            $this->dirCache = $languages;
-        }
+        if (! $this->dirCacheStatus) $this->initDirCache();
 
         // Second, cache the needed parts of each file.
         foreach ($this->dirCache as $filename) {
@@ -213,5 +201,42 @@ class Translation
             }
         }
         return '<select name="langfilenew">' . implode("\n", $lfs) . '</select>';
+    }
+
+    /**
+     * Checks if the specified language is installed by confirming the file exists.
+     *
+     * @since 1.10.00
+     */
+    public function langFileExists(string $langfile): bool
+    {
+        if (! $this->dirCacheStatus) $this->initDirCache();
+
+        return false !== array_search("$langfile.lang.php", $this->dirCache);
+    }
+
+    /**
+     * Sets up the lang directory cache.
+     *
+     * @since 1.10.00
+     */
+    private function initDirCache()
+    {
+        if ($this->dirCacheStatus) return;
+
+        $languages = scandir(XMB_ROOT . 'lang/');
+
+        if (false === $languages) {
+            $msg = 'Unable to read the /lang/ directory.  ';
+            if ($this->vars->debug) {
+                $msg .= 'See error log for details.';
+            } else {
+                $msg .= 'Enable debug mode in XMB conf.php for details.';
+            }
+            throw new RuntimeException($msg);
+        }
+
+        $this->dirCache = $languages;
+        $this->dirCacheStatus = true;
     }
 }

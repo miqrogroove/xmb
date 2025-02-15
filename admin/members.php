@@ -99,51 +99,22 @@ $members = getPhpInput('members', 'g');
 if (noSubmit('membersubmit')) {
     if (!$members) {
         $body = $template->process('admin_members_search.php');
-    } else if ($members == "search") {
+    } elseif ($members == "search") {
         $template->token = $token->create('Control Panel/Members', 'mass-edit', $vars::NONCE_FORM_EXP);
 
         $body = $template->process('admin_members_edit_start.php');
 
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "members $where ORDER BY username");
 
-        while($member = $db->fetch_array($query)) {
+        while ($member = $db->fetch_array($query)) {
             $template->member = $member;
             $template->userLink = recodeOut($member['username']);
             $template->statusAttr = attrOut($member['customstatus']);
-            $template->sadminselect = '';
-            $template->adminselect = '';
-            $template->smodselect = '';
-            $template->modselect = '';
-            $template->memselect = '';
-            $template->banselect = '';
+            $template->userStatus = $core->userStatusControl("status{$member['uid']}", $member['status']);
             $template->noban = '';
             $template->u2uban = '';
             $template->postban = '';
             $template->bothban = '';
-
-            switch($member['status']) {
-                case 'Super Administrator':
-                    $template->sadminselect = $vars::selHTML;
-                    break;
-                case 'Administrator':
-                    $template->adminselect = $vars::selHTML;
-                    break;
-                case 'Super Moderator':
-                    $template->smodselect = $vars::selHTML;
-                    break;
-                case 'Moderator':
-                    $template->modselect = $vars::selHTML;
-                    break;
-                case 'Member':
-                    $template->memselect = $vars::selHTML;
-                    break;
-                case 'Banned':
-                    $template->banselect = $vars::selHTML;
-                    break;
-                default:
-                    $template->memselect = $vars::selHTML;
-                    break;
-            }
 
             switch($member['ban']) {
                 case 'u2u':
@@ -180,9 +151,9 @@ if (noSubmit('membersubmit')) {
         $template->srchstatus = $srchstatus;
         $body .= $template->process('admin_members_edit_end.php');
     }
-} else if (onSubmit('membersubmit')) {
+} elseif (onSubmit('membersubmit')) {
     $core->request_secure('Control Panel/Members', 'mass-edit', error_header: true);
-    $query = $db->query("SELECT uid, username, password, status FROM " . $vars->tablepre . "members $where");
+    $query = $db->query("SELECT uid, username, status FROM " . $vars->tablepre . "members $where");
 
     // Guarantee this request will not remove all Super Administrators.
     if (X_SADMIN && $db->num_rows($query) > 0) {
@@ -190,7 +161,7 @@ if (noSubmit('membersubmit')) {
         $sa_count = (int) $db->result($saquery, 0);
         $db->free_result($saquery);
 
-        while($mem = $db->fetch_array($query)) {
+        while ($mem = $db->fetch_array($query)) {
             if ($mem['status'] == 'Super Administrator' && $core->postedVar('status'.$mem['uid']) != 'Super Administrator') {
                 $sa_count--;
             }
@@ -202,7 +173,7 @@ if (noSubmit('membersubmit')) {
     }
 
     // Now execute this request
-    while($mem = $db->fetch_array($query)) {
+    while ($mem = $db->fetch_array($query)) {
         $origstatus = $mem['status'];
         $status = $core->postedVar('status'.$mem['uid']);
         if ($status == '') {
@@ -234,9 +205,17 @@ if (noSubmit('membersubmit')) {
             $db->query("DELETE FROM " . $vars->tablepre . "u2u WHERE owner='{$mem['username']}'");
             $db->query("UPDATE " . $vars->tablepre . "whosonline SET username='xguest123' WHERE username='{$mem['username']}'");
         } else {
-            $db->query("UPDATE " . $vars->tablepre . "members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus'$queryadd WHERE uid={$mem['uid']}");
-            if ('' != $queryadd) {
-                $session->logoutAll($mem['username']);
+            $db->query("UPDATE " . $vars->tablepre . "members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus' WHERE uid={$mem['uid']}");
+
+            if (getRawString('pw' . $mem['uid']) != '') {
+                $newPass = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);
+                $passMan = new \XMB\Password($sql);
+                $passMan->changePassword($mem['username'], $newPass);
+                unset($newPass, $passMan);
+
+                // Force logout and delete cookies.
+                $sql->deleteWhosonline($mem['username']);
+                $session->logoutAll($mem['username'], isSelf: false);
             }
         }
     }

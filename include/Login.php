@@ -90,7 +90,6 @@ class Login
         // $xmbuser is often used as a raw value in queries and should be sql escaped.
         // $self['username'] had been a good alternative for template/HTML use when it was a global variable.
         // Now the best practice is to keep the $self array isolated and use a template alias of the $self['username'] value for output.
-        // $xmbpw was historically abused and will no longer contain a value.
 
         if ('good' == $state || 'already-logged-in' == $state) {
             // 'good' means normal login or resumed session.
@@ -101,7 +100,6 @@ class Login
             $vars->self = ['status' => ''];
             $vars->xmbuser = '';
         }
-        $vars->self['password'] = '';
 
         // Initialize the new translation system
         if (! defined('XMB_UPGRADE')) {

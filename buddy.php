@@ -34,8 +34,6 @@ $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
 
-require XMB_ROOT . 'include/buddy.inc.php';
-
 header('X-Robots-Tag: noindex');
 
 if (X_GUEST) {

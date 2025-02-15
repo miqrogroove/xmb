@@ -28,6 +28,11 @@ namespace XMB;
 
 use InvalidArgumentException;
 
+/**
+ * High-level and general-purpose methods which depend on XMB's shared services.
+ *
+ * @since 1.10.00
+ */
 class Core
 {
     public function __construct(
@@ -1336,8 +1341,8 @@ class Core
             $startStr = substr($altFormat, 0, $pos);
             $endStr = substr($altFormat, $pos+1);
             $month = gmdate('m', intval($timestamp + ($timeoffset*3600)+(($altOffset+$SETTINGS['addtime'])*3600)));
-            $textM = month2text($month);
-            return printGmDate($timestamp, $startStr, $altOffset).substr($textM,0, ($f ? strlen($textM) : 3)).printGmDate($timestamp, $endStr, $altOffset);
+            $textM = $this->month2text($month);
+            return $this->printGmDate($timestamp, $startStr, $altOffset) . substr($textM,0, ($f ? strlen($textM) : 3)) . $this->printGmDate($timestamp, $endStr, $altOffset);
         } else {
             return gmdate($altFormat, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
         }
@@ -2118,6 +2123,54 @@ class Core
     }
 
     /**
+     * Generates HTML for a user status (role) select element.
+     *
+     * @since 1.10.00
+     * @param string $statusField The name attribute for the select element.
+     * @param string $currentStatus The previously saved value of members.status.
+     * @return string
+     */
+    public function userStatusControl(string $statusField, string $currentStatus): string
+    {
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
+
+        $template->statusField = $statusField;
+
+        // From editprofile.php
+        $template->sadminselect = '';
+        $template->adminselect = '';
+        $template->smodselect = '';
+        $template->modselect = '';
+        $template->memselect = '';
+        $template->banselect = '';
+        switch ($currentStatus) {
+            case 'Super Administrator':
+                $template->sadminselect = $this->vars::selHTML;
+                break;
+            case 'Administrator':
+                $template->adminselect = $this->vars::selHTML;
+                break;
+            case 'Super Moderator':
+                $template->smodselect = $this->vars::selHTML;
+                break;
+            case 'Moderator':
+                $template->modselect = $this->vars::selHTML;
+                break;
+            case 'Member':
+                $template->memselect = $this->vars::selHTML;
+                break;
+            case 'Banned':
+                $template->banselect = $this->vars::selHTML;
+                break;
+            default:
+                $template->memselect = $this->vars::selHTML;
+        }
+        
+        return $template->process('admin_members_status_field.php');
+    }
+
+    /**
      * Checks if guest recently tried to register and disclosed age < 13
      *
      * @since 1.9.12
@@ -2142,6 +2195,35 @@ class Core
             header('HTTP/1.0 403 Forbidden');
             $this->message($this->vars->lang['u2uadmin_noperm']);
         }
+    }
+
+    /**
+     * Checks a new password against requirements.
+     *
+     * @since 1.10.00
+     * @param string $passInputName
+     * @param string $passConfirmName
+     * @return string The raw text of the new password.
+     */
+    public function assertPasswordPolicy(string $passInputName, string $passConfirmName): string
+    {
+        $password1 = getRawString($passInputName);
+        $password2 = getRawString($passConfirmName);
+
+        if ('' == $password1) {
+            $this->error($this->vars->lang['textnopassword']);
+        }
+        if (strlen($password1) < $this->vars::PASS_MIN_LENGTH) {
+            $core->error($this->vars->lang['pwtooshort']);
+        }
+        if (strlen($password1) > $this->vars::PASS_MAX_LENGTH) {
+            $core->error($this->vars->lang['pwtoolong']);
+        }
+        if ($password1 !== $password2) {
+            $this->error($this->vars->lang['pwnomatch']);
+        }
+
+        return $password1;
     }
 
     /**

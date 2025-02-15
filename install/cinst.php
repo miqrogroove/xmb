@@ -88,17 +88,27 @@ while(ob_get_level() > 0) {
 }
 ob_implicit_flush(1);
 
+require XMB_ROOT . 'db/DBStuff.php';
+require XMB_ROOT . 'include/Bootup.php';
 require XMB_ROOT.'include/global.inc.php';
-require_once XMB_ROOT.'config.php';
 require_once XMB_ROOT.'db/'.$database.'.php';
+require XMB_ROOT . 'include/Password.php';
 require XMB_ROOT.'include/schema.inc.php';
 require XMB_ROOT.'include/sql.inc.php';
+require XMB_ROOT . 'include/Template.php';
 require XMB_ROOT.'include/translation.inc.php';
+require XMB_ROOT . 'include/Variables.php';
 
-define('X_PREFIX', $tablepre);
+$vars = new \XMB\Variables();
+$template = new \XMB\Template($vars);
+$boot = new \XMB\Bootup($template, $vars);
+$boot->loadConfig();
 
-$db = new dbstuff;
-$db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect, true);
+
+define('X_PREFIX', $vars->tablepre);
+
+$db = $boot->connectDB();
+$sql = new \XMB\SQL($db, $vars->tablepre);
 
 show_act("Checking Super Administrator Account");
 $vUsername = trim($frmUsername);
@@ -138,7 +148,8 @@ if ($vUsername !== preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '',
 }
 
 // these two are used waaaaay down below.
-$vPassword = md5($frmPassword);
+$passMan = new \XMB\Password($sql);
+$vPassword = $passMan->hashPassword($frmPassword);
 $myDate = time();
 show_result(X_INST_OK);
 
@@ -389,9 +400,9 @@ $db->query(
 show_result(X_INST_OK);
 
 show_act("Creating Super Administrator Account");
-\XMB\SQL\addMember([
+$sql->addMember([
     'username'   => $vUsername,
-    'password'   => $vPassword,
+    'password2'  => $vPassword,
     'pwdate'     => $myDate,
     'regdate'    => $myDate,
     'regip'      => $_SERVER['REMOTE_ADDR'],

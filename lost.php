@@ -50,28 +50,27 @@ if (X_MEMBER) {
 } elseif ($valid_post) {
     // New password from posted form received.
     $username = postedVar('username', '', true, false);
-    $password1 = postedVar('password1', '', false, false);
-    $password2 = postedVar('password2', '', false, false);
     if ('' == $username) {
         error($lang['textnousername']);
     }
-    if (strlen($username) < 3 || strlen($username) > 32) {
+    if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
         error($lang['username_length_invalid']);
     }
-    if ('' == $password1) {
-        error($lang['textnopassword']);
-    }
-    if ($password1 !== $password2) {
-        error($lang['pwnomatch']);
-    }
+
+    $newPass = $core->assertPasswordPolicy('password1', 'password2');
 
     // Inputs look reasonable.  Check the token.
     if (! \XMB\Token\consume($token2, 'Lost Password', $username)) {
         error($lang['lostpw_bad_token']);
     }
 
-    $newpassword = md5($password1);
-    sql()->setNewPassword($username, $newpassword);
+    $passMan = new \XMB\Password($sql);
+    $passMan->changePassword($username, $newPass);
+    unset($newPass, $passMan);
+
+    $sql->deleteWhosonline($username);
+    $session->logoutAll($username);
+
     message($lang['lostpw_success']);
 
 } else {

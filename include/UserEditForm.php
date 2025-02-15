@@ -1,0 +1,513 @@
+<?php
+
+/**
+ * eXtreme Message Board
+ * XMB 1.10.00-alpha
+ *
+ * Developed And Maintained By The XMB Group
+ * Copyright (c) 2001-2025, The XMB Group
+ * https://www.xmbforum2.com/
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types=1);
+
+namespace XMB;
+
+/**
+ * Provides common form logic for user self-registration, self-editing, and admin-editing.
+ *
+ * @since 1.10.00
+ */
+class UserEditForm
+{
+    private Template $template;
+
+    private string $formMode;
+
+    private array $edits = [];
+
+    /**
+     * @param array @targetUser The record being edited.  May be empty for new users.
+     * @param array @editorUser The record of the user doing the editing.  May be empty for new users.
+     */
+    public function __construct(
+        private array $targetUser,
+        private array $editorUser,
+        private Core $core,
+        private DBStuff $db,
+        private SQL $sql,
+        private Theme\Manager $theme,
+        private Translation $tran,
+        private Variables $vars,
+    ) {
+        $this->template = new \XMB\Template($vars);
+        $this->template->addRefs();
+        
+        if (! isset($targetUser['username'])) {
+            $this->formMode = 'new';
+        } elseif ($targetUser['username'] === $editorUser['username']) {
+            $this->formMode = 'self';
+        } else {
+            $this->formMode = 'admin';
+        }
+    }
+
+    public function getTemplate(): Template
+    {
+        return $this->template;
+    }
+
+    public function getEdits(): array
+    {
+        return $this->edits;
+    }
+
+    public function setOptions()
+    {
+        $template = $this->template;
+        $member = &$this->targetUser;
+        $vars = $this->vars;
+
+        $template->check12 = '';
+        $template->check24 = '';
+        $template->u2uasel0 = '';
+        $template->u2uasel1 = '';
+        $template->u2uasel2 = '';
+
+        if ($this->formMode == 'new') {
+            // From template member_reg
+            $template->checked = '';
+            $template->subschecked = '';
+            $template->newschecked = $vars::cheHTML;
+            $template->uou2uchecked = '';
+            $template->ogu2uchecked = $vars::cheHTML;
+            $template->eouchecked = '';
+            $template->invchecked = '';
+            if ('24' === $this->vars->settings['timeformat']) {
+                $template->check24 = $vars::cheHTML;
+            } else {
+                $template->check12 = $vars::cheHTML;
+            }
+
+        } else {
+            // From memcp.php
+            $template->checked = $member['showemail'] == 'yes' ? $vars::cheHTML : '';
+            $template->subschecked = $member['sub_each_post'] == 'yes' ? $vars::cheHTML : '';
+            $template->newschecked = $member['newsletter'] == 'yes' ? $vars::cheHTML : '';
+            $template->uou2uchecked = $member['useoldu2u'] == 'yes' ? $vars::cheHTML : '';
+            $template->ogu2uchecked = $member['saveogu2u'] == 'yes' ? $vars::cheHTML : '';
+            $template->eouchecked = $member['emailonu2u'] == 'yes' ? $vars::cheHTML : '';
+            $template->invchecked = $member['invisible'] === '1' ? $vars::cheHTML : '';
+
+            switch ($member['u2ualert']) {
+                case '2':
+                    $template->u2uasel2 = $vars::selHTML;
+                    break;
+                case '1':
+                    $template->u2uasel1 = $vars::selHTML;
+                    break;
+                case '0':
+                default:
+                    $template->u2uasel0 = $vars::selHTML;
+            }
+
+            if ('24' === $member['timeformat']) {
+                $template->check24 = $vars::cheHTML;
+            } else {
+                $template->check12 = $vars::cheHTML;
+            }
+        }
+    }
+
+    public function readOptions()
+    {
+        $timeformatnew = formInt('timeformatnew');
+        if ($timeformatnew != 12 && $timeformatnew != 24) {
+            $timeformatnew = $this->vars->settings['timeformat'];
+        }
+        if ($this->targetUser['timeformat'] != $timeformatnew) {
+            $this->edits['timeformat'] = $timeformatnew;
+        }
+
+        $u2ualert = formInt('u2ualert');
+        if ($this->targetUser['u2ualert'] != $u2ualert) {
+            $this->edits['u2ualert'] = $u2ualert;
+        }
+
+        $showemail = formYesNo('newshowemail');
+        if ($this->targetUser['showemail'] != $showemail) {
+            $this->edits['showemail'] = $showemail;
+        }
+
+        $newsletter = formYesNo('newsletter');
+        if ($this->targetUser['newsletter'] != $newsletter) {
+            $this->edits['newsletter'] = $newsletter;
+        }
+
+        $useoldu2u = formYesNo('useoldu2u');
+        if ($this->targetUser['useoldu2u'] != $useoldu2u) {
+            $this->edits['useoldu2u'] = $useoldu2u;
+        }
+
+        $saveogu2u = formYesNo('saveogu2u');
+        if ($this->targetUser['saveogu2u'] != $saveogu2u) {
+            $this->edits['saveogu2u'] = $saveogu2u;
+        }
+
+        $emailonu2u = formYesNo('emailonu2u');
+        if ($this->targetUser['emailonu2u'] != $emailonu2u) {
+            $this->edits['emailonu2u'] = $emailonu2u;
+        }
+
+
+        if ($this->formMode != 'new') {
+            $newsubs = formYesNo('newsubs');
+            if ($this->targetUser['sub_each_post'] != $newsubs) {
+                $this->edits['sub_each_post'] = $newsubs;
+            }
+
+            $invisible = getPhpInput('newinv') === '1' ? '1' : '0';
+            if ($this->targetUser['invisible'] != $invisible) {
+                $this->edits['invisible'] = $invisible;
+            }
+        }
+    }
+
+    public function setCallables()
+    {
+        $template = $this->template;
+        $member = &$this->targetUser;
+        
+        if ($this->formMode == 'new') {
+            $timeOffset = $this->vars->settings['def_tz'];
+            $theme = null;
+            $langfile = $this->vars->settings['langfile'];
+        } else {
+            $timeOffset = $member['timeoffset'];
+            $theme = (int) $member['theme'];
+            $langfile = $member['langfile'];
+        }
+
+        $template->timezones = $this->core->timezone_control($timeOffset);
+
+        $template->themelist = $this->theme->selector(
+            nameAttr: 'thememem',
+            selection: $theme,
+        );
+
+        $template->langfileselect = $this->tran->createLangFileSelect($langfile);
+
+        if ($this->formMode == 'admin') {
+            $template->userStatus = $this->core->userStatusControl(
+                statusField: 'status',
+                currentStatus: $member['status'],
+            );
+        }
+    }
+
+    public function readCallables()
+    {
+        $timeoffset = getPhpInput('timeoffset1');
+        if (! is_numeric($timeoffset)) $timeoffset = '0';
+        if ($this->formMode == 'new' || $this->targetUser['timeoffset'] != $timeoffset) {
+            $this->edits['timeoffset'] = $timeoffset;
+        }
+
+        $thememem = formInt('thememem');
+        if ($this->formMode == 'new' || $this->targetUser['theme'] != $thememem) {
+            $this->edits['theme'] = $thememem;
+        }
+
+        $langfilenew = $this->core->postedVar('langfilenew');
+        if (! $this->tran->langfileExists($langfilenew)) {
+            $langfilenew = $this->vars->settings['langfile'];
+        }
+        if ($this->formMode == 'new' || $this->targetUser['langfile'] != $langfilenew) {
+            $this->edits['langfile'] = $langfilenew;
+        }
+
+        if ($this->formMode == 'admin') {
+            $status = $this->core->postedVar('status', dbescape: false);
+            $origstatus = $this->targetUser['status'];
+            if ($origstatus == 'Super Administrator') {
+                $query = $this->db->query("SELECT COUNT(uid) FROM " . $this->vars->tablepre . "members WHERE status = 'Super Administrator'");
+                $sa_count = (int) $this->db->result($query);
+                $this->db->free_result($query);
+                if ($status != 'Super Administrator' && $sa_count == 1) {
+                    $this->core->error($this->vars->lang['lastsadmin']);
+                }
+            }
+            if ($this->targetUser['status'] != $status) {
+                $this->edits['status'] = $status;
+            }
+        }
+    }
+
+    private function setAvatar()
+    {
+        $template = $this->template;
+        $member = &$this->targetUser;
+
+        $httpsOnly = 'on' == $this->vars->settings['images_https_only'];
+        $template->js_https_only = $httpsOnly ? 'true' : 'false';
+
+        if ($this->vars->settings['avastatus'] == 'on') {
+            if ($this->formMode == 'new') {
+                $template->avatar = $template->process('member_reg_avatarurl.php');
+            } else {
+                null_string($member['avatar']);
+                if ($httpsOnly && strpos($member['avatar'], ':') !== false && substr($member['avatar'], 0, 6) !== 'https:') {
+                    $member['avatar'] = '';
+                }
+                $template->member = $member;
+                $template->avatar = $template->process('memcp_profile_avatarurl.php');
+            }
+        } elseif ($this->vars->settings['avastatus'] == 'list')  {
+            $avatars = ['<option value="" />' . $this->vars->lang['textnone'] . '</option>'];
+            $dir1 = opendir(XMB_ROOT . 'images/avatars');
+            while ($avFile = readdir($dir1)) {
+                if (is_file(XMB_ROOT . 'images/avatars/' . $avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                    $avatars[] = '<option value="' . $this->vars->full_url . 'images/avatars/' . $avFile . '" />' . $avFile . '</option>';
+                }
+            }
+            closedir($dir1);
+            if ($this->formMode != 'new') {
+                null_string($member['avatar']);
+                $avatars = str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars);
+            }
+            $template->avatars = implode("\n", $avatars);
+            $template->avatar = $template->process('member_reg_avatarlist.php');
+            unset($avatars, $template->avatars);
+        } else {
+            $template->avatar = '';
+        }
+    }
+
+    private function readAvatar(): string
+    {
+        $httpsOnly = 'on' == $this->vars->settings['images_https_only'];
+
+        if ($this->vars->settings['avastatus'] == 'on') {
+            $avatar = $this->core->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true);
+            $rawavatar = getPhpInput('newavatar');
+            $newavatarcheck = getPhpInput('newavatarcheck');
+
+            $max_size = explode('x', $this->vars->settings['max_avatar_size']);
+
+            if (preg_match('/^' . get_img_regexp($httpsOnly) . '$/i', $rawavatar) == 0) {
+                $avatar = '';
+            } elseif (ini_get('allow_url_fopen')) {
+                if ((int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
+                    $size = getimagesize($rawavatar);
+                    if ($size === false) {
+                        $avatar = '';
+                    } elseif (($size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1]) && ! X_SADMIN) {
+                        $this->core->error($this->vars->lang['avatar_too_big'] . $this->vars->settings['max_avatar_size'] . 'px');
+                    }
+                }
+            } elseif ($newavatarcheck == 'no') {
+                $avatar = '';
+            }
+        } elseif ($this->vars->settings['avastatus'] == 'list') {
+            $rawavatar = getPhpInput('newavatar');
+            $dirHandle = opendir(XMB_ROOT . 'images/avatars');
+            $filefound = false;
+            while ($avFile = readdir($dirHandle)) {
+                if ($rawavatar == $this->vars->full_url . 'images/avatars/' . $avFile) {
+                    if (is_file(XMB_ROOT . 'images/avatars/' . $avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                        $filefound = true;
+                        break;
+                    }
+                }
+            }
+            closedir($dirHandle);
+            $avatar = $filefound ? $this->core->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true) : '';
+        } else {
+            $avatar = '';
+        }
+
+        return $avatar;
+    }
+
+    public function setBirthday()
+    {
+        $template = $this->template;
+        $member = &$this->targetUser;
+
+        if ($this->formMode == 'new') {
+            $day = '';
+            $month = 0;
+            $template->year = '';
+        } else {
+            $day = intval(substr($member['bday'], 8, 2));
+            $month = intval(substr($member['bday'], 5, 2));
+            $template->year = substr($member['bday'], 0, 4);
+        }
+
+        $dayselect = [
+            "<select name='day'>",
+            "<option value=''>&nbsp;</option>",
+        ];
+        for ($num = 1; $num <= 31; $num++) {
+            $selected = $day == $num ? $this->vars::selHTML : '';
+            $dayselect[] = "<option value='$num' $selected>$num</option>";
+        }
+        $dayselect[] = '</select>';
+        $template->dayselect = implode("\n", $dayselect);
+
+        $sel = array_fill(start_index: 0, count: 13, value: '');
+        $sel[$month] = $this->vars::selHTML;
+        $template->sel = $sel;
+    }
+
+    public function readBirthday()
+    {
+        $year = formInt('year');
+        $month = formInt('month');
+        $day = formInt('day');
+        // For year of birth, reject all integers from 100 through 1899.
+        if ($year >= 100 && $year <= 1899) $year = 0;
+        $bday = iso8601_date($year, $month, $day);   
+
+        if ($this->formMode == 'new' || $this->targetUser['bday'] != $bday) {
+            $this->edits['bday'] = $bday;
+        }
+    }
+
+    public function setOptionalFields()
+    {
+        $member = &$this->targetUser;
+
+        if ($this->formMode == 'admin') {
+            $member['bio'] = decimalEntityDecode($member['bio']);
+            $member['location'] = decimalEntityDecode($member['location']);
+            $member['mood'] = decimalEntityDecode($member['mood']);
+            $member['sig'] = decimalEntityDecode($member['sig']);
+        } else {
+            $member['bio'] = $this->core->rawHTMLsubject($member['bio']);
+            $member['location'] = $this->core->rawHTMLsubject($member['location']);
+            $member['mood'] = $this->core->rawHTMLsubject($member['mood']);
+            $member['sig'] = $this->core->rawHTMLsubject($member['sig']);
+        }
+
+        $this->template->member = $member;
+        
+        $this->setAvatar();
+    }
+
+    public function readOptionalFields()
+    {
+        $anyEdit = 'on' == $this->vars->settings['regoptional'];
+        
+        $selfEdit = $this->formMode == 'self' && (
+            'off' == $this->vars->settings['quarantine_new_users']
+            || ((int) $this->vars->self['postnum'] > 0 && 'no' == $this->vars->self['waiting_for_mod'])
+            || X_STAFF
+        );
+        
+        $adminEdit = $this->formMode == 'admin';
+        
+        if ($anyEdit || $selfEdit || $adminEdit) {
+            $location = $this->core->postedVar('newlocation', 'javascript', dbescape: false, quoteencode: true);
+            $site = $this->core->postedVar('newsite', 'javascript', dbescape: false, quoteencode: true);
+            $bio = $this->core->postedVar('newbio', 'javascript', dbescape: false, quoteencode: true);
+            $mood = $this->core->postedVar('newmood', 'javascript', dbescape: false, quoteencode: true);
+            $sig = $this->core->postedVar('newsig', 'javascript', dbescape: false, quoteencode: true);
+            $avatar = $this->readAvatar();
+        } else {
+            $location = '';
+            $site = '';
+            $bio = '';
+            $mood = '';
+            $sig = '';
+            $avatar = '';
+        }
+        if ($this->formMode == 'new' || $this->targetUser['location'] != $location) {
+            $this->edits['location'] = $location;
+        }
+        if ($this->formMode == 'new' || $this->targetUser['site'] != $site) {
+            $this->edits['site'] = $site;
+        }
+        if ($this->formMode == 'new' || $this->targetUser['bio'] != $bio) {
+            $this->edits['bio'] = $bio;
+        }
+        if ($this->formMode == 'new' || $this->targetUser['mood'] != $mood) {
+            $this->edits['mood'] = $mood;
+        }
+        if ($this->formMode == 'new' || $this->targetUser['sig'] != $sig) {
+            $this->edits['sig'] = $sig;
+            if ($this->formMode != 'new' && $this->vars->settings['resetsigs'] == 'on') {
+                if (strlen(trim($this->targetUser['sig'])) == 0) {
+                    if (strlen(trim($sig)) > 0) {
+                        $this->sql->setPostSigsByAuthor(true, $this->vars->self['username']);
+                    }
+                } elseif (strlen(trim($sig)) == 0) {
+                    $this->sql->setPostSigsByAuthor(false, $this->vars->self['username']);
+                }
+            }
+        }
+        if ($this->formMode == 'new' || $this->targetUser['avatar'] != $avatar) {
+            $this->edits['avatar'] = $avatar;
+        }
+    }
+
+    public function setNumericFields()
+    {
+        if ($this->formMode == 'new') {
+            $this->template->tpp = $this->vars->settings['topicperpage'];
+            $this->template->ppp = $this->vars->settings['postperpage'];
+        } else {
+            $this->template->tpp = $this->targetUser['tpp'];
+            $this->template->ppp = $this->targetUser['ppp'];
+        }
+    }
+
+    public function readNumericFields()
+    {
+        $tpp = formInt('tpp');
+        $ppp = formInt('ppp');
+        if ($tpp < 5) $tpp = $this->vars->settings['topicperpage'];
+        if ($ppp < 5) $ppp = $this->vars->settings['postperpage'];
+        if ($this->formMode == 'new' || $this->targetUser['tpp'] != $tpp) {
+            $this->edits['tpp'] = (int) $tpp;
+        }
+        if ($this->formMode == 'new' || $this->targetUser['ppp'] != $ppp) {
+            $this->edits['ppp'] = (int) $ppp;
+        }
+    }
+
+    public function setMiscFields()
+    {
+        if ($this->formMode == 'new') {
+            $this->template->dateformat = $this->vars->settings['dateformat'];
+        } else {
+            $this->template->dateformat = $this->targetUser['dateformat'];
+        }
+    }
+
+    public function readMiscFields()
+    {
+        $dateformat = getPhpInput('dateformatnew');
+        $dateformattest = attrOut($dateformat, 'javascript');
+        // Never allow attribute-special data in the date format because it can be unescaped using the date() parser.
+        if (strlen($this->targetUser['dateformat']) == 0 || $this->targetUser['dateformat'] !== $dateformattest) {
+            $dateformat = $this->vars->settings['dateformat'];
+        }
+        if ($this->formMode == 'new' || $this->targetUser['dateformat'] != $dateformat) {
+            $this->edits['dateformat'] = $dateformat;
+        }
+    }
+}

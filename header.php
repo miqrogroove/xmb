@@ -54,6 +54,7 @@ require XMB_ROOT . 'include/attach.inc.php';
 require XMB_ROOT . 'include/BBCode.php';
 require XMB_ROOT . 'include/Bootup.php';
 require XMB_ROOT . 'include/BootupLoader.php';
+require XMB_ROOT . 'include/buddy.inc.php';
 require XMB_ROOT . 'include/captcha.inc.php';
 require XMB_ROOT . 'include/debug.inc.php';
 require XMB_ROOT . 'include/format.php';
@@ -61,6 +62,7 @@ require XMB_ROOT . 'include/Forums.php';
 require XMB_ROOT . 'include/functions.inc.php';
 require XMB_ROOT . 'include/Login.php';
 require XMB_ROOT . 'include/Observer.php';
+require XMB_ROOT . 'include/Password.php';
 require XMB_ROOT . 'include/schema.inc.php';
 require XMB_ROOT . 'include/services.php';
 require XMB_ROOT . 'include/sessions.inc.php';
@@ -71,6 +73,7 @@ require XMB_ROOT . 'include/Template.php';
 require XMB_ROOT . 'include/ThemeManager.php';
 require XMB_ROOT . 'include/tokens.inc.php';
 require XMB_ROOT . 'include/translation.inc.php';
+require XMB_ROOT . 'include/UserEditForm.php';
 require XMB_ROOT . 'include/validate.inc.php';
 
 

@@ -22,6 +22,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
 /**
  * EmailAddressValidator Class
  * https://code.google.com/archive/p/php-email-address-validation/

@@ -186,7 +186,7 @@ class SQL
         if (! isset($values['waiting_for_mod'])) $values['waiting_for_mod'] = 'no';
 
         // Required values:
-        $req = ['username', 'password', 'email', 'status', 'regip', 'regdate'];
+        $req = ['username', 'password2', 'email', 'status', 'regip', 'regdate'];
 
         // Types:
         $ints = ['regdate', 'postnum', 'theme', 'tpp', 'ppp', 'timeformat', 'lastvisit', 'pwdate', 'u2ualert', 'bad_login_date',
@@ -196,7 +196,7 @@ class SQL
 
         $strings = ['username', 'password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'showemail', 'avatar',
         'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
-        'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod'];
+        'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
 
         $sql = [];
 
@@ -230,6 +230,52 @@ class SQL
         $this->db->query("INSERT INTO " . $this->tablepre . "members SET " . implode(', ', $sql));
 
         return $this->db->insert_id();
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     * @param string $username The user being updated, must be HTML encoded.
+     * @param array $values Field name & value list.
+     */
+    public function updateMember(string $username, array $values)
+    {
+        $this->db->escape_fast($username);
+
+        // Types:
+        $ints = ['regdate', 'postnum', 'theme', 'tpp', 'ppp', 'timeformat', 'lastvisit', 'pwdate', 'u2ualert', 'bad_login_date',
+        'bad_login_count', 'bad_session_date', 'bad_session_count'];
+
+        $numerics = ['timeoffset'];
+
+        $strings = ['password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'showemail', 'avatar',
+        'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
+        'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
+
+        $sql = [];
+
+        foreach($ints as $field) {
+            if (isset($values[$field])) {
+                if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
+                $sql[] = "$field = {$values[$field]}";
+            }
+        }
+        foreach($numerics as $field) {
+            if (isset($values[$field])) {
+                if (! is_numeric($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
+                $sql[] = "$field = {$values[$field]}";
+            }
+        }
+        foreach($strings as $field) {
+            if (isset($values[$field])) {
+                if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
+                $this->db->escape_fast($values[$field]);
+                $sql[] = "$field = '{$values[$field]}'";
+            }
+        }
+
+        $this->db->query("UPDATE " . $this->tablepre . "members SET " . implode(', ', $sql) . " WHERE username = '$username'");
     }
 
     /**
@@ -413,10 +459,10 @@ class SQL
      */
     public function setNewPassword(string $username, string $password)
     {
-        $sqlpass = $this->db->escape($password);
-        $sqluser = $this->db->escape($username);
+        $this->db->escape_fast($password);
+        $this->db->escape_fast($username);
 
-        $this->db->query("UPDATE " . $this->tablepre . "members SET password = '$sqlpass', bad_login_count = 0 WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET password2 = '$password', password = '', bad_login_count = 0 WHERE username = '$username'");
     }
 
     /**
@@ -1127,6 +1173,23 @@ class SQL
     }
 
     /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function deleteFavorites(array $tids, string $username, string $type, bool $quarantine = false)
+    {
+        $sqluser = $this->db->escape($username);
+        $sqltype = $this->db->escape($type);
+        $tids = array_map('intval', $tids);
+        $tids = implode(',', $tids);
+
+        $table = $quarantine ? $this->tablepre . 'hold_favorites' : $this->tablepre . 'favorites';
+
+        $query = $this->db->query("DELETE FROM $table WHERE tid IN ($tids) AND username = '$sqluser' AND type = '$sqltype'");
+    }
+
+    /**
      * Retrieve the list of favorite threads for a user, sorted by recent posts.
      *
      * @since 1.10.00
@@ -1785,6 +1848,19 @@ class SQL
     }
 
     /**
+     * Remove a user's records upon logout.
+     *
+     * @since 1.10.00
+     * @param string $username Current user.
+     */
+    public function deleteWhosonline(string $username)
+    {
+        $this->db->escape_fast($username);
+
+        $this->db->query("DELETE FROM " . $this->tablepre . "whosonline WHERE username = '$username'");
+    }
+
+    /**
      * Add a Who's Online Record
      *
      * @since 1.9.12.04
@@ -2019,11 +2095,16 @@ class SQL
      *
      * @since 1.10.00
      * @param int $tid The thread ID number.
+     * @param boool $getThemeIDToo Should the result contain the theme field or not?
      * @return array The forum ID and theme.
      */
-    public function getFIDFromTID(int $tid): array
+    public function getFIDFromTID(int $tid, bool $getThemeIDToo = false): array
     {
-        $query = $this->db->query("SELECT f.fid, f.theme FROM " . $this->tablepre . "forums f RIGHT JOIN " . $this->tablepre . "threads t USING (fid) WHERE t.tid = $tid");
+        if ($getThemeIDToo) {
+            $query = $this->db->query("SELECT f.fid, f.theme FROM " . $this->tablepre . "forums f RIGHT JOIN " . $this->tablepre . "threads t USING (fid) WHERE t.tid = $tid");
+        } else {
+            $query = $this->db->query("SELECT fid FROM " . $this->tablepre . "threads WHERE tid = $tid");
+        }
 
         if ($this->db->num_rows($query) === 0) {
             $forum = []; // Post not found.

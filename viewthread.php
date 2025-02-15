@@ -267,8 +267,8 @@ if ($action == '') {
             $quickTemplate->allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton']:$lang['textoff'];
 
             if (X_MEMBER) {
-                $quickTemplate->usesigcheck = ($vars->self['sig'] != '') ? $cheHTML : '';
-                $quickTemplate->subcheck = ('yes' == $vars->self['sub_each_post']) ? $cheHTML : '';
+                $quickTemplate->usesigcheck = ($vars->self['sig'] != '') ? $vars::cheHTML : '';
+                $quickTemplate->subcheck = ('yes' == $vars->self['sub_each_post']) ? $vars::cheHTML : '';
             } else {
                 $quickTemplate->usesigcheck = '';
                 $quickTemplate->subcheck = '';

@@ -87,12 +87,8 @@ function MakeTime()
 /**
  * @since 1.9.4
  */
-function iso8601_date($year=0, $month=0, $day=0)
+function iso8601_date(int $year, int $month, int $day)
 {
-    $year = (int) $year;
-    $month = (int) $month;
-    $day = (int) $day;
-
     if ($year < 1 || $month < 1 || $day < 1) {
         return '0000-00-00';
     }
@@ -109,7 +105,7 @@ function iso8601_date($year=0, $month=0, $day=0)
         $day = 1;
     }
 
-    return str_pad($year, 4, '0', STR_PAD_LEFT).'-'.str_pad($month, 2, '0', STR_PAD_LEFT).'-'.str_pad($day, 2, '0', STR_PAD_LEFT);
+    return str_pad((string) $year, 4, '0', STR_PAD_LEFT).'-'.str_pad((string) $month, 2, '0', STR_PAD_LEFT).'-'.str_pad((string) $day, 2, '0', STR_PAD_LEFT);
 }
 
 /**

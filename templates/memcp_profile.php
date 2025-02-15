@@ -64,11 +64,11 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttpp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tppnew" size="4" value="<?= $member['tpp'] ?>" /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tppnew" size="4" value="<?= $tpp ?>" /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textppp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="pppnew" size="4" value="<?= $member['ppp'] ?>" /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="pppnew" size="4" value="<?= $ppp ?>" /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textshowemail'] ?></td>
@@ -84,7 +84,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textgetnews'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="newnewsletter" value="yes" <?= $newschecked ?> /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="newsletter" value="yes" <?= $newschecked ?> /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['u2ualert1'] ?></td>

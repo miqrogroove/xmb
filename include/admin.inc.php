@@ -35,8 +35,14 @@ use XMB\Session\Manager as SessionMgr;
  */
 class admin
 {
-    public function __construct(private Core $core, private DBStuff $db, private SessionMgr $session, private SQL $sql, private Template $template, private Variables $vars)
-    {
+    public function __construct(
+        private Core $core,
+        private DBStuff $db,
+        private SessionMgr $session,
+        private SQL $sql,
+        private Template $template,
+        private Variables $vars
+    ) {
         // Property promotion.
     }
 
@@ -53,7 +59,7 @@ class admin
         $db = $this->db;
         $lang = &$this->vars->lang;
 
-        if (strlen($userto) < 3 || strlen($userto) > 32) {
+        if (strlen($userto) < $vars::USERNAME_MIN_LENGTH || strlen($userto) > $vars::USERNAME_MAX_LENGTH) {
             return $lang['username_length_invalid'];
         }
 

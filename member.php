@@ -221,7 +221,7 @@ switch($action) {
                     $self = [];
                     $self['username'] = trim(postedVar('username', '', TRUE, FALSE));
 
-                    if (strlen($self['username']) < 3 || strlen($self['username']) > 32) {
+                    if (strlen($self['username']) < $vars::USERNAME_MIN_LENGTH || strlen($self['username']) > $vars::USERNAME_MAX_LENGTH) {
                         error($lang['username_length_invalid']);
                     }
 
@@ -276,23 +276,17 @@ switch($action) {
                     }
 
                     if ($SETTINGS['emailcheck'] == 'on') {
-                        $self['password'] = '';
+                        $newPass = '';
                         $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
                         $get = strlen($chars) - 1;
                         for($i = 0; $i < 10; $i++) {
-                            $self['password'] .= $chars[random_int(0, $get)];
+                            $newPass .= $chars[random_int(0, $get)];
                         }
-                        $password2 = $self['password'];
-                    } elseif (!isset($_POST['password']) || !isset($_POST['password2'])) {
-                        error($lang['textpw1']);
                     } else {
-                        $self['password'] = $_POST['password'];
-                        $password2 = $_POST['password2'];
+                        $newPass = $core->assertPasswordPolicy('password', 'password2');
                     }
-
-                    if ($self['password'] !== $password2) {
-                        error($lang['pwnomatch']);
-                    }
+                    $passMan = new \XMB\Password($sql);
+                    $self['password2'] = $passMan->hashPassword($newPass);
 
                     $fail = false;
                     $efail = false;
@@ -341,109 +335,23 @@ switch($action) {
                         error($lang['bademail']);
                     }
 
-                    if ($self['password'] == '') {
-                        error($lang['textpw1']);
-                    }
-
-                    $self['langfile'] = postedVar('langfilenew', '', false, false);
-                    $langfilenew = $db->escape($self['langfile']);
-                    $result = $db->query("SELECT devname FROM ".X_PREFIX."lang_base WHERE devname='$langfilenew'");
-                    if ($db->num_rows($result) == 0) {
-                        $self['langfile'] = $SETTINGS['langfile'];
-                    }
+                    $form = new \XMB\UserEditForm([], [], $core, $theme, $tran, $vars);
+                    $form->readBirthday();
+                    $form->readAvatar();
+                    $form->readCallables();
+                    $form->readTextFields();
+                    $form->readOptions();
+                    $form->readNumericFields();
+                    $form->readMiscFields();
 
                     $count1 = $sql->countMembers();
                     $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
-                    $self['timeoffset'] = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
-                    $self['theme'] = formInt('thememem');
-                    $self['tpp'] = formInt('tpp');
-                    $self['ppp'] = formInt('ppp');
-                    $self['showemail'] = formYesNo('showemail');
-                    $self['newsletter'] = formYesNo('newsletter');
-                    $self['saveogu2u'] = formYesNo('saveogu2u');
-                    $self['emailonu2u'] = formYesNo('emailonu2u');
-                    $self['useoldu2u'] = formYesNo('useoldu2u');
-                    $self['u2ualert'] = formInt('u2ualert');
-
-                    // For year of birth, reject all integers from 100 through 1899.
-                    $year = formInt('year');
-                    $month = formInt('month');
-                    $day = formInt('day');
-                    if ($year >= 100 && $year <= 1899) $year = 0;
-                    $self['bday'] = iso8601_date($year, $month, $day);
-
-                    $self['dateformat'] = postedVar('dateformatnew', '', false, false);
-                    $dateformattest = attrOut($self['dateformat'], 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
-                    if (strlen($self['dateformat']) == 0 || $self['dateformat'] !== $dateformattest) {
-                        $self['dateformat'] = $SETTINGS['dateformat'];
-                    }
-                    unset($dateformattest);
-
-                    $self['timeformat'] = formInt('timeformatnew');
-                    if ($self['timeformat'] != 12 && $self['timeformat'] != 24) {
-                        $self['timeformat'] = $SETTINGS['timeformat'];
-                    }
-
-                    $self['password'] = md5($self['password']);
                     $self['regdate'] = $vars->onlinetime;
                     if (strlen($onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($onlineip) > 39)) {
                         $self['regip'] = '';
                     } else {
                         $self['regip'] = $onlineip;
-                    }
-
-                    if ('on' == $SETTINGS['regoptional']) {
-                        $self['location'] = postedVar('location', 'javascript', true, false, true);
-                        $self['site'] = postedVar('site', 'javascript', true, false, true);
-                        $self['bio'] = postedVar('bio', 'javascript', true, false, true);
-                        $self['mood'] = postedVar('mood', 'javascript', true, false, true);
-                        $self['sig'] = postedVar('sig', 'javascript', true, false, true);
-
-                        if ($SETTINGS['avastatus'] == 'on') {
-                            $self['avatar'] = postedVar('newavatar', 'javascript', true, false, true);
-                            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-
-                            $newavatarcheck = postedVar('newavatarcheck');
-
-                            $max_size = explode('x', $SETTINGS['max_avatar_size']);
-
-                            if (preg_match('/^' . get_img_regexp($https_only) . '$/i', $rawavatar) == 0) {
-                                $self['avatar'] = '';
-                            } elseif (ini_get('allow_url_fopen')) {
-                                if ((int) $max_size[0] > 0 && (int) $max_size[1] > 0 && strlen($rawavatar) > 0) {
-                                    $size = @getimagesize($rawavatar);
-                                    if ($size === FALSE) {
-                                        $self['avatar'] = '';
-                                    } elseif ($size[0] > (int) $max_size[0] || $size[1] > (int) $max_size[1]) {
-                                        error($lang['avatar_too_big'] . $SETTINGS['max_avatar_size'] . 'px');
-                                    }
-                                }
-                            } elseif ($newavatarcheck == "no") {
-                                $self['avatar'] = '';
-                            }
-                            unset($rawavatar);
-                        } elseif ($SETTINGS['avastatus'] == 'list') {
-                            $rawavatar = postedVar('newavatar', '', FALSE, FALSE);
-                            $dirHandle = opendir(XMB_ROOT.'images/avatars');
-                            $filefound = FALSE;
-                            while($avFile = readdir($dirHandle)) {
-                                if ($rawavatar == './images/avatars/'.$avFile) {
-                                    if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
-                                        $filefound = TRUE;
-                                    }
-                                }
-                            }
-                            closedir($dirHandle);
-                            unset($rawavatar);
-                            if ($filefound) {
-                                $self['avatar'] = $core->postedVar('newavatar', 'javascript', true, false, true);
-                            } else {
-                                $self['avatar'] = '';
-                            }
-                        } else {
-                            $self['avatar'] = '';
-                        }
                     }
 
                     $sql->addMember($self);
@@ -477,14 +385,13 @@ switch($action) {
                         $username = trim(postedVar('username', '', FALSE, FALSE));
                         $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
                         $subject = "[$rawbbname] {$translate['textyourpw']}";
-                        $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
+                        $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $newPass\n\n$full_url";
                         xmb_mail($rawemail, $subject, $body, $translate['charset']);
                     } else {
                         $session->newUser($self);
                     }
 
-                    $self['password'] = '';
-                    $password2 = '';
+                    unset($newPass, $passMan);
                     break;
             }
 
@@ -555,27 +462,20 @@ switch($action) {
 
             if (4 == $stepout) {
                 // Display new user form
-                $captcharegcheck = '';
+                $form = new \XMB\UserEditForm([], [], $core, $theme, $tran, $vars);
+                $form->setOptionSelectors();
+                $form->setCallableElements();
+                $form->setAvatar();
+                $form->setBirthday();
+                $form->setNumericFields();
+                $form->setMiscFields();
+
+                $subTemplate = $form->getTemplate();
+
                 $token = \XMB\Token\create('Registration', (string) $stepout, $vars::NONCE_FORM_EXP, true);
 
                 $currdate = gmdate($vars->timecode, $core->standardTime($vars->onlinetime));
                 $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
-
-                $themelist = $theme->selector(
-                    nameAttr: 'thememem',
-                    selection: null,
-                );
-
-                $langfileselect = $tran->createLangFileSelect($langfile);
-
-                $dayselect = array();
-                $dayselect[] = '<select name="day">';
-                $dayselect[] = '<option value="">&nbsp;</option>';
-                for($num = 1; $num <= 31; $num++) {
-                    $dayselect[] = '<option value="'.$num.'">'.$num.'</option>';
-                }
-                $dayselect[] = '</select>';
-                $dayselect = implode("\n", $dayselect);
 
                 if ($SETTINGS['sigbbcode'] == 'on') {
                     $bbcodeis = $lang['texton'];
@@ -590,41 +490,11 @@ switch($action) {
                     eval('$pwtd = "'.template('member_reg_password').'";');
                 }
 
-                if ('24' === $SETTINGS['timeformat']) {
-                    $timeFormat12Checked = '';
-                    $timeFormat24Checked = $cheHTML;
-                } else {
-                    $timeFormat12Checked = $cheHTML;
-                    $timeFormat24Checked = '';
-                }
-
-                $timezones = timezone_control($SETTINGS['def_tz']);
-
-                $avatd = '';
-                if ($SETTINGS['avastatus'] == 'on') {
-                    eval('$avatd = "'.template('member_reg_avatarurl').'";');
-                } else if ($SETTINGS['avastatus'] == 'list') {
-                    $avatars = array();
-                    $avatars[] = '<option value=""/>'.$lang['textnone'].'</option>';
-                    $dirHandle = opendir(XMB_ROOT.'images/avatars');
-                    while($avFile = readdir($dirHandle)) {
-                        if (is_file(XMB_ROOT.'images/avatars/'.$avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
-                            $avatars[] = '<option value="./images/avatars/'.$avFile.'" />'.$avFile.'</option>';
-                        }
-                    }
-                    closedir($dirHandle);
-                    $avatars = implode("\n", str_replace('value="'.$member['avatar'].'"', 'value="'.$member['avatar'].'" selected="selected"', $avatars));
-                    eval('$avatd = "'.template('member_reg_avatarlist').'";');
-                }
-
-                $dformatorig = $SETTINGS['dateformat'];
-
                 $regoptional = '';
                 if ($SETTINGS['regoptional'] == 'on') {
                     eval('$regoptional = "'.template('member_reg_optional').'";');
                 }
 
-                $captcharegcheck = '';
                 eval('$memberpage = "'.template('member_reg').'";');
             }
 
