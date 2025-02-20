@@ -294,6 +294,7 @@ if ($action == 'profile') {
             }
             $member = \XMB\SQL\getMemberByName( $self['username'] );
             if ( $member['password'] !== md5($_POST['oldpassword']) ) {
+                auditBadLogin($self);
                 error($lang['textpwincorrect']);
             }
             unset( $member );
