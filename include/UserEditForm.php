@@ -242,15 +242,19 @@ class UserEditForm
         if ($this->formMode == 'admin') {
             $status = $this->core->postedVar('status', dbescape: false);
             $origstatus = $this->targetUser['status'];
-            if ($origstatus == 'Super Administrator') {
-                $query = $this->db->query("SELECT COUNT(uid) FROM " . $this->vars->tablepre . "members WHERE status = 'Super Administrator'");
-                $sa_count = (int) $this->db->result($query);
-                $this->db->free_result($query);
-                if ($status != 'Super Administrator' && $sa_count == 1) {
-                    $this->core->error($this->vars->lang['lastsadmin']);
+            // Check permission.
+            if ($this->editorUser['status'] != 'Super Administrator' && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
+                // Unauthorized.  Only Super Admins may edit Super Admins.
+            } elseif ($this->targetUser['status'] != $status) {
+                if ($origstatus == 'Super Administrator') {
+                    // Check if the last Super Admin is trying to change own status.
+                    $query = $this->db->query("SELECT COUNT(uid) FROM " . $this->vars->tablepre . "members WHERE status = 'Super Administrator'");
+                    $sa_count = (int) $this->db->result($query);
+                    $this->db->free_result($query);
+                    if ($sa_count == 1) {
+                        $this->core->error($this->vars->lang['lastsadmin']);
+                    }
                 }
-            }
-            if ($this->targetUser['status'] != $status) {
                 $this->edits['status'] = $status;
             }
         }

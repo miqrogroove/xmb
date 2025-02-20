@@ -97,7 +97,7 @@ if (count($where) == 0) {
 $members = getPhpInput('members', 'g');
 
 if (noSubmit('membersubmit')) {
-    if (!$members) {
+    if (! $members) {
         $body = $template->process('admin_members_search.php');
     } elseif ($members == "search") {
         $template->token = $token->create('Control Panel/Members', 'mass-edit', $vars::NONCE_FORM_EXP);
@@ -107,7 +107,9 @@ if (noSubmit('membersubmit')) {
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "members $where ORDER BY username");
 
         while ($member = $db->fetch_array($query)) {
-            $template->member = $member;
+            $template->uid = $member['uid'];
+            $template->username = $member['username'];
+            $template->postnum = $member['postnum'];
             $template->userLink = recodeOut($member['username']);
             $template->statusAttr = attrOut($member['customstatus']);
             $template->userStatus = $core->userStatusControl("status{$member['uid']}", $member['status']);
@@ -180,22 +182,13 @@ if (noSubmit('membersubmit')) {
             $status = 'Member';
         }
 
-        if (!X_SADMIN && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
+        if (! X_SADMIN && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
             continue;
         }
 
         $banstatus = $core->postedVar('banstatus'.$mem['uid']);
-        $cusstatus = $core->postedVar('cusstatus'.$mem['uid'], '', FALSE);
-        $postnum = getInt('postnum'.$mem['uid'], 'p');
+        $cusstatus = $core->postedVar('cusstatus'.$mem['uid'], '', false);
         $delete = getInt('delete'.$mem['uid'], 'p');
-
-        $queryadd = '';
-        if (isset($_POST['pw'.$mem['uid']])) {
-            if ($_POST['pw'.$mem['uid']] != '') {
-                $newpw = md5($_POST['pw'.$mem['uid']]);
-                $queryadd = ", password='$newpw' ";
-            }
-        }
 
         if ($delete == (int) $mem['uid'] && $delete != (int) $self['uid'] && $origstatus != "Super Administrator") {
             $db->escape_fast($mem['username']);
@@ -205,7 +198,7 @@ if (noSubmit('membersubmit')) {
             $db->query("DELETE FROM " . $vars->tablepre . "u2u WHERE owner='{$mem['username']}'");
             $db->query("UPDATE " . $vars->tablepre . "whosonline SET username='xguest123' WHERE username='{$mem['username']}'");
         } else {
-            $db->query("UPDATE " . $vars->tablepre . "members SET ban='$banstatus', status='$status', postnum='$postnum', customstatus='$cusstatus' WHERE uid={$mem['uid']}");
+            $db->query("UPDATE " . $vars->tablepre . "members SET ban='$banstatus', status='$status', customstatus='$cusstatus' WHERE uid={$mem['uid']}");
 
             if (getRawString('pw' . $mem['uid']) != '') {
                 $newPass = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);

@@ -337,9 +337,7 @@ switch($action) {
 
                     $form = new \XMB\UserEditForm([], [], $core, $theme, $tran, $vars);
                     $form->readBirthday();
-                    $form->readAvatar();
                     $form->readCallables();
-                    $form->readTextFields();
                     $form->readOptions();
                     $form->readNumericFields();
                     $form->readMiscFields();
@@ -352,6 +350,10 @@ switch($action) {
                         $self['regip'] = '';
                     } else {
                         $self['regip'] = $onlineip;
+                    }
+
+                    if ('on' == $SETTINGS['regoptional']) {
+                        $form->readOptionalFields();
                     }
 
                     $sql->addMember($self);
@@ -464,8 +466,7 @@ switch($action) {
                 // Display new user form
                 $form = new \XMB\UserEditForm([], [], $core, $theme, $tran, $vars);
                 $form->setOptionSelectors();
-                $form->setCallableElements();
-                $form->setAvatar();
+                $form->setCallables();
                 $form->setBirthday();
                 $form->setNumericFields();
                 $form->setMiscFields();
@@ -492,6 +493,7 @@ switch($action) {
 
                 $regoptional = '';
                 if ($SETTINGS['regoptional'] == 'on') {
+                    $form->setOptionalFields();
                     eval('$regoptional = "'.template('member_reg_optional').'";');
                 }
 

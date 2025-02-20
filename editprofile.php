@@ -69,12 +69,10 @@ $js_https_only = $https_only ? 'true' : 'false';
 
 if (noSubmit('editsubmit')) {
     $form = new \XMB\UserEditForm($member, $vars->self, $core, $theme, $tran, $vars);
-    $form->setOptionSelectors();
-    $form->setCallableElements();
-    $form->setAvatar();
+    $form->setOptions();
+    $form->setCallables();
+    $form->setOptionalFields();
     $form->setBirthday();
-    $form->setStatus();
-    $form->setTextFields();
     $form->setNumericFields();
     $form->setMiscFields();
 
@@ -141,9 +139,8 @@ if (noSubmit('editsubmit')) {
 
     $form = new \XMB\UserEditForm($member, $vars->self, $core, $theme, $tran, $vars);
     $form->readBirthday();
-    $form->readAvatar();
+    $form->readOptionalFields();
     $form->readCallables();
-    $form->readTextFields();
     $form->readOptions();
     $form->readNumericFields();
     $form->readMiscFields();
