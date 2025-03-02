@@ -22,6 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+$core = \XMB\Services\core();
 $smile = \XMB\Services\smile();
 $vars = \XMB\Services\vars();
 
@@ -68,8 +69,7 @@ if (!isset($searchsubmit) && !isset($page)) {
     $captchasearchcheck = '';
     if (X_GUEST) {
         if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
-            require XMB_ROOT.'include/captcha.inc.php';
-            $Captcha = new Captcha();
+            $Captcha = new Captcha($core, $vars);
             if ($Captcha->bCompatible !== false) {
                 $imghash = $Captcha->GenerateCode();
                 if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
@@ -124,8 +124,7 @@ if (!isset($searchsubmit) && !isset($page)) {
             if ($page > 1) {
                 error($lang['searchguesterror']);
             }
-            require XMB_ROOT.'include/captcha.inc.php';
-            $Captcha = new Captcha();
+            $Captcha = new Captcha($core, $vars);
             if ($Captcha->bCompatible !== false) {
                 $imgcode = postedVar('imgcode', '', FALSE, FALSE, FALSE, 'g');
                 $imghash = postedVar('imghash', '', TRUE, TRUE, FALSE, 'g');

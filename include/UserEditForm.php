@@ -138,37 +138,37 @@ class UserEditForm
         if ($timeformatnew != 12 && $timeformatnew != 24) {
             $timeformatnew = $this->vars->settings['timeformat'];
         }
-        if ($this->targetUser['timeformat'] != $timeformatnew) {
+        if ($this->formMode == 'new' || $this->targetUser['timeformat'] != $timeformatnew) {
             $this->edits['timeformat'] = $timeformatnew;
         }
 
         $u2ualert = formInt('u2ualert');
-        if ($this->targetUser['u2ualert'] != $u2ualert) {
+        if ($this->formMode == 'new' || $this->targetUser['u2ualert'] != $u2ualert) {
             $this->edits['u2ualert'] = $u2ualert;
         }
 
         $showemail = formYesNo('newshowemail');
-        if ($this->targetUser['showemail'] != $showemail) {
+        if ($this->formMode == 'new' || $this->targetUser['showemail'] != $showemail) {
             $this->edits['showemail'] = $showemail;
         }
 
         $newsletter = formYesNo('newsletter');
-        if ($this->targetUser['newsletter'] != $newsletter) {
+        if ($this->formMode == 'new' || $this->targetUser['newsletter'] != $newsletter) {
             $this->edits['newsletter'] = $newsletter;
         }
 
         $useoldu2u = formYesNo('useoldu2u');
-        if ($this->targetUser['useoldu2u'] != $useoldu2u) {
+        if ($this->formMode == 'new' || $this->targetUser['useoldu2u'] != $useoldu2u) {
             $this->edits['useoldu2u'] = $useoldu2u;
         }
 
         $saveogu2u = formYesNo('saveogu2u');
-        if ($this->targetUser['saveogu2u'] != $saveogu2u) {
+        if ($this->formMode == 'new' || $this->targetUser['saveogu2u'] != $saveogu2u) {
             $this->edits['saveogu2u'] = $saveogu2u;
         }
 
         $emailonu2u = formYesNo('emailonu2u');
-        if ($this->targetUser['emailonu2u'] != $emailonu2u) {
+        if ($this->formMode == 'new' || $this->targetUser['emailonu2u'] != $emailonu2u) {
             $this->edits['emailonu2u'] = $emailonu2u;
         }
 
@@ -192,16 +192,17 @@ class UserEditForm
         $member = &$this->targetUser;
         
         if ($this->formMode == 'new') {
-            $timeOffset = $this->vars->settings['def_tz'];
+            $template->timeOffset = $this->vars->settings['def_tz'];
             $theme = null;
             $langfile = $this->vars->settings['langfile'];
         } else {
-            $timeOffset = $member['timeoffset'];
+            $template->timeOffset = $member['timeoffset'];
             $theme = (int) $member['theme'];
             $langfile = $member['langfile'];
         }
 
-        $template->timezones = $this->core->timezone_control($timeOffset);
+        // Some callers will use timeOffset, others will need the timezone control.
+        $template->timezones = $this->core->timezone_control($template->timeOffset);
 
         $template->themelist = $this->theme->selector(
             nameAttr: 'thememem',
@@ -274,9 +275,10 @@ class UserEditForm
             } else {
                 null_string($member['avatar']);
                 if ($httpsOnly && strpos($member['avatar'], ':') !== false && substr($member['avatar'], 0, 6) !== 'https:') {
-                    $member['avatar'] = '';
+                    $template->avatarValue = '';
+                } else {
+                    $template->avatarValue = $member['avatar'];
                 }
-                $template->member = $member;
                 $template->avatar = $template->process('memcp_profile_avatarurl.php');
             }
         } elseif ($this->vars->settings['avastatus'] == 'list')  {
@@ -395,20 +397,29 @@ class UserEditForm
     {
         $member = &$this->targetUser;
 
-        if ($this->formMode == 'admin') {
-            $member['bio'] = decimalEntityDecode($member['bio']);
-            $member['location'] = decimalEntityDecode($member['location']);
-            $member['mood'] = decimalEntityDecode($member['mood']);
-            $member['sig'] = decimalEntityDecode($member['sig']);
-        } else {
-            $member['bio'] = $this->core->rawHTMLsubject($member['bio']);
-            $member['location'] = $this->core->rawHTMLsubject($member['location']);
-            $member['mood'] = $this->core->rawHTMLsubject($member['mood']);
-            $member['sig'] = $this->core->rawHTMLsubject($member['sig']);
+        switch ($this->formMode) {
+            case 'admin':
+                $this->template->bio = decimalEntityDecode($member['bio']);
+                $this->template->location = decimalEntityDecode($member['location']);
+                $this->template->mood = decimalEntityDecode($member['mood']);
+                $this->template->sig = decimalEntityDecode($member['sig']);
+                $this->template->site = $member['site'];
+                break;
+            case 'self':
+                $this->template->bio = $this->core->rawHTMLsubject($member['bio']);
+                $this->template->location = $this->core->rawHTMLsubject($member['location']);
+                $this->template->mood = $this->core->rawHTMLsubject($member['mood']);
+                $this->template->sig = $this->core->rawHTMLsubject($member['sig']);
+                $this->template->site = $member['site'];
+                break;
+            default:
+                $this->template->bio = '';
+                $this->template->location = '';
+                $this->template->mood = '';
+                $this->template->sig = '';
+                $this->template->site = '';
         }
 
-        $this->template->member = $member;
-        
         $this->setAvatar();
     }
 
@@ -507,10 +518,9 @@ class UserEditForm
         $dateformat = getPhpInput('dateformatnew');
         $dateformattest = attrOut($dateformat, 'javascript');
         // Never allow attribute-special data in the date format because it can be unescaped using the date() parser.
-        if (strlen($this->targetUser['dateformat']) == 0 || $this->targetUser['dateformat'] !== $dateformattest) {
+        if (empty($dateformat) || $dateformat !== $dateformattest) {
             $dateformat = $this->vars->settings['dateformat'];
-        }
-        if ($this->formMode == 'new' || $this->targetUser['dateformat'] != $dateformat) {
+        } elseif ($this->formMode == 'new' || $this->targetUser['dateformat'] != $dateformat) {
             $this->edits['dateformat'] = $dateformat;
         }
     }

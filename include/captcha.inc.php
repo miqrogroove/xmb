@@ -90,7 +90,7 @@ class Captcha
     public readonly bool $bCompatible;
     public bool $bPoison;
 
-    function __construct(private Core $core, private Observer $observer, private Variables $vars)
+    function __construct(private Core $core, private Variables $vars)
     {
         // get parameters
         $this->SetWidth((int) $this->vars->settings['captcha_image_width']);
@@ -365,10 +365,10 @@ class Captcha
         }
     }
 
-    private function WriteFile()
+    private function WriteFile(Observer $observer)
     {
         // Explicitly re-run XMB's output stream check, and do not rely on the DEBUG constant.
-        $this->observer->assertEmptyOutputStream('misc.php (?) before the call to Captcha::WriteFile()', use_debug: false);
+        $observer->assertEmptyOutputStream('misc.php (?) before the call to Captcha::WriteFile()', use_debug: false);
 
         // tell browser that data is jpeg
         header("Content-type: image/$this->sFileType");
@@ -385,7 +385,7 @@ class Captcha
         }
     }
 
-    public function Create($imghash)
+    public function Create(string $imghash, Observer $observer)
     {
         $this->bPoison = true;
 
@@ -394,10 +394,10 @@ class Captcha
         $bg_green = hexdec(substr($this->vars->theme['altbg2'], 3, 2));
         $bg_blue = hexdec(substr($this->vars->theme['altbg2'], 5, 2));
         $bg_lum = (max($bg_red, $bg_green, $bg_blue) + min($bg_red, $bg_green, $bg_blue)) >> 1;
-        $colors = array();
+        $colors = [];
 
         // get background image if specified and copy to CAPTCHA
-        if (!empty($this->aBackgroundImages)) {
+        if (! empty($this->aBackgroundImages)) {
             // create new image
             $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
 
@@ -405,7 +405,7 @@ class Captcha
             $iRandImage = array_rand($this->aBackgroundImages);
             $vBackgroundImage = $this->aBackgroundImages[$iRandImage];
             $ext = substr($vBackgroundImage, -3);
-            switch($ext) {
+            switch ($ext) {
                 case 'gif':
                     $oBackgroundImage = imagecreatefromgif ($vBackgroundImage);
                     break;
@@ -421,7 +421,7 @@ class Captcha
 
             // free memory used to create background image
             imagedestroy($oBackgroundImage);
-        } else if ($this->bUseColor) {
+        } elseif ($this->bUseColor) {
             // XMB forces true color mode to prevent palette overflow.
             $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
             $bgcolor = imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
@@ -430,7 +430,7 @@ class Captcha
             // XMB pre-allocates all greyscales to prevent palette overflow.
             $this->oImage = imagecreate($this->iWidth, $this->iHeight);
             imagecolorallocate($this->oImage, $bg_red, $bg_green, $bg_blue);
-            for($i = 1; $i <= 255; $i++) {
+            for ($i = 1; $i <= 255; $i++) {
                 $colors[$i] = imagecolorallocate($this->oImage, $i, $i, $i);
             }
             $colors[0] = $colors[1];
@@ -442,11 +442,10 @@ class Captcha
         $this->DrawCharacters($bg_lum, $colors);
 
         // write out image to file or browser
-        $this->WriteFile();
+        $this->WriteFile($observer);
 
         // free memory used in creating image
         imagedestroy($this->oImage);
-        return true;
     }
 
 
@@ -591,7 +590,7 @@ class Captcha
         }
     }
 
-    private function RetrieveCode($imghash)
+    private function RetrieveCode(string $imghash)
     {
         if ($imghash == 'test') {
             $this->bPoison = true;

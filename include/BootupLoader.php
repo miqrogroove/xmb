@@ -48,7 +48,11 @@ class BootupLoader
             header("Pragma: no-cache");
         }
 
-        ini_set('user_agent', 'XMB-eXtreme-Message-Board/1.9; ' . $this->vars->full_url);
+        $agent = 'XMB-eXtreme-Message-Board';
+        if ($this->vars->versionshort != '') $agent .= '/' . $this->vars->versionshort == '';
+        $agent .= '; ' . $this->vars->full_url;
+
+        ini_set('user_agent', $agent);
 
         $this->vars->oldtopics = getPhpInput('oldtopics', 'c');
 
@@ -265,7 +269,7 @@ class BootupLoader
         $imgdir = $full_url . $this->vars->theme['imgdir'];
 
         // Search-link
-        $searchlink = $this->core->makeSearchLink();
+        $this->template->searchlink = $this->core->makeSearchLink();
 
         // Faq-link
         if ($this->vars->settings['faqstatus'] == 'on') {

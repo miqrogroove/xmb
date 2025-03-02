@@ -115,7 +115,7 @@ if ($goto == 'lastpost') {
     } else {
         $page = "&page=$page";
     }
-    redirect("{$full_url}viewthread.php?tid=$tid$page#pid$pid", timeout: 0);
+    $core->redirect("{$full_url}viewthread.php?tid=$tid$page#pid$pid", timeout: 0);
 
 } elseif ($goto == 'search') {
     $tidtest = $db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid = $tid AND pid = $pid");
@@ -275,7 +275,7 @@ if ($action == '') {
             }
             $quickTemplate->captchapostcheck = '';
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                $Captcha = new Captcha();
+                $Captcha = new Captcha($core, $vars);
                 if ($Captcha->bCompatible !== false) {
                     $quickTemplate->imghash = $Captcha->GenerateCode();
                     if ($SETTINGS['captcha_code_casesensitive'] == 'off') {

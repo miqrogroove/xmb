@@ -12,7 +12,7 @@
 <td bgcolor="<?= $THEME['altbg1'] ?>" class="tablerow"><?= $lang['rulesoninfo'] ?></td>
 </tr>
 <tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow"><?= $SETTINGS['bbrulestxt'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow"><?= $rules ?></td>
 </tr>
 <tr>
 <td bgcolor="<?= $THEME['altbg2'] ?>" class="ctrtablerow"><input type="submit" class="submit" name="rulesubmit" value="<?= $lang['textagree'] ?>" /></td>

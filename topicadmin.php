@@ -26,6 +26,7 @@ $attach = \XMB\Services\attach();
 $core = \XMB\Services\core();
 $forumCache = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
 
 require 'header.php';
@@ -169,7 +170,7 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 }
 
 // Search-link
-$searchlink = makeSearchLink($forums['fid']);
+$template->searchlink = makeSearchLink($forums['fid']);
 
 if (0 === $pid && 'getip' === $action) {
     header('HTTP/1.0 404 Not Found');

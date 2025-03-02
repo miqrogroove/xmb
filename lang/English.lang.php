@@ -672,6 +672,8 @@ $lang['reggedonly'] = "You must be registered to view these boards.";
 $lang['registerrulestitle'] = "Registration Terms";
 $lang['regoptional'] = "Optional fields on registration status:<br /><span class=\"smalltxt\">This option enables/disables optional fields on registration such as biography, signature, etc.</span>";
 $lang['regques'] = "Need to register?";
+$lang['reg_intro'] = "Welcome to the registration page for new members.<br /><br />\nThe following screens will guide you through some questions about your new profile.<br /><br />\nClick or tap the Continue button to begin.";
+$lang['reg_intro_title'] = "Membership Introduction";
 $lang['reg_on'] = "Allow User Registration";
 $lang['reg_today'] = "You have already registered today, you can re-register again in 24 hours.<br />";
 $lang['renamefile'] = "&nbsp;Rename current file to:";

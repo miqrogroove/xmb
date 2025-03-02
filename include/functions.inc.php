@@ -1214,12 +1214,12 @@ class Core
     /**
      * Send a mail message.
      *
-     * Works just like php's altMail() function, but allows sending trough alternative mailers as well.
+     * Works just like php's mail() function, but allows sending trough alternative mailers as well.
      *
      * @since 1.9.2
      * @return bool Success
      */
-    function altMail(string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = '')
+    private function altMail(string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = ''): bool
     {
         global $mailer, $SETTINGS;
         static $handlers;
@@ -1847,7 +1847,7 @@ class Core
      * @param string $fromaddress Must be a fully validated e-mail address.
      * @return string
      */
-    private function smtpHeaderFrom($fromname, $fromaddress)
+    private function smtpHeaderFrom(string $fromname, string $fromaddress): string
     {
         $fromname = preg_replace('@([^\\t !\\x23-\\x5b\\x5d-\\x7e])@', '\\\\$1', $fromname);
         return 'From: "'.$fromname.'" <'.$fromaddress.'>';
@@ -1865,7 +1865,7 @@ class Core
      * @param string $key The known value, such as what the nonce may be used for.
      * @return string
      */
-    public function nonce_create($key)
+    public function nonce_create(string $key): string
     {
         global $self;
         
@@ -1888,7 +1888,7 @@ class Core
      * @param  int    $key_length The known length of the key.
      * @return string The key value.
      */
-    public function nonce_peek($nonce, $key_length)
+    public function nonce_peek(string $nonce, int $key_length): string
     {
         $db = $this->db;
 
@@ -1900,7 +1900,7 @@ class Core
         $result = $db->query(
             "SELECT imagestring
              FROM " . $this->vars->tablepre . "captchaimages
-             WHERE imagehash='$nonce' AND dateline >= $time AND LENGTH(imagestring) = $key_length"
+             WHERE imagehash = '$nonce' AND dateline >= $time AND LENGTH(imagestring) = $key_length"
         );
         if ($db->num_rows($result) === 1) {
             return $db->result($result);
@@ -1917,7 +1917,7 @@ class Core
      * @param int    $expire Optional. Number of seconds for which any nonce having the same $key will be valid.
      * @return bool True only if the user provided a unique nonce for the key/nonce pair.
      */
-    public function nonce_use($key, $nonce, $expire = 0)
+    public function nonce_use(string $key, string $nonce, int $expire = 0): bool
     {
         $db = $this->db;
 
@@ -1931,7 +1931,7 @@ class Core
             $sql_expire .= " OR imagestring='$key' AND dateline < $time";
         }
         $db->query("DELETE FROM " . $this->vars->tablepre . "captchaimages WHERE $sql_expire");
-        $db->query("DELETE FROM " . $this->vars->tablepre . "captchaimages WHERE imagehash='$nonce' AND imagestring='$key'");
+        $db->query("DELETE FROM " . $this->vars->tablepre . "captchaimages WHERE imagehash = '$nonce' AND imagestring = '$key'");
 
         return ($db->affected_rows() === 1);
     }
@@ -1947,18 +1947,16 @@ class Core
      * @param bool   $html    Optional. Set to true if the $message param is HTML formatted.
      * @return bool
      */
-    function xmb_mail(string $to, string $subject, string $message, string $charset, bool $html = false)
+    public function xmb_mail(string $to, string $subject, string $message, string $charset, bool $html = false): bool
     {
-        global $self, $bbname, $adminemail, $cookiedomain;
+        global $self, $bbname, $cookiedomain;
 
         if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32') {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
-            ini_set('sendmail_from', $adminemail);
+            ini_set('sendmail_from', $this->vars->settings['adminemail']);
         }
 
-        $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
-        if (! empty($self)) {
-            $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-        }
+        $rawbbname = htmlspecialchars_decode($this->vars->settings['bbname'], ENT_NOQUOTES);
+        $rawusername = htmlspecialchars_decode($this->vars->self['username'] ?? '', ENT_QUOTES);
 
         if ($html) {
             $content_type = 'text/html';
@@ -1966,19 +1964,19 @@ class Core
             $content_type = 'text/plain';
         }
 
-        $headers = array();
-        $headers[] = smtpHeaderFrom($rawbbname, $adminemail);
-        $headers[] = "X-Mailer: PHP";
-        $headers[] = "X-AntiAbuse: Board servername - $cookiedomain";
-        if (! empty($self)) {
+        $headers = [];
+        $headers[] = $this->smtpHeaderFrom($rawbbname, $this->vars->settings['adminemail']);
+        $headers[] = 'X-Mailer: PHP';
+        $headers[] = 'X-AntiAbuse: Board servername - ' . $this->vars->cookiedomain;
+        if ($rawusername != '') {
             $headers[] = "X-AntiAbuse: Username - $rawusername";
         }
         $headers[] = "Content-Type: $content_type; charset=$charset";
         $headers = implode("\r\n", $headers);
 
-        $params = "-f $adminemail";
+        $params = '-f ' . $this->vars->settings['adminemail'];
 
-        return altMail($to, $subject, $message, $headers, $params);
+        return $this->altMail($to, $subject, $message, $headers, $params);
     }
 
     /**
@@ -2253,5 +2251,58 @@ class Core
         $template->maxtotal = $this->attach->getSizeFormatted($maxtotal);
         
         return $template->process('post_attachmentbox.php');
+    }
+
+    /**
+     * Validate a new username
+     *
+     * @since 1.9.1 Formerly known as admin::check_restricted()
+     * @since 1.10.00
+     * @param string $input Username to check
+     * @return bool Validity of the username.
+     */
+    public function usernameValidation(string $input): bool
+    {
+        // Check individual characters
+        $nonprinting = '\\x00-\\x1F\\x7F';  // Universal chars that are invalid.
+        $specials = '\\]\'<>\\\\|"[,@';  // Other universal chars disallowed by XMB: []'"<>\|,@
+        $sequences = '|  ';  // Phrases disallowed, each separated by '|'
+        $icharset = strtoupper($this->vars->charset);
+        if (substr($icharset, 0, 8) == 'ISO-8859') {
+            if ($icharset == 'ISO-8859-11') {
+                $nonprinting .= '-\\x9F\\xDB-\\xDE\\xFC-\\xFF';  //More chars invalid for the Thai set.
+            } else {
+                $nonprinting .= '-\\x9F\\xAD';  //More chars invalid for all ISO 8859 sets except Part 11 (Thai).
+            }
+        } elseif (substr($icharset, 0, 11) == 'WINDOWS-125') {
+            $nonprinting .= '\\xAD';  //More chars invalid for all Windows code pages.
+        }
+
+        if ($input !== preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $input)) {
+            return false;
+        }
+
+        // Check admin-specified phrases
+        $restrictions = $this->sql->getRestrictions();
+        foreach ($restrictions as $restriction) {
+            if ('0' === $restriction['case_sensitivity']) {
+                $t_username = strtolower($input);
+                $restriction['name'] = strtolower($restriction['name']);
+            } else {
+                $t_username = $input;
+            }
+
+            if ('1' === $restriction['partial']) {
+                if (strpos($t_username, $restriction['name']) !== false) {
+                    return false;
+                }
+            } else {
+                if ($t_username === $restriction['name']) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

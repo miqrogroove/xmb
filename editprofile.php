@@ -23,6 +23,7 @@
  */
 
 $core = \XMB\Services\core();
+$db = \XMB\Services\db();
 $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $theme = \XMB\Services\theme();
@@ -68,7 +69,7 @@ $https_only = 'on' == $SETTINGS['images_https_only'];
 $js_https_only = $https_only ? 'true' : 'false';
 
 if (noSubmit('editsubmit')) {
-    $form = new \XMB\UserEditForm($member, $vars->self, $core, $theme, $tran, $vars);
+    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
     $form->setOptions();
     $form->setCallables();
     $form->setOptionalFields();
@@ -80,13 +81,13 @@ if (noSubmit('editsubmit')) {
 
     $custout = attrOut($member['customstatus']);
 
-    $registerdate = gmdate($dateformat, core()->timeKludge((int) $member['regdate']));
+    $registerdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['regdate']));
 
     if (0 == (int) $member['lastvisit']) {
         $lastlogdate = $lang['textpendinglogin'];
     } else {
-        $lastvisitdate = gmdate($dateformat, core()->timeKludge((int) $member['lastvisit']));
-        $lastvisittime = gmdate($timecode, core()->timeKludge((int) $member['lastvisit']));
+        $lastvisitdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['lastvisit']));
+        $lastvisittime = gmdate($vars->timecode, $core->timeKludge((int) $member['lastvisit']));
         $lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
     }
 
@@ -95,8 +96,8 @@ if (noSubmit('editsubmit')) {
         $loginfails = $lang['textnone'];
         $loginfaildate = $lang['textnone'];
     } else {
-        $loginfaildate = gmdate($dateformat, core()->timeKludge((int) $member['bad_login_date']));
-        $loginfailtime = gmdate($timecode, core()->timeKludge((int) $member['bad_login_date']));
+        $loginfaildate = gmdate($vars->dateformat, $core->timeKludge((int) $member['bad_login_date']));
+        $loginfailtime = gmdate($vars->timecode, $core->timeKludge((int) $member['bad_login_date']));
         $loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
     }
 
@@ -105,8 +106,8 @@ if (noSubmit('editsubmit')) {
         $sessfails = $lang['textnone'];
         $sessfaildate = $lang['textnone'];
     } else {
-        $sessfaildate = gmdate($dateformat, core()->timeKludge((int) $member['bad_session_date']));
-        $sessfailtime = gmdate($timecode, core()->timeKludge((int) $member['bad_session_date']));
+        $sessfaildate = gmdate($vars->dateformat, $core->timeKludge((int) $member['bad_session_date']));
+        $sessfailtime = gmdate($vars->timecode, $core->timeKludge((int) $member['bad_session_date']));
         $sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
     }
 
@@ -117,7 +118,7 @@ if (noSubmit('editsubmit')) {
         $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
     }
 
-    $currdate = gmdate($timecode, $vars->onlinetime + ($SETTINGS['addtime'] * 3600));
+    $currdate = gmdate($vars->timecode, $vars->onlinetime + ($SETTINGS['addtime'] * 3600));
     $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
     if ($SETTINGS['sigbbcode'] == 'on') {
@@ -130,14 +131,19 @@ if (noSubmit('editsubmit')) {
 
     $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
 
-    $userrecode = recodeOut($member['username']);
+    $subTemplate->email = $member['email'];
+    $subTemplate->emailURL = recodeOut($member['email']);
+    $subTemplate->regip = $member['regip'];
+    $subTemplate->uid = $member['uid'];
+    $subTemplate->username = $member['username'];
+    $subTemplate->userrecode = recodeOut($member['username']);
 
     $template = template_secure('admintool_editprofile', 'Edit User Account', $member['uid'], $vars::NONCE_FORM_EXP);
     eval('$editpage = "'.$template.'";');
 } else {
     request_secure('Edit User Account', $member['uid']);
 
-    $form = new \XMB\UserEditForm($member, $vars->self, $core, $theme, $tran, $vars);
+    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
     $form->readBirthday();
     $form->readOptionalFields();
     $form->readCallables();

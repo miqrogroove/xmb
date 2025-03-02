@@ -76,17 +76,18 @@ class admin
         $cUsrTo = $db->num_rows($query);
         $db->free_result($query);
 
-        if (!($cUsrFrm == 1 && $cUsrTo == 0)) {
+        if (! ($cUsrFrm == 1 && $cUsrTo == 0)) {
             return $lang['admin_rename_fail'];
         }
 
-        if (!$this->check_restricted($dbuserto)) {
+        if (! $core->usernameValidation($userto)) {
             return $lang['restricted'];
         }
-        
+
         $this->session->logoutAll($userfrom);
 
-        @set_time_limit(180);
+        ignore_user_abort(true);
+        set_time_limit(180);
         $db->query("UPDATE " . $this->vars->tablepre . "members SET username='$dbuserto' WHERE username='$dbuserfrom'");
         $db->query("UPDATE " . $this->vars->tablepre . "buddys SET username='$dbuserto' WHERE username='$dbuserfrom'");
         $db->query("UPDATE " . $this->vars->tablepre . "buddys SET buddyname='$dbuserto' WHERE buddyname='$dbuserfrom'");
@@ -150,47 +151,6 @@ class admin
         $db->free_result($query);
 
         return (($this->vars->self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] : '') . $lang['admin_rename_success'];
-    }
-
-    /**
-     * check_restricted()
-     *
-     * Duplicates some logic in member.php.
-     *
-     * @since 1.9.1
-     * @param string $userto Username to check
-     * @return bool Username validity.
-     */
-    private function check_restricted(string $userto): bool
-    {
-        $db = $this->db;
-
-        $nameokay = true;
-
-        if ($userto != preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]|  #', '', $userto)) {
-            return false;
-        }
-
-        $query = $db->query("SELECT * FROM " . $this->vars->tablepre . "restricted");
-        while($restriction = $db->fetch_array($query)) {
-            if ('0' === $restriction['case_sensitivity']) {
-                $t_username = strtolower($userto);
-                $restriction['name'] = strtolower($restriction['name']);
-            }
-
-            if ('1' === $restriction['partial']) {
-                if (strpos($t_username, $restriction['name']) !== false) {
-                    $nameokay = false;
-                }
-            } else {
-                if ($t_username === $restriction['name']) {
-                    $nameokay = false;
-                }
-            }
-        }
-        $db->free_result($query);
-
-        return $nameokay;
     }
 
     /**

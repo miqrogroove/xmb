@@ -119,7 +119,7 @@ if ($vars->settings['subject_in_title'] == 'on') {
 }
 
 // Search-link
-$searchlink = $core->makeSearchLink((int) $forum['fid']);
+$template->searchlink = $core->makeSearchLink((int) $forum['fid']);
 
 if ($action == 'report') {
     $core->nav($lang['textreportpost']);

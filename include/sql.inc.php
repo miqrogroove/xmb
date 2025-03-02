@@ -334,6 +334,27 @@ class SQL
     /**
      * SQL command
      *
+     * @since 1.10.00
+     */
+    public function countMembersByRegIP(string $address, int $time = 0): int
+    {
+        $this->db->escape_fast($address);
+        if ($time != 0) {
+            $extra = " AND regdate >= $time";
+        } else {
+            $extra = '';
+        }
+
+        $query = $this->db->query("SELECT COUNT(*) FROM " . $this->tablepre . "members WHERE regip = '$address' $extra");
+        $result = (int) $this->db->result($query);
+        $this->db->free_result($query);
+
+        return $result;
+    }
+
+    /**
+     * SQL command
+     *
      * @since 1.9.12
      * @param string $username
      * @return int The new value of bad_login_count for this member.
@@ -1997,6 +2018,22 @@ class SQL
         $this->db->free_result($result);
 
         return $words;
+    }
+
+    /**
+     * Retrieve the list of username restrictions.
+     *
+     * @since 1.10.00
+     * @return array of associative table rows.
+    */
+    public function getRestrictions(): array
+    {
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "restricted");
+
+        $restrictions = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $restrictions;
     }
 
     /**

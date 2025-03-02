@@ -410,7 +410,7 @@ switch($action) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
                 if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                    $Captcha = new Captcha();
+                    $Captcha = new Captcha($core, $vars);
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = getPhpInput('imgcode');
                         $imghash = $core->postedVar('imghash');
@@ -687,7 +687,7 @@ switch($action) {
             }
 
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                $Captcha = new Captcha();
+                $Captcha = new Captcha($core, $vars);
                 if ($Captcha->bCompatible !== false) {
                     $subTemplate->imghash = $Captcha->GenerateCode();
                     $template->captchapostcheck = $subTemplate->process('post_captcha.php');
@@ -793,7 +793,7 @@ switch($action) {
             if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
                 $password = '';
                 if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                    $Captcha = new Captcha();
+                    $Captcha = new Captcha($core, $vars);
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = getPhpInput('imgcode');
                         $imghash = $core->postedVar('imghash');
@@ -1087,7 +1087,7 @@ switch($action) {
             }
 
             if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                $Captcha = new Captcha();
+                $Captcha = new Captcha($core, $vars);
                 if ($Captcha->bCompatible !== false) {
                     $subTemplate->imghash = $Captcha->GenerateCode();
                     $template->captchapostcheck = $subTemplate->process('post_captcha.php');

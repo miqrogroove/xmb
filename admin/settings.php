@@ -165,7 +165,7 @@ if (
 
     $template->max_avatar_sizes = explode('x', $SETTINGS['max_avatar_size']);
 
-    $captcha = new \XMB\Captcha($core, $observer, $vars);
+    $captcha = new \XMB\Captcha($core, $vars);
     $template->goodCaptcha = $captcha->bCompatible;
 
     $body = $template->process('admin_settings.php');

@@ -93,7 +93,7 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 }
 
 // Search-link
-$searchlink = $core->makeSearchLink((int) $forum['fid']);
+$template->searchlink = $core->makeSearchLink((int) $forum['fid']);
 
 $threadcount = $sql->countThreadsByForum($fid);
 

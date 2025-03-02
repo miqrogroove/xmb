@@ -31,6 +31,7 @@ require './header.php';
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $login = \XMB\Services\login();
+$observer = \XMB\Services\observer();
 $session = \XMB\Services\session();
 $smile = \XMB\Services\smile();
 $sql = \XMB\Services\sql();
@@ -521,9 +522,9 @@ switch($action) {
         }
         require XMB_ROOT.'include/captcha.inc.php';
         header('X-Robots-Tag: noindex');
-        $oPhpCaptcha = new Captcha();
-        $imagehash = postedVar('imagehash', '', FALSE, TRUE, FALSE, 'g');
-        $oPhpCaptcha->Create($imagehash);
+        $oPhpCaptcha = new Captcha($core, $vars);
+        $imagehash = getPhpInput('imagehash', sourcearray: 'g');
+        $oPhpCaptcha->Create($imagehash, $observer);
         exit();
         break;
 

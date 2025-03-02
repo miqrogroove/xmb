@@ -13,7 +13,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textemail'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newemail" size="25" value="<?= $member['email'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newemail" size="25" value="<?= $email ?>" /></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['pwchange'] ?> - <?= $lang['optional'] ?></strong></font></td>
@@ -115,7 +115,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['dateformat'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="dateformatnew" size="25" value="<?= $member['dateformat'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="dateformatnew" size="25" value="<?= $dateformat ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $textoffset ?></td>

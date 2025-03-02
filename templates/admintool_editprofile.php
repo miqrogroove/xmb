@@ -1,4 +1,4 @@
-<form method="post" action="editprofile.php?user=<?= $userrecode ?>" name="reg">
+<form method="post" action="<?= $full_url ?>editprofile.php?user=<?= $userrecode ?>" name="reg">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
@@ -9,11 +9,11 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textusername'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $member['username'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $username ?></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textemail'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newemail" size="25" value="<?= $member['email'] ?>" /><br /><a href="https://gsuite.tools/verify-email?email=<?= $member['email'] ?>" onclick="window.open(this.href); return false;"><?= $lang['adminverifyemail'] ?></a></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newemail" size="25" value="<?= $email ?>" /><br /><a href="https://gsuite.tools/verify-email?email=<?= $emailURL ?>" onclick="window.open(this.href); return false;"><?= $lang['adminverifyemail'] ?></a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textstatus'] ?></td>
@@ -37,26 +37,26 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsite'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newsite" size="25" value="<?= $member['site'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newsite" size="25" value="<?= $site ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textlocation'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newlocation" size="25" value="<?= $member['location'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newlocation" size="25" value="<?= $location ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['userprofilemood'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newmood" size="25" value="<?= $member['mood'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="newmood" size="25" value="<?= $mood ?>" /></td>
 </tr>
 <?= $avatar ?>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textbio'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><textarea rows="5" cols="45" name="newbio">
-<?= $member['bio'] ?></textarea></td>
+<?= $bio ?></textarea></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsig'] ?><br /><span class="smalltxt"><?= $lang['texthtmlis'] ?> <?= $htmlis ?><br /><?= $lang['textbbcodeis'] ?> <?= $bbcodeis ?></span></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><textarea rows="5" cols="45" name="newsig">
-<?= $member['sig'] ?></textarea></td>
+<?= $sig ?></textarea></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['texteditpro'] ?> - <?= $lang['textoptions'] ?></strong></font></td>
@@ -109,7 +109,7 @@
 <input type="checkbox" name="useoldu2u" value="yes" <?= $uou2uchecked ?> /> <?= $lang['textuseoldu2u'] ?><br />
 <input type="checkbox" name="saveogu2u" value="yes" <?= $ogu2uchecked ?> /> <?= $lang['textsaveog'] ?><br />
 <input type="checkbox" name="emailonu2u" value="yes" <?= $eouchecked ?> /> <?= $lang['textemailonu2u'] ?><br />
-<input type="text" name="timeoffset1" size="3" value="<?= $member['timeoffset'] ?>" /> <?= $textoffset ?>
+<input type="text" name="timeoffset1" size="3" value="<?= $timeOffset ?>" /> <?= $textoffset ?>
 </td>
 </tr>
 <tr class="tablerow">
@@ -128,15 +128,15 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['dateformat'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="dateformatnew" size="25" value="<?= $member['dateformat'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="dateformatnew" size="25" value="<?= $dateformat ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['editprofile_minfo'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>">
- <strong><?= $lang['editprofile_userid'] ?></strong> <?= $member['uid'] ?><br />
+ <strong><?= $lang['editprofile_userid'] ?></strong> <?= $uid ?><br />
  <?= $lang['editprofile_lastlogin'] ?> <?= $lastlogdate ?><br />
  <?= $lang['editprofile_regdate'] ?> <?= $registerdate ?><br />
- <?= $lang['editprofile_regip'] ?> <a href="https://whois.domaintools.com/<?= $member['regip'] ?>" onclick="window.open(this.href); return false;"><?= $member['regip'] ?></a><br />
+ <?= $lang['editprofile_regip'] ?> <a href="https://whois.domaintools.com/<?= $regip ?>" onclick="window.open(this.href); return false;"><?= $regip ?></a><br />
  <?= $lang['editprofile_loginfails'] ?> <?= $loginfails ?><br />
  <?= $lang['editprofile_loginfaildate'] ?> <?= $loginfaildate ?><br />
  <?= $lang['editprofile_sessfails'] ?> <?= $sessfails ?><br />

@@ -123,6 +123,7 @@ if ($action == 'profile') {
         $subTemplate->textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
         $subTemplate->hUsername = $vars->self['username'];
+        $subTemplate->email = $vars->self['email'];
         $subTemplate->token = $token->create('User Control Panel/Edit Profile', $vars->self['uid'], $vars::NONCE_FORM_EXP);
 
         $mempage = $subTemplate->process('memcp_profile.php');
