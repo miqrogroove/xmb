@@ -418,7 +418,10 @@ class MySQLiDatabase implements DBStuff
     }
 
     /**
-     * Can be used to make any expression query-safe, but see next function.
+     * Can be used to make any expression query-safe.
+     *
+     * This method produces output that is safe to use in a MySQL quoted string.
+     * It is not reversible via stripslashes due to C-style escape sequences.
      *
      * Example:
      *  $sqlinput = $db->escape($rawinput);
@@ -457,6 +460,19 @@ class MySQLiDatabase implements DBStuff
         }
     }
 
+    /**
+     * Escape a string used with the LIKE operator.
+     *
+     * Any required wildcards must be added separately (must not be escaped by this method).
+     *
+     * This method produces output that is safe to use in a MySQL quoted string.
+     * It is not reversible via stripslashes due to C-style escape sequences on top of limited inner slashing.
+     * This mix is necessary because the real_escape_string method produces C-style sequences, but the LIKE operator itself does not understand them.
+     *
+     * @since 1.9.10
+     * @param string $rawstring
+     * @return string
+     */
     public function like_escape(string $rawstring): string
     {
         try {

@@ -22,21 +22,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\vars;
+declare(strict_types=1);
 
-require 'header.php';
+namespace XMB;
 
-nav($lang['altstats']);
+require './header.php';
 
-loadtemplates('feature_statistics');
+$core = \XMB\Services\core();
+$db = \XMB\Services\db();
+$forums = \XMB\Services\forums();
+$sqlSvc = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$vars = \XMB\Services\vars();
+$lang = &$vars->lang;
+$SETTINGS = &$vars->settings;
+
+$core->nav($lang['altstats']);
 
 if ($SETTINGS['stats'] == 'off') {
     header('HTTP/1.0 403 Forbidden');
-    error($lang['fnasorry3'], TRUE);
+    $core->error($lang['fnasorry3']);
 }
 
-setCanonicalLink('stats.php');
-eval('$header = "'.template('header').'";');
+$core->setCanonicalLink($vars->full_url . 'stats.php');
+$header = $template->process('header.php');
 
 $fids = implode(',', $core->permittedFIDsForThreadView());
 if (strlen($fids) == 0) {
@@ -45,20 +54,20 @@ if (strlen($fids) == 0) {
     $restrict = " fid IN ($fids)";
 }
 
-$query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");
+$query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "members UNION ALL SELECT COUNT(*) FROM " . $vars->tablepre . "threads UNION ALL SELECT COUNT(*) FROM " . $vars->tablepre . "posts");
 $members = (int) $db->result($query, 0);
 $threads = (int) $db->result($query, 1);
 $posts = (int) $db->result($query, 2);
 $db->free_result($query);
 
-$query = $db->query("SELECT MIN(regdate) FROM ".X_PREFIX."members");
-$first_date = (int) $db->result($query, 0);  // If no aggregate rows, result of MIN() will be null and cast to zero.  Resolves ugly old error checking methods.
+$query = $db->query("SELECT MIN(regdate) FROM " . $vars->tablepre . "members");
+$first_date = (int) $db->result($query);  // If no aggregate rows, result of MIN() will be null and cast to zero.  Resolves ugly old error checking methods.
 $db->free_result($query);
 
 if ($first_date <= 0) {
     $days = 0;
 } else {
-    $days = (vars()->onlinetime - $first_date) / 86400;
+    $days = ($vars->onlinetime - $first_date) / 86400;
 }
 
 if ($days > 0) {
@@ -67,77 +76,64 @@ if ($days > 0) {
     $membersday = number_format(0, 2);
 }
 
-// Get total amount of forums
-$query = $db->query("SELECT COUNT(fid) FROM ".X_PREFIX."forums WHERE type='forum'");
-$forums = $db->result($query, 0);
-$db->free_result($query);
-
 // Get total amount of forums that are ON
-$query = $db->query("SELECT COUNT(fid) FROM ".X_PREFIX."forums WHERE type='forum' AND status='on'");
-$forumsa = $db->result($query, 0);
-$db->free_result($query);
+$forumList = $forums->forumCache();
+$types = array_column($forumList, 'type');
+$counts = array_count_values($types);
+$forumsa = $counts['forum'] ?? 0;
 
 // Get total amount of members that actually posted...
-$query = $db->query("SELECT COUNT(postnum) FROM ".X_PREFIX."members WHERE postnum > '0'");
-$membersact = $db->result($query, 0);
+$query = $db->query("SELECT COUNT(postnum) FROM " . $vars->tablepre . "members WHERE postnum > 0");
+$membersact = $db->result($query);
 $db->free_result($query);
 
 // In case any of these is 0, the stats will show wrong info, take care of that
-if ($posts == 0 || $members == 0 || $threads == 0 || $forums == 0 || $days < 1) {
-    message($lang['stats_incomplete']);
+if ($posts == 0 || $members == 0 || $threads == 0 || $forumsa == 0 || $days < 1) {
+    $core->message($lang['stats_incomplete']);
 }
 
 // Get amount of posts per user
-$mempost = 0;
-$query = $db->query("SELECT SUM(postnum) FROM ".X_PREFIX."members");
-$mempost = number_format(($db->result($query, 0) / $members), 2);
-$db->free_result($query);
+$mempost = number_format($posts / $members, 2);
 
 // Get amount of posts per forum
-$forumpost = 0;
-$query = $db->query("SELECT SUM(posts) FROM ".X_PREFIX."forums");
-$forumpost = number_format(($db->result($query, 0) / $forums), 2);
-$db->free_result($query);
+$forumpost = number_format($posts / $forumsa, 2);
 
-// Get amount of posts per thread
-$threadreply = 0;
-$query = $db->query("SELECT SUM(replies) FROM ".X_PREFIX."threads");
-$threadreply = number_format(($db->result($query, 0) / $threads), 2);
-$db->free_result($query);
+// Get amount of replies per thread
+$threadreply = number_format(($posts - $threads) / $threads, 2);
 
 // Check the percentage of members that posted against the amount of members that didn't post
 $mapercent  = number_format(($membersact*100/$members), 2).'%';
 
 // Get top 5 most viewed threads
-$viewmost = array();
-$query = $db->query("SELECT views, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY views DESC LIMIT 5");
-while($views = $db->fetch_array($query)) {
-    $views['subject'] = shortenString(rawHTMLsubject(stripslashes($views['subject'])));
-    $viewmost[] = '<a href="viewthread.php?tid='.intval($views['tid']).'">'.$views['subject'].'</a> ('.$views['views'].')';
+$viewmost = [];
+$query = $db->query("SELECT views, tid, subject FROM " . $vars->tablepre . "threads WHERE $restrict ORDER BY views DESC LIMIT 5");
+while ($views = $db->fetch_array($query)) {
+    $views['subject'] = shortenString($core->rawHTMLsubject(stripslashes($views['subject'])));
+    $viewmost[] = '<a href="' . $vars->full_url . 'viewthread.php?tid=' . intval($views['tid']) . '">' . $views['subject'] . '</a> (' . $views['views'] . ')';
 }
 $viewmost = implode('<br />', $viewmost);
 $db->free_result($query);
 
 // Get top 5 most replied to threads
-$replymost = array();
-$query = $db->query("SELECT replies, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY replies DESC LIMIT 5");
-while($reply = $db->fetch_array($query)) {
-    $reply['subject'] = shortenString(rawHTMLsubject(stripslashes($reply['subject'])));
-    $replymost[] = '<a href="viewthread.php?tid='.intval($reply['tid']).'">'.$reply['subject'].'</a> ('.$reply['replies'].')';
+$replymost = [];
+$query = $db->query("SELECT replies, tid, subject FROM " . $vars->tablepre . "threads WHERE $restrict ORDER BY replies DESC LIMIT 5");
+while ($reply = $db->fetch_array($query)) {
+    $reply['subject'] = shortenString($core->rawHTMLsubject(stripslashes($reply['subject'])));
+    $replymost[] = '<a href="' . $vars->full_url . 'viewthread.php?tid='.intval($reply['tid']).'">'.$reply['subject'].'</a> ('.$reply['replies'].')';
 }
 $replymost = implode('<br />', $replymost);
 $db->free_result($query);
 
 // Get last 5 posts
 $latest = array();
-$query = $db->query("SELECT lastpost, tid, subject FROM ".X_PREFIX."threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
-while($last = $db->fetch_array($query)) {
+$query = $db->query("SELECT lastpost, tid, subject FROM " . $vars->tablepre . "threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
+while ($last = $db->fetch_array($query)) {
     $last['lastpost'] = (int) $last['lastpost'];
-    $lpdate = gmdate($dateformat, core()->timeKludge((int) $last['lastpost']));
-    $lptime = gmdate($timecode, core()->timeKludge((int) $last['lastpost']));
+    $lpdate = gmdate($vars->dateformat, $core->timeKludge((int) $last['lastpost']));
+    $lptime = gmdate($vars->timecode, $core->timeKludge((int) $last['lastpost']));
     $thislast = $lang['lpoststats'].' '.$lang['lastreply1'].' '.$lpdate.' '.$lang['textat'].' '.$lptime;
-    $last['subject'] = shortenString(rawHTMLsubject(stripslashes($last['subject'])));
-    $latest[] = '<a href="viewthread.php?tid='.intval($last['tid']).'">'.$last['subject'].'</a> ('.$thislast.')';
+    $last['subject'] = shortenString($core->rawHTMLsubject(stripslashes($last['subject'])));
+    $latest[] = '<a href="' . $vars->full_url . 'viewthread.php?tid=' . intval($last['tid']) . '">' . $last['subject'] . '</a> (' . $thislast . ')';
 }
 $latest = implode('<br />', $latest);
 $db->free_result($query);
@@ -146,9 +142,9 @@ $db->free_result($query);
 if (strlen($fids) == 0) {
     $popforum = $lang['textnoforumsexist'];
 } else {
-    $query = $db->query("SELECT posts, threads, fid, name FROM ".X_PREFIX."forums WHERE $restrict AND (type='sub' OR type='forum') AND status='on' ORDER BY posts DESC LIMIT 0, 1");
+    $query = $db->query("SELECT posts, threads, fid, name FROM " . $vars->tablepre . "forums WHERE $restrict AND (type='sub' OR type='forum') AND status='on' ORDER BY posts DESC LIMIT 0, 1");
     $pop = $db->fetch_array($query);
-    $popforum = '<a href="forumdisplay.php?fid='.intval($pop['fid']).'"><strong>'.fnameOut($pop['name']).'</strong></a>';
+    $popforum = '<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . intval($pop['fid']) . '"><strong>' . fnameOut($pop['name']) . '</strong></a>';
     $db->free_result($query);
 }
 
@@ -156,49 +152,49 @@ if (strlen($fids) == 0) {
 $postsday = number_format($posts / $days, 2);
 
 // Get best member
-$timesearch = vars()->onlinetime - 86400;
+$timesearch = $vars->onlinetime - 86400;
 
-$query = $db->query("SELECT author, COUNT(author) AS Total FROM ".X_PREFIX."posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
+$query = $db->query("SELECT author, COUNT(author) AS Total FROM " . $vars->tablepre . "posts WHERE dateline >= '$timesearch' GROUP BY author ORDER BY Total DESC LIMIT 1");
 
 if ($db->num_rows($query) == 0) {
-    $bestmember = $lang['evalnobestmember'];
+    $template->bestmember = $lang['evalnobestmember'];
 } else {
     $info = $db->fetch_array($query);
     $bestmember = $info['author'];
-    $membesthtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($bestmember).'"><strong>'.$bestmember.'</strong></a>';
+    $membesthtml = '<a href="' . $vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($bestmember) . '"><strong>' . $bestmember . '</strong></a>';
     $bestmemberpost = $info['Total'];
     $search  = [ '$membesthtml', '$bestmemberpost' ];
     $replace = [  $membesthtml,   $bestmemberpost  ];
-    $bestmember = str_replace($search, $replace, $lang['evalbestmember']);
+    $template->bestmember = str_replace($search, $replace, $lang['evalbestmember']);
 }
 $db->free_result($query);
 
-$stats1 = str_replace('$bbname', $bbname, $lang['evalstats1']);
-$stats2 = str_replace('$posts', $posts, $lang['evalstats2']);
-$stats3 = str_replace('$threads', $threads, $lang['evalstats3']);
+$template->stats1 = str_replace('$bbname', $SETTINGS['bbname'], $lang['evalstats1']);
+$template->stats2 = str_replace('$posts', (string) $posts, $lang['evalstats2']);
+$template->stats3 = str_replace('$threads', (string) $threads, $lang['evalstats3']);
 
-$search  = [ '$forumsa', '$forums' ];
-$replace = [  $forumsa,   $forums  ];
-$stats4 = str_replace($search, $replace, $lang['evalstats4']);
+$search  = [ '$forums' ];
+$replace = [  $forumsa  ];
+$template->stats4 = str_replace($search, $replace, $lang['evalstats4']);
 
-$stats5 = str_replace('$members', $members, $lang['evalstats5']);
-$stats6 = str_replace('$viewmost', $viewmost, $lang['evalstats6']);
-$stats7 = str_replace('$replymost', $replymost, $lang['evalstats7']);
+$template->stats5 = str_replace('$members', (string) $members, $lang['evalstats5']);
+$template->stats6 = str_replace('$viewmost', $viewmost, $lang['evalstats6']);
+$template->stats7 = str_replace('$replymost', $replymost, $lang['evalstats7']);
 
 $search  = [ '$popforum', '$pop[posts]', '$pop[threads]'  ];
 $replace = [  $popforum,   $pop['posts'], $pop['threads'] ];
-$stats8 = str_replace($search, $replace, $lang['evalstats8']);
+$template->stats8 = str_replace($search, $replace, $lang['evalstats8']);
 
-$stats9 = str_replace('$mempost', $mempost, $lang['evalstats9']);
-$stats10 = str_replace('$forumpost', $forumpost, $lang['evalstats10']);
-$stats11 = str_replace('$threadreply', $threadreply, $lang['evalstats11']);
-$stats12 = str_replace('$postsday', $postsday, $lang['evalstats12']);
-$stats13 = str_replace('$membersday', $membersday, $lang['evalstats13']);
-$stats14 = str_replace('$latest', $latest, $lang['evalstats14']);
-$stats15 = str_replace('$mapercent', $mapercent, $lang['evalstats15']);
+$template->stats9 = str_replace('$mempost', $mempost, $lang['evalstats9']);
+$template->stats10 = str_replace('$forumpost', $forumpost, $lang['evalstats10']);
+$template->stats11 = str_replace('$threadreply', $threadreply, $lang['evalstats11']);
+$template->stats12 = str_replace('$postsday', $postsday, $lang['evalstats12']);
+$template->stats13 = str_replace('$membersday', $membersday, $lang['evalstats13']);
+$template->stats14 = str_replace('$latest', $latest, $lang['evalstats14']);
+$template->stats15 = str_replace('$mapercent', $mapercent, $lang['evalstats15']);
 
-eval('$statspage = "'.template('feature_statistics').'";');
+$statspage = $template->process('feature_statistics.php');
 
-end_time();
-eval('$footer = "'.template('footer').'";');
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $statspage, $footer;

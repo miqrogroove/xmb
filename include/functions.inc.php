@@ -176,6 +176,7 @@ class Core
         } else if ((int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer) {
             $this->auditBadLogin($member);
             if ($member['status'] != 'Super Administrator') {
+                // This special code could help implement old session vs. new login policy, but the session system currently lacks a public logout method for use with auditing.
                 return 'password-locked';
             } else if ((int) $member['bad_login_count'] >= $admin_limit) {
                 return 'password-locked';
@@ -201,10 +202,10 @@ class Core
         $reset_timer = 86400;
 
         if (time() >= (int) $member['bad_login_date'] + $reset_timer) {
-            // Allowed less than 10 failures.  After 24 hours, reset.
+            // After 24 hours, reset.
             $this->sql->resetLoginCounter($member['username'], time());
         } elseif ((int) $member['bad_login_count'] >= $guess_limit && time() >= (int) $member['bad_login_date'] + $lockout_timer) {
-            // User had more than 10 failures and should be locked out.  After 2 hours, reset.
+            // User had more than 10 failures and was locked out.  After 2 hours, reset.
             $this->sql->resetLoginCounter($member['username'], time());
         } else {
             $count = $this->sql->raiseLoginCounter($member['username']);
@@ -1561,7 +1562,7 @@ class Core
         $lang = &$this->vars->lang;
 
         // Initialize $forumselect
-        $forumselect = array();
+        $forumselect = [];
         if (!$multiple) {
             $forumselect[] = '<select name="'.$selectname.'">';
         } else {
@@ -1579,7 +1580,7 @@ class Core
         }
 
         // Populate $forumselect
-        $permitted = $this->getStructuredForums(true);
+        $permitted = $this->getStructuredForums(usePerms: true);
 
         foreach($permitted['forum']['0'] as $forum) {
             $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
@@ -1626,7 +1627,7 @@ class Core
         $forumselect[] = '<option value="">' . $this->vars->lang['forumjumpselect'] . '</option>';
 
         // Populate $forumselect
-        $permitted = $this->getStructuredForums(true);
+        $permitted = $this->getStructuredForums(usePerms: true);
 
         if (0 == count($permitted['group']['0']) && 0 == count($permitted['forum']['0'])) {
             return '';

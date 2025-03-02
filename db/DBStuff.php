@@ -171,6 +171,14 @@ interface DBStuff
      */
     public function escape_fast(string &$sql);
 
+    /**
+     * Escape a string used with the LIKE operator.
+     *
+     * Any required wildcards must be added separately (must not be escaped by this method).
+     *
+     * @param string $rawstring
+     * @return string
+     */
     public function like_escape(string $rawstring): string;
 
     public function regexp_escape(string $rawstring): string;
