@@ -31,7 +31,6 @@ require './header.php';
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $forums = \XMB\Services\forums();
-$sqlSvc = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;

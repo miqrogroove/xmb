@@ -30,6 +30,7 @@ use RuntimeException;
 use XMB\Core;
 use XMB\Password;
 use XMB\SQL;
+use XMB\Token;
 
 use function XMB\formYesNo;
 use function XMB\getPhpInput;
@@ -66,9 +67,9 @@ class Manager
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      * @param string $serror Condition prior to authentication.
      */
-    public function __construct(string $mode, private string $serror, private Core $core, SQL $sql)
+    public function __construct(string $mode, private string $serror, private Core $core, SQL $sql, private Token $token)
     {
-        $this->mechanisms = [new FormsAndCookies($core, $sql)];
+        $this->mechanisms = [new FormsAndCookies($core, $sql, $token)];
 
         switch ($mode) {
         case 'login':
@@ -135,7 +136,7 @@ class Manager
     {
         $lists = [];
         if ('good' == $this->status) {
-            foreach($this->mechanisms as $session) {
+            foreach ($this->mechanisms as $session) {
                 $lists[get_class($session)] = $session->getSessionList($this->saved->member['username']);
             }
         }
@@ -151,7 +152,7 @@ class Manager
     {
         if ('good' != $this->status) return;
 
-        foreach($this->mechanisms as $session) {
+        foreach ($this->mechanisms as $session) {
             $name = get_class($session);
             if (! empty($selection[$name])) {
                 $session->logoutByList($this->saved->member['username'], $selection[$name]);
@@ -174,7 +175,7 @@ class Manager
                 return;
             }
         }
-        foreach($this->mechanisms as $session) {
+        foreach ($this->mechanisms as $session) {
             $session->logoutAll($username, $isSelf);
         }
     }
@@ -186,7 +187,7 @@ class Manager
     {
         $data = new Data();
         $data->member =& $member;
-        foreach($this->mechanisms as $session) {
+        foreach ($this->mechanisms as $session) {
             if ($session->saveClientData($data)) {
                 break;
             }
@@ -201,7 +202,7 @@ class Manager
         $this->status = 'login-no-input';
 
         // First, check that all mechanisms are working and not already in a session.
-        foreach($this->mechanisms as $session) {
+        foreach ($this->mechanisms as $session) {
             $data = $session->checkSavedSession();
             if ($data->status == 'good') {
                 $this->status = 'already-logged-in';
@@ -216,12 +217,18 @@ class Manager
         }
 
         // Next, authenticate the login.
-        foreach($this->mechanisms as $session) {
+        foreach ($this->mechanisms as $session) {
             // Fetch the user record
             $data = $session->checkUsername();
 
             // Check for errors
             if ('good' == $data->status) {
+                if (! $session->checkOrigin()) {
+                    $this->status = 'origin-check-fail';
+                    $this->saved = new Data();
+                    return;
+                }
+
                 // Before we even authenticate the user, check if the account is authorized for login.
                 $this->status = $this->core->loginAuthorization($data->member, $this->serror);
                 if ('good' != $this->status) {
@@ -265,7 +272,7 @@ class Manager
     private function logout()
     {
 		$this->saved = new Data();
-        foreach($this->mechanisms as $session) {
+        foreach ($this->mechanisms as $session) {
             $data = $session->logout();
             if ($data->status == 'none') {
                 continue;
@@ -292,7 +299,7 @@ class Manager
         $this->status = 'session-no-input';
 
         // Authenticate any session token.
-        foreach($this->mechanisms as $session) {
+        foreach ($this->mechanisms as $session) {
             $data = $session->checkSavedSession();
 
             // Check for errors
@@ -322,6 +329,19 @@ class Manager
 
         // Save the results
         $this->saved = $data;
+    }
+
+    /**
+     * This event occurs when the client visits the login page to get ready for a login.
+     *
+     * @since 1.10.00
+     * @param string $newToken A copy of the CSRF token used in the login template.
+     */
+    public function preLogin(string $newToken)
+    {
+        foreach ($this->mechanisms as $session) {
+            $session->preLogin($newToken);
+        }
     }
 }
 
@@ -448,6 +468,22 @@ interface Mechanism
      * Each mechanism may customize the structure of its list.
      */
     public function logoutByList(string $username, array $selection);
+
+    /**
+     * This event occurs when the client visits the login page to get ready for a login.
+     *
+     * @since 1.10.00
+     * @param string $newToken A copy of the CSRF token used in the login template.
+     */
+    public function preLogin(string $newToken);
+
+    /**
+     * Check the origin of the login request to verify it has not been injected by a different domain.
+     *
+     * @since 1.10.00
+     * @return bool
+     */
+    public function checkOrigin(): bool;
 }
 
 /**
@@ -458,6 +494,7 @@ interface Mechanism
 class FormsAndCookies implements Mechanism
 {
     // Mechanism configuration.
+    const FORM_EXP = 3600;
     const REGEN_AFTER = 3600;
     const REGEN_ENABLED = true;
     const SESSION_LIFE_LONG = 86400 * 30;
@@ -467,12 +504,13 @@ class FormsAndCookies implements Mechanism
     const USER_MIN_LEN = 3;
 
     // Cookie names.
+    const FORM_COOKIE = 'login';
     const REGEN_COOKIE = 'id2';
     const SESSION_COOKIE = 'xmbpw';
     const TEST_COOKIE = 'test';
     const USER_COOKIE = 'xmbuser';
 
-    public function __construct(private Core $core, private SQL $sql)
+    public function __construct(private Core $core, private SQL $sql, private Token $token)
     {
         // Property promotion.
     }
@@ -813,9 +851,37 @@ class FormsAndCookies implements Mechanism
         }
     }
 
+    /**
+     * This event occurs when the client visits the login page to get ready for a login.
+     *
+     * @since 1.10.00
+     */
+    public function preLogin(string $newToken)
+    {
+        $this->core->put_cookie(self::FORM_COOKIE, $newToken, expire: time() + self::FORM_EXP);
+    }
+
+    /**
+     * Check the origin of the login request to verify it has not been injected by a different domain.
+     *
+     * @since 1.10.00
+     * @return bool
+     */
+    public function checkOrigin(): bool
+    {
+        // Due to the anonymous nature of a login request, we need to check both the form integrity and the cookie integrity.
+        $cookieToken = $this->get_cookie(self::FORM_COOKIE);
+        $postToken = getPhpInput('token');
+        $this->delete_cookie(self::FORM_COOKIE);
+        
+        if ($cookieToken != $postToken) return false;
+        
+        return $this->token->consume($postToken, 'Login', '');
+    }
+
     private function get_cookie(string $name): string
     {
-        return getPhpInput($name, 'c');
+        return getPhpInput($name, sourcearray: 'c');
     }
 
     private function delete_cookie(string $name)

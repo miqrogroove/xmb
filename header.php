@@ -160,7 +160,7 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $params = $loader->prepareSession();
-session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql()));
+session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql(), token()));
 login(new \XMB\Login(core(), db(), session(), sql(), translation(), vars()));
 login()->elevateUser($params['force_inv']);
 unset($params);

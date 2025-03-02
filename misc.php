@@ -85,6 +85,8 @@ switch($action) {
             if (X_MEMBER) {
                 $misc = $template->process('misc_feature_not_while_loggedin.php');
             } else {
+                $template->token = $token->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
+                $session->preLogin($template->token);
                 $misc = $template->process('misc_login.php');
             }
         } else {
@@ -97,9 +99,9 @@ switch($action) {
                     } else {
                         $invisible = ($invisible == 1);
                     }
-                    
+
                     $login->loginUser($invisible);
-                    $core->redirect($vars->full_url, 0);
+                    $core->redirect($vars->full_url, timeout: 0);
                     break;
                 case 'login-client-disabled':
                     $core->error($lang['cookies_disabled']);
@@ -113,6 +115,9 @@ switch($action) {
                     break;
                 case 'password-locked':
                     $core->error($lang['login_lockout']);
+                    break;
+                case 'origin-check-fail':
+                    $core->error($lang['bad_token']);
                     break;
                 case 'login-no-input':
                 case 'bad-password':
@@ -185,7 +190,7 @@ switch($action) {
             }
             
             $sql->setLostPasswordDate($member['uid'], time());
-            $newtoken = $token->create('Lost Password', $member['username'], $vars::NONCE_MAX_AGE, true);
+            $newtoken = $token->create('Lost Password', $member['username'], $vars::NONCE_MAX_AGE, anonymous: true);
             $link = $vars->full_url . "lost.php?a=$newtoken";
 
             $lang2 = $tran->loadPhrases(['charset', 'textyourpw', 'lostpw_body_eval']);

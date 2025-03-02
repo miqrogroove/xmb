@@ -86,8 +86,10 @@ class Token
      */
     function consume(string $token, string $action, string $object): bool
     {
+        $username = $this->vars->self['username'] ?? '';
+
         $this->sql->deleteTokensByDate(time());
 
-        return $this->sql->deleteToken($token, $this->vars->self['username'], $action, $object);
+        return $this->sql->deleteToken($token, $username, $action, $object);
     }
 }

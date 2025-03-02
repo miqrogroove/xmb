@@ -300,7 +300,7 @@ class Core
         }
     }
 
-    public function rawHTMLmessage(string $rawstring, string $allowhtml='no'): string
+    public function rawHTMLmessage(string $rawstring, string $allowhtml = 'no'): string
     {
         if ($allowhtml == 'yes') {
             return $this->smile->censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
@@ -1171,13 +1171,13 @@ class Core
         // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.
         if (headers_sent()) {
             trigger_error('Attempted use of put_cookie() after headers already sent.', E_USER_WARNING);
-            return false;
+            return;
         }
 
         // Default arguments were poorly chosen, so let's try to fill them in now.
         if (is_null($path)) $path = $this->vars->cookiepath;
         if (is_null($domain)) $domain = $this->vars->cookiedomain;
-        if (!$secure) $secure = $this->vars->cookiesecure;
+        if (! $secure) $secure = $this->vars->cookiesecure;
         $httponly = true;
         $samesite = 'Lax';
 
@@ -1189,7 +1189,7 @@ class Core
             'httponly' => $httponly,
             'samesite' => $samesite,
         ];
-        return setcookie($name, $value, $options);
+        setcookie($name, $value, $options);
     }
 
     /**

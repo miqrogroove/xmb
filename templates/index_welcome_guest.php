@@ -8,15 +8,12 @@
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><font size="1"><?= $lang['welcomeunreg'] ?></font></td>
 <td align="right" width="25%">
-<form method="post" action="misc.php?action=login" onsubmit="return disableButton(this);">
-<input type="hidden" name="token" value="" />
-<input type="hidden" name="hide" value="2" />
+<form method="get" action="<?= $full_url ?>misc.php" onsubmit="return disableButton(this);">
+<input type="hidden" name="action" value="login" />
 <table border="0" cellpadding="0" cellspacing="0">
 <tr>
 <td nowrap="nowrap">
-<input type="text" name="username" size="7" accesskey="u" />
-<input type="password" name="password" size="7" accesskey="p" />
-<input type="submit" class="submit" name="loginsubmit" value="<?= $lang['textlogin'] ?>" />
+<input type="submit" class="submit" value="<?= $lang['textlogin'] ?>" />
 </td>
 </tr>
 </table>
