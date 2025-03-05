@@ -548,9 +548,14 @@ switch ($action) {
             $core->error($lang['nomember']);
         }
 
+        $header = $template->process('header.php');
+
         $memberinfo['email'] = '';
         $memberinfo['password'] = '';
         $memberinfo['password2'] = '';
+        
+        $template->username = $memberinfo['username'];
+        $template->postnum = $memberinfo['postnum'];
 
         null_string($memberinfo['avatar']);
 
@@ -589,34 +594,32 @@ switch ($action) {
             }
         }
 
-        $header = $template->process('header.php');
-
         $encodeuser = recodeOut($memberinfo['username']);
         if (X_GUEST) {
-            $memberlinks = '';
+            $template->memberlinks = '';
         } else {
-            $memberlinks = " <small>(<a href='" . $vars->full_url . "u2u.php?action=send&amp;username=$encodeuser' onclick='Popup(this.href, \"Window\", 700, 450); return false;'>{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href='" . $vars->full_url . "buddy.php?action=add&amp;buddys=$encodeuser' onclick='Popup(this.href, \"Window\", 450, 400); return false;'>{$lang['addtobuddies']}</a>)</small>";
+            $template->memberlinks = " <small>(<a href='" . $vars->full_url . "u2u.php?action=send&amp;username=$encodeuser' onclick='Popup(this.href, \"Window\", 700, 450); return false;'>{$lang['textu2u']}</a>)&nbsp;&nbsp;(<a href='" . $vars->full_url . "buddy.php?action=add&amp;buddys=$encodeuser' onclick='Popup(this.href, \"Window\", 450, 400); return false;'>{$lang['addtobuddies']}</a>)</small>";
         }
 
         $daysreg = ($vars->onlinetime - (int) $memberinfo['regdate']) / (24*3600);
         if ($daysreg > 1) {
-            $ppd = $memberinfo['postnum'] / $daysreg;
-            $ppd = round($ppd, 2);
+            $template->ppd = round($memberinfo['postnum'] / $daysreg, 2);
         } else {
-            $ppd = $memberinfo['postnum'];
+            $template->ppd = $memberinfo['postnum'];
         }
 
-        $memberinfo['regdate'] = gmdate($dateformat, $core->timeKludge($memberinfo['regdate']));
+        $template->regdate = gmdate($vars->dateformat, $core->timeKludge((int) $memberinfo['regdate']));
 
-        $memberinfo['site'] = format_member_site($memberinfo['site']);
-        $site = $memberinfo['site'];
+        $template->site = format_member_site($memberinfo['site']);
 
         $rank['avatarrank'] = trim($rank['avatarrank']);
         $memberinfo['avatar'] = trim($memberinfo['avatar']);
 
         if ($rank['avatarrank'] !== '') {
-            $rank['avatarrank'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" />';
+            $rank['avatarrank'] = "<img src='{$rank['avatarrank']}' alt='{$lang['altavatar']}' border=0 />";
         }
+        
+        $template->avatarrank = $rank['avatarrank'];
 
         if ('on' == $SETTINGS['images_https_only'] && strpos($memberinfo['avatar'], ':') !== false && substr($memberinfo['avatar'], 0, 6) !== 'https:') {
             $memberinfo['avatar'] = '';
@@ -626,74 +629,68 @@ switch ($action) {
             $memberinfo['avatar'] = '<img src="'.$memberinfo['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
         }
 
-        if (($rank['avatarrank'] || $memberinfo['avatar']) && $site != '') {
-            $sitelink = $site;
+        if (($rank['avatarrank'] || $memberinfo['avatar']) && $template->site != '') {
             if ($memberinfo['avatar'] !== '') {
-                $newsitelink = "<a href='$sitelink' onclick='window.open(this.href); return false;'>{$memberinfo['avatar']}</a></td>";
+                $template->newsitelink = "<a href='" . $template->site . "' onclick='window.open(this.href); return false;'>{$memberinfo['avatar']}</a></td>";
             } else {
-                $newsitelink = '';
+                $template->newsitelink = '';
             }
         } else {
-            $sitelink = "about:blank";
-            $newsitelink = $memberinfo['avatar'];
+            $template->newsitelink = $memberinfo['avatar'];
         }
 
-        $showtitle = $rank['title'];
-        $stars = str_repeat('<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/star.gif" alt="*" border="0" />', $rank['stars']);
+        $template->showtitle = $rank['title'];
+        $template->stars = str_repeat('<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/star.gif" alt="*" border="0" />', (int) $rank['stars']);
 
         if ($memberinfo['customstatus'] != '') {
-            $showtitle = $rank['title'];
-            $customstatus = '<br />' . $smile->censor($memberinfo['customstatus']);
+            $template->customstatus = '<br />' . $smile->censor($memberinfo['customstatus']);
         } else {
-            $showtitle = $rank['title'];
-            $customstatus = '';
+            $template->customstatus = '';
         }
 
         if (! ((int) $memberinfo['lastvisit'] > 0)) {
-            $lastmembervisittext = $lang['textpendinglogin'];
+            $template->lastmembervisittext = $lang['textpendinglogin'];
         } else {
-            $lastvisitdate = gmdate($vars->dateformat, $core->timeKludge($memberinfo['lastvisit']));
-            $lastvisittime = gmdate($vars->timecode, $core->timeKludge($memberinfo['lastvisit']));
-            $lastmembervisittext = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
+            $lastvisitdate = gmdate($vars->dateformat, $core->timeKludge((int) $memberinfo['lastvisit']));
+            $lastvisittime = gmdate($vars->timecode, $core->timeKludge((int) $memberinfo['lastvisit']));
+            $template->lastmembervisittext = "$lastvisitdate {$lang['textat']} $lastvisittime";
         }
 
         $posts = $sql->countPosts();
 
         $posttot = $posts;
         if ($posttot == 0) {
-            $percent = '0';
+            $template->percent = '0';
         } else {
-            $percent = $memberinfo['postnum']*100/$posttot;
-            $percent = round($percent, 2);
+            $percent = $memberinfo['postnum'] * 100 / $posttot;
+            $template->percent = round($percent, 2);
         }
 
-        $memberinfo['bio'] = nl2br($core->rawHTMLsubject($memberinfo['bio']));
-
-        $template->emailblock = '';
+        $template->bio = nl2br($core->rawHTMLsubject($memberinfo['bio']));
 
         if (X_SADMIN) {
-            $admin_edit = "<br />{$lang['adminoption']} <a href='./editprofile.php?user=$encodeuser'>{$lang['admin_edituseraccount']}</a>";
+            $template->admin_edit = "<br />{$lang['adminoption']} <a href='./editprofile.php?user=$encodeuser'>{$lang['admin_edituseraccount']}</a>";
         } else {
-            $admin_edit = '';
+            $template->admin_edit = '';
         }
 
         if ($memberinfo['mood'] != '') {
-            $memberinfo['mood'] = $core->postify(
+            $template->mood = $core->postify(
                 message: $memberinfo['mood'],
                 allowimgcode: 'no',
                 ignorespaces: true,
-                ismood: 'yes'
+                ismood: 'yes',
             );
         } else {
-            $memberinfo['mood'] = '';
+            $template->mood = '';
         }
 
-        $memberinfo['location'] = $core->rawHTMLsubject($memberinfo['location']);
+        $template->location = $core->rawHTMLsubject($memberinfo['location']);
 
         if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
-            $memberinfo['bday'] = $lang['textnone'];
+            $template->bday = $lang['textnone'];
         } else {
-            $memberinfo['bday'] = $core->printGmDate(MakeTime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)), $vars->dateformat, -$vars->timeoffset);
+            $template->bday = $core->printGmDate(MakeTime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)), $vars->dateformat, -$vars->timeoffset);
         }
 
         // Forum most active in
@@ -716,9 +713,9 @@ switch ($action) {
             $row = $db->fetch_array($query);
             $posts = $row['posts'];
             $forum = $forums->getForum((int) $row['fid']);
-            $topforum = "<a href='" . $vars->full_url . "forumdisplay.php?fid={$forum['fid']}'>" . fnameOut($forum['name']) . "</a> ($posts {$lang['memposts']}) [" . round(($posts/$memberinfo['postnum'])*100, 1) . "% {$lang['textoftotposts']}]";
+            $template->topforum = "<a href='" . $vars->full_url . "forumdisplay.php?fid={$forum['fid']}'>" . fnameOut($forum['name']) . "</a> ($posts {$lang['memposts']}) [" . round(($posts/$memberinfo['postnum'])*100, 1) . "% {$lang['textoftotposts']}]";
         } else {
-            $topforum = $lang['textnopostsyet'];
+            $template->topforum = $lang['textnopostsyet'];
         }
 
         // Last post
@@ -742,9 +739,9 @@ switch ($action) {
             $lastposttime = gmdate($vars->timecode, $core->timeKludge((int) $post['dateline']));
             $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
             $lpsubject = $core->rawHTMLsubject(stripslashes($post['subject']));
-            $lastpost = "<a href='" . $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}'>$lpsubject</a> ($lastposttext)";
+            $template->lastpost = "<a href='" . $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}'>$lpsubject</a> ($lastposttext)";
         } else {
-            $lastpost = $lang['textnopostsyet'];
+            $template->lastpost = $lang['textnopostsyet'];
         }
 
         if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
@@ -752,7 +749,8 @@ switch ($action) {
         } else {
             $lang['searchusermsg'] = str_replace('*USER*', recodeOut($memberinfo['username']), $lang['searchusermsg']);
         }
-        eval('$memberpage = "'.template('member_profile').'";');
+        
+        $memberpage = $template->process('member_profile.php');
         break;
 
     default:
