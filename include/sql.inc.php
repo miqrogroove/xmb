@@ -991,7 +991,11 @@ class SQL
      */
     public function countThreadsByUser(string $username, int $fid, bool $quarantine = false): int
     {
-        return $this->countThreadsByForum($fid, $username, $quarantine);
+        return $this->countThreadsByFIDs(
+            fids: [$fid],
+            username: $username,
+            quarantine: $quarantine,
+        );
     }
 
     /**
@@ -999,18 +1003,34 @@ class SQL
      *
      * @since 1.10.00
      */
-    public function countThreadsByForum(int $fid, ?string $username = null, bool $quarantine = false): int
+    public function countThreadsByForum(int $fid): int
     {
-        if (is_null($username)) {
-            $author = '';
-        } else {
+        return $this->countThreadsByFIDs([$fid]);
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function countThreadsByFIDs(array $fids, ?int $after = null, ?string $username = null, bool $quarantine = false): int
+    {
+        $fids = implode(',', array_map('intval', $fids));
+
+        $extra = '';
+
+        if (! is_null($after)) {
+            $extra .= " AND lastpost > '$after'"; // Remember, lastpost is a varchar field.
+        }
+
+        if (! is_null($username)) {
             $this->db->escape_fast($username);
-            $author =  "AND author = '$username'";
+            $extra .= " AND author = '$username'";
         }
 
         $table = $quarantine ? $this->tablepre . 'hold_threads' : $this->tablepre . 'threads';
 
-        $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE fid = $fid $author");
+        $query = $this->db->query("SELECT COUNT(*) FROM $table WHERE fid IN ($fids) $extra");
         $result = (int) $this->db->result($query);
         $this->db->free_result($query);
 

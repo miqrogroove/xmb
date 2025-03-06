@@ -347,9 +347,7 @@ while ($thread = $db->fetch_array($querytop)) {
         $thread['realtid'] = $thread['tid'];
     }
 
-    $template->folder = $folder;
-    $template->thread = $thread;
-
+    $template->tid = $thread['tid'];
     $template->lastpostrow = $template->process('forumdisplay_thread_lastpost.php');
 
     if ('1' === $thread['pollopts']) {
@@ -360,7 +358,9 @@ while ($thread = $db->fetch_array($querytop)) {
         $prefix = $lang['toppedprefix'].' '.$prefix;
     }
 
+    $template->folder = $folder;
     $template->prefix = $prefix;
+    $template->thread = $thread;
 
     $template->threadlist .= $template->process($forumdisplay_thread . '.php');
 }

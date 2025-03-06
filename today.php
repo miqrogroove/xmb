@@ -22,118 +22,118 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\forums;
-use function XMB\Services\vars;
+declare(strict_types=1);
 
-require 'header.php';
+namespace XMB;
 
-loadtemplates(
-'forumdisplay_thread_lastpost',
-'today',
-'today_noposts',
-'today_row',
-'today_multipage'
-);
+require './header.php';
 
-nav($lang['navtodaysposts']);
+$core = \XMB\Services\core();
+$db = \XMB\Services\db();
+$forums = \XMB\Services\forums();
+$sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$vars = \XMB\Services\vars();
+$lang = &$vars->lang;
+$SETTINGS = &$vars->settings;
+
+$core->nav($lang['navtodaysposts']);
 
 if ($SETTINGS['todaysposts'] == 'off') {
     header('HTTP/1.0 403 Forbidden');
-    error($lang['fnasorry3'], TRUE);
+    $core->error($lang['fnasorry3']);
 }
 
-$daysold = getInt('daysold', 'r');
-if ($daysold < 1) {
-    $daysold = 1;
-}
-$srchfrom = vars()->onlinetime - (86400 * $daysold);
+$header = $template->process('header.php');
 
-$tids = array();
-$fids = implode(',', $core->permittedFIDsForThreadView());
+$template->daysold = max(1, getInt('daysold', 'r'));
+$srchfrom = $vars->onlinetime - (86400 * $template->daysold);
 
-if (strlen($fids) == 0) {
+$tids = [];
+$afids = $core->permittedFIDsForThreadView();
+$fids = implode(',', $afids);
+
+if (count($afids) == 0) {
     $threadcount = 0;
 } else {
-    $threadcount = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE lastpost > '$srchfrom' AND fid IN ($fids)"), 0);
+    $threadcount = $sql->countThreadsByFIDs($afids, $srchfrom);
 }
 
-if ($threadcount == 0) {
-    eval('$header = "'.template('header').'";');
-    $noPostsMessage = ($daysold == 1) ? $lang['nopoststoday'] : $lang['noPostsTimePeriod'];
-    $multipage = '';
-    eval('$rows = "'.template('today_noposts').'";');
-} else {
-    if ($daysold == 1) {
-        $mpage = multipage($threadcount, $tpp, 'today.php');
-    } else {
-        $mpage = multipage($threadcount, $tpp, 'today.php?daysold='.$daysold);
-    }
-    $multipage =& $mpage['html'];
-    if (strlen($mpage['html']) != 0) {
-        eval('$multipage = "'.template('today_multipage').'";');
-    }
+$template->multipage = '';
 
-    eval('$header = "'.template('header').'";');
+if ($threadcount == 0) {
+    $template->noPostsMessage = ($template->daysold == 1) ? $lang['nopoststoday'] : $lang['noPostsTimePeriod'];
+    $template->rows = $template->process('today_noposts.php');
+} else {
+    if ($template->daysold == 1) {
+        $mpage = $core->multipage($threadcount, $vars->tpp, $vars->full_url . 'today.php');
+    } else {
+        $mpage = $core->multipage($threadcount, $vars->tpp, $vars->full_url . 'today.php?daysold=' . $template->daysold);
+    }
+    if (strlen($mpage['html']) != 0) {
+        $template->pagenav = $mpage['html'];
+        $template->multipage = $template->process('today_multipage.php');
+    }
 
     $t_extension = get_extension($lang['toppedprefix']);
-    switch($t_extension) {
+    switch ($t_extension) {
         case 'gif':
         case 'jpg':
         case 'jpeg':
         case 'png':
-            $lang['toppedprefix'] = '<img src="'.$imgdir.'/'.$lang['toppedprefix'].'" alt="'.$lang['toppedpost'].'" border="0" />';
+            $lang['toppedprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['toppedprefix'] . '" alt="' . $lang['toppedpost'] . '" border=0 />';
             break;
     }
 
     $p_extension = get_extension($lang['pollprefix']);
-    switch($p_extension) {
+    switch ($p_extension) {
         case 'gif':
         case 'jpg':
         case 'jpeg':
         case 'png':
-            $lang['pollprefix'] = '<img src="'.$imgdir.'/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" />';
+            $lang['pollprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['pollprefix'] . '" alt="' . $lang['postpoll'] . '" border=0 />';
             break;
     }
 
     $query = $db->query(
         "SELECT t.*, t.replies+1 as posts, m.uid
-         FROM ".X_PREFIX."threads t
-         LEFT JOIN ".X_PREFIX."members AS m ON t.author = m.username
+         FROM " . $vars->tablepre . "threads t
+         LEFT JOIN " . $vars->tablepre . "members AS m ON t.author = m.username
          WHERE t.lastpost > '$srchfrom' AND t.fid IN ($fids)
          ORDER BY t.lastpost DESC
-         LIMIT {$mpage['start']}, $tpp"
+         LIMIT {$mpage['start']}, " . $vars->tpp
     );
     
-    $threadsInFid = array();
+    $threadsInFid = [];
 
-    if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $self['postnum'] > 0) {
-        while($thread = $db->fetch_array($query)) {
+    if ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $vars->self['postnum'] > 0) {
+        while ($thread = $db->fetch_array($query)) {
             $threadsInFid[] = $thread['tid'];
         }
         $db->data_seek($query, 0);
 
         $threadsInFid = implode(',', $threadsInFid);
-        $queryfids = $db->query("SELECT tid FROM ".X_PREFIX."posts WHERE tid IN ($threadsInFid) AND author='$xmbuser' GROUP BY tid");
+        $queryfids = $db->query("SELECT tid FROM " . $vars->tablepre . "posts WHERE tid IN ($threadsInFid) AND author = '" . $vars->xmbuser . "' GROUP BY tid");
 
-        $threadsInFid = array();
-        while($row = $db->fetch_array($queryfids)) {
+        $threadsInFid = [];
+        while ($row = $db->fetch_array($queryfids)) {
             $threadsInFid[] = $row['tid'];
         }
         $db->free_result($queryfids);
     }
 
-    $today_row = array();
-    while($thread = $db->fetch_array($query)) {
-        $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
-        $forum = forums()->getForum((int) $thread['fid']);
+    $today_row = [];
+    while ($thread = $db->fetch_array($query)) {
+        $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+        $forum = $forums->getForum((int) $thread['fid']);
         $thread['name'] = fnameOut($forum['name']);
 
         if ($thread['author'] == 'Anonymous') {
-            $authorlink = $lang['textanonymous'];
+            $template->authorlink = $lang['textanonymous'];
         } elseif (is_null($thread['uid'])) {
-            $authorlink = $thread['author'];
+            $template->authorlink = $thread['author'];
         } else {
-            $authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
+            $template->authorlink = '<a href="' . $vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($thread['author']) . '">' . $thread['author'] . '</a>';
         }
 
         $lastpost = explode('|', $thread['lastpost']);
@@ -146,18 +146,18 @@ if ($threadcount == 0) {
             $lastpostname = $lang['textanonymous'];
         }
 
-        $lastreplydate = gmdate($dateformat, core()->timeKludge((int) $lastpost[0]));
-        $lastreplytime = gmdate($timecode, core()->timeKludge((int) $lastpost[0]));
-        $lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
+        $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
+        $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
+        $template->lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
-        if ($thread['icon'] != '' && file_exists($smdir.'/'.$thread['icon'])) {
-            $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
+        if ($thread['icon'] != '' && file_exists(XMB_ROOT . $vars->theme['smdir'] . '/' . $thread['icon'])) {
+            $thread['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'] . '" alt="' . $thread['icon'] . '" border=0 />';
         } else {
             $thread['icon'] = '';
         }
 
         if ($thread['closed'] == 'yes') {
-            $folder = '<img src="'.$imgdir.'/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
+            $template->folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/lock_folder.gif" alt="' . $lang['altclosedtopic'] . '" border=0 />';
         } else {
             if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                 $folder = 'hot_folder.gif';
@@ -165,8 +165,8 @@ if ($threadcount == 0) {
                 $folder = 'folder.gif';
             }
 
-            $oT = strpos($oldtopics, "|$lastPid|");
-            if (vars()->lastvisit < (int) $dalast && $oT === false) {
+            $oT = strpos($vars->oldtopics, "|$lastPid|");
+            if ($vars->lastvisit < (int) $dalast && $oT === false) {
                 if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                     $folder = 'hot_red_folder.gif';
                 } else {
@@ -178,35 +178,38 @@ if ($threadcount == 0) {
                 $folder = 'dot_'.$folder;
             }
 
-            $folder = '<img src="'.$imgdir.'/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
+            $template->folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $folder . '" alt="' . $lang['altfolder'] . '" border=0 />';
 
             $moved = explode('|', $thread['closed']);
             if ($moved[0] == 'moved') {
                 continue;
             }
         }
+        
+        $template->tid = $thread['tid'];
+        $template->lastpostrow = $template->process('forumdisplay_thread_lastpost.php');
 
-        $prefix = '';
-        eval('$lastpostrow = "'.template('forumdisplay_thread_lastpost').'";');
+        $template->prefix = '';
 
         if ('1' === $thread['pollopts']) {
-            $prefix = $lang['pollprefix'].' ';
+            $template->prefix = $lang['pollprefix'] . ' ';
         }
 
         if ('1' === $thread['topped']) {
-            $prefix = $lang['toppedprefix'].' '.$prefix;
+            $template->prefix = $lang['toppedprefix'] . ' ' . $template->prefix;
         }
 
         $multipage2 = '';
+        $template->thread = $thread;
 
-        eval('$today_row[] = "'.template('today_row').'";');
+        $today_row[] = $template->process('today_row.php');
     }
-    $rows = implode("\n", $today_row);
+    $template->rows = implode("\n", $today_row);
     $db->free_result($query);
 }
 
-eval('$todaypage = "'.template('today').'";');
+$todaypage = $template->process('today.php');
 
-end_time();
-eval('$footer = "'.template('footer').'";');
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $todaypage, $footer;
