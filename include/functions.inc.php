@@ -1033,7 +1033,7 @@ class Core
 
         if (headers_sent()) {
             $template = new \XMB\Template($this->vars);
-            $template->path = $path;
+            $template->path = addslashes($path);
             $template->timeout = $timeout * 1000;
             $template->process('functions_redirect.php', echo: true);
         } else {
@@ -1799,7 +1799,11 @@ class Core
                 }
                 $this->redirect($newurl, timeout: 0);
                 exit();
+            } else {
+                $message = $this->vars->lang['invalidforumpw'];
             }
+        } else {
+            $message = $this->vars->lang['forumpwinfo'];
         }
 
         $template = new \XMB\Template($this->vars);
@@ -1807,7 +1811,7 @@ class Core
 
         $template->label = str_replace('$forum', $forum['name'], $this->vars->lang['textpasswordForum']);
         $pwform = $template->process('forumdisplay_password.php');
-        $this->error($this->vars->lang['invalidforumpw'], append: $pwform);
+        $this->message($message, append: $pwform);
     }
 
     /**
