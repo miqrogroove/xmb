@@ -1531,7 +1531,7 @@ function redirect($path, $timeout=2, $type=X_REDIRECT_HEADER) {
         ?>
         <script language="javascript" type="text/javascript">
         function redirect() {
-            window.location.replace("<?php echo $path?>");
+            window.location.replace("<?php echo addslashes($path) ?>");
         }
         setTimeout("redirect();", <?php echo ($timeout*1000)?>);
         </script>
@@ -2355,8 +2355,9 @@ function getOneForumPerm($forum, $bitfield) {
 }
 
 function handlePasswordDialog($fid) {
-    global $db, $full_url, $url, $THEME, $lang;
+    global $db, $full_url, $THEME, $lang;
 
+    $url = '';
     $fid = intval($fid);
     $pwinput = postedVar('pw', '', FALSE, FALSE);
 
@@ -2364,7 +2365,7 @@ function handlePasswordDialog($fid) {
     if (strlen($pwinput) != 0 && $forum !== FALSE) {
         if ( $pwinput === $forum['password'] ) {
             put_cookie('fidpw'.$fid, $forum['password'], (time() + (86400*30)));
-            $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
+            $newurl = preg_replace('/[^\x20-\x7e]/', '', $GLOBALS['url']);
             redirect($full_url.substr($newurl, strlen($cookiepath)), 0);
         } else {
             eval('$pwform = "'.template('forumdisplay_password').'";');
