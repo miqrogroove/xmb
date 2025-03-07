@@ -283,13 +283,21 @@ class SQL
      *
      * @since 1.9.12
      * @param string $username Must be HTML encoded.
+     * @param string $email Optional.
      * @return array Member record or empty array.
      */
-    public function getMemberByName(string $username): array
+    public function getMemberByName(string $username, ?string $email = null): array
     {
-        $sqluser = $this->db->escape($username);
+        $this->db->escape_fast($username);
 
-        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "members WHERE username = '$sqluser'");
+        if (! is_null($email)) {
+            $this->db->escape_fast($email);
+            $extra = "AND email = '$email'";
+        } else {
+            $extra = '';
+        }
+
+        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "members WHERE username = '$username' $extra");
         if ($this->db->num_rows($query) == 1) {
             $member = $this->db->fetch_array($query);
         } else {

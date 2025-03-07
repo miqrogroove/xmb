@@ -1057,6 +1057,7 @@ $lang['textorder'] = "Order:";
 $lang['textpages'] = "Pages:";
 $lang['textpassword'] = "Password:";
 $lang['textpasswordcf'] = "Confirm Password:";
+$lang['textpasswordForum'] = "Password for \$forum:";
 $lang['textpendinglogin'] = "Pending First Login";
 $lang['textpermission1'] = "Normal";
 $lang['textpermission2'] = "Admins";

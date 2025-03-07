@@ -160,27 +160,24 @@ switch($action) {
 
     case 'lostpw':
         if (X_MEMBER) {
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_not_while_loggedin').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
-        }
-
-        if (noSubmit('lostpwsubmit')) {
-            eval('$misc = "'.template('misc_lostpw').'";');
+            $misc = $template->process('misc_feature_not_while_loggedin.php');
+        } elseif (noSubmit('lostpwsubmit')) {
+            $template->token = $token->create('Lost Password', '', $vars::NONCE_FORM_EXP, anonymous: true);
+            $misc = $template->process('misc_lostpw.php');
         } else {
-            $username = postedVar('username');
-            if (strlen($username) < 3) {
+            $core->request_secure('Lost Password', '', error_header: true);
+            $username = $core->postedVar('username');
+            if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
                 $core->error($lang['badinfo']);
             }
-            $email = postedVar('email');
-            $query = $db->query("SELECT uid, username, email, pwdate, langfile, status FROM " . $vars->tablepre . "members WHERE username='$username' AND email='$email'");
-            if ($db->num_rows($query) != 1) {
+            $email = $core->postedVar('email');
+
+            $member = $sql->getMemberByName($username, $email);
+
+            if (empty($member)) {
                 $core->error($lang['badinfo']);
             }
-            $member = $db->fetch_array($query);
-            $db->free_result($query);
+
             if ($member['status'] == 'Banned') {
                 $core->error($lang['bannedmessage']);
             }
@@ -190,7 +187,7 @@ switch($action) {
                 $core->error($lang['lostpw_in24hrs']);
             }
             
-            $sql->setLostPasswordDate($member['uid'], time());
+            $sql->setLostPasswordDate((int) $member['uid'], time());
             $newtoken = $token->create('Lost Password', $member['username'], $vars::NONCE_MAX_AGE, anonymous: true);
             $link = $vars->full_url . "lost.php?a=$newtoken";
 
@@ -198,10 +195,10 @@ switch($action) {
             $translate = $lang2[$member['langfile']];
             $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
             $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
-            $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
+            $rawbbname = htmlspecialchars_decode($SETTINGS['bbname'], ENT_NOQUOTES);
             $subject = "[$rawbbname] {$translate['textyourpw']}";
-            $search  = [ '$name', '$link' ];
-            $replace = [  $name,   $link  ];
+            $search  = ['$name', '$link'];
+            $replace = [$name, $link];
             $body = str_replace($search, $replace, $lang['lostpw_body_eval']);
             $core->xmb_mail($emailaddy, $subject, $body, $translate['charset']);
 
@@ -210,7 +207,7 @@ switch($action) {
         break;
 
     case 'online':
-        require XMB_ROOT.'include/online.inc.php';
+        require XMB_ROOT . 'include/online.inc.php';
 
         if ($SETTINGS['whosonlinestatus'] == 'off') {
             header('HTTP/1.0 403 Forbidden');

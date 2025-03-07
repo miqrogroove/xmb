@@ -404,7 +404,7 @@ if ($action == '') {
                     if ($poll_length > 97) {
                         $poll_length = 97;
                     }
-                    $subTemplate->pollbar = "<img src='{$full_url}" . $vars->theme['imgdir'] . "/pollbar.gif' height=10 width='{$poll_length}%' alt='{$lang['altpollpercentage']}' title='{$lang['altpollpercentage']}' border=0 />";
+                    $subTemplate->pollbar = "<img src='{$full_url}" . $vars->theme['imgdir'] . "/pollbar.gif' height=10 width='{$poll_length}%' alt='{$lang['altpollpercentage']}' title='{$lang['altpollpercentage']}' border='0' />";
                 } else {
                     $subTemplate->percentage = '0%';
                 }
@@ -549,9 +549,9 @@ if ($action == '') {
         $subTemplate->poston = "{$lang['textposton']} $date {$lang['textat']} $time";
 
         if ($post['icon'] != '' && file_exists(XMB_ROOT . $vars->theme['smdir'] . '/' . $post['icon'])) {
-            $post['icon'] = "<img src='{$full_url}" . $vars->theme['smdir'] . "/{$post['icon']}' alt='{$post['icon']}' border=0 />";
+            $post['icon'] = "<img src='{$full_url}" . $vars->theme['smdir'] . "/{$post['icon']}' alt='{$post['icon']}' border='0' />";
         } else {
-            $post['icon'] = "<img src='{$full_url}" . $vars->theme['imgdir'] . "/default_icon.gif' alt='[*]' border=0 />";
+            $post['icon'] = "<img src='{$full_url}" . $vars->theme['imgdir'] . "/default_icon.gif' alt='[*]' border='0' />";
         }
 
         if ($post['author'] != 'Anonymous' && $post['username'] && ('off' == $SETTINGS['hide_banned'] || $post['status'] != 'Banned')) {
@@ -627,12 +627,12 @@ if ($action == '') {
                 $rank = &$rankposts[$max];
             }
 
-            $subTemplate->stars = str_repeat("<img src='{$full_url}" . $vars->theme['imgdir'] . "/star.gif' alt='*' border=0 />", (int) $rank['stars']) . '<br />';
+            $subTemplate->stars = str_repeat("<img src='{$full_url}" . $vars->theme['imgdir'] . "/star.gif' alt='*' border='0' />", (int) $rank['stars']) . '<br />';
             $subTemplate->showtitle = ($post['customstatus'] != '') ? $post['customstatus'] . '<br />' : $rank['title'] . '<br />';
 
             // $rankAvatar is the avatar configured in rank settings.  $avatar is the user's avatar, pulled from the posts-join-members query.
             if ($rank['avatarrank'] != '') {
-                $subTemplate->rankAvatar = "<img src='{$rank['avatarrank']}' alt='{$lang['altavatar']}' border=0 /><br />";
+                $subTemplate->rankAvatar = "<img src='{$rank['avatarrank']}' alt='{$lang['altavatar']}' border='0' /><br />";
             } else {
                 $subTemplate->rankAvatar = '';
             }
@@ -648,7 +648,7 @@ if ($action == '') {
             $subTemplate->avatar = '';
             if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
                 if ($post['avatar'] !== '' && $rank['allowavatars'] != "no") {
-                    $subTemplate->avatar = "<img src='{$post['avatar']}' alt='{$lang['altavatar']}' border=0 />";
+                    $subTemplate->avatar = "<img src='{$post['avatar']}' alt='{$lang['altavatar']}' border='0' />";
                 }
             }
 
@@ -734,13 +734,12 @@ if ($action == '') {
         );
 
         if ($post['usesig'] == 'yes') {
-            $post['sig'] = $core->postify(
-                $post['sig'],
+            $subTemplate->sig = $core->postify(
+                message: $post['sig'],
                 allowsmilies: $forum['allowsmilies'],
                 allowbbcode: $SETTINGS['sigbbcode'],
                 allowimgcode: $forum['allowimgcode'],
             );
-            $subTemplate->post = $post;
             $post['message'] .= $subTemplate->process('viewthread_post_sig.php');
         }
 

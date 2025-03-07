@@ -103,7 +103,7 @@ default:
 }
 
 // Sanity Checks
-if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $self['uid'])) {
+if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $vars->self['uid'])) {
     header('HTTP/1.0 404 Not Found');
     $core->error($lang['textnothread']);
 }
@@ -112,7 +112,7 @@ if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $self['uid
 if ($filename == '') {
     if ($pid == 0 && !X_ADMIN) {
         // Allow preview of own attachments when the URL format requires a PID.
-        $file = $sql->getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $self['uid']);
+        $file = $sql->getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $vars->self['uid']);
     } else {
         $file = $sql->getAttachmentAndFID($aid, $quarantine, $pid);
     }
@@ -142,7 +142,7 @@ if ($pid > 0 || $file['fid'] != '') {
             $core->error($lang['privforummsg']);
         }
     } else if (! $perms[$vars::PERMS_PASSWORD]) {
-        $core->handlePasswordDialog($forum['fid']);
+        $core->handlePasswordDialog((int) $forum['fid']);
     }
 
     $fup = array();
@@ -158,7 +158,7 @@ if ($pid > 0 || $file['fid'] != '') {
                 $core->error($lang['privforummsg']);
             }
         } else if (! $fupPerms[$vars::PERMS_PASSWORD]) {
-            $core->handlePasswordDialog($fup['fid']);
+            $core->handlePasswordDialog((int) $fup['fid']);
         }
         unset($fup);
     }

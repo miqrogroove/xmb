@@ -1,4 +1,4 @@
-<form method="post" action="lost.php" onsubmit="return disableButton(this);">
+<form method="post" action="<?= $full_url ?>lost.php" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>

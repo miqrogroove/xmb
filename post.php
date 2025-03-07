@@ -186,7 +186,7 @@ $fup = [];
 if ($forum['type'] == 'sub') {
     $fup = $forums->getForum((int) $forum['fup']);
     // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = checkForumPermissions($fup);
+    $fupPerms = $core->checkForumPermissions($fup);
     if (! $fupPerms[$vars::PERMS_VIEW]) {
         if (X_GUEST) {
             $core->redirect($vars->full_url . "misc.php?action=login", 0);
@@ -679,7 +679,12 @@ switch($action) {
                 $subTemplate->message1 = $core->postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
-                    $subTemplate->post = ['sig' => $core->postify($vars->self['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false)];
+                    $subTemplate->sig = $core->postify(
+                        message: $vars->self['sig'],
+                        allowsmilies: $forum['allowsmilies'],
+                        allowbbcode: $SETTINGS['sigbbcode'],
+                        allowimgcode: $forum['allowimgcode'],
+                    );
                     $subTemplate->message1 .= $subTemplate->process('viewthread_post_sig.php');
                 }
                 $subTemplate->username = $username;
@@ -1079,7 +1084,12 @@ switch($action) {
                 $subTemplate->message1 = $core->postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
-                    $subTemplate->post = ['sig' => postify($vars->self['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false)];
+                    $subTemplate->sig = $core->postify(
+                        message: $vars->self['sig'],
+                        allowsmilies: $forum['allowsmilies'],
+                        allowbbcode: $SETTINGS['sigbbcode'],
+                        allowimgcode: $forum['allowimgcode'],
+                    );
                     $subTemplate->message1 .= $subTemplate->process('viewthread_post_sig.php');
                 }
 
@@ -1363,7 +1373,12 @@ switch($action) {
                 $message1 = $core->postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
                 if ($usesig == 'yes') {
-                    $subTemplate->post = ['sig' => $core->postify($vars->self['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false)];
+                    $subTemplate->sig = $core->postify(
+                        message: $vars->self['sig'],
+                        allowsmilies: $forum['allowsmilies'],
+                        allowbbcode: $SETTINGS['sigbbcode'],
+                        allowimgcode: $forum['allowimgcode'],
+                    );
                     $message1 .= $subTemplate->process('viewthread_post_sig.php');
                 }
                 $subTemplate->message1 = $message1;

@@ -81,7 +81,7 @@ if ($threadcount == 0) {
         case 'jpg':
         case 'jpeg':
         case 'png':
-            $lang['toppedprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['toppedprefix'] . '" alt="' . $lang['toppedpost'] . '" border=0 />';
+            $lang['toppedprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['toppedprefix'] . '" alt="' . $lang['toppedpost'] . '" border="0" />';
             break;
     }
 
@@ -91,7 +91,7 @@ if ($threadcount == 0) {
         case 'jpg':
         case 'jpeg':
         case 'png':
-            $lang['pollprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['pollprefix'] . '" alt="' . $lang['postpoll'] . '" border=0 />';
+            $lang['pollprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['pollprefix'] . '" alt="' . $lang['postpoll'] . '" border="0" />';
             break;
     }
 
@@ -151,13 +151,13 @@ if ($threadcount == 0) {
         $template->lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
         if ($thread['icon'] != '' && file_exists(XMB_ROOT . $vars->theme['smdir'] . '/' . $thread['icon'])) {
-            $thread['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'] . '" alt="' . $thread['icon'] . '" border=0 />';
+            $thread['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'] . '" alt="' . $thread['icon'] . '" border="0" />';
         } else {
             $thread['icon'] = '';
         }
 
         if ($thread['closed'] == 'yes') {
-            $template->folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/lock_folder.gif" alt="' . $lang['altclosedtopic'] . '" border=0 />';
+            $template->folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/lock_folder.gif" alt="' . $lang['altclosedtopic'] . '" border="0" />';
         } else {
             if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
                 $folder = 'hot_folder.gif';
@@ -178,7 +178,7 @@ if ($threadcount == 0) {
                 $folder = 'dot_'.$folder;
             }
 
-            $template->folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $folder . '" alt="' . $lang['altfolder'] . '" border=0 />';
+            $template->folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $folder . '" alt="' . $lang['altfolder'] . '" border="0" />';
 
             $moved = explode('|', $thread['closed']);
             if ($moved[0] == 'moved') {

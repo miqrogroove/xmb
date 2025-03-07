@@ -40,7 +40,7 @@ class Bootup
 
     public function loadConfig()
     {
-        require XMB_ROOT.'config.php';
+        require XMB_ROOT . 'config.php';
         
         if ($ipcheck === 'on') $ipcheck = true;
         
@@ -90,7 +90,7 @@ class Bootup
 
     public function setVersion()
     {
-        require XMB_ROOT.'include/version.php';
+        require XMB_ROOT . 'include/version.php';
 
         $this->template->copyright = $copyright;
         $this->template->versioncompany = $versioncompany;
@@ -118,7 +118,7 @@ class Bootup
     public function setURL()
     {
         // Validate URL Configuration
-        $this->vars->url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        $this->vars->url = $_SERVER['REQUEST_URI'] ?? '';
 
         if (empty($this->vars->full_url)) {
             header('HTTP/1.0 500 Internal Server Error');
@@ -135,7 +135,7 @@ class Bootup
                 $cookiedomain = substr($cookiedomain, 3);
             }
 
-            if (!isset($array['path'])) {
+            if (! isset($array['path'])) {
                 $array['path'] = '/';
             }
             $cookiepath = $array['path'];
@@ -184,11 +184,11 @@ class Bootup
 
     private function debugURLsettings($securesetting, $hostsetting, $pathsetting)
     {
-        if (!isset($_SERVER['REQUEST_URI'])) {
-            if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
+        if (! isset($_SERVER['REQUEST_URI'])) {
+            if (! headers_sent()) header('HTTP/1.0 500 Internal Server Error');
             if (false === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
                 exit('Error: REQUEST_URI is missing.  Your server may be misconfigured or incompatible with XMB.');
-            } elseif(!extension_loaded('ISAPI') && !isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
+            } elseif(! extension_loaded('ISAPI') && ! isset($_ENV['PHP_FCGI_MAX_REQUESTS'])) {
                 exit('Error: FastCGI is missing or not configured on your server.');
             } else {
                 exit('Error: Unexpected environment.  Please make sure FastCGI is working.');
@@ -226,7 +226,7 @@ class Bootup
         }
 
         if (!$success) {
-            if (!headers_sent()) header('HTTP/1.0 500 Internal Server Error');
+            if (! headers_sent()) header('HTTP/1.0 500 Internal Server Error');
             exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
         }
     }

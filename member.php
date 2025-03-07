@@ -616,7 +616,7 @@ switch ($action) {
         $memberinfo['avatar'] = trim($memberinfo['avatar']);
 
         if ($rank['avatarrank'] !== '') {
-            $rank['avatarrank'] = "<img src='{$rank['avatarrank']}' alt='{$lang['altavatar']}' border=0 />";
+            $rank['avatarrank'] = "<img src='{$rank['avatarrank']}' alt='{$lang['altavatar']}' border='0' />";
         }
         
         $template->avatarrank = $rank['avatarrank'];

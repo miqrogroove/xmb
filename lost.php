@@ -22,46 +22,47 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use function XMB\Services\sql;
+declare(strict_types=1);
 
-define('X_SCRIPT', 'lost.php');
+namespace XMB;
 
-require 'header.php';
+require './header.php';
 
-loadtemplates(
-'lost_pw_reset',
-'misc_feature_not_while_loggedin'
-);
+$core = \XMB\Services\core();
+$session = \XMB\Services\session();
+$sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$token = \XMB\Services\token();
+$vars = \XMB\Services\vars();
+$lang = &$vars->lang;
 
-$token1 = postedVar('a', '', false, false, false, 'g');
-$token2 = postedVar('token', '', false, false, false, 'p');
+$token1 = getPhpInput('a', sourcearray: 'g');
+$token2 = getPhpInput('token');
 
 $valid_get = preg_match('%^[a-f0-9]{32}$%', $token1) === 1;
 $valid_post = preg_match('%^[a-f0-9]{32}$%', $token2) === 1;
 
 if (X_MEMBER) {
-    eval('$page = "'.template('misc_feature_not_while_loggedin').'";');
-
+    $page = $template->process('misc_feature_not_while_loggedin.php');
 } elseif ($valid_get) {
     // Link from email received.
-    $token = $token1;
-    eval('$page = "'.template('lost_pw_reset').'";');
-
+    $template->token = $token1;
+    $page = $template->process('lost_pw_reset.php');
 } elseif ($valid_post) {
     // New password from posted form received.
-    $username = postedVar('username', '', true, false);
+    $username = $core->postedVar('username', dbescape: false);
     if ('' == $username) {
-        error($lang['textnousername']);
+        $core->error($lang['textnousername']);
     }
     if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
-        error($lang['username_length_invalid']);
+        $core->error($lang['username_length_invalid']);
     }
 
     $newPass = $core->assertPasswordPolicy('password1', 'password2');
 
     // Inputs look reasonable.  Check the token.
-    if (! \XMB\Token\consume($token2, 'Lost Password', $username)) {
-        error($lang['lostpw_bad_token']);
+    if (! $token->consume($token2, 'Lost Password', $username)) {
+        $core->error($lang['lostpw_bad_token']);
     }
 
     $passMan = new \XMB\Password($sql);
@@ -71,13 +72,12 @@ if (X_MEMBER) {
     $sql->deleteWhosonline($username);
     $session->logoutAll($username);
 
-    message($lang['lostpw_success']);
-
+    $core->message($lang['lostpw_success']);
 } else {
-    error($lang['lostpw_bad_token']);
+    $core->error($lang['lostpw_bad_token']);
 }
 
-eval('$header = "'.template('header').'";');
-end_time();
-eval('$footer = "'.template('footer').'";');
+$header = $template->process('header.php');
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $page, $footer;

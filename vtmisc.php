@@ -94,7 +94,7 @@ if ($forum['type'] == 'sub') {
     if (! $fupPerms[$vars::PERMS_VIEW]) {
         $core->error($lang['privforummsg']);
     } elseif (! $fupPerms[$vars::PERMS_PASSWORD]) {
-        $core->handlePasswordDialog($fup['fid']);
+        $core->handlePasswordDialog((int) $fup['fid']);
     } elseif ((int) $fup['fup'] > 0) {
         $fupup = $forums->getForum((int) $fup['fup']);
         $core->nav('<a href="' . $vars->full_url . 'index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');

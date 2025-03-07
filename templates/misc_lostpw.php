@@ -1,5 +1,5 @@
-<form method="post" action="misc.php?action=lostpw" onsubmit="return disableButton(this);">
-<input type="hidden" name="token" value="" />
+<form method="post" action="<?= $full_url?>misc.php?action=lostpw" onsubmit="return disableButton(this);">
+<input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">

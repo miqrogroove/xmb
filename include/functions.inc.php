@@ -35,6 +35,8 @@ use InvalidArgumentException;
  */
 class Core
 {
+    private array $mailConnections = [];
+
     public function __construct(
         private Attach $attach,
         private BBCode $bbcode,
@@ -1221,28 +1223,27 @@ class Core
      */
     private function altMail(string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = ''): bool
     {
-        global $mailer, $SETTINGS;
-        static $handlers;
+        $mailer = &$this->vars->mailer;
 
-        $message = str_replace(array("\r\n", "\r", "\n"), array("\n", "\n", "\r\n"), $message);
-        $subject = str_replace(array("\r", "\n"), array('', ''), $subject);
+        $message = str_replace(["\r\n", "\r", "\n"], ["\n", "\n", "\r\n"], $message);
+        $subject = str_replace(["\r", "\n"], ['', ''], $subject);
 
         if ($mailer['type'] == 'socket_SMTP') {
             require_once(XMB_ROOT . 'include/smtp.inc.php');
 
-            if (! isset($handlers['socket_SMTP'])) {
+            if (! isset($this->mailConnections['socket_SMTP'])) {
                 if ($this->vars->debug) {
-                    $mail = new socket_SMTP(true, './smtp-log.txt');
+                    $mail = new socket_SMTP(true, XMB_ROOT . 'smtp-log.txt');
                 } else {
                     $mail = new socket_SMTP;
                 }
-                $handlers['socket_SMTP'] = $mail;
+                $this->mailConnections['socket_SMTP'] = $mail;
                 if (! $mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password'])) {
                     return false;
                 }
                 register_shutdown_function(array($mail, 'disconnect'));
             } else {
-                $mail = $handlers['socket_SMTP'];
+                $mail = $this->mailConnections['socket_SMTP'];
                 if (false === $mail->connection) {
                     return false;
                 }
@@ -1251,9 +1252,9 @@ class Core
             $subjectInHeader = false;
             $toInHeader = false;
             $additional_headers = explode("\r\n", $additional_headers);
-            foreach($additional_headers as $k=>$h) {
+            foreach ($additional_headers as $k => $h) {
                 if (strpos(trim($h), 'ubject:') === 1) {
-                    $additional_headers[$k] = 'Subject: '.$subject."\r\n";
+                    $additional_headers[$k] = "Subject: $subject\r\n";
                     $subjectInHeader = true;
                     continue;
                 }
@@ -1263,24 +1264,24 @@ class Core
                 }
             }
 
-            if (!$subjectInHeader) {
-                $additional_headers[] = 'Subject: '.$subject;
+            if (! $subjectInHeader) {
+                $additional_headers[] = "Subject: $subject";
             }
 
-            if (!$toInHeader) {
-                $additional_headers[] = 'To: '.$to;
+            if (! $toInHeader) {
+                $additional_headers[] = "To: $to";
             }
 
             $additional_headers = implode("\r\n", $additional_headers);
 
-            return $mail->sendMessage($SETTINGS['adminemail'], $to, $message, $additional_headers);
+            return $mail->sendMessage($this->vars->settings['adminemail'], $to, $message, $additional_headers);
         } else {
             if (ini_get('safe_mode') == "1") {
                 $return = mail($to, $subject, $message, $additional_headers);
             } else {
                 $return = mail($to, $subject, $message, $additional_headers, $additional_parameters);
             }
-            if (!$return) {
+            if (! $return) {
                 $msg = 'XMB failed to send an e-mail because the PHP mail() function returned FALSE!  This might be caused by using an invalid address in XMB\'s Administrator E-Mail setting.';
                 trigger_error($msg, E_USER_WARNING);
             }
@@ -1776,11 +1777,11 @@ class Core
      *
      * Should be called when checkForumPermissions() shows X_PERMS_PASSWORD == false and the user is trying to access the forum.
      *
-     * @since 1.9.10
+     * @since 1.9 Formerly known as pwverify().
+     * @since 1.9.9
      */
     function handlePasswordDialog(int $fid)
     {
-        $this->template->url = $this->vars->url;
         $pwinput = getPhpInput('pw');
         $forum = $this->forums->getForum($fid);
 
@@ -1788,34 +1789,47 @@ class Core
             if ($pwinput === $forum['password']) {
                 $this->put_cookie('fidpw' . $fid, $forum['password'], time() + (86400*30));
                 $newurl = preg_replace('/[^\x20-\x7e]/', '', $this->vars->url);
-                $this->redirect($this->vars->full_url . substr($newurl, strlen($this->vars->cookiepath)), timeout: 0);
-            } else {
-                $pwform = $this->template->process('forumdisplay_password.php');
-                $this->error($this->vars->lang['invalidforumpw'], append: $pwform);
+                if (substr($newurl, 0, 1) === '/') {
+                    // This is normal.
+                    $newurl = $this->vars->full_url . substr($newurl, strlen($this->vars->cookiepath));
+                } elseif (substr($newurl, 0, strlen($this->vars->full_url)) !== $this->vars->full_url) {
+                    // This is unexpected and should be audited.  If the URI doesn't start with a slash or a full URL then something is misconfigured on the client or the server.
+                    trigger_error('Forum password posted with unexpected URI: ' . $this->vars->url, E_USER_WARNING);
+                    $newurl = $this->vars->full_url;
+                }
+                $this->redirect($newurl, timeout: 0);
+                exit();
             }
-        } else {
-            $pwform = $this->template->process('forumdisplay_password.php');
-            $this->error($this->vars->lang['forumpwinfo'], append: $pwform);
         }
+
+        $template = new \XMB\Template($this->vars);
+        $template->addRefs();
+
+        $template->label = str_replace('$forum', $forum['name'], $this->vars->lang['textpasswordForum']);
+        $pwform = $template->process('forumdisplay_password.php');
+        $this->error($this->vars->lang['invalidforumpw'], append: $pwform);
     }
 
     /**
-     * Creates an XHTML link to the forum search page.
+     * Creates a templated link to the forum search page.
      *
      * @since 1.9.11
      * @param int $fid Optional. Current FID number used to create a context-sensitive search.
-     * @return string Empty string if the forum search page is disabled.
+     * @return string The search link, or empty string if search is disabled.
      */
     public function makeSearchLink(int $fid = 0): string
     {
         if ($this->vars->settings['searchstatus'] == 'on') {
+            $template = new \XMB\Template($this->vars);
+            $template->addRefs();
             if ($fid == 0) {
-                $fid = '';
+                $query = '';
             } else {
-                $fid = "?fid=$fid";
+                $query = "?fid=$fid";
             }
-            return '<img src="' . $this->vars->theme['imgdir'] . '/top_search.gif" alt="' . $this->vars->lang['altsearch'] . '" border="0" /> <a href="search.php'
-                . $fid . '"><font class="navtd">' . $this->vars->lang['textsearch'] . '</font></a> &nbsp; ';
+            $template->searchURL = $this->vars->full_url . 'search.php' . $query;
+            $template->imageURL = $this->vars->full_url . $this->vars->theme['imgdir'] . '/top_search.gif';
+            return $template->process('functions_search_link.php');
         } else {
             return '';
         }

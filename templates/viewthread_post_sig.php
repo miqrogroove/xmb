@@ -2,4 +2,4 @@
 <br />
 <br />
 <br />
-<div class="sig"><?= $post['sig'] ?></div>
+<div class="sig"><?= $sig ?></div>
