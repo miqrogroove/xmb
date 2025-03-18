@@ -37,8 +37,15 @@ use XMB\Session\Manager as SessionMgr;
  */
 class Login
 {
-    public function __construct(private Core $core, private DBStuff $db, private SessionMgr $session, private SQL $sql, private Translation $tran, private Variables $vars)
-    {
+    public function __construct(
+        private Core $core,
+        private DBStuff $db,
+        private SessionMgr $session,
+        private SQL $sql,
+        private Template $template,
+        private Translation $tran,
+        private Variables $vars
+    ) {
         // Property promotion.
     }
 
@@ -102,24 +109,28 @@ class Login
         }
 
         // Initialize the new translation system
-        if (! defined('XMB_UPGRADE')) {
-            $success = false;
-            if (!empty($vars->self['langfile'])) {
-                $success = $this->tran->loadLang($vars->self['langfile']);
-            }
-            if (!$success) {
-                $success = $this->tran->loadLang($vars->settings['langfile']);
-            }
-            if (!$success) {
-                $this->tran->langPanic();
-            }
+        $success = false;
+        if (! empty($vars->self['langfile'])) {
+            $success = $this->tran->loadLang($vars->self['langfile']);
+        }
+        if (! $success && ! empty($vars->settings['langfile'])) {
+            $success = $this->tran->loadLang($vars->settings['langfile']);
+        }
+        if (! $success) {
+            $this->tran->langPanic();
+        }
+
+        // Adjust any variables that require translation
+        $this->template->versionlong = $this->vars->lang['textpoweredVer'] . $this->vars->versiongeneral;
+        if ($this->vars->debug) {
+            $this->template->versionlong .= ' ' . $this->vars->lang['debugMode'];
         }
 
         // Set the user status constants.
         if ($vars->xmbuser != '') {
-            if (!defined('X_GUEST')) {
-                define('X_MEMBER', TRUE);
-                define('X_GUEST', FALSE);
+            if (! defined('X_GUEST')) {
+                define('X_MEMBER', true);
+                define('X_GUEST', false);
             }
             // Save some write locks by updating in 60-second intervals.
             if (abs(time() - (int) $vars->self['lastvisit']) > 60) {
@@ -127,9 +138,9 @@ class Login
                 // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
             }
         } else {
-            if (!defined('X_GUEST')) {
-                define('X_MEMBER', FALSE);
-                define('X_GUEST', TRUE);
+            if (! defined('X_GUEST')) {
+                define('X_MEMBER', false);
+                define('X_GUEST', true);
             }
         }
 
@@ -140,7 +151,7 @@ class Login
             $int_status = $this->vars->status_enum['Member']; // If $self['status'] contains an unknown value, default to Member.
         }
 
-        if (!defined('X_STAFF')) {
+        if (! defined('X_STAFF')) {
             define('X_SADMIN', ($vars->self['status'] == 'Super Administrator'));
             define('X_ADMIN', ($int_status <= $this->vars->status_enum['Administrator']));
             define('X_SMOD', ($int_status <= $this->vars->status_enum['Super Moderator']));

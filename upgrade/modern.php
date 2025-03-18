@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace XMB;
 
-// This file helps transition from the PHP 4 coding style to the PHP 7 style.  It is incompatible with PHP 4 and also doesn't conform to current standards.
+// This file helps transition from the PHP 4 coding style to the PHP 7 style.  It is incompatible with PHP 4 and also relies on a global variable.
 
 if (! defined('XMB_ROOT')) {
     header('HTTP/1.0 403 Forbidden');

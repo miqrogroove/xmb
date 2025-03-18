@@ -24,28 +24,28 @@
 
 // This file has been tested against PHP v4.4.6 for backward-compatible error reporting.
 
+if (count(get_included_files()) <= 1) {
+    header('HTTP/1.0 403 Forbidden');
+    exit('Not allowed to run this file directly.');
+}
+
 // HTTP headers
 header('X-Frame-Options: deny');
 header('X-Robots-Tag: noindex');
 
-// XMB constants
-define('XMB_UPGRADE', true);
-define('XMB_ROOT', '../');
-define('LOG_FILE', './upgrade.log');
+// XMB Constants
+if (! defined('XMB_ROOT')) define('XMB_ROOT', '../');
+define('XMB_ERR_DISPLAY_FORCED_OFF', (bool) ini_get('display_errors'));
 
 // PHP configuration
-if (ini_get('display_errors')) {
-	ini_set('display_errors', '0');
-	$forced_display_off = true;
-} else {
-	$forced_display_off = false;
-}
+if (XMB_ERR_DISPLAY_FORCED_OFF) ini_set('display_errors', '0');
+error_reporting(-1);
 
-// Check Server Version
+// PHP Version Test
 require XMB_ROOT . 'include/version.php';
 $version = new XMBVersion();
 $version->assertPHP();
 unset($version);
 
 // Proceed with modern scripting.
-require XMB_ROOT . 'upgrade/modern.php';
+require XMB_ROOT . 'install/wizard.php';

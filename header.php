@@ -28,7 +28,7 @@ namespace XMB\Services;
 
 /* Front Matter */
 
-if ('header.php' === basename($_SERVER['SCRIPT_NAME'])) {
+if (count(get_included_files()) === 1) {
     header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }
@@ -47,6 +47,7 @@ require XMB_ROOT . 'include/CartesianSize.php';
 require XMB_ROOT . 'include/UploadResult.php';
 require XMB_ROOT . 'include/UploadStatus.php';
 require XMB_ROOT . 'include/Variables.php';
+require_once XMB_ROOT . 'include/version.php';
 
 // Implementations
 require XMB_ROOT . 'include/admin.inc.php';
@@ -90,7 +91,7 @@ template()->init();
 $boot = new \XMB\Bootup(template(), vars());
 
 observer()->testSuperGlobals();
-observer()->assertEmptyOutputStream('the db/* and include/* files');
+observer()->assertEmptyOutputStream('the db/* and include/* files', use_debug: false);
 
 ob_end_clean();
 
@@ -101,17 +102,23 @@ unset($mtime);
 
 /* Load the Configuration Created by Install */
 
+if (defined('XMB_INSTALL') && ! defined('XMB_INSTALL_P2')) {
+    vars()->show_full_info = true;
+    $boot->setVersion();
+    unset($boot);
+    return;
+}
+
 $boot->loadConfig();
 observer()->assertEmptyOutputStream('config.php');
+if (! vars()->debug) {
+    error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
+}
 $boot->setBrowser();
 $boot->setIP();
 $boot->setURL();
 $boot->setVersion();
 observer()->assertEmptyOutputStream('version.php');
-
-if (! vars()->debug) {
-    error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
-}
 
 
 /* Create more services */
@@ -161,11 +168,15 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 
 $params = $loader->prepareSession();
 session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql(), token()));
-login(new \XMB\Login(core(), db(), session(), sql(), translation(), vars()));
+login(new \XMB\Login(core(), db(), session(), sql(), template(), translation(), vars()));
 login()->elevateUser($params['force_inv']);
 unset($params);
 
-if (defined('XMB_UPGRADE')) return;
+if (defined('XMB_UPGRADE')) {
+    return;
+} elseif (X_SADMIN && (int) vars()->settings['schema_version'] < \XMB\Schema::VER) {
+    $core->redirect(vars()->full_url . 'install/', timeout: 0);
+}
 
 
 /* Set Up HTML Templates and Themes */

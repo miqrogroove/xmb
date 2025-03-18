@@ -22,7 +22,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if ('config.php' === basename($_SERVER['SCRIPT_NAME'])) {
+if (! defined('XMB_ROOT')) {
     header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }

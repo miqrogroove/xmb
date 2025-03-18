@@ -29,6 +29,7 @@ namespace XMB;
 /**
  * Defines abstracted database query methods and connection methods.
  *
+ * @since 1.9 Formerly dbStruct, removed after 1.9.5.
  * @since 1.10.00
  */
 interface DBStuff
@@ -87,10 +88,10 @@ interface DBStuff
      * Sets the name of the database to be used on this connection.
      *
      * @param string $database The full name of the database.
-     * @param bool $force Optional. Specifies error mode. Dies if true.
-     * @return bool TRUE on success, FALSE on failure with !$force.
+     * @param string $force Optional. Specifies error mode. Dies if 'yes'.
+     * @return bool TRUE on success.
      */
-    public function select_db(string $database, bool $force = true): bool;
+    public function select_db(string $database, string $force = 'yes'): bool;
 
     /**
      * Searches for an accessible database containing the XMB settings table.
@@ -181,6 +182,9 @@ interface DBStuff
      */
     public function like_escape(string $rawstring): string;
 
+    /**
+     * Escape a string used with the REGEXP operator.
+     */
     public function regexp_escape(string $rawstring): string;
 
     /**

@@ -160,11 +160,8 @@ class Translation
      */
     public function langPanic()
     {
-        if (defined('XMB_UPGRADE')) {
-            return true;
-        }
         if ($this->loadLang()) {
-            return true;
+            return;
         }
         if (file_exists(XMB_ROOT.'Upgrade/') || file_exists(XMB_ROOT.'upgrade/') || file_exists(XMB_ROOT.'upgrade.php')) {
             header('HTTP/1.0 503 Service Unavailable');

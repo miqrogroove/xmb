@@ -93,7 +93,7 @@ class MySQLiDatabase implements DBStuff
         bool $force_db = false,
     ): bool {
         // Verify compatiblity.
-        if (!$this->isInstalled()) {
+        if (! $this->isInstalled()) {
             header('HTTP/1.0 500 Internal Server Error');
             echo 'Error: The PHP mysqli extension is missing.';
             throw new RuntimeException('The PHP mysqli extension is missing.');
@@ -150,18 +150,23 @@ class MySQLiDatabase implements DBStuff
      * @param string $dbname
      * @return bool  Whether or not the connection was made and the database was found.
      */
-    public function testConnect(string $dbhost, string $dbuser, string $dbpw, string $dbname): bool
-    {
-        if (!$this->isInstalled()) return false;
+    public function testConnect(
+        string $dbhost,
+        string $dbuser,
+        #[\SensitiveParameter]
+        string $dbpw,
+        string $dbname
+    ): bool {
+        if (! $this->isInstalled()) return false;
         try {
             $this->link = new mysqli($dbhost, $dbuser, $dbpw, $dbname);
             $this->link->set_charset('latin1');
+            $this->select_db($dbname, force: 'test');
         } catch (mysqli_sql_exception $e) {
             $this->test_error = $e->getMessage();
             return false;
         }
         
-        $this->db = $dbname;
         $this->test_error = '';
         return true;
     }
@@ -196,20 +201,23 @@ class MySQLiDatabase implements DBStuff
      *
      * @since 1.9.1
      * @param string $database The full name of the MySQL database.
-     * @param bool $force Optional. Specifies error mode. Dies if true.
-     * @return bool TRUE on success, FALSE on failure with !$force.
+     * @param string $force Optional. Specifies error mode. Dies if 'yes'.
+     * @return bool TRUE on success.
      */
-    public function select_db(string $database, bool $force = true): bool
+    public function select_db(string $database, string $force = 'yes'): bool
     {
         try {
             $this->link->select_db($database);
             $this->db = $database;
             return true;
         } catch (mysqli_sql_exception $e) {
-            if ($force) {
-                $this->panic($e);
-            } else {
-                return false;
+            switch ($force) {
+                case 'yes':
+                    $this->panic($e);
+                case 'test':
+                    throw $e;
+                case 'no':
+                    return false;
             }
         }
     }
@@ -343,6 +351,7 @@ class MySQLiDatabase implements DBStuff
     /**
      * Handle all MySQLi errors.
      *
+     * @since 1.9.8 SP3
      * @param Exception $e
      * @param string $sql Optional.  The full SQL command that caused the error, if any.
      * @param string $msg Optional.  HTML help message to display before the error.
@@ -427,6 +436,7 @@ class MySQLiDatabase implements DBStuff
      *  $sqlinput = $db->escape($rawinput);
      *  $db->query("UPDATE a SET b = 'Hello, my name is $sqlinput'");
      *
+     * @since 1.9.8 SP3
      * @param string $rawstring
      * @return string
      */
@@ -482,6 +492,11 @@ class MySQLiDatabase implements DBStuff
         }
     }
 
+    /**
+     * Escape a string used with the REGEXP operator.
+     *
+     * @since 1.9.10
+     */
     public function regexp_escape(string $rawstring): string
     {
         try {

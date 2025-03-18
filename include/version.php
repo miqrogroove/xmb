@@ -24,21 +24,50 @@
 
 // This file has been tested against PHP v4.4.6 for backward-compatible error reporting.
 
-if (! defined('X_VERSION_EXT')) {
-    define('X_VERSION', '1.10.00');
-    define('X_VERSION_EXT', '1.10.00-alpha');
-    define('X_VERSION_DATE', '20250208');
-    define('MYSQL_MIN_VER', '5.5.8');
-    define('PHP_MIN_VER', '8.2.0');
-    define('COPY_YEAR', '2001-2025');
-}
+/**
+ * Provides version details for XMB.
+ *
+ * @since 1.10.00
+ */
+class XMBVersion
+{
+    /**
+     * Get the version data.
+     *
+     * @return array
+     */
+    function get()
+    {
+        $data = array(
+            'version' => '1.10.00',
+            'versionStage' => 'alpha',
+            'versionDate' => '20250316',
+            'mysqlMinVer' => '5.5.8',
+            'phpMinVer' => '8.2.0',
+            'copyright' => '2001-2025',
+            'company' => 'The XMB Group',
+        );
+        
+        $data['versionGeneral'] = 'XMB ' . $data['version'];
+        $data['versionExt'] = $data['version'];
+        if ($data['versionStage'] != '') {
+            $data['versionExt'] .= '-' . $data['versionStage'];
+        }
+        
+        return $data;
+    }
 
-$versioncompany = 'The XMB Group';
-$versionshort = X_VERSION;
-$versiongeneral = 'XMB ' . X_VERSION;
-$copyright = COPY_YEAR;
-$alpha = 'alpha';
-$beta = '';
-$gamma = '';
-$service_pack = '';
-$versionbuild = X_VERSION_DATE;
+    /**
+     * Assert the minimum PHP version requirement.
+     */
+    function assertPHP() {
+        $data = $this->get();
+        $minimum = $data['phpMinVer'];
+
+        // Check Server Version
+        if (version_compare(phpversion(), $minimum, '<')) {
+            include XMB_ROOT . 'templates/install_php_version_error.php';
+            exit();
+        }
+    }
+}

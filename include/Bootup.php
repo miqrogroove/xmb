@@ -26,6 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use XMBVersion;
+
 /**
  * Provides some of the procedural logic formerly in header.php.
  *
@@ -80,39 +82,35 @@ class Bootup
         foreach($config_array as $key => $value) {
             if ($this->vars->$key === $value) {
                 header('HTTP/1.0 500 Internal Server Error');
-                if (file_exists(XMB_ROOT.'install/')) {
-                    exit('<h1>Error:</h1><br />The installation files ("./install/") have been found on the server. Please remove them as soon as possible. If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
-                }
-                exit('Configuration Problem: XMB noticed that your config.php has not been fully configured.<br />The $'.$key.' has not been configured correctly.<br /><br />Please configure config.php before continuing.<br />Refresh the browser after uploading the new config.php (when asked if you want to resubmit POST data, click the \'OK\'-button).');
+                exit('If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
+                exit('Configuration Problem: XMB is not yet installed with a valid config.php file.<br />The $'.$key.' has not been specified.<br /><br />Please configure config.php before continuing.');
             }
         }
     }
 
     public function setVersion()
     {
-        require XMB_ROOT . 'include/version.php';
+        $source = new XMBVersion();
+        $data = $source->get();
 
-        $this->template->copyright = $copyright;
-        $this->template->versioncompany = $versioncompany;
+        $this->template->copyright = $data['copyright'];
+        $this->template->versioncompany = $data['company'];
         if (! $this->vars->show_full_info) {
             $versionshort = '';
             $versiongeneral = 'XMB';
-            $alpha = '';
-            $beta = '';
-            $gamma = '';
-            $service_pack = '';
+            $stage = '';
             $versionbuild = '[HIDDEN]';
         } else {
-            $versiongeneral .= ' ';
+            $versionshort = $data['version'];
+            $versiongeneral = 'XMB ' . $data['versionExt'];
+            $stage = $data['versionStage'];
+            $versionbuild = $data['versionDate'];
         }
-        $this->template->versionlong = 'Powered by '.$versiongeneral.$alpha.$beta.$gamma.$service_pack;
         $this->template->versionbuild = $versionbuild;
         $this->vars->versionshort = $versionshort;
         $this->vars->versiongeneral = $versiongeneral;
 
-        if ($this->vars->debug) {
-            $this->template->versionlong .= ' (Debug Mode)';
-        }
+        // "Debug Mode" and "Powered by" string usage has moved to Login::elevateUser() for translation.
     }
 
     public function setURL()

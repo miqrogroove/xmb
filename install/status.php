@@ -30,6 +30,7 @@ header('Expires: 0');
 header('X-Frame-Options: sameorigin');
 
 $logfile = './upgrade.log';
+$logfileName = 'upgrade.log';
 
 $log = file_get_contents($logfile);
 $check = substr($log, -14);
@@ -48,7 +49,7 @@ $error = '<!-- error -->' == $check;
 // Display the log file in reverse order, so latest message is first.
 $lines = explode("\r\n", $log);
 $counter = count($lines);
-while(count($lines) > 0) {
+while (count($lines) > 0) {
 	echo $counter--, ". ", array_pop($lines), "<br>\n";
 }
 ?>
@@ -57,27 +58,5 @@ while(count($lines) > 0) {
 <?php
 
 if ($done) {
-	rmFromDir(dirname(__FILE__));
-}
-
-/**
- * Recursively deletes all files in the given path.
- *
- * @param string $path
- */
-function rmFromDir($path)
-{
-    if (is_dir($path)) {
-        $stream = opendir($path);
-        while(($file = readdir($stream)) !== false) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-            rmFromDir($path.'/'.$file);
-        }
-        closedir($stream);
-        @rmdir($path);
-    } else if (is_file($path)) {
-        @unlink($path);
-    }
+	@unlink(dirname(__FILE__) . '/' . $logfileName);
 }

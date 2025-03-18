@@ -29,7 +29,7 @@ namespace XMB;
 define('XMB_ROOT', '../');
 define('XMB_UPGRADE', true);
 
-require XMB_ROOT.'header.php';
+require XMB_ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $sql = \XMB\Services\sql();

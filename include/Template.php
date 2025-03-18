@@ -122,11 +122,16 @@ class Template
 
     /**
      * This can be used as often as needed to ensure the references are current.
+     *
+     * @param bool $translationOnly Skip the Theme and other references.
      */
-    public function addRefs()
+    public function addRefs(bool $translationOnly = false)
     {
-        $this->data['full_url'] = &$this->vars->full_url;
         $this->data['lang'] = &$this->vars->lang;
+
+        if ($translationOnly) return;
+
+        $this->data['full_url'] = &$this->vars->full_url;
         $this->data['SETTINGS'] = &$this->vars->settings;
         $this->data['THEME'] = &$this->vars->theme;
     }

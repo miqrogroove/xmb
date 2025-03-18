@@ -58,14 +58,14 @@ class Core
      *
      * @since 1.9.8 SP3
      */
-    function postedVar(string $varname, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
+    public function postedVar(string $varname, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
     {
         $retval = getPhpInput($varname, $sourcearray);
 
         return $this->sanitizeString($retval, $word, $htmlencode, $dbescape, $quoteencode);
     }
 
-    function postedArray(
+    public function postedArray(
         string $varname,
         string $valueType = 'string',
         string $keyType = 'int',

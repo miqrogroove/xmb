@@ -26,6 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use XMBVersion;
+
 ignore_user_abort(true);
 header('Expires: 0');
 header('X-Frame-Options: sameorigin');
@@ -83,12 +85,11 @@ if (! defined('X_SADMIN') || ! X_SADMIN) {
 }
 
 //Check Server Version
-if (version_compare(phpversion(), PHP_MIN_VER, '<')) {
-    $show->error('XMB requires PHP version ' . PHP_MIN_VER . ' or higher to work properly.  Version ' . phpversion() . ' is running.');
-    throw new Exception('Admin attempted upgrade with obsolete PHP engine.');
-}
-if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
-    $show->error('<br /><br />XMB requires MySQL version ' . MYSQL_MIN_VER . ' or higher to work properly.  Version ' . $db->server_version() . ' is running.');
+$version = new XMBVersion();
+$version->assertPHP();
+$data = $version->get();
+if (version_compare($db->server_version(), $data['mysqlMinVer'], '<')) {
+    $show->error('<br /><br />XMB requires MySQL version ' . $data['mysqlMinVer'] . ' or higher to work properly.  Version ' . $db->server_version() . ' is running.');
     throw new Exception('Admin attempted upgrade with obsolete MySQL engine.');
 }
 

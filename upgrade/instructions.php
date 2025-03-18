@@ -28,6 +28,7 @@ namespace XMB;
 
 use Exception;
 use RuntimeException;
+use XMBVersion;
 
 function displayUpgrader(bool $forced_display_off)
 {
@@ -61,8 +62,10 @@ function displayUpgrader(bool $forced_display_off)
     }
 
     // Check Server Version
-    if (version_compare($db->server_version(), MYSQL_MIN_VER, '<')) {
-        echo '<br /><br />XMB requires MySQL version '.MYSQL_MIN_VER.' or higher to work properly.  Version '.$db->server_version().' is running.';
+    $source = new XMBVersion();
+    $data = $source->get();
+    if (version_compare($db->server_version(), $data['mysqlMinVer'], '<')) {
+        echo '<br /><br />XMB requires MySQL version ' . $data['mysqlMinVer'] . ' or higher to work properly.  Version ' . $db->server_version() . ' is running.';
         throw new Exception('Admin attempted upgrade with obsolete MySQL engine.');
     }
 
@@ -104,7 +107,7 @@ function displayUpgrader(bool $forced_display_off)
     } elseif ('2' === $_GET['step']) {
 
         ?>
-        <h1><?=$vars->versiongeneral ?> Upgrade Script</h1>
+        <h1><?= $vars->versiongeneral ?> Upgrade Script</h1>
         <h2>Status Information</h2>
         <?php
 
