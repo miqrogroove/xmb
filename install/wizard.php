@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use Exception;
 use XMBVersion;
 
 if (! defined('XMB_ROOT')) {
@@ -33,12 +34,18 @@ if (! defined('XMB_ROOT')) {
     exit('Not allowed to run this file directly.');
 }
 
-define('LOG_FILE', './upgrade.log');
 define('X_INST_ERR', 0);
 define('X_INST_WARN', 1);
 define('X_INST_OK', 2);
 define('X_INST_SKIP', 3);
 
+//Check location
+if (! is_readable('./UpgradeOutput.php') || ! is_readable('./LoggedOutput.php') || ! is_readable('./upgrade.lib.php') || ! is_readable('./WizFunctions.php') || ! is_readable(XMB_ROOT . 'header.php')) {
+    echo "Could not find the installer files!\n<br />\nPlease make sure the entire XMB folder contents are available.";
+    throw new Exception('Attempted install by ' . $_SERVER['REMOTE_ADDR'] . ' without the required files.');
+}
+
+require './UpgradeOutput.php';
 require './WizFunctions.php';
 
 // Check the status of the config.php file, if any
@@ -117,6 +124,8 @@ if ($status == 'installed') {
         throw new Exception(str_replace('$ipAddress', $_SERVER['REMOTE_ADDR'], $vars->lang['upgrade_admin_error']));
     }
 
+    ini_set('display_errors', '1');
+
     // Check Server Version
     $source = new XMBVersion();
     $data = $source->get();
@@ -130,54 +139,42 @@ if ($status == 'installed') {
     }
 
     // Initialize Verbose Logging
-    $result = file_put_contents(LOG_FILE, $vars->lang['upgrade_init']);
+    require './LoggedOutput.php';
+
+    $result = file_put_contents(LoggedOutput::LOG_FILE, $vars->lang['upgrade_init']);
     if (false === $result) {
-        echo "<br /><br />\n" . str_replace('$filepath', LOG_FILE, $vars->lang['write_error']) . '  ' . $vars->lang['write_check'];
-        throw new RuntimeException(str_replace('$filepath', LOG_FILE, $vars->lang['write_error']));
+        echo "<br /><br />\n" . str_replace('$filepath', LoggedOutput::LOG_FILE, $vars->lang['write_error']) . '  ' . $vars->lang['write_check'];
+        throw new RuntimeException(str_replace('$filepath', LoggedOutput::LOG_FILE, $vars->lang['write_error']));
     }
 
     $template->process('install_header.php', echo: true);
 
+    if (XMB_ERR_DISPLAY_FORCED_OFF) {
+        trigger_error($vars->lang['upgrade_display_errors'], E_USER_WARNING);
+    }
+
+    if ($vars->debug) {
+        echo "<p>" . $vars->lang['upgrade_debug_on'] . "</p>\n";
+    } else {
+        echo "<p>" . $vars->lang['upgrade_debug_off'] . "</p>\n";
+    }
+
+    $template->version = $vars->versiongeneral;
+
     if (! isset($_GET['step']) || '1' === $_GET['step']) {
-        $template->version = $vars->versiongeneral;
         $template->process('install_upgrade_intro.php', echo: true);
     } elseif ('2' === $_GET['step']) {
 
-        ?>
-        <h1><?= $vars->versiongeneral ?> Upgrade Script</h1>
-        <h2>Status Information</h2>
-        <?php
-
-        ?>
-        <iframe src='status.php' width='100%' height='50%'></iframe>
-        <?php
-
+        // The status.php frame will show logged output.
+        // The trigger.php frame will create the logged output and display any fatal errors.
+        // These requests for separate frames avoid buffering of script output while the upgrade gets processed.
+        $template->process('install_upgrade_window.php', echo: true);
         $template->process('install_footer.php', echo: true);
-
-        // Not sure why trigger.php was used as a 3rd request in the past.  It doesn't seem necessary.
-        $trigger_old_schema = (int) $vars->settings['schema_version'];
-
-        require './upgrade.lib.php';
-        require './UpgradeOutput.php';
-        require './LoggedOutput.php';
-
-        $show = new \XMB\LoggedOutput(LOG_FILE);
-
-        $schema = new \XMB\Schema($db, $vars);
-
-        $lib = new \XMB\Upgrade($db, $show, $schema, $vars);
-
-        $lib->xmb_upgrade();
-
-        if ($trigger_old_schema < 5) {
-            $show->finished('<b>Done! :D</b><br />Now <a href="' . $vars->full_url . 'misc.php?action=login" target="_parent">login and remember to turn your board back on</a>.<br />');
-        } else {
-            $show->finished('<b>Done! :D</b><br />Now <a href="' . $vars->full_url . 'admin/settings.php#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />');
-        }
-
     }
     exit;
 }
+
+ini_set('display_errors', '1');
 
 if (! empty($full_url) && $full_url != 'FULLURL') {
     $template->full_url = $full_url;
@@ -439,7 +436,6 @@ switch($vStep) {
         $template->process('install_progress_header.php', echo: true);
 
         require './cinst.php';
-        require './UpgradeOutput.php';
         require './HttpOutput.php';
 
         $show = new \XMB\HttpOutput($template, $vars);
@@ -457,5 +453,8 @@ switch($vStep) {
 }
     
 $template->process('install_header.php', echo: true);
+if (XMB_ERR_DISPLAY_FORCED_OFF) {
+    trigger_error($vars->lang['upgrade_display_errors'], E_USER_WARNING);
+}
 echo $content;
 $template->process('install_footer.php', echo: true);

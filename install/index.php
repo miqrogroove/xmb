@@ -24,6 +24,11 @@
 
 // This file has been tested against PHP v4.4.6 for backward-compatible error reporting.
 
+// Check location
+if (! is_readable('./web-header.php')) {
+    exit('Could not find the installer files! Please make sure the entire install folder contents are available.');
+}
+
 // If PHP is running, proceed to the version test.
 include './web-header.php';
 exit();

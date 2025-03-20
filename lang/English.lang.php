@@ -1381,10 +1381,15 @@ $lang['upgrade_admin'] = "Upgrades may be performed only by a Super Administrato
 $lang['upgrade_admin_error'] = "Unauthenticated upgrade attempt by \$ipAddress";
 $lang['upgrade_admin_login'] = "Please <a href='\$url'>click here to login</a> first to begin the upgrade.";
 $lang['upgrade_begin'] = "Click Here if you already have a backup and want to begin the upgrade";
+$lang['upgrade_connect'] = "Database Connection Established";
+$lang['upgrade_debug_off'] = "Debug Mode Disabled - You will not see any PHP warnings.";
+$lang['upgrade_debug_on'] = "Debug Mode Enabled.";
+$lang['upgrade_display_errors'] = "Your PHP server has <code>display_errors=On</code>, which should never be used on production systems.";
 $lang['upgrade_header'] = "Upgrade Script";
 $lang['upgrade_init'] = "Initializing Upgrade Engine...";
 $lang['upgrade_intro'] = "This procedure can upgrade the database from XMB versions 1.8 and greater, including \$ver Betas.";
 $lang['upgrade_ready'] = "When you are ready,";
+$lang['upgrade_status'] = "Status Information";
 $lang['upgrade_step_1'] = "Disable your forums using the Board Status setting.";
 $lang['upgrade_step_2'] = "BACKUP YOUR DATABASE - This script cannot be undone!";
 $lang['upgrade_step_3'] = "Backup your config.php file.";

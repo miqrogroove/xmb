@@ -35,11 +35,8 @@ use RuntimeException;
  */
 class LoggedOutput implements UpgradeOutput
 {
-    public function __construct(private string $logfile)
-    {
-        // Property promotion.
-    }
-    
+    public const LOG_FILE = './upgrade.log';
+
     /**
      * Output the upgrade progress at each step.
      *
@@ -51,10 +48,10 @@ class LoggedOutput implements UpgradeOutput
      */
     public function progress(string $text)
     {
-        $result = file_put_contents($this->logfile, "\r\n$text...", FILE_APPEND);
+        $result = file_put_contents($this::LOG_FILE, "\r\n$text...", FILE_APPEND);
         if (false === $result) {
-            echo 'Unable to write to file ' . $this->logfile;
-            throw new RuntimeException('Unable to write to file ' . $this->logfile);
+            echo 'Unable to write to file ' . $this::LOG_FILE;
+            throw new RuntimeException('Unable to write to file ' . $this::LOG_FILE);
         }
     }
 
@@ -66,10 +63,10 @@ class LoggedOutput implements UpgradeOutput
      */
     public function warning(string $text)
     {
-        $result = file_put_contents($this->logfile, "\r\n<b>$text</b>", FILE_APPEND);
+        $result = file_put_contents($this::LOG_FILE, "\r\n<b>$text</b>", FILE_APPEND);
         if (false === $result) {
-            echo 'Unable to write to file ' . $this->logfile;
-            throw new RuntimeException('Unable to write to file ' . $this->logfile);
+            echo 'Unable to write to file ' . $this::LOG_FILE;
+            throw new RuntimeException('Unable to write to file ' . $this::LOG_FILE);
         }
     }
 
@@ -81,7 +78,21 @@ class LoggedOutput implements UpgradeOutput
      */
     public function error(string $text)
     {
-        file_put_contents($this->logfile, "\r\n$text<!-- error -->", FILE_APPEND);
+        file_put_contents($this::LOG_FILE, "\r\n$text<!-- error -->", FILE_APPEND);
+    }
+
+    /**
+     * Custom error handler.
+     *
+     * Note the PHP documentation states this will receive non-fatal warnings and lower messages only.
+     */
+    public function error_handler(int $errno, string $errstr, string $errfile, int $errline): bool
+    {
+        // Forward to the upgrade output file.
+        $this->warning("$errstr\n$errfile ($errline)");
+        
+        // Allow the PHP standard error handler to proceed, followed by resuming the next statement after the one that caused the error.
+        return false;
     }
 
     /**
@@ -92,6 +103,6 @@ class LoggedOutput implements UpgradeOutput
      */
     public function finished(string $text)
     {
-        file_put_contents($this->logfile, "\r\n$text<!-- done. -->", FILE_APPEND);
+        file_put_contents($this::LOG_FILE, "\r\n$text<!-- done. -->", FILE_APPEND);
     }
 }
