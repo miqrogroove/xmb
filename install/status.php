@@ -33,6 +33,10 @@ $logfile = './upgrade.log';
 $logfileName = 'upgrade.log';
 
 $log = file_get_contents($logfile);
+if ($log === false) {
+    header('HTTP/1.0 403 Forbidden');
+    exit('Not allowed to run this file directly.');
+}
 $check = substr($log, -14);
 $done = '<!-- done. -->' == $check;
 $error = '<!-- error -->' == $check;
