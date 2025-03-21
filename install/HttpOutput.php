@@ -88,6 +88,20 @@ class HttpOutput implements UpgradeOutput
         $this->template->text = $text;
         $this->template->process('install_progress_error.php', echo: true);
         $this->template->process('install_footer.php', echo: true);
+        
+        exit;
+    }
+
+    public function wizardError(string $head, string $msg)
+    {
+        $this->template->head = $head;
+        $this->template->msg = $msg;
+
+        $this->template->process('install_header.php', echo: true);
+        $this->template->process('install_error.php', echo: true);
+        $this->template->process('install_footer.php', echo: true);
+
+        exit;
     }
 
     /**

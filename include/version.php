@@ -67,7 +67,7 @@ class XMBVersion
         // Check Server Version
         if (version_compare(phpversion(), $minimum, '<')) {
             include XMB_ROOT . 'templates/install_php_version_error.php';
-            exit();
+            exit;
         }
     }
 }

@@ -124,6 +124,8 @@ switch($action) {
                 case 'bad-password':
                 case 'bad-username':
                 default:
+                    $template->token = $token->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
+                    $session->preLogin($template->token);
                     $misc = $template->process('misc_login_incorrectdetails.php') . $template->process('misc_login.php');
                     break;
             }

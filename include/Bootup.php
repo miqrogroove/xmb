@@ -82,8 +82,7 @@ class Bootup
         foreach($config_array as $key => $value) {
             if ($this->vars->$key === $value) {
                 header('HTTP/1.0 500 Internal Server Error');
-                exit('If you have not yet installed XMB, please do so at this time. Just <a href="./install/index.php">click here</a>.');
-                exit('Configuration Problem: XMB is not yet installed with a valid config.php file.<br />The $'.$key.' has not been specified.<br /><br />Please configure config.php before continuing.');
+                exit('Configuration Problem: XMB is not yet installed.<br />The <code>$'.$key.'</code> has not been specified in <code>conifg.php</code>.<br /><br />To start the install, just <a href="install/">click here</a>.');
             }
         }
     }
@@ -270,7 +269,7 @@ class Bootup
             $this->vars->database = 'mysqli';
         }
 
-        require XMB_ROOT . 'db/' . $this->vars->database . '.php';
+        require_once XMB_ROOT . 'db/' . $this->vars->database . '.php';
 
         switch ($this->vars->database) {
             default:

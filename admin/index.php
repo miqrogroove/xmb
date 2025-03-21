@@ -46,29 +46,6 @@ $core->assertAdminOnly();
 
 $header = $template->process('header.php');
 
-
-/* Assert Additional Security */
-
-if (X_SADMIN) {
-    $x_error = '';
-
-    if (file_exists(XMB_ROOT.'install/') && !@rmdir(XMB_ROOT.'install/')) {
-        $x_error = $vars->lang['admin_found_install'];
-    }
-    if (file_exists(XMB_ROOT.'Upgrade/') && !@rmdir(XMB_ROOT.'Upgrade/') || file_exists(XMB_ROOT.'upgrade/') && !@rmdir(XMB_ROOT.'upgrade/')) {
-        $x_error = $vars->lang['admin_found_updir'];
-    }
-    if (file_exists(XMB_ROOT.'upgrade.php')) {
-        $x_error = $vars->lang['admin_found_upfile'];
-    }
-
-    if (strlen($x_error) > 0) {
-        header('HTTP/1.0 500 Internal Server Error');
-        $core->error($x_error);
-    }
-    unset($x_error);
-}
-
 $table = $template->process('admin_table.php');
 $panel = $template->process('admin_panel.php');
 $endTable = $template->process('admin_table_end.php');

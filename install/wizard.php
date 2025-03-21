@@ -34,18 +34,22 @@ if (! defined('XMB_ROOT')) {
     exit('Not allowed to run this file directly.');
 }
 
-define('X_INST_ERR', 0);
-define('X_INST_WARN', 1);
-define('X_INST_OK', 2);
-define('X_INST_SKIP', 3);
-
 //Check location
-if (! is_readable('./UpgradeOutput.php') || ! is_readable('./LoggedOutput.php') || ! is_readable('./upgrade.lib.php') || ! is_readable('./WizFunctions.php') || ! is_readable(XMB_ROOT . 'header.php')) {
+if (
+    ! is_readable('./HttpOutput.php') ||
+    ! is_readable('./LoggedOutput.php') ||
+    ! is_readable('./UpgradeOutput.php') ||
+    ! is_readable('./upgrade.lib.php') ||
+    ! is_readable('./WizFunctions.php') ||
+    ! is_readable(XMB_ROOT . 'header.php')
+) {
     echo "Could not find the installer files!\n<br />\nPlease make sure the entire XMB folder contents are available.";
     throw new Exception('Attempted install by ' . $_SERVER['REMOTE_ADDR'] . ' without the required files.');
 }
 
 require './UpgradeOutput.php';
+
+require './HttpOutput.php';
 require './WizFunctions.php';
 
 // Check the status of the config.php file, if any
@@ -56,29 +60,28 @@ if (is_readable(XMB_ROOT . 'config.php')) {
     try {
         include XMB_ROOT . 'config.php';
     } catch (Throwable $e) {
+        $status = 'bad-config-file';
         $config_success = false;
         $config_error = $e->getMessage();
     }
+} else {
+    $status = 'no-config-file';
+	$config_success = false;
+}
+if ($config_success) {    
     if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {
         $status = already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre);
         switch ($status) {
             case 'no-db-config':
                 $config_success = false;
-                $config_error = 'The config.php file is not fully configured.';
                 break;
             case 'no-connection':
                 $config_success = false;
-                $config_error = 'Unable to connect to the database specified in config.php.';
         }
     } else {
         $status = 'no-db-config';
         $config_success = false;
-        $config_error = 'The config.php file is not fully configured.';
     }
-} else {
-    $status = 'no-config-file';
-	$config_success = false;
-	$config_error = 'The config.php file was not found, or bad permissions.';
 }
 
 if ($status == 'installed') {
@@ -98,6 +101,17 @@ require XMB_ROOT . 'header.php';
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
 
+switch ($status) {
+    case 'no-config-file':
+        $config_error = $vars->lang['config_error_file'];
+        break;
+    case 'no-db-config':
+        $config_error = $vars->lang['config_error_defaults'];
+        break;
+    case 'no-connection':
+        $config_error = $vars->lang['config_error_connect'];
+}
+
 $vStep = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 1;
 
 if ($vStep != 4) {
@@ -113,7 +127,7 @@ if ($vStep != 4) {
 if ($status == 'installed') {
     $db = \XMB\Services\db();
 
-    if ((int) $vars->settings['schema_version'] == Schema::VER) {
+    if ((int) $vars->settings['schema_version'] >= Schema::VER) {
         header('HTTP/1.0 403 Forbidden');
         exit($vars->lang['already_installed']);
     }
@@ -188,6 +202,8 @@ if (! empty($full_url) && $full_url != 'FULLURL') {
     // SCRIPT_NAME is expected to end with 'install/index.php'.  Anything before that is part of the forum's web path.
     $template->full_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') - strlen('install'));
 }
+
+$show = new \XMB\HttpOutput($template, $vars);
 
 switch($vStep) {
     case 1: // welcome
@@ -287,7 +303,7 @@ switch($vStep) {
                     $content = $template->process('install_config_inline.php');
                     break;
 
-                case 2:
+                case 2: // Save configuration to disk
                     header("Content-type: text/html;charset=ISO-8859-1");
 
                     if (file_put_contents(XMB_ROOT . 'config.php', $configuration) === false) {
@@ -298,10 +314,8 @@ switch($vStep) {
                     $content = $template->process('install_config_write.php');
                     break;
 
-                case 3:
-                    // Get size
+                case 3: // Send configuration as a file
                     $size = strlen($configuration);
-                    // Put out headers for mime-type, filesize, forced-download, description and no-cache.
                     header("Content-type: application/octet-stream");
                     header("Content-length: $size");
                     header("Content-Disposition: attachment; filename=config.php");
@@ -332,7 +346,7 @@ switch($vStep) {
     case 5: // Make the administrator set a username and password for the super admin user
 
         if (! $config_success) {
-            error('Incorrect Configuration', $config_error);
+            $show->wizardError($vars->lang['config_error'], $config_error);
         }
 
         $config_array = array(
@@ -360,7 +374,7 @@ switch($vStep) {
         if (!isset($array['path'])) {
             $array['path'] = '/';
         }
-        if (strpos($array['host'], '.') === FALSE || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $array['host'])) {
+        if (strpos($array['host'], '.') === false || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $array['host'])) {
             $array['host'] = '';
         } elseif (substr($array['host'], 0, 4) === 'www.') {
             $array['host'] = substr($array['host'], 3);
@@ -375,65 +389,50 @@ switch($vStep) {
     case 6: // remaining parts
         // check db-connection.
         if (! $config_success) {
-            error('Incorrect Configuration', $config_error);
+            $show->wizardError($vars->lang['config_error'], $config_error);
         }
-
-        show_act('Checking Database Files');
 
         // Force upgrade to mysqli
         if ('mysql' === $database) $database = 'mysqli';
 
-        if (! file_exists(XMB_ROOT."db/{$database}.php")) {
-            show_result(X_INST_ERR);
-            error('Database connection', 'XMB could not locate the <i>/db/'.$database.'.php</i> file, you have configured xmb to use this database-type. For it to work you will need to upload the file, or change the config.php file to reflect a different choice.', true);
-        }
-        show_result(X_INST_OK);
-        
         require_once XMB_ROOT . "db/{$database}.php";
 
         $db = new \XMB\MySQLiDatabase($debug, $log_mysql_errors);
         
-        show_act('Checking Database API');
         // let's check if the actual functionality exists...
 
         if (! $db->isInstalled()) {
-            error('Database Handler', 'XMB has determined that your php installation does not support the functions required to use <i>'.$database.'</i> to store all data.', true);
-            unset($err);
+            $show->wizardError($vars->lang['install_db_ext'], str_replace('$database', $database, $vars->lang['install_db_ext_error']));
         }
-        show_result(X_INST_OK);
 
         // let's check the connection itself.
-        show_act('Checking Database Username Security');
-        if ($dbuser == 'root') {
-            show_result(X_INST_WARN);
-            error('Security hazard', 'You have configured XMB to use root access to the database, this is a security hazard. If your server gets hacked, or php itself crashes, the config.php file might be available freely to anyone looking at it, and thus reveal your root username/password. Please consider making a new user for XMB to use the database.', false);
-        } else {
-            show_result(X_INST_OK);
-        }
-
-        show_act('Checking Database Connection');
         $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
         if (! $result) {
-            show_result(X_INST_ERR);
-            error('Database Connection', 'XMB could not connect to the specified database. The database returned "error ' . $db->getTestError() . '"', true);
-        } else {
-            show_result(X_INST_OK);
+            $show->wizardError($vars->lang['install_db_connect'], str_replace('$msg', $db->getTestError(), $vars->lang['install_db_connect_error']));
         }
-        show_act('Checking Database Version');
+
         $sqlver = $db->server_version();
 
         $source = new XMBVersion();
         $data = $source->get();
         if (version_compare($sqlver, $data['mysqlMinVer'], '<')) {
-            show_result(X_INST_ERR);
-            error('Version mismatch', 'XMB requires MySQL version ' . $data['mysqlMinVer'] . ' or higher to work properly.  Version ' . $sqlver . ' is running.', true);
-        } else {
-            show_result(X_INST_OK);
+            $show->wizardError($vars->lang['version_check'], str_replace(
+                ['$minimum', '$current'],
+                [$data['mysqlMinVer'], $sqlver],
+                $vars->lang['mysql_min_ver'],
+            ));
         }
 
         // throw in all stuff then :)
         $template->process('install_header.php', echo: true);
         $template->process('install_progress_header.php', echo: true);
+
+        $show->progress('Checking Database Username Security');
+        if ($dbuser == 'root') {
+            $show->warning('You have configured XMB to use root access to the database, this is a security hazard. If your server gets hacked, or php itself crashes, the config.php file might be available freely to anyone looking at it, and thus reveal your root username/password. Please consider making a new user for XMB to use the database.');
+        } else {
+            $show->okay();
+        }
 
         require './cinst.php';
         require './HttpOutput.php';

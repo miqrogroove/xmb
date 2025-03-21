@@ -61,6 +61,13 @@ if (! defined('X_SADMIN') || ! X_SADMIN) {
     throw new Exception('Unauthenticated upgrade attempt by ' . $_SERVER['REMOTE_ADDR']);
 }
 
+$trigger_old_schema = (int) $vars->settings['schema_version'];
+
+if ($trigger_old_schema >= $schema::VER) {
+    header('HTTP/1.0 403 Forbidden');
+    exit($vars->lang['already_installed']);
+}
+
 // Ensure any new fatal errors will be displayed, otherwise they might end up in a PHP log file (or not) that the admin doesn't know how to find.
 ini_set('display_errors', '1');
 error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR | E_CORE_WARNING | E_COMPILE_WARNING);
@@ -78,11 +85,9 @@ if (version_compare($db->server_version(), $data['mysqlMinVer'], '<')) {
     throw new Exception('Admin attempted upgrade with obsolete MySQL engine.');
 }
 
-$trigger_old_schema = (int) $vars->settings['schema_version'];
-
 try {
     $lib->xmb_upgrade();
-} catch (Exception $e) {
+} catch (Throwable $e) {
     $show->error($e->getMessage() . "\n" . $e->getTraceAsString());
     exit;
 }

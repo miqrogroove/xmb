@@ -26,58 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-function show_act($act)
-{
-    $act .= str_repeat('.', (75-strlen($act)));
-    echo '<span class="progress">'.$act;
-}
-
-function show_result($type)
-{
-    switch ($type) {
-        case X_INST_ERR:
-            echo '<span class="progressErr">ERROR</span><br />';
-            break;
-        case X_INST_WARN:
-            echo '<span class="progressWarn">WARNING</span><br />';
-            break;
-        case X_INST_OK:
-            echo '<span class="progressOk">OK</span><br />';
-            break;
-        case X_INST_SKIP:
-            echo '<span class="progressSkip">SKIPPED</span><br />';
-            break;
-    }
-    echo "</span>\n";
-}
-
-function error($head, $msg, $die = true)
-{
-    echo "\n";
-    echo '<h1 class="progressErr">'.$head.'</h1>';
-    echo '<span class="progressWarn">'.$msg.'</span><br />';
-    echo "\n";
-    if ($die) {
-        echo '
-            </div>
-        </div>
-        <div class="bottom"><span></span></div>
-    </div>
-    <div id="footer">
-        <div class="top"><span></span></div>
-        <div class="center-content">
-            <span><a href="https://www.xmbforum2.com/" onclick="window.open(this.href); return false;"><strong><abbr title="eXtreme Message Board">XMB</abbr>
-            Forum Software</strong></a>&nbsp;&copy; '.COPY_YEAR.' The XMB Group</span>
-        </div>
-        <div class="bottom"><span></span></div>
-    </div>
-</div>';
-        exit();
-    }
-}
-
 /**
- * Haults the script if XMB is already installed.
+ * Check if XMB is already installed.
  *
  * @since 1.9.11.09
  * @param string $database
@@ -88,8 +38,16 @@ function error($head, $msg, $die = true)
  * @param bool   $pconnect
  * @param string $tablepre
  */
-function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre): string
-{
+function already_installed(
+    string $database,
+    string $dbhost,
+    string $dbuser,
+    #[\SensitiveParameter]
+    string $dbpw,
+    string $dbname,
+    bool $pconnect,
+    string $tablepre,
+): string {
     // When config.php has default values, XMB is not installed.
     $config_array = array(
         'dbname' => 'DB/NAME',
@@ -108,9 +66,10 @@ function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnec
     if ('mysql' === $database) $database = 'mysqli';
 
     if (! is_readable(XMB_ROOT . "db/{$database}.php")) return false;
+    require_once XMB_ROOT . 'db/DBStuff.php';
     require_once XMB_ROOT . "db/{$database}.php";
 
-    $db = new dbstuff;
+    $db = new \XMB\MySQLiDatabase(debug: true, logErrors: true);
     $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
     if (! $result) return 'no-connection';
 
@@ -125,4 +84,3 @@ function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnec
         return 'no-db-table';
     }
 }
-

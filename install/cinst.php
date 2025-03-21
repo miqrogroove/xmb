@@ -52,34 +52,22 @@ class Install
         $vEmail = trim($frmEmail);
 
         if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
-            show_result(X_INST_ERR);
-            $errStr = 'The username, password or e-mail address cannot be blank or malformed. Please press back and try again.';
-            error('Bad super administrator credentials', $errStr);
-            exit();
+            $this->show->error('The username, password or e-mail address cannot be blank or malformed. Please press back and try again.');
         }
 
         if ($iUsername == 'anonymous' || $iUsername == 'xguest123' || strlen($vUsername) > 32 || strlen($vUsername) < 3) {
-            show_result(X_INST_ERR);
-            $errStr = 'The username you provided is not valid for XMB. Please press back and create a different username.';
-            error('Bad super administrator credentials', $errStr);
-            exit();
+            $this->show->error('The username you provided is not valid for XMB. Please press back and create a different username.');
         }
 
         if ($frmPassword !== $frmPasswordCfm) {
-            show_result(X_INST_ERR);
-            $errStr = 'The passwords do not match. Please press back and try again.';
-            error('Bad super administrator credentials', $errStr);
-            exit();
+            $this->show->error('The passwords do not match. Please press back and try again.');
         }
 
         $nonprinting = '\\x00-\\x1F\\x7F-\\x9F\\xAD';
         $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
         $sequences = '|  ';  //Phrases disallowed, each separated by '|'
         if ($vUsername !== preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $vUsername)) {
-            show_result(X_INST_ERR);
-            $errStr = 'The username may not contain special characters. Please press back and try again.';
-            error('Bad super administrator credentials', $errStr);
-            exit();
+            $this->show->error('The username may not contain special characters. Please press back and try again.');
         }
 
         // these two are used waaaaay down below.
@@ -91,14 +79,10 @@ class Install
         // is XMB already installed?
         $this->show->progress('Checking for previous XMB Installations');
         if (xmb_schema_table_exists('settings')) {
-            show_result(X_INST_WARN);
-            $errStr = 'An existing installation of XMB has been detected in the "'
-            . $dbname . '" database located on "'
-            . $dbhost . '". <br />If you wish to overwrite this installation, please drop your "'
+            $errStr = 'An existing installation of XMB has been detected.  If you wish to overwrite this installation, please drop your "'
             . X_PREFIX . 'settings" table by using <pre>DROP TABLE `'
             . X_PREFIX . 'settings`;</pre>To install another forum on the same database, go back and enter a different table prefix.';
-            error('XMB Already Installed', $errStr);
-            exit();
+            $this->show->error($errStr);
         }
         $this->show->okay();
 
@@ -356,7 +340,7 @@ class Install
         ]);
         $this->show->okay();
 
-        // Debug mode is enabled by default during install. Need to turn it off so the new forums will look normal.
+        // Debug mode is enabled by default during install. Try to turn it off so the new forums will look normal.
         if ($this->vars->debug) {
             $this->show->progress("Deactivating debug mode");
             if (is_writable(XMB_ROOT . 'config.php')) {
@@ -364,14 +348,12 @@ class Install
                 $configuration = str_ireplace("define('DEBUG', true);", "define('DEBUG', false);", $configuration);
                 $result = file_put_contents(XMB_ROOT . 'config.php', $configuration);
                 if (false === $result){
-                    show_result(X_INST_SKIP);
-                    error('Permissions Notice', 'XMB could not update the config.php file.');
+                    $this->show->warning('Please disable debug mode in the config.php file after a successful installation.');
                 } else {
                     $this->show->okay();
                 }
             } else {
-                show_result(X_INST_SKIP);
-                error('Permissions Notice', 'XMB could not update the config.php file.');
+                $this->show->warning('Please disable debug mode in the config.php file after a successful installation.');
             }
         }
 

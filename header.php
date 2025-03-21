@@ -42,7 +42,7 @@ if (! defined('XMB_ROOT')) define('XMB_ROOT', './');
 ob_start();
 
 // Interfaces and base dependencies go first.
-require XMB_ROOT . 'db/DBStuff.php';
+require_once XMB_ROOT . 'db/DBStuff.php';
 require XMB_ROOT . 'include/CartesianSize.php';
 require XMB_ROOT . 'include/UploadResult.php';
 require XMB_ROOT . 'include/UploadStatus.php';
