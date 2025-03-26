@@ -92,7 +92,6 @@ class UserEditForm
             $template->checked = '';
             $template->subschecked = '';
             $template->newschecked = $vars::cheHTML;
-            $template->uou2uchecked = '';
             $template->ogu2uchecked = $vars::cheHTML;
             $template->eouchecked = '';
             $template->invchecked = '';
@@ -107,7 +106,6 @@ class UserEditForm
             $template->checked = $member['showemail'] == 'yes' ? $vars::cheHTML : '';
             $template->subschecked = $member['sub_each_post'] == 'yes' ? $vars::cheHTML : '';
             $template->newschecked = $member['newsletter'] == 'yes' ? $vars::cheHTML : '';
-            $template->uou2uchecked = $member['useoldu2u'] == 'yes' ? $vars::cheHTML : '';
             $template->ogu2uchecked = $member['saveogu2u'] == 'yes' ? $vars::cheHTML : '';
             $template->eouchecked = $member['emailonu2u'] == 'yes' ? $vars::cheHTML : '';
             $template->invchecked = $member['invisible'] === '1' ? $vars::cheHTML : '';
@@ -155,11 +153,6 @@ class UserEditForm
         $newsletter = formYesNo('newsletter');
         if ($this->formMode == 'new' || $this->targetUser['newsletter'] != $newsletter) {
             $this->edits['newsletter'] = $newsletter;
-        }
-
-        $useoldu2u = formYesNo('useoldu2u');
-        if ($this->formMode == 'new' || $this->targetUser['useoldu2u'] != $useoldu2u) {
-            $this->edits['useoldu2u'] = $useoldu2u;
         }
 
         $saveogu2u = formYesNo('saveogu2u');

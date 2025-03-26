@@ -78,11 +78,6 @@
 </td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textuseoldu2u'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="useoldu2u" value="yes" />
-</td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsaveog'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="saveogu2u" value="yes" checked="checked" />
 </td>

@@ -196,12 +196,12 @@ class SQL
 
         $strings = ['username', 'password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'showemail', 'avatar',
         'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
-        'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
+        'u2ufolders', 'saveogu2u', 'emailonu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
 
         $sql = [];
 
-        foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
-        foreach($ints as $field) {
+        foreach ($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
+        foreach ($ints as $field) {
             if (isset($values[$field])) {
                 if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             } else {
@@ -209,7 +209,7 @@ class SQL
             }
             $sql[] = "$field = {$values[$field]}";
         }
-        foreach($numerics as $field) {
+        foreach ($numerics as $field) {
             if (isset($values[$field])) {
                 if (! is_numeric($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             } else {
@@ -217,7 +217,7 @@ class SQL
             }
             $sql[] = "$field = {$values[$field]}";
         }
-        foreach($strings as $field) {
+        foreach ($strings as $field) {
             if (isset($values[$field])) {
                 if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 $this->db->escape_fast($values[$field]);
@@ -251,7 +251,7 @@ class SQL
 
         $strings = ['password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'showemail', 'avatar',
         'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
-        'u2ufolders', 'saveogu2u', 'emailonu2u', 'useoldu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
+        'u2ufolders', 'saveogu2u', 'emailonu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
 
         $sql = [];
 

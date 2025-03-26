@@ -106,7 +106,6 @@
 <input type="checkbox" name="newsubs" value="yes" <?= $subschecked ?> /> <?= $lang['subdefault'] ?><br />
 <input type="checkbox" name="newsletter" value="yes" <?= $newschecked ?> /> <?= $lang['textgetnews'] ?><br />
 <input type="checkbox" name="newinv" value="1" <?= $invchecked ?> /> <?= $lang['textinvisible'] ?><br />
-<input type="checkbox" name="useoldu2u" value="yes" <?= $uou2uchecked ?> /> <?= $lang['textuseoldu2u'] ?><br />
 <input type="checkbox" name="saveogu2u" value="yes" <?= $ogu2uchecked ?> /> <?= $lang['textsaveog'] ?><br />
 <input type="checkbox" name="emailonu2u" value="yes" <?= $eouchecked ?> /> <?= $lang['textemailonu2u'] ?><br />
 <input type="text" name="timeoffset1" size="3" value="<?= $timeOffset ?>" /> <?= $textoffset ?>

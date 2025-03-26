@@ -159,7 +159,7 @@ if (noSubmit('editsubmit')) {
     location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', avatar='$avatar',
     theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew',
     dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u',
-    useoldu2u='$useoldu2u', u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$user'");
+    u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$user'");
 
     if (getRawString('newpassword') != '') {
         $newPass = $core->assertPasswordPolicy('newpassword', 'newpassword');

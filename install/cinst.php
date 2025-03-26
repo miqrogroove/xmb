@@ -336,7 +336,6 @@ class Install
             'ppp'        => 30,
             'saveogu2u'  => 'yes',
             'emailonu2u' => 'no',
-            'useoldu2u'  => 'no',
         ]);
         $this->show->okay();
 

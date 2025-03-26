@@ -70,7 +70,7 @@ if (! $u2uid) {
     $u2uid = formInt('u2uid');
 }
 
-$template->thewidth = ($vars->self['useoldu2u'] == 'yes') ? $vars->theme['tablewidth'] : '100%';
+$template->thewidth = '100%';
 
 $template->leftpane = '';
 
@@ -215,6 +215,4 @@ $template->u2uheader = $u2u->getHeader();
 $template->u2uquotabar = $template->process('u2u_quotabar.php');
 $template->u2ufooter = $u2u->getFooter();
 
-// TODO: What the hell is u2u_old for?
-$tu2u = ($vars->self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';
-$template->process("$tu2u.php", echo: true);
+$template->process("u2u.php", echo: true);

@@ -2120,6 +2120,7 @@ class Upgrade
 
 // TODO: Schema 11
 //  - Delete 'spellcheck' record from settings table.
+//  - Delete members.useoldu2u
 
     /**
      * Recalculates the value of every field in the forums.postperm column.

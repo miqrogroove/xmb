@@ -766,7 +766,7 @@ class U2U
                     $u2uname = $u2u['msgto'];
                 }
 
-                $subTemplate->u2usent = '<a href="' . $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($u2uname) . "target='_blank'>$u2uname</a> ($online)";
+                $subTemplate->u2usent = "<a href='" . $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($u2uname) . "' target='_blank'>$u2uname</a> ($online)";
             } elseif ($u2u['type'] == 'draft') {
                 $subTemplate->u2usent = $this->vars->lang['textu2unotsent'];
             }
