@@ -1,4 +1,4 @@
-<form method="post" action="u2u.php?action=mod" name="u2u_main">
+<form method="post" action="<?= $full_url ?>u2u.php?action=mod" name="u2u_main">
 <input type="hidden" name="token" value="" />
 <?= $u2ulist ?>
 <br />
@@ -7,9 +7,9 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>" align="left">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>"><a href="u2u.php" onclick="setCheckboxes('u2u_main', true); return false;"><?= $lang['checkall'] ?></a> -
-<a href="u2u.php" onclick="setCheckboxes('u2u_main', false); return false;"><?= $lang['uncheckall'] ?></a> -
-<a href="u2u.php" onclick="invertSelection('u2u_main', 'u2u_select[]'); return false;"><?= $lang['invertselection'] ?></a></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><a href="<?= $full_url ?>u2u.php" onclick="setCheckboxes('u2u_main', true); return false;"><?= $lang['checkall'] ?></a> -
+<a href="<?= $full_url ?>u2u.php" onclick="setCheckboxes('u2u_main', false); return false;"><?= $lang['uncheckall'] ?></a> -
+<a href="<?= $full_url ?>u2u.php" onclick="invertSelection('u2u_main', 'u2u_select[]'); return false;"><?= $lang['invertselection'] ?></a></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><input type="radio" name="modaction" value="delete" /> <?= $lang['deletebutton'] ?></td>

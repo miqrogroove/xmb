@@ -22,210 +22,199 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('X_SCRIPT', 'u2u.php');
+declare(strict_types=1);
 
-require 'header.php';
-require XMB_ROOT.'include/u2u.inc.php';
+namespace XMB;
+
+require './header.php';
+
+require XMB_ROOT . 'include/u2u.inc.php';
 
 header('X-Robots-Tag: noindex');
 
-loadtemplates(
-'u2u_header',
-'u2u_footer',
-'u2u_msg',
-'u2u',
-'u2u_folderlink',
-'u2u_inbox',
-'u2u_outbox',
-'u2u_drafts',
-'u2u_row',
-'u2u_row_none',
-'u2u_view',
-'u2u_ignore',
-'u2u_send',
-'u2u_send_preview',
-'u2u_folders',
-'u2u_main',
-'u2u_quotabar',
-'u2u_old',
-'u2u_printable',
-'email_html_header',
-'email_html_footer',
-'css'
-);
+$core = \XMB\Services\core();
+$db = \XMB\Services\db();
+$sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$tran = \XMB\Services\translation();
+$vars = \XMB\Services\vars();
+$lang = &$vars->lang;
 
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
+$u2u = new U2U($core, $db, $sql, $template, $tran, $vars);
+
+$action = getPhpInput('action', 'g');
 $sendmode = ($action == 'send') ? "true" : "false";
 
-eval('$u2uheader = "'.template('u2u_header').'";');
-eval('$u2ufooter = "'.template('u2u_footer').'";');
-
 if (X_GUEST) {
-    redirect("{$full_url}misc.php?action=login", 0);
+    redirect($vars->full_url . "misc.php?action=login", timeout: 0);
     exit;
 }
 
-$folder = postedVar('folder', '', TRUE, FALSE, TRUE);
+$folder = $core->postedVar('folder', '', TRUE, FALSE, TRUE);
 if ($folder == '') {
-    $folder = postedVar('folder', '', TRUE, FALSE, TRUE, 'g');
+    $folder = $core->postedVar('folder', '', TRUE, FALSE, TRUE, 'g');
 }
 
-$tofolder = postedVar('tofolder', '', TRUE, FALSE, TRUE);
+$tofolder = $core->postedVar('tofolder', '', TRUE, FALSE, TRUE);
 
-$folderlist = '';
-$folders = ''; // This variable gets set globally by u2u_folderList().  Don't ask.  Needs improvement.
-$farray = array();
 if ($folder != '' && ($action == '' || $action == 'mod' || $action == 'view')) {
     //$folder = checkInput($folder, true);
 } else {
     $folder = 'Inbox';
 }
+$u2u->setFolder($folder);
 
-$u2ucount = u2u_folderList(); //Sets several global vars
+$u2ucount = $u2u->folderList();
 $u2uid = getInt('u2uid');
-if (!$u2uid) {
-    $u2uid = postedVar('u2uid');
+if (! $u2uid) {
+    $u2uid = formInt('u2uid');
 }
 
-$thewidth = ($self['useoldu2u'] == 'yes') ? $tablewidth : '100%';
+$template->thewidth = ($vars->self['useoldu2u'] == 'yes') ? $vars->theme['tablewidth'] : '100%';
 
-$u2upreview = '';
-$leftpane = '';
+$template->leftpane = '';
 
-switch($action) {
+switch ($action) {
     case 'modif':
-        $mod = postedVar('mod', '', FALSE, FALSE);
+        $mod = $core->postedVar('mod', '', FALSE, FALSE);
         switch($mod) {
+            // TODO: What is the purpose of any of these redirects?
             case 'send':
                 if ($u2uid > 0) {
-                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid", 0);
+                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid", 0);
                 } else {
-                    redirect($full_url.'u2u.php?action=send', 0);
+                    redirect($vars->full_url . 'u2u.php?action=send', 0);
                 }
                 break;
             case 'reply':
                 if ($u2uid > 0) {
-                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid&reply=yes", 0);
+                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&reply=yes", 0);
                 } else {
-                    redirect($full_url."u2u.php?action=send&reply=yes", 0);
+                    redirect($vars->full_url . "u2u.php?action=send&reply=yes", 0);
                 }
                 break;
             case 'replydel':
                 if ($u2uid > 0) {
-                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid&reply=yes&del=yes", 0);
+                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&reply=yes&del=yes", 0);
                 } else {
-                    redirect($full_url."u2u.php?action=send&reply=yes&del=yes", 0);
+                    redirect($vars->full_url . "u2u.php?action=send&reply=yes&del=yes", 0);
                 }
                 break;
             case 'forward':
                 if ($u2uid > 0) {
-                    redirect($full_url."u2u.php?action=send&u2uid=$u2uid&forward=yes", 0);
+                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&forward=yes", 0);
                 } else {
-                    redirect($full_url."u2u.php?action=send&forward=yes", 0);
+                    redirect($vars->full_url . "u2u.php?action=send&forward=yes", 0);
                 }
                 break;
             case 'sendtoemail':
-                u2u_print($u2uid, true);
+                $u2u->printOrEmail($u2uid, eMail: true);
                 break;
             case 'delete':
-                u2u_delete($u2uid, $folder);
+                $u2u->delete($u2uid);
                 break;
             case 'move':
-                u2u_move($u2uid, $tofolder);
+                $u2u->move($u2uid, $tofolder);
                 break;
             case 'markunread':
-                u2u_markUnread($u2uid, $folder, $type);
+                // This value is related to template u2u_view.php
+                $type = getPhpInput('type');
+                $u2u->markUnread($u2uid, $type);
                 break;
             default:
-                $leftpane = u2u_display($folder, $folders);
+                $template->leftpane = $u2u->display();
                 break;
         }
         break;
     case 'mod':
-        $modaction = postedVar('modaction', '', FALSE, FALSE);
+        $modaction = $core->postedVar('modaction', '', FALSE, FALSE);
         $u2u_select = getFormArrayInt('u2u_select');
-        $tofolder = postedVar('tofolder', '', TRUE, FALSE);
+        $tofolder = $core->postedVar('tofolder', '', TRUE, FALSE);
         $folder_url = recodeOut($folder);
-        switch($modaction) {
+        switch ($modaction) {
             case 'delete':
-                if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
+                if (! isset($u2u_select) || empty($u2u_select)) {
+                    $u2u->error($lang['textnonechosen'], $vars->full_url . "u2u.php?folder=$folder_url");
                 }
-                u2u_mod_delete($folder, $u2u_select);
+                $u2u->modDelete($u2u_select);
                 break;
             case 'move':
-                if (!isset($tofolder) || empty($tofolder)) {
-                    error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
+                if (! isset($tofolder) || empty($tofolder)) {
+                    $u2u->error($lang['textnofolder'], $vars->full_url . 'u2u.php');
                 }
 
-                if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
-                    return;
+                if (! isset($u2u_select) || empty($u2u_select)) {
+                    $u2u->error($lang['textnonechosen'], $vars->full_url . "u2u.php?folder=$folder_url");
                 }
-                u2u_mod_move($tofolder, $u2u_select);
+                $u2u->modMove($tofolder, $u2u_select);
                 break;
             case 'markunread':
-                if (!isset($u2u_select) || empty($u2u_select)) {
-                    error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
+                if (! isset($u2u_select) || empty($u2u_select)) {
+                    $u2u->error($lang['textnonechosen'], $vars->full_url . "u2u.php?folder=$folder_url");
                 }
-                u2u_mod_markUnread($folder, $u2u_select);
+                $u2u->modMarkUnread($u2u_select);
                 break;
             default:
-                error($lang['testnothingchos'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?folder=$folder_url", true, false, false);
+                $u2u->error($lang['testnothingchos'], $vars->full_url . "u2u.php?folder=$folder_url");
                 break;
         }
         break;
     case 'send':
-        $msgto = postedVar('msgto', 'javascript', TRUE, FALSE, TRUE);
-        $subject = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
-        $message = postedVar('message', '', TRUE, FALSE);
-        $leftpane = u2u_send($u2uid, $msgto, $subject, $message);
+        $msgto = $core->postedVar('msgto', 'javascript', TRUE, FALSE, TRUE);
+        $subject = $core->postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
+        $message = $core->postedVar('message', '', TRUE, FALSE);
+        $template->leftpane = $u2u->send($u2uid, $msgto, $subject, $message);
         break;
     case 'view':
-        $leftpane = u2u_view($u2uid, $folders);
+        $template->leftpane = $u2u->view($u2uid);
         break;
     case 'printable':
-        u2u_print($u2uid, false);
+        $u2u->printOrEmail($u2uid);
         break;
     case 'folders':
         if (onSubmit('folderssubmit')) {
-            $u2ufolders = postedVar('u2ufolders', 'javascript', TRUE, FALSE, TRUE);
-            u2u_folderSubmit($u2ufolders, $folders);
+            $u2ufolders = $core->postedVar('u2ufolders', 'javascript', TRUE, FALSE, TRUE);
+            $u2u->folderSubmit($u2ufolders);
         } else {
             $template->hU2ufolders = $vars->self->u2ufolders;
-            eval('$leftpane = "'.template('u2u_folders').'";');
+            $template->leftpane = $template->process('u2u_folders.php');
         }
         break;
     case 'ignore':
-        $leftpane = u2u_ignore();
+        $template->leftpane = $u2u->ignore();
         break;
     case 'emptytrash':
-        $db->query("DELETE FROM ".X_PREFIX."u2u WHERE folder='Trash' AND owner='$xmbuser'");
-        u2u_msg($lang['texttrashemptied'], 'u2u.php');
+        $db->query("DELETE FROM " . $vars->tablepre . "u2u WHERE folder = 'Trash' AND owner = '$xmbuser'");
+        $u2u->msg($lang['texttrashemptied'], $vars->full_url . 'u2u.php');
         break;
     default:
-        $leftpane = u2u_display($folder, $folders);
+        $template->leftpane = $u2u->display();
         break;
 }
 
-if (!X_STAFF) {
+if (! X_STAFF) {
     $percentage = (0 == (int) $SETTINGS['u2uquota']) ? 0 : (float)(($u2ucount / (int) $SETTINGS['u2uquota']) * 100);
     if ($percentage > 100) {
-        $barwidth = 100;
+        $template->barwidth = 100;
         $search  = [ '$u2ucount', '$u2uquota'            ];
         $replace = [  $u2ucount,   $SETTINGS['u2uquota'] ];
-        $uqinfo = str_replace($search, $replace, $lang['evaluqinfo_over']);
+        $template->uqinfo = str_replace($search, $replace, $lang['evaluqinfo_over']);
     } else {
         $percent = number_format($percentage, 2);
-        $barwidth = number_format($percentage, 0);
+        $template->barwidth = number_format($percentage, 0);
         $search  = [ '$u2ucount', '$percent', '$u2uquota'            ];
         $replace = [  $u2ucount,   $percent,   $SETTINGS['u2uquota'] ];
-        $uqinfo = str_replace($search, $replace, $lang['evaluqinfo']);
+        $template->uqinfo = str_replace($search, $replace, $lang['evaluqinfo']);
     }
 } else {
-    $barwidth = $percentage = 0;
-    $uqinfo = str_replace('$u2ucount', $u2ucount, $lang['evalu2ustaffquota']);
+    $template->barwidth = $percentage = 0;
+    $template->uqinfo = str_replace('$u2ucount', (string) $u2ucount, $lang['evalu2ustaffquota']);
 }
-eval('$u2uquotabar = "'.template('u2u_quotabar').'";');
-$tu2u = ($self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';
-eval('echo "'.template($tu2u).'";');
+
+$template->u2uheader = $u2u->getHeader();
+$template->u2uquotabar = $template->process('u2u_quotabar.php');
+$template->u2ufooter = $u2u->getFooter();
+
+// TODO: What the hell is u2u_old for?
+$tu2u = ($vars->self['useoldu2u'] == 'yes') ? 'u2u_old' : 'u2u';
+$template->process("$tu2u.php", echo: true);

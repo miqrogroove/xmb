@@ -26,7 +26,7 @@ code {
 white-space: pre;
 }
 </style>
-<title><?= $bbname ?> - <?= $lang['textpowered'] ?></title>
+<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
 </head>
 <body>
 <?= $THEME['logo'] ?><br /><br />

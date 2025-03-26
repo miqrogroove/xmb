@@ -1,4 +1,4 @@
-<form method="post" action="u2u.php?action=folders">
+<form method="post" action="<?= $full_url ?>u2u.php?action=folders">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
 <tr>

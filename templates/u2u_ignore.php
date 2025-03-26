@@ -1,4 +1,4 @@
-<form method="post" action="u2u.php?action=ignore">
+<form method="post" action="<?= $full_url ?>u2u.php?action=ignore">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $thewidth ?>" align="center">
 <tr>

@@ -31,13 +31,13 @@
 </table>
 <table cellspacing="2" cellpadding="2" border="0" align="center">
 <tr>
-<td align="right" class="tablerow"><a href="u2u.php?action=printable&amp;u2uid=<?= $u2uid ?>" onclick="window.open(this.href); return false;"><?= $lang['textprintver'] ?></a></td>
+<td align="right" class="tablerow"><a href="<?= $full_url ?>u2u.php?action=printable&amp;u2uid=<?= $u2uid ?>" onclick="window.open(this.href); return false;"><?= $lang['textprintver'] ?></a></td>
 </tr>
 </table>
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $thewidth ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
-<form method="post" action="u2u.php?action=modif">
+<form method="post" action="<?= $full_url ?>u2u.php?action=modif">
 <input type="hidden" name="token" value="" />
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
@@ -45,9 +45,9 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>">
-<input type="hidden" name="u2uid" value="<?= $u2u['u2uid'] ?>" />
-<input type="hidden" name="folder" value="<?= $u2u['folder'] ?>" />
-<input type="hidden" name="type" value="<?= $u2u['type'] ?>" />
+<input type="hidden" name="u2uid" value="<?= $u2uid ?>" />
+<input type="hidden" name="folder" value="<?= $u2ufolder ?>" />
+<input type="hidden" name="type" value="<?= $type ?>" />
 <input type="radio" name="mod" value="delete" <?= $delchecked ?> /> <?= $lang['deletebutton'] ?><br />
 <?= $sendoptions ?>
 <input type="radio" name="mod" value="markunread" /> <?= $lang['textu2umarkunread'] ?><br />

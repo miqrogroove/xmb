@@ -3,7 +3,7 @@
 <head>
 <base href="<?= $full_url ?>" />
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
-<title><?= $bbname ?> &gt; <?= $lang['textu2utoemail'] ?></title>
+<title><?= $SETTINGS['bbname'] ?> &gt; <?= $lang['textu2utoemail'] ?></title>
 <?= $css ?>
 </head>
 <body style="color: <?= $THEME['text'] ?>;">

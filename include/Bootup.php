@@ -193,10 +193,8 @@ class Bootup
         }
 
         $secure = false;
-        if (isset($_SERVER['HTTPS'])) {
-            if ($_SERVER['HTTPS'] != 'off') {
-                $secure = true;
-            }
+        if (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+            $secure = true;
         }
         if (substr($hostsetting, 0, 1) == '.') {
             $hostsetting = substr($hostsetting, 1);

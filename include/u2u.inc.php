@@ -30,106 +30,81 @@ class U2U
 {
     private const int U2U_FOLDER_COL_SIZE = 32;
 
+    private array $farray = []; // Array of ints, message counts indexed by English internal folder name.
+    private array $folders = []; // Array of strings, translated folder names.
+
+    private int $messageCount;
+    
+    private string $folder;
+    private string $footer;
+    private string $header;
+
     public function __construct(
+        private Core $core,
         private DBStuff $db,
         private SQL $sql,
+        private Template $template,
         private Translation $tran,
         private Variables $vars,
     ) {
-        // Property promotion
+        $this->header = $template->process('u2u_header.php');
+        $this->footer = $template->process('u2u_footer.php');
     }
 
-    function u2u_msg($msg, $redirect)
+    public function setFolder(string $folder)
     {
-        global $u2uheader, $u2ufooter, $THEME;
+        $this->folder = $folder;
+    }
 
-        if (!empty($redirect)) {
-            redirect($redirect);
+    public function getFooter(): string
+    {
+        return $this->footer;
+    }
+
+    public function getHeader(): string
+    {
+        return $this->header;
+    }
+
+    /**
+     * Display a themed notice.
+     *
+     * @since 1.9.1 Formerly u2u_msg()
+     * @since 1.10.00
+     * @param string $msg
+     * @param string $redirect
+     */
+    public function msg(string $msg, string $redirect)
+    {
+        if (! empty($redirect)) {
+            $this->core->redirect($redirect);
         }
-        eval('echo "'.template('u2u_msg').'";');
+        $this->template->u2uheader = $this->header;
+        $this->template->u2ufooter = $this->footer;
+        $this->template->msg = $msg;
+
+        $this->template->process('u2u_msg.php', echo: true);
         exit;
     }
 
     /**
-     * SQL Command
+     * Send a U2U message to one or more recipients.
      *
-     * DEPRECATED by XMB 1.10.00
+     * @since 1.9.1 Formerly u2u_send_multi_recp()
+     * @since 1.10.00
+     * @param string $msgto The recipient(s) of this U2U message.
+     * @param string $subject The U2U Subject
+     * @param string $message The U2U message body
+     * @return string HTML formatted error messages
      */
-    function db_u2u_insert($to, $from, $type, $owner, $folder, $subject, $message, $isRead, $isSent)
-    {
-        trigger_error('Function db_u2u_insert() is deprecated.  Use \XMB\SQL::addU2U().', E_DEPRECATED);
-
-        $onlinetime = $this->vars->onlinetime;
-
-        $this->db->query("INSERT INTO " . $this->vars->tablepre . "u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('$to', '$from', '$type', '$owner', '$folder', '$subject', '$message', '$onlinetime', '$isRead', '$isSent')");
-    }
-
-    function u2u_send_multi_recp($msgto, $subject, $message, $u2uid=0)
+    private function send_multi_recp(string $msgto, string $subject, string $message): string
     {
         $errors = '';
         $recipients = array_unique(array_map('trim', explode(',', $msgto)));
 
-        foreach($recipients as $recp) {
-            $errors .= u2u_send_recp($recp, $subject, $message, $u2uid);
+        foreach ($recipients as $recp) {
+            $errors .= $this->send_single($recp, $subject, $message);
         }
-
-        return $errors;
-    }
-
-    /**
-     * Sends a message from the current user to the specified username.
-     *
-     * DEPRECATED by XMB 1.10.00
-     *
-     * Assumes the current user is already authenticated and not banned from U2U.
-     *
-     * @since 1.9.1
-     * @param string $msgto XMB username, must be SQL safe.
-     * @param string $subject Message subject line, must be double-slashed.
-     * @param string $message Message body, must be double-slashed.
-     * @param int $u2uid Optional.
-     * @return string Empty string on success, HTML formatted messages on failure.
-     */
-    function u2u_send_recp($msgto, $subject, $message, $u2uid = 0)
-    {
-        trigger_error('Function u2u_send_recp() is deprecated.  Use U2U::send_single().', E_DEPRECATED);
-        
-        global $db, $self, $SETTINGS, $lang, $bbname, $adminemail, $cookiedomain, $del, $oToken, $xmbuser, $full_url;
-
-        $del = ('yes' === $del) ? 'yes' : 'no';
-        $errors = '';
-
-        $query = $db->query("SELECT username, email, lastvisit, ignoreu2u, emailonu2u, status, langfile FROM " . $this->vars->tablepre . "members WHERE username='$msgto'");
-        if ($rcpt = $db->fetch_array($query)) {
-            $ilist = array_map('trim', explode(',', $rcpt['ignoreu2u']));
-            if (!in_array($self['username'], $ilist) || X_ADMIN) {
-                $db->escape_fast($rcpt['username']);
-                db_u2u_insert($rcpt['username'], $xmbuser, 'incoming', $rcpt['username'], 'Inbox', $subject, $message, 'no', 'yes');
-                if ($self['saveogu2u'] == 'yes') {
-                    db_u2u_insert($rcpt['username'], $xmbuser, 'outgoing', $xmbuser, 'Outbox', $subject, $message, 'no', 'yes');
-                }
-
-                $u2uid = (int) $u2uid;
-                if ($del == 'yes' && $u2uid > 0) {
-                    $db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
-                }
-
-                if ($rcpt['emailonu2u'] == 'yes' && $rcpt['status'] != 'Banned') {
-                    $lang2 = $tran->loadPhrases(['charset', 'textnewu2uemail', 'textnewu2ubody']);
-                    $translate = $lang2[$rcpt['langfile']];
-                    $u2uurl = $full_url.'u2u.php';
-                    $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-                    $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
-                    $body = "$rawusername {$translate['textnewu2ubody']} \n$u2uurl";
-                    xmb_mail($rawaddress, $translate['textnewu2uemail'], $body, $translate['charset']);
-                }
-            } else {
-                $errors = '<br />'.$lang['u2ublocked'];
-            }
-        } else {
-            $errors = '<br />'.$lang['badrcpt'];
-        }
-        $db->free_result($query);
 
         return $errors;
     }
@@ -191,46 +166,37 @@ class U2U
                     $rawusername = htmlspecialchars_decode($this->vars->self['username'], ENT_QUOTES);
                     $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
                     $body = "$rawusername {$translate['textnewu2ubody']} \n$u2uurl";
-                    $core->xmb_mail($rawaddress, $translate['textnewu2uemail'], $body, $translate['charset']);
+                    $this->core->xmb_mail($rawaddress, $translate['textnewu2uemail'], $body, $translate['charset']);
                 }
             } else {
-                $errors = '<br />'.$lang['u2ublocked'];
+                $errors = '<br />'.$this->vars->lang['u2ublocked'];
             }
         } else {
-            $errors = '<br />'.$lang['badrcpt'];
+            $errors = '<br />'.$this->vars->lang['badrcpt'];
         }
 
         return $errors;
     }
 
     /**
-     * Send a U2U message to one or more recipients.
+     * Create a U2U message to one or more recipients, including message editing and previewing.
      *
-     * For PHP 8.1 compatibility, the $msgto, $subject, and $message params now accept strings only.
-     *
-     * @since 1.9.1
+     * @since 1.9.1 Formerly u2u_send()
+     * @since 1.10.00
      * @param int    $u2uid Generates a quoted message from the given message ID.
      * @param string $msgto The recipient(s) of this U2U message.
      * @param string $subject The U2U Subject
      * @param string $message The U2U message body
      * @return string The left-hand-pane view
      */
-    function u2u_send($u2uid, string $msgto, string $subject, string $message): string
+    public function send(int $u2uid, string $msgto, string $subject, string $message): string
     {
-        global $db, $self, $lang, $xmbuser, $SETTINGS, $del, $full_url;
-        global $u2uheader, $u2ufooter, $u2ucount, $u2uquota, $oToken;
-        global $THEME, $thewidth;
-        global $forward, $reply, $previewsubmit;
+        // TODO: These action inputs would be better as DI params: forward, reply, delete, save, preview, send.
+        $forward = getPhpInput('forward', 'g') === 'yes';
+        $reply = getPhpInput('reply', 'g') === 'yes';
+        $del = getPhpInput('del', 'g') === 'yes';
 
-        $dbsubject = addslashes($subject); //message and subject were historically double-slashed
-        $dbmessage = addslashes($message);
-        $db->escape_fast($dbsubject);
-        $db->escape_fast($dbmessage);
-        $dbto = $db->escape($msgto);
-
-        $leftpane = '';
-        $del = ($del == 'yes') ? 'yes' : 'no';
-        $username = $core->postedVar(
+        $username = $this->core->postedVar(
             varname: 'username',
             word: 'javascript',
             dbescape: false,
@@ -238,365 +204,407 @@ class U2U
             sourcearray: 'g',
         ); //username is the param from u2u links on profiles.
 
-        if ($self['ban'] == 'u2u' || $self['ban'] == 'both') {
-            error($lang['textbanfromu2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
+        if ($this->vars->self['ban'] == 'u2u' || $this->vars->self['ban'] == 'both') {
+            $this->error($this->vars->lang['textbanfromu2u']);
         }
 
-        if (!X_STAFF && $u2ucount >= $u2uquota && $u2uquota > 0) {
-            error($lang['u2ureachedquota'], false, $u2uheader, $u2ufooter, false, true, false, false);
+        if (! X_STAFF && $this->messageCount >= (int) $this->vars->settings['u2uquota'] && (int) $this->vars->settings['u2uquota'] > 0) {
+            $this->error($this->vars->lang['u2ureachedquota']);
         }
 
         if (onSubmit('savesubmit')) {
-            $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
+            if (empty($subject)) {
+                $subject = $this->vars->lang['textnosub'];
+            }
 
             if (empty($message)) {
-                error($lang['u2uempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
+                $this->error($this->vars->lang['u2uempty']);
             }
-            db_u2u_insert('', '', 'draft', $xmbuser, 'Drafts', $dbsubject, $dbmessage, 'yes', 'no');
-            u2u_msg($lang['imsavedmsg'], $full_url.'u2u.php?folder=Drafts');
-        }
 
-        if (onSubmit('sendsubmit')) {
+            $this->sql->addU2U(
+                to: '',
+                from: '',
+                type: 'draft',
+                owner: $this->vars->self['username'],
+                folder: 'Drafts',
+                subject: $subject,
+                message: $message,
+                isRead: 'yes',
+                isSent: 'no',
+                timestamp: $this->vars->onlinetime,
+            );
+
+            $this->msg($this->vars->lang['imsavedmsg'], $this->vars->full_url . 'u2u.php?folder=Drafts');
+        } elseif (onSubmit('sendsubmit')) {
             $errors = '';
-            $dbsubject = (empty($dbsubject) ? $db->escape($lang['textnosub']) : $dbsubject);
-
-            if (empty($message)) {
-                error($lang['u2umsgempty'], false, $u2uheader, $u2ufooter, false, true, false, false);
+            if (empty($subject)) {
+                $subject = $this->vars->lang['textnosub'];
             }
 
-            if ((int) $db->result($db->query("SELECT count(u2uid) FROM " . $this->vars->tablepre . "u2u WHERE msgfrom='$xmbuser' AND dateline > ".(time()-$SETTINGS['floodctrl'])), 0) > 0) {
-                error($lang['floodprotect_u2u'], false, $u2uheader, $u2ufooter, false, true, false, false);
+            if (empty($message)) {
+                $this->error($this->vars->lang['u2umsgempty']);
+            }
+
+            if ((int) $this->db->result($this->db->query("SELECT count(u2uid) FROM " . $this->vars->tablepre . "u2u WHERE msgfrom='" . $this->vars->xmbuser . "' AND dateline > ".(time() - $this->vars->settings['floodctrl'])), 0) > 0) {
+                $this->error($this->vars->lang['floodprotect_u2u']);
             }
 
             $u2uid = (int) $_POST['u2uid'];
 
             if (strstr($msgto, ',') && X_STAFF) {
-                $errors = u2u_send_multi_recp($dbto, $dbsubject, $dbmessage, $u2uid);
+                $errors = $this->send_multi_recp($msgto, $subject, $message);
             } else {
-                $errors = u2u_send_recp($dbto, $dbsubject, $dbmessage, $u2uid);
+                $errors = $this->send_single($msgto, $subject, $message);
             }
 
             if (empty($errors)) {
-                u2u_msg($lang['imsentmsg'], $full_url.'u2u.php');
+                $this->msg($this->vars->lang['imsentmsg'], $this->vars->full_url . 'u2u.php');
             } else {
-                u2u_msg(substr($errors, 6) , $full_url.'u2u.php');
+                $this->msg(substr($errors, 6) , $this->vars->full_url . 'u2u.php');
             }
         }
 
         if ($u2uid > 0) {
-            $query = $db->query("SELECT subject, msgfrom, message FROM " . $this->vars->tablepre . "u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
-            $quote = $db->fetch_array($query);
+            $query = $this->db->query("SELECT subject, msgfrom, message FROM " . $this->vars->tablepre . "u2u WHERE u2uid = '$u2uid' AND owner = '" . $this->vars->xmbuser . "'");
+            $quote = $this->db->fetch_array($query);
             if ($quote) {
-                if (!isset($previewsubmit)) {
-                    $prefixes = array($lang['textre'].' ', $lang['textfwd'].' ');
+                if (noSubmit('previewsubmit')) {
+                    $prefixes = array($this->vars->lang['textre'].' ', $this->vars->lang['textfwd'].' ');
                     $subject = str_replace($prefixes, '', $quote['subject']);
-                    $message = rawHTMLmessage(stripslashes($quote['message']));  //message and subject were historically double-slashed
-                    if ($forward == 'yes') {
-                        $subject = $lang['textfwd'].' '.$subject;
-                        $message = '[quote][i]'.$lang['origpostedby'].' '.$quote['msgfrom']."[/i]\n".$message.'[/quote]';
-                    } else if ($reply == 'yes') {
-                        $subject = $lang['textre'].' '.$subject;
+                    $message = $this->core->rawHTMLmessage(stripslashes($quote['message']));  //message and subject were historically double-slashed
+                    if ($forward) {
+                        $subject = $this->vars->lang['textfwd'].' '.$subject;
+                        $message = '[quote][i]'.$this->vars->lang['origpostedby'].' '.$quote['msgfrom']."[/i]\n".$message.'[/quote]';
+                    } elseif ($reply) {
+                        $subject = $this->vars->lang['textre'].' '.$subject;
                         $message = '[quote]'.$message.'[/quote]';
                         $username = $quote['msgfrom'];
                     }
                 }
             }
-            $db->free_result($query);
+            $this->db->free_result($query);
         }
 
-        if (isset($previewsubmit)) {
-            $subject = rawHTMLsubject($subject);
-            $u2usubject = $subject;
-            $u2umessage = postify($message, "no", "", "yes", "no");
-            $message = rawHTMLmessage($message);
-            eval('$u2upreview = "'.template('u2u_send_preview').'";');
+        if (onSubmit('previewsubmit')) {
+            $subject = $this->core->rawHTMLsubject($subject);
+            $this->template->u2usubject = $subject;
+            $this->template->u2umessage = $this->core->postify($message);
+            $this->template->u2upreview = $this->template->process('u2u_send_preview.php');
+            $message = $this->core->rawHTMLmessage($message);
             $username = $msgto;
         } else {
-            $u2upreview = '';
+            $this->template->u2upreview = '';
         }
 
-        eval('$leftpane = "'.template('u2u_send').'";');
-        return $leftpane;
+        $this->template->message = $message;
+        $this->template->subject = $subject;
+        $this->template->u2uid = $u2uid;
+        $this->template->username = $username;
+
+        return $this->template->process('u2u_send.php');
     }
 
-    function u2u_view($u2uid, $folders)
+    /**
+     * Generates the web format of the specified message.
+     *
+     * @since 1.9.1 Formerly u2u_view()
+     * @since 1.10.00
+     * @param int $u2uid
+     * @return string
+     */
+    function view(int $u2uid): string
     {
-        global $db, $dateformat, $timecode, $timeoffset, $lang, $self, $oToken, $xmbuser;
-        global $THEME, $thewidth, $full_url;
-        global $sendoptions, $u2uheader, $u2ufooter, $SETTINGS;
+        $subTemplate = new Template($this->vars);
+        $subTemplate->addRefs();
+        $subTemplate->thewidth = $this->template->thewidth;
+        $subTemplate->u2uid = $u2uid;
 
-        $delchecked = '';
-        $leftpane = '';
-
-        $u2uid = (int) $u2uid;
-
-        if (!($u2uid > 0)) {
-            error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
-            return;
+        if (! ($u2uid > 0)) {
+            $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . 'u2u.php');
         }
 
-        $query = $db->query("SELECT u.*, m.avatar FROM " . $this->vars->tablepre . "u2u AS u LEFT JOIN " . $this->vars->tablepre . "members AS m ON u.msgfrom=m.username WHERE u2uid='$u2uid' AND owner='$xmbuser'");
-        $u2u = $db->fetch_array($query);
-        null_string($self['avatar']);
+        $query = $this->db->query("SELECT u.*, m.avatar FROM " . $this->vars->tablepre . "u2u AS u LEFT JOIN " . $this->vars->tablepre . "members AS m ON u.msgfrom = m.username WHERE u2uid = '$u2uid' AND owner = '" . $this->vars->xmbuser . "'");
+        $u2u = $this->db->fetch_array($query);
+        null_string($this->vars->self['avatar']);
         null_string($u2u['avatar']);
-        if ($u2u) {
-            if ('on' == $SETTINGS['images_https_only']) {
-                if (strpos($self['avatar'], ':') !== false && substr($self['avatar'], 0, 6) !== 'https:') {
-                    $self['avatar'] = '';
-                }
-                if (strpos($u2u['avatar'], ':') !== false && substr($u2u['avatar'], 0, 6) !== 'https:') {
-                    $u2u['avatar'] = '';
-                }
-            }
 
-            $u2uavatar = '';
-            if ($u2u['type'] == 'incoming') {
-                $db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='$xmbuser')");
-                if ($SETTINGS['avastatus'] != 'off' && $u2u['avatar'] !== '') {
-                    $u2uavatar = '<br /><img src="'.$u2u['avatar'].'" />';
-                }
-            } else if ($u2u['type'] == 'draft') {
-                $db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid]");
-                if ($SETTINGS['avastatus'] != 'off' && $self['avatar'] !== '') {
-                    $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
-                }
-            } else {
-                if ($SETTINGS['avastatus'] != 'off' && $self['avatar'] !== '') {
-                    $u2uavatar = '<br /><img src="'.$self['avatar'].'" />';
-                }
-            }
-
-            $adjTime = $core->timeKludge((int) $u2u['dateline']);
-            $u2udate = gmdate($dateformat, $adjTime);
-            $u2utime = gmdate($timecode, $adjTime);
-            $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-            $u2usubject = rawHTMLsubject(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
-            $u2umessage = postify(stripslashes($u2u['message']), 'no', '', 'yes', 'no');
-            $u2ufolder = $u2u['folder'];
-            $u2ufrom = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgfrom']).'" target="mainwindow">'.$u2u['msgfrom'].'</a>';
-            $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2u['msgto']).'" target="mainwindow">'.$u2u['msgto'].'</a>';
-
-            if ($u2u['type'] == 'draft') {
-                $sendoptions = '<input type="radio" name="mod" value="send" /> '.$lang['textu2u'].'<br />';
-                $delchecked = ' checked="checked"';
-            } else if ($u2u['msgfrom'] !== $self['username']) {
-                $sendoptions = '<input type="radio" name="mod" value="reply" checked="checked" /> '.$lang['textreply'].'<br /><input type="radio" name="mod" value="replydel" /> '.$lang['textreplytrash'].'<br /><input type="radio" name="mod" value="forward" /> '.$lang['textforward'].'<br />';
-            } else {
-                $delchecked = ' checked="checked"';
-            }
-
-            $mtofolder = array();
-            $mtofolder[] = '<select name="tofolder">';
-            $mtofolder[] = '<option value="">'.$lang['textpickfolder'].'</option>';
-            foreach($folders as $key => $value) {
-                if (is_numeric($key)) {
-                    $key = $value;
-                }
-                $mtofolder[] = '<option value="'.$key.'">'.$value.'</option>';
-            }
-            $mtofolder[] = '</select>';
-            $mtofolder = implode("\n", $mtofolder);
-        } else {
-            error($lang['u2uadmin_noperm'], false, $u2uheader, $u2ufooter, false, true, false, false);
-        }
-        $db->free_result($query);
-
-        eval('$leftpane = "'.template('u2u_view').'";');
-        return $leftpane;
-    }
-
-    function u2u_print($u2uid, $eMail = false)
-    {
-        global $SETTINGS, $db, $self, $timeoffset, $lang, $u2uheader, $full_url,
-               $u2ufooter, $dateformat, $timecode, $bbname, $xmbuser, $THEME;
-
-        $mailHeader = '';
-        $mailFooter = '';
-
-        $u2uid = (int) $u2uid;
-
-        if (!($u2uid > 0)) {
-            error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
-            return;
+        if (! $u2u) {
+            $this->error($this->vars->lang['u2uadmin_noperm']);
         }
 
-        $query = $db->query("SELECT * FROM " . $this->vars->tablepre . "u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
-        $u2u = $db->fetch_array($query);
-        $db->free_result($query);
+        if ('on' == $this->vars->settings['images_https_only']) {
+            if (strpos($this->vars->self['avatar'], ':') !== false && substr($this->vars->self['avatar'], 0, 6) !== 'https:') {
+                $this->vars->self['avatar'] = '';
+            }
+            if (strpos($u2u['avatar'], ':') !== false && substr($u2u['avatar'], 0, 6) !== 'https:') {
+                $u2u['avatar'] = '';
+            }
+        }
 
-        if ($u2u) {
-            $adjTime = $core->timeKludge((int) $u2u['dateline']);
-            $u2udate = gmdate($dateformat, $adjTime);
-            $u2utime = gmdate($timecode, $adjTime);
-            $u2udateline = $u2udate.' '.$lang['textat'].' '.$u2utime;
-            $u2usubject = rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
-            $u2umessage = postify(stripslashes($u2u['message']), 'no', 'no', 'yes', 'no', 'yes', 'yes', false, "no", "yes");
-            $u2ufolder = $u2u['folder'];
-            $u2ufrom = $u2u['msgfrom'];
-            $u2uto = ($u2u['type'] == 'draft') ? $lang['textu2unotsent'] : $u2u['msgto'];
-
-            if ($eMail) {
-                // Make an HTML-formatted email containing the U2U body.
-                eval('$css = "'.template('css').'";');
-                if (file_exists(XMB_ROOT.$THEME['imgdir'].'/theme.css')) {
-                    $extra = file_get_contents(XMB_ROOT.$THEME['imgdir'].'/theme.css');
-                    if (false !== $extra) {
-                        $css .= $extra;
-                    }
-                }
-                $css = "<style type='text/css'>\n$css\n</style>";
-                eval('$mailHeader = "'.template('email_html_header').'";');
-                eval('$mailFooter = "'.template('email_html_footer').'";');
-                $html = true;
-                $title = "{$lang['textu2utoemail']} $u2usubject";
-                $body = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".$u2umessage."<br />\n<br />\n".$full_url.$mailFooter;
-                $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
-                $result = xmb_mail($rawemail, $title, $body, $lang['charset'], $html);
-                u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
-            } else {
-                global $css;
-                eval('echo "'.template('u2u_printable').'";');
-                exit;
+        $subTemplate->u2uavatar = '';
+        if ($u2u['type'] == 'incoming') {
+            $this->db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus='yes' WHERE u2uid=$u2u[u2uid] OR (u2uid=$u2u[u2uid]+1 AND type='outgoing' AND msgto='" . $this->vars->xmbuser . "')");
+            if ($this->vars->settings['avastatus'] != 'off' && $u2u['avatar'] !== '') {
+                $subTemplate->u2uavatar = '<br /><img src="' . $u2u['avatar'] . '" />';
+            }
+        } elseif ($u2u['type'] == 'draft') {
+            $this->db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus = 'yes' WHERE u2uid = $u2u[u2uid]");
+            if ($this->vars->settings['avastatus'] != 'off' && $this->vars->self['avatar'] !== '') {
+                $subTemplate->u2uavatar = '<br /><img src="' . $this->vars->self['avatar'] . '" />';
             }
         } else {
-            error($lang['u2uadmin_noperm'], false, $u2uheader, $u2ufooter, false, true, false, false);
-        }
-    }
-
-    function u2u_delete($u2uid, $folder)
-    {
-        global $db, $self, $lang, $xmbuser, $u2uheader, $u2ufooter, $oToken, $full_url;
-
-        $u2uid = (int) $u2uid;
-
-        if (!($u2uid > 0)) {
-            error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
-            return;
+            if ($this->vars->settings['avastatus'] != 'off' && $this->vars->self['avatar'] !== '') {
+                $subTemplate->u2uavatar = '<br /><img src="' . $this->vars->self['avatar'] . '" />';
+            }
         }
 
-        if ($folder == "Trash") {
-            $db->query("DELETE FROM " . $this->vars->tablepre . "u2u WHERE u2uid='$u2uid' AND owner='$xmbuser'");
+        $adjTime = $this->core->timeKludge((int) $u2u['dateline']);
+        $u2udate = gmdate($this->vars->dateformat, $adjTime);
+        $u2utime = gmdate($this->vars->timecode, $adjTime);
+        $subTemplate->u2udateline = "$u2udate " . $this->vars->lang['textat'] . " $u2utime";
+        $subTemplate->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
+        $subTemplate->u2umessage = $this->core->postify(stripslashes($u2u['message']));
+        $subTemplate->u2ufolder = $u2u['folder'];
+        $subTemplate->u2ufrom = '<a href="' . $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($u2u['msgfrom']) . '" target="mainwindow">' . $u2u['msgfrom'] . '</a>';
+        $subTemplate->u2uto = ($u2u['type'] == 'draft') ? $this->vars->lang['textu2unotsent'] : '<a href="' . $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($u2u['msgto']) . '" target="mainwindow">' . $u2u['msgto'] . '</a>';
+        $subTemplate->type = $u2u['type'];
+
+        if ($u2u['type'] == 'draft') {
+            $subTemplate->sendoptions = '<input type="radio" name="mod" value="send" /> ' . $this->vars->lang['textu2u'] . '<br />';
+            $subTemplate->delchecked = ' checked="checked"';
+        } elseif ($u2u['msgfrom'] !== $this->vars->self['username']) {
+            $subTemplate->sendoptions = '<input type="radio" name="mod" value="reply" checked="checked" /> ' . $this->vars->lang['textreply'] . '<br /><input type="radio" name="mod" value="replydel" /> ' . $this->vars->lang['textreplytrash'] . '<br /><input type="radio" name="mod" value="forward" /> ' . $this->vars->lang['textforward'] . '<br />';
+            $subTemplate->delchecked = '';
         } else {
-            $db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder='Trash' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
+            $subTemplate->sendoptions = '';
+            $subTemplate->delchecked = ' checked="checked"';
         }
 
-        u2u_msg($lang['imdeletedmsg'], $full_url.'u2u.php?folder='.recodeOut($folder));
+        $mtofolder = [];
+        $mtofolder[] = '<select name="tofolder">';
+        $mtofolder[] = '<option value="">' . $this->vars->lang['textpickfolder'] . '</option>';
+        foreach ($this->folders as $key => $value) {
+            if (is_numeric($key)) {
+                $key = $value;
+            }
+            $mtofolder[] = '<option value="'.$key.'">'.$value.'</option>';
+        }
+        $mtofolder[] = '</select>';
+        $subTemplate->mtofolder = implode("\n", $mtofolder);
+
+        $this->db->free_result($query);
+
+        return $subTemplate->process('u2u_view.php');
     }
 
-    function u2u_mod_delete($folder, $u2u_select)
+    /**
+     * Display printable format, or send-to-email, for the specified message.
+     *
+     * @since 1.9.1 Formerly u2u_print()
+     * @since 1.10.00
+     * @param int $u2uid
+     */
+    public function printOrEmail(int $u2uid, bool $eMail = false)
     {
-        global $db, $self, $lang, $oToken, $xmbuser, $full_url;
+        if (! ($u2uid > 0)) {
+            $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . 'u2u.php');
+        }
 
+        $query = $this->db->query("SELECT * FROM " . $this->vars->tablepre . "u2u WHERE u2uid = '$u2uid' AND owner = '" . $this->vars->xmbuser . "'");
+        $u2u = $this->db->fetch_array($query);
+        $this->db->free_result($query);
+
+        if (empty($u2u)) {
+            $this->error($this->vars->lang['u2uadmin_noperm']);
+        }
+
+        $adjTime = $this->core->timeKludge((int) $u2u['dateline']);
+        $u2udate = gmdate($this->vars->dateformat, $adjTime);
+        $u2utime = gmdate($this->vars->timecode, $adjTime);
+        $this->template->u2udateline = $u2udate . ' ' . $this->vars->lang['textat'] . ' ' . $u2utime;
+        $this->template->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject']));  // Message and subject were historically double-slashed
+        $this->template->u2umessage = $this->core->postify(stripslashes($u2u['message']));
+        $this->template->u2ufolder = $u2u['folder'];
+        $this->template->u2ufrom = $u2u['msgfrom'];
+        $this->template->u2uto = ($u2u['type'] == 'draft') ? $this->vars->lang['textu2unotsent'] : $u2u['msgto'];
+
+        if ($eMail) {
+            // Make an HTML-formatted email containing the U2U body.
+            $css = $this->template->process('css.php');
+            if (file_exists(XMB_ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
+                $extra = file_get_contents(XMB_ROOT . $this->vars->theme['imgdir'] . '/theme.css');
+                if (false !== $extra) {
+                    $css .= $extra;
+                }
+            }
+            $this->template->css = "<style type='text/css'>\n$css\n</style>";
+            $this->template->mailHeader = $this->template->process('email_html_header.php');
+            $this->template->mailFooter = $this->template->process('email_html_footer.php');
+            $title = $this->vars->lang['textu2utoemail'] . ' ' . $this->template->u2usubject;
+            $body = $this->template->process('u2u_email.php');
+            $rawemail = htmlspecialchars_decode($this->vars->self['email'], ENT_QUOTES);
+            $result = $this->core->xmb_mail($rawemail, $title, $body, $this->vars->lang['charset'], html: true);
+            $this->msg($this->vars->lang['textu2utoemailsent'], $this->vars->full_url . "u2u.php?action=view&u2uid=$u2uid");
+        } else {
+            $this->template->process('u2u_printable.php', echo: true);
+            exit;
+        }
+    }
+
+    /**
+     * Delete the specified message.
+     *
+     * @since 1.9.1 Formerly u2u_delete()
+     * @since 1.10.00
+     * @param int $u2uid
+     */
+    public function delete(int $u2uid)
+    {
+        if (! ($u2uid > 0)) {
+            $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . 'u2u.php');
+        }
+
+        $this->modDelete([$u2uid]);
+    }
+
+    /**
+     * Mass delete the specified messages.
+     *
+     * @since 1.9.1 Formerly u2u_mod_delete()
+     * @since 1.10.00
+     * @param array $u2u_select Array of int u2uid values.
+     */
+    public function modDelete(array $u2u_select)
+    {
         $in = '';
-        foreach($u2u_select as $value) {
+        foreach ($u2u_select as $value) {
             $value = (int) $value;
             $in .= ($value > 0 ? (empty($in) ? "$value" : ", $value") : '');
         }
 
-        if ($folder == "Trash") {
-            $db->query("DELETE FROM " . $this->vars->tablepre . "u2u WHERE u2uid IN($in) AND owner='$xmbuser'");
+        if ($this->folder == "Trash") {
+            $this->db->query("DELETE FROM " . $this->vars->tablepre . "u2u WHERE u2uid IN ($in) AND owner = '" . $this->vars->xmbuser . "'");
         } else {
-            $db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder='Trash' WHERE u2uid IN($in) AND owner='$xmbuser'");
+            $this->db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder = 'Trash' WHERE u2uid IN ($in) AND owner = '" . $this->vars->xmbuser . "'");
         }
 
-        u2u_msg($lang['imdeletedmsg'], $full_url.'u2u.php?folder='.recodeOut($folder));
+        $this->msg($this->vars->lang['imdeletedmsg'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
     }
 
-    function u2u_move($u2uid, $tofolder)
+    /**
+     * Edit the folder of a message to the specified value.
+     *
+     * @since 1.9.1 Formerly u2u_move()
+     * @since 1.10.00
+     * @param int $u2uid
+     * @param string $tofolder The destination folder of the move.
+     */
+    public function move(int $u2uid, string $tofolder)
     {
-        global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $type, $folder, $oToken, $xmbuser, $full_url;
-
-        $u2uid = (int) $u2uid;
-
-        if (!($u2uid > 0)) {
-            error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php', true, false, false);
-            return;
+        if (! ($u2uid > 0)) {
+            $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . 'u2u.php');
         }
+
+        // This value is related to template u2u_view.php
+        $type = getPhpInput('type');
 
         if (empty($tofolder)) {
-            error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
-        } else {
-            if (!(in_array($tofolder, $folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') || ($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) || ($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) || ($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
-                error($lang['textcantmove'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
-            }
-
-            $db->escape_fast($tofolder);
-            $db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder='$tofolder' WHERE u2uid='$u2uid' AND owner='$xmbuser'");
-
-            u2u_msg($lang['textmovesucc'], $full_url.'u2u.php?folder='.recodeOut($folder));
+            $this->error($this->vars->lang['textnofolder'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
         }
+
+        if (! (in_array($tofolder, $this->folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') || ($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) || ($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) || ($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
+            $this->error($this->vars->lang['textcantmove'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
+        }
+
+        $this->db->escape_fast($tofolder);
+        $this->db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder = '$tofolder' WHERE u2uid = '$u2uid' AND owner = '" . $this->vars->xmbuser . "'");
+
+        $this->msg($this->vars->lang['textmovesucc'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
     }
 
-    function u2u_mod_move($tofolder, $u2u_select)
+    /**
+     * Mass edit the folder of many messages to the specified value.
+     *
+     * @since 1.9.1 Formerly u2u_mod_move()
+     * @since 1.10.00
+     * @param string $tofolder The destination folder of the move.
+     * @param array $u2u_select Array of int u2uid values.
+     */
+    public function modMove(string $tofolder, array $u2u_select)
     {
-        global $db, $self, $lang, $u2uheader, $u2ufooter, $folders, $oToken, $folder, $xmbuser, $full_url;
-
         $in = '';
-        foreach($u2u_select as $value) {
+        foreach ($u2u_select as $value) {
             $value = (int) $value;
             if ($value > 0) {
-                $type = $GLOBALS['type'.$value];
-                if ((in_array($tofolder, $folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') && !($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) && !($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) && !($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
+                // These values are related to template u2u_row.php
+                $type = getPhpInput("type$value");
+                if ((in_array($tofolder, $this->folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') && !($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) && !($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) && !($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
                     $in .= (empty($in)) ? "$value" : ",$value";
                 }
             }
         }
 
         if (empty($in)) {
-            error($lang['textcantmove'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
+            $this->error($this->vars->lang['textcantmove'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
             return;
         }
 
-        $db->escape_fast($tofolder);
-        $db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder='$tofolder' WHERE u2uid IN($in) AND owner='$xmbuser'");
+        $this->db->escape_fast($tofolder);
+        $this->db->query("UPDATE " . $this->vars->tablepre . "u2u SET folder = '$tofolder' WHERE u2uid IN ($in) AND owner = '" . $this->vars->xmbuser . "'");
 
-        u2u_msg($lang['textmovesucc'], $full_url.'u2u.php?folder='.recodeOut($folder));
+        $this->msg($this->vars->lang['textmovesucc'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
     }
 
-    function u2u_markUnread($u2uid, $folder, $type)
+    /**
+     * Edit the readstatus of a message to 'no'.
+     *
+     * @since 1.9.1 Formerly u2u_markUnread()
+     * @since 1.10.00
+     * @param int $u2uid
+     * @param string $type
+     */
+    public function markUnread(int $u2uid, string $type)
     {
-        global $db, $self, $lang, $u2uheader, $u2ufooter, $oToken, $xmbuser, $full_url;
-
-        $u2uid = (int) $u2uid;
-
-        if (!($u2uid > 0)) {
-            error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url."u2u.php", true, false, false);
-            return;
+        if (! ($u2uid > 0)) {
+            $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . "u2u.php");
         }
 
-        if (empty($folder)) {
-            error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
-            return;
+        if (empty($this->folder)) {
+            $this->error($this->vars->lang['textnofolder'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
         }
 
         if ($type == 'outgoing') {
-            error($lang['textnomur'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
+            $this->error($this->vars->lang['textnomur'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
         }
 
-        $db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus='no' WHERE u2uid=$u2uid AND owner='$xmbuser'");
+        $this->db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus = 'no' WHERE u2uid=$u2uid AND owner = '" . $this->vars->xmbuser . "'");
 
-        u2u_msg($lang['textmarkedunread'], $full_url.'u2u.php?folder='.recodeOut($folder));
+        $this->msg($this->vars->lang['textmarkedunread'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
     }
 
-    function u2u_mod_markUnread($folder, $u2u_select)
+    /**
+     * Mass edit the readstatus of many messages to 'no'.
+     *
+     * @since 1.9.1 Formerly u2u_mod_markUnread()
+     * @since 1.10.00
+     * @param array $u2u_select Array of int u2uid values.
+     */
+    public function modMarkUnread(array $u2u_select)
     {
-        global $db, $lang, $u2uheader, $u2ufooter, $self, $oToken, $xmbuser, $full_url;
-
-        if (empty($folder)) {
-            error($lang['textnofolder'], false, $u2uheader, $u2ufooter, $full_url."u2u.php?action=view&amp;u2uid=$u2uid", true, false, false);
-            return;
+        if (empty($this->folder)) {
+            $this->error($this->vars->lang['textnofolder'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
         }
 
         if (empty($u2u_select)) {
-            error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
-            return;
+            $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
         }
 
         $in = '';
-        foreach($u2u_select as $value) {
+        foreach ($u2u_select as $value) {
             $value = (int) $value;
             if ($value > 0) {
-                if ($GLOBALS['type'.$value] != 'outgoing') {
+                // These values are related to template u2u_row.php
+                if (getPhpInput("type$value") != 'outgoing') {
                     $value = intval($value);
                     $in .= (empty($in)) ? "$value" : ",$value";
                 }
@@ -604,24 +612,28 @@ class U2U
         }
 
         if (empty($in)) {
-            error($lang['textnonechosen'], false, $u2uheader, $u2ufooter, $full_url.'u2u.php?folder='.recodeOut($folder), true, false, false);
+            $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
         }
 
-        $db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus='no' WHERE u2uid IN($in) AND owner='$xmbuser'");
+        $this->db->query("UPDATE " . $this->vars->tablepre . "u2u SET readstatus = 'no' WHERE u2uid IN ($in) AND owner = '" . $this->vars->xmbuser . "'");
 
-        u2u_msg($lang['textmarkedunread'], $full_url.'u2u.php?folder='.recodeOut($folder));
+        $this->msg($this->vars->lang['textmarkedunread'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
     }
 
-    function u2u_folderSubmit($u2ufolders, $folders)
+    /**
+     * Save changes to the user's list of custom folder names.
+     *
+     * @since 1.9.1 Formerly u2u_folderSubmit()
+     * @since 1.10.00
+     */
+    function folderSubmit(string $u2ufolders)
     {
-        global $db, $lang, $self, $farray, $oToken, $xmbuser, $full_url;
-
         $error = '';
 
-        //Trim all folder names, remove all duplicates, use case-insensitivity due to absence of explicit column collation.
+        // Trim all folder names, remove all duplicates, use case-insensitivity due to absence of explicit column collation.
         $newfolders = explode(',', $u2ufolders);
         $testarray = ['inbox', 'outbox', 'drafts', 'trash'];
-        foreach($newfolders as $key => $value) {
+        foreach ($newfolders as $key => $value) {
             $value = trim($value);
             if (strlen($value) > $this::U2U_FOLDER_COL_SIZE) {
                 $value = substr($value, 0, $this::U2U_FOLDER_COL_SIZE);
@@ -639,102 +651,113 @@ class U2U
             }
         }
 
-        //Prevent deleting non-empty custom folders
-        foreach($folders as $value) {
-            if (isset($farray[$value]) && $farray[$value] != 0 && !in_array($value, $newfolders) && !in_array($value, array('Inbox', 'Outbox', 'Drafts', 'Trash'))) {
+        // Prevent deleting non-empty custom folders
+        foreach ($this->folders as $value) {
+            if (! empty($this->farray[$value]) && ! in_array($value, $newfolders) && ! in_array($value, ['Inbox', 'Outbox', 'Drafts', 'Trash'])) {
                 $newfolders[] = $value;
-                $error .= (empty($error)) ? '<br />'.$lang['foldersupdateerror'].' '.$value : ', '.$value;
+                $error .= (empty($error)) ? '<br />' . $this->vars->lang['foldersupdateerror'] . ' ' . $value : ', ' . $value;
             }
         }
 
         $u2ufolders = implode(', ', $newfolders);
-        $db->escape_fast($u2ufolders);
-        $db->query("UPDATE " . $this->vars->tablepre . "members SET u2ufolders='$u2ufolders' WHERE username='$xmbuser'");
+        $this->db->escape_fast($u2ufolders);
+        $this->db->query("UPDATE " . $this->vars->tablepre . "members SET u2ufolders = '$u2ufolders' WHERE username = '" . $this->vars->xmbuser . "'");
 
-        u2u_msg($lang['foldersupdate'].$error, $full_url.'u2u.php?folder=Inbox');
+        $this->msg($this->vars->lang['foldersupdate'] . $error, $this->vars->full_url . 'u2u.php?folder=Inbox');
     }
 
-    function u2u_ignore()
+    /**
+     * Displays the ignore list from the form submission variables, and
+     * attempts to update the ignore list if the Ignore Submit button has been pressed
+     *
+     * @since 1.9.1 Formerly u2u_ignore()
+     * @since 1.10.00
+     * @return string The left pane to render if no post data.
+     */
+    public function ignore(): string
     {
-        global $self, $lang, $db, $oToken, $xmbuser, $full_url;
-        global $THEME, $thewidth;
-
         $leftpane = '';
         if (onSubmit('ignoresubmit')) {
-            $ignorelist = $core->postedVar('ignorelist');
-            $self['ignoreu2u'] = $ignorelist;
-            $db->query("UPDATE " . $this->vars->tablepre . "members SET ignoreu2u='" . $self['ignoreu2u'] . "' WHERE username='$xmbuser'");
-            u2u_msg($lang['ignoreupdate'], $full_url.'u2u.php?action=ignore');
+            $ignorelist = $this->core->postedVar('ignorelist');
+            $this->vars->self['ignoreu2u'] = $ignorelist;
+            $this->db->query("UPDATE " . $this->vars->tablepre . "members SET ignoreu2u = '" . $this->vars->self['ignoreu2u'] . "' WHERE username = '" . $this->vars->xmbuser . "'");
+            $this->msg($this->vars->lang['ignoreupdate'], $this->vars->full_url . 'u2u.php?action=ignore');
         } else {
-            $template->hIgnoreu2u = $self['ignoreu2u'];
-            eval('$leftpane = "'.template('u2u_ignore').'";');
+            $this->template->hIgnoreu2u = $this->vars->self['ignoreu2u'];
+            $leftpane = $this->template->process('u2u_ignore.php');
         }
 
         return $leftpane;
     }
 
-    function u2u_display($folder, $folders)
+    /**
+     * Generates the left pane HTML.
+     *
+     * @since 1.9.1 Formerly u2u_display()
+     * @since 1.10.00
+     * @return string
+     */
+    public function display(): string
     {
-        global $db, $self, $lang, $xmbuser;
-        global $THEME, $thewidth;
-        global $SETTINGS, $timeoffset, $dateformat, $timecode, $oToken;
-
-        $u2usin = '';
-        $u2usout = '';
-        $u2usdraft = '';
-        $leftpane = '';
-        $folderrecode = recodeOut($folder);
-        $db->escape_fast($folder);
+        $folder = $this->db->escape($this->folder);
 
         if (empty($folder)) {
             $folder = "Inbox";
         }
 
-        switch($folder) {
-        case 'Inbox':
-            $query = $db->query("SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgfrom=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
-            break;
-        case 'Outbox':
-        case 'Drafts':
-            $query = $db->query("SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' ORDER BY dateline DESC");
-            break;
-        default:
-            $query = $db->query(
-                "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgfrom=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' AND u.type='incoming' "
-              . "UNION ALL "
-              . "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='$xmbuser' AND u.type IN ('outgoing','draft') "
-              . "ORDER BY dateline DESC"
-            );
-            break;
+        $subTemplate = new Template($this->vars);
+        $subTemplate->addRefs();
+        $subTemplate->folderrecode = recodeOut($this->folder);
+        $subTemplate->thewidth = $this->template->thewidth;
+        $subTemplate->u2usin = '';
+        $subTemplate->u2usout = '';
+        $subTemplate->u2usdraft = '';
+
+        switch ($folder) {
+            case 'Inbox':
+                $query = $this->db->query("SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgfrom=m.username WHERE u.folder='$folder' AND u.owner='" . $this->vars->xmbuser . "' ORDER BY dateline DESC");
+                break;
+            case 'Outbox':
+            case 'Drafts':
+                $query = $this->db->query("SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='" . $this->vars->xmbuser . "' ORDER BY dateline DESC");
+                break;
+            default:
+                $query = $this->db->query(
+                    "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgfrom=m.username WHERE u.folder='$folder' AND u.owner='" . $this->vars->xmbuser . "' AND u.type='incoming' "
+                  . "UNION ALL "
+                  . "SELECT u.u2uid, u.msgto, u.msgfrom, u.type, u.folder, u.subject, u.dateline, u.readstatus, m.username, m.invisible, m.lastvisit FROM " . $this->vars->tablepre . "u2u u LEFT JOIN " . $this->vars->tablepre . "members m ON u.msgto=m.username WHERE u.folder='$folder' AND u.owner='" . $this->vars->xmbuser . "' AND u.type IN ('outgoing','draft') "
+                  . "ORDER BY dateline DESC"
+                );
+                break;
         }
 
-        while($u2u = $db->fetch_array($query)) {
+        while ($u2u = $this->db->fetch_array($query)) {
             if ($u2u['readstatus'] == 'yes') {
-                $u2ureadstatus = $lang['textread'];
+                $subTemplate->u2ureadstatus = $this->vars->lang['textread'];
             } else {
-                $u2ureadstatus = '<strong>'.$lang['textunread'].'</strong>';
+                $subTemplate->u2ureadstatus = '<strong>' . $this->vars->lang['textunread'] . '</strong>';
             }
 
             if (empty($u2u['subject'])) {
-                $u2u['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
+                $u2u['subject'] = '&laquo;' . $this->vars->lang['textnosub'] . '&raquo;';
             }
 
-            $u2usubject = rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
+            $subTemplate->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
 
             if ($u2u['type'] == 'incoming' || $u2u['type'] == 'outgoing') {
 
-                if ($vars->onlinetime - (int)$u2u['lastvisit'] <= X_ONLINE_TIMER) {
+                if ($this->vars->onlinetime - (int) $u2u['lastvisit'] <= $this->vars::ONLINE_TIMER) {
                     if ('1' === $u2u['invisible']) {
-                        if (!X_ADMIN) {
-                            $online = $lang['textoffline'];
+                        if (! X_ADMIN) {
+                            $online = $this->vars->lang['textoffline'];
                         } else {
-                            $online = $lang['hidden'];
+                            $online = $this->vars->lang['hidden'];
                         }
                     } else {
-                        $online = $lang['textonline'];
+                        $online = $this->vars->lang['textonline'];
                     }
                 } else {
-                    $online = $lang['textoffline'];
+                    $online = $this->vars->lang['textoffline'];
                 }
 
                 if ($u2u['type'] == 'incoming') {
@@ -743,114 +766,151 @@ class U2U
                     $u2uname = $u2u['msgto'];
                 }
 
-                $u2usent = '<a href="member.php?action=viewpro&amp;member='.recodeOut($u2uname).'"target="_blank">'.$u2uname.'</a> ('.$online.')';
-            } else if ($u2u['type'] == 'draft') {
-                $u2usent = $lang['textu2unotsent'];
+                $subTemplate->u2usent = '<a href="' . $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($u2uname) . "target='_blank'>$u2uname</a> ($online)";
+            } elseif ($u2u['type'] == 'draft') {
+                $subTemplate->u2usent = $this->vars->lang['textu2unotsent'];
             }
 
-            $adjTime = $core->timeKludge((int) $u2u['dateline']);
-            $u2udate = gmdate($dateformat, $adjTime);
-            $u2utime = gmdate($timecode, $adjTime);
-            $u2udateline = "$u2udate $lang[textat] $u2utime";
-            switch($u2u['type']) {
+            $adjTime = $this->core->timeKludge((int) $u2u['dateline']);
+            $u2udate = gmdate($this->vars->dateformat, $adjTime);
+            $u2utime = gmdate($this->vars->timecode, $adjTime);
+            $subTemplate->u2udateline = "$u2udate " . $this->vars->lang['textat'] . " $u2utime";
+
+            $subTemplate->type = $u2u['type'];
+            $subTemplate->u2uid = $u2u['u2uid'];
+
+            switch ($u2u['type']) {
                 case 'outgoing':
-                    eval('$u2usout .= "'.template('u2u_row').'";');
+                    $subTemplate->u2usout .= $subTemplate->process('u2u_row.php');
                     break;
                 case 'draft':
-                    eval('$u2usdraft .= "'.template('u2u_row').'";');
+                    $subTemplate->u2usdraft .= $subTemplate->process('u2u_row.php');
                     break;
                 case 'incoming':
                 default:
-                    eval('$u2usin .= "'.template('u2u_row').'";');
+                    $subTemplate->u2usin .= $subTemplate->process('u2u_row.php');
                     break;
             }
         }
-        $db->free_result($query);
+        $this->db->free_result($query);
 
-        if (empty($u2usin)) {
-            eval('$u2usin = "'.template('u2u_row_none').'";');
+        if (empty($subTemplate->u2usin)) {
+            $subTemplate->u2usin = $subTemplate->process('u2u_row_none.php');
         }
 
-        if (empty($u2usout)) {
-            eval('$u2usout = "'.template('u2u_row_none').'";');
+        if (empty($subTemplate->u2usout)) {
+            $subTemplate->u2usout = $subTemplate->process('u2u_row_none.php');
         }
 
-        if (empty($u2usdraft)) {
-            eval('$u2usdraft = "'.template('u2u_row_none').'";');
+        if (empty($subTemplate->u2usdraft)) {
+            $subTemplate->u2usdraft = $subTemplate->process('u2u_row_none.php');
         }
 
-        switch($folder) {
+        switch ($folder) {
             case 'Outbox':
-                eval('$u2ulist = "'.template('u2u_outbox').'";');
+                $subTemplate->u2ulist = $subTemplate->process('u2u_outbox.php');
                 break;
             case 'Drafts':
-                eval('$u2ulist = "'.template('u2u_drafts').'";');
+                $subTemplate->u2ulist = $subTemplate->process('u2u_drafts.php');
                 break;
             case 'Inbox':
-                eval('$u2ulist = "'.template('u2u_inbox').'";');
+                $subTemplate->u2ulist = $subTemplate->process('u2u_inbox.php');
                 break;
             default:
-                eval('$u2ulist = "'.template('u2u_inbox').'<br />'.template('u2u_outbox').'<br />'.template('u2u_drafts').'";');
-                break;
+                $subTemplate->u2ulist = (
+                    $subTemplate->process('u2u_inbox.php') . '<br />' .
+                    $subTemplate->process('u2u_outbox.php') . '<br />' .
+                    $subTemplate->process('u2u_drafts.php') . '<br />'
+                );
         }
 
-        $mtofolder = array();
+        $mtofolder = [];
         $mtofolder[] = '<select name="tofolder">';
-        $mtofolder[] = '<option value="">'.$lang['textpickfolder'].'</option>';
-        foreach($folders as $key => $value) {
+        $mtofolder[] = '<option value="">' . $this->vars->lang['textpickfolder'] . '</option>';
+        foreach ($this->folders as $key => $value) {
             if (is_numeric($key)) {
                 $key = $value;
             }
-            $mtofolder[] = '<option value="'.$key.'">'.$value.'</option>';
+            $mtofolder[] = "<option value='$key'>$value</option>";
         }
         $mtofolder[] = '</select>';
-        $mtofolder = implode("\n", $mtofolder);
+        $subTemplate->mtofolder = implode("\n", $mtofolder);
+        $subTemplate->folder = $folder;
 
-        eval('$leftpane = "'.template('u2u_main').'";');
-        return $leftpane;
+        return $subTemplate->process('u2u_main.php');
     }
 
-    function u2u_folderList()
+    /**
+     * Gathers names and stats about the user's U2U folders.
+     *
+     * @since 1.9.1 Formerly u2u_folderList()
+     * @since 1.10.00
+     * @return int The number of u2u's in total the user has
+     */
+    public function folderList(): int
     {
-        global $db, $self, $lang, $THEME, $oToken, $xmbuser;
-        global $folder, $folderlist, $folders, $farray; // <--- these are modified in here
-
-        $u2ucount = 0;
-        $folders = (empty($self['u2ufolders'])) ? array() : explode(",", $self['u2ufolders']);
-        foreach($folders as $key => $value) {
-            $folders[$key] = trim($value);
-        }
+        $this->messageCount = 0;
+        $folders = empty($this->vars->self['u2ufolders']) ? [] : explode(",", $this->vars->self['u2ufolders']);
+        array_map('trim', $folders);
         sort($folders);
-        $folders = array_merge(array('Inbox' => $lang['textu2uinbox'], 'Outbox' => $lang['textu2uoutbox']), $folders, array('Drafts' => $lang['textu2udrafts'], 'Trash' => $lang['textu2utrash']));
+        $this->folders = array_merge([
+            'Inbox' => $this->vars->lang['textu2uinbox'],
+            'Outbox' => $this->vars->lang['textu2uoutbox'],
+            'Drafts' => $this->vars->lang['textu2udrafts'],
+            'Trash' => $this->vars->lang['textu2utrash'],
+        ], $folders);
 
-        $query = $db->query("SELECT folder, count(u2uid) as count FROM " . $this->vars->tablepre . "u2u WHERE owner='$xmbuser' GROUP BY folder ORDER BY folder ASC");
-        $flist = array();
-        while($flist = $db->fetch_array($query)) {
-            $farray[$flist['folder']] = $flist['count'];
-            $u2ucount += $flist['count'];
+        $query = $this->db->query("SELECT folder, count(u2uid) as count FROM " . $this->vars->tablepre . "u2u WHERE owner = '" . $this->vars->xmbuser . "' GROUP BY folder ORDER BY folder ASC");
+        while ($flist = $this->db->fetch_array($query)) {
+            $this->farray[$flist['folder']] = (int) $flist['count'];
+            $this->messageCount += (int) $flist['count'];
         }
-        $db->free_result($query);
+        $this->db->free_result($query);
+    
+        $subTemplate = new Template($this->vars);
+        $subTemplate->addRefs();
 
-        $emptytrash = $folderlist = '';
-        foreach($folders as $link => $value) {
+        // The folderlist is used only in template u2u.php so save that to the shared template service. 
+        $this->template->folderlist = '';
+        foreach ($this->folders as $link => $value) {
             if (is_numeric($link)) {
                 $link = $value;
             }
 
-            if ($link === $folder) {
-                $value = '<strong>'.$value.'</strong>';
+            if ($link === $this->folder) {
+                $subTemplate->value = "<strong>$value</strong>";
             }
 
-            $count = (empty($farray[$link])) ? 0 : $farray[$link];
+            $count = (empty($this->farray[$link])) ? 0 : $this->farray[$link];
+            $subTemplate->emptytrash = '';
             if ($link == 'Trash') {
                 if ($count != 0) {
-                    $emptytrash = ' (<a href="u2u.php?action=emptytrash">'.$lang['textemptytrash'].'</a>)';
+                    $subTemplate->emptytrash = ' (<a href="' . $this->vars->full_url . 'u2u.php?action=emptytrash">' . $this->vars->lang['textemptytrash'] . '</a>)';
                 }
             }
-            $link = recodeOut($link);
-            eval('$folderlist .= "'.template('u2u_folderlink').'";');
+            $subTemplate->link = recodeOut($link);
+            $subTemplate->count = $count;
+            $subTemplate->value = $value;
+            $this->template->folderlist .= $subTemplate->process('u2u_folderlink.php');
         }
 
-        return $u2ucount;
+        return $this->messageCount;
+    }
+
+    /**
+     * Error output wrapper for the U2U window.
+     *
+     * @since 1.10.00
+     */
+    public function error(string $msg, ?string $redirect = null)
+    {
+        $this->core->error(
+            msg: $msg,
+            showheader: false,
+            prepend: $this->header,
+            append: $this->footer,
+            redirect: $redirect,
+            showfooter: false,
+        );
     }
 }

@@ -1,7 +1,7 @@
 <script type="text/javascript" language="JavaScript">
 var sendMode = true;
 </script>
-<form method="post" action="u2u.php?action=send">
+<form method="post" action="<?= $full_url ?>u2u.php?action=send">
 <input type="hidden" name="token" value="" />
 <input name="u2uid" type="hidden" value="<?= $u2uid ?>" />
 <?= $u2upreview ?>
@@ -27,7 +27,6 @@ var sendMode = true;
 </tr>
 <tr>
 <td valign="top" class="ctrtablerow" bgcolor="<?= $THEME['altbg1'] ?>" colspan="2">
-<input type="hidden" name="del" value="<?= $del ?>" />
 <input type="submit" class="submit" name="sendsubmit" value="<?= $lang['textsendu2u'] ?>" />
 <input type="submit" class="submit" name="savesubmit" value="<?= $lang['textsaveu2u'] ?>" />
 <input type="submit" class="submit" name="previewsubmit" value="<?= $lang['textpreviewu2u'] ?>" /></td>

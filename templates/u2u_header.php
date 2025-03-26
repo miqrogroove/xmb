@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
-<title><?= $bbname ?> - <?= $lang['textpowered'] ?></title>
+<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
 <script language="JavaScript" type="text/javascript" src="./js/u2uheader.js"></script>
 <?= $css ?>
 </head>
