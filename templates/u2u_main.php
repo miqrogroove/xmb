@@ -1,5 +1,6 @@
 <form method="post" action="<?= $full_url ?>u2u.php?action=mod" name="u2u_main">
 <input type="hidden" name="token" value="" />
+<input type="hidden" name="folder" value="<?= $folder ?>" />
 <?= $u2ulist ?>
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $thewidth ?>" align="center">
@@ -17,10 +18,11 @@
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><input type="radio" name="modaction" value="move" /> <?= $lang['textu2umoveto'] ?> <?= $mtofolder ?><br /></td>
 </tr>
+<?php if ($folder !== 'Outbox') { ?>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><input type="radio" name="modaction" value="markunread" /> <?= $lang['textu2umarkunread'] ?>
-<input type="hidden" name="folder" value="<?= $folder ?>" /></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>"><input type="radio" name="modaction" value="markunread" /> <?= $lang['textu2umarkunread'] ?></td>
 </tr>
+<?php } ?>
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input class="submit" type="submit" name="u2umodsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>

@@ -50,24 +50,21 @@ if (X_GUEST) {
     exit;
 }
 
-$folder = $core->postedVar('folder', '', TRUE, FALSE, TRUE);
+$folder = $core->postedVar('folder', dbescape: false, quoteencode: true);
 if ($folder == '') {
-    $folder = $core->postedVar('folder', '', TRUE, FALSE, TRUE, 'g');
-}
-
-$tofolder = $core->postedVar('tofolder', '', TRUE, FALSE, TRUE);
-
-if ($folder != '' && ($action == '' || $action == 'mod' || $action == 'view')) {
-    //$folder = checkInput($folder, true);
-} else {
-    $folder = 'Inbox';
+    $folder = $core->postedVar('folder', dbescape: false, quoteencode: true, sourcearray: 'g');
+    if ($folder == '') {
+        $folder = 'Inbox';
+    }
 }
 $u2u->setFolder($folder);
 
+$tofolder = $core->postedVar('tofolder', dbescape: false, quoteencode: true);
+
 $u2ucount = $u2u->folderList();
-$u2uid = getInt('u2uid');
-if (! $u2uid) {
-    $u2uid = formInt('u2uid');
+$u2uid = formInt('u2uid');
+if ($u2uid == 0) {
+    $u2uid = getInt('u2uid');
 }
 
 $template->thewidth = '100%';
@@ -91,13 +88,6 @@ switch ($action) {
                     redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&reply=yes", 0);
                 } else {
                     redirect($vars->full_url . "u2u.php?action=send&reply=yes", 0);
-                }
-                break;
-            case 'replydel':
-                if ($u2uid > 0) {
-                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&reply=yes&del=yes", 0);
-                } else {
-                    redirect($vars->full_url . "u2u.php?action=send&reply=yes&del=yes", 0);
                 }
                 break;
             case 'forward':
@@ -160,8 +150,8 @@ switch ($action) {
         }
         break;
     case 'send':
-        $msgto = $core->postedVar('msgto', 'javascript', TRUE, FALSE, TRUE);
-        $subject = $core->postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
+        $msgto = $core->postedVar('msgto', 'javascript', dbescape: false, quoteencode: true);
+        $subject = $core->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
         $message = $core->postedVar('message', '', TRUE, FALSE);
         $template->leftpane = $u2u->send($u2uid, $msgto, $subject, $message);
         break;
@@ -173,7 +163,7 @@ switch ($action) {
         break;
     case 'folders':
         if (onSubmit('folderssubmit')) {
-            $u2ufolders = $core->postedVar('u2ufolders', 'javascript', TRUE, FALSE, TRUE);
+            $u2ufolders = $core->postedVar('u2ufolders', 'javascript', dbescape: false, quoteencode: true);
             $u2u->folderSubmit($u2ufolders);
         } else {
             $template->hU2ufolders = $vars->self->u2ufolders;
@@ -184,7 +174,7 @@ switch ($action) {
         $template->leftpane = $u2u->ignore();
         break;
     case 'emptytrash':
-        $db->query("DELETE FROM " . $vars->tablepre . "u2u WHERE folder = 'Trash' AND owner = '$xmbuser'");
+        $db->query("DELETE FROM " . $vars->tablepre . "u2u WHERE folder = 'Trash' AND owner = '" . $vars->xmbuser . "'");
         $u2u->msg($lang['texttrashemptied'], $vars->full_url . 'u2u.php');
         break;
     default:

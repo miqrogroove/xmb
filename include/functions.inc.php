@@ -90,9 +90,9 @@ class Core
         
         $keys = array_keys($input);
         if ($keyType == 'int') {
-            array_map('intval', $keys);
+            $keys = array_map('intval', $keys);
         } else {
-            foreach($keys as &$key) {
+            foreach ($keys as &$key) {
                 $key = str_replace("\x00", '', $key);
                 $key = $this->sanitizeString($key, $word, $htmlencode, $dbescape, $quoteencode);
             }

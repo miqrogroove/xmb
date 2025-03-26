@@ -2312,6 +2312,28 @@ class SQL
     }
 
     /**
+     * Get the folder name based on a list of message IDs.
+     *
+     * @since 1.10.00
+     */
+    public function getU2UFolder(array $msgIDs): string
+    {
+        $msgIDs = array_map('intval', $msgIDs);
+        $in = implode(',', $msgIDs);
+        
+        $result = $this->db->query("SELECT folder FROM " . $this->tablepre . "u2u WHERE u2uid IN ($in) GROUP BY folder");
+        
+        if ($this->db->num_rows($result) === 1) {
+            $folder = $this->db->result($result);
+        } else {
+            $folder = '';
+        }
+        $this->db->free_result($result);
+
+        return $folder;
+    }
+
+    /**
      * Retrieve the list of buddys for the specified user.
      *
      * @since 1.10.00

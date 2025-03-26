@@ -50,7 +50,9 @@
 <input type="hidden" name="type" value="<?= $type ?>" />
 <input type="radio" name="mod" value="delete" <?= $delchecked ?> /> <?= $lang['deletebutton'] ?><br />
 <?= $sendoptions ?>
+<?php if ($u2ufolder !== 'Outbox') { ?>
 <input type="radio" name="mod" value="markunread" /> <?= $lang['textu2umarkunread'] ?><br />
+<?php } ?>
 <input type="radio" name="mod" value="sendtoemail" /> <?= $lang['textforwardu2utoemail'] ?><br />
 <input type="radio" name="mod" value="move" /> <?= $lang['textu2umoveto'] ?> <?= $mtofolder ?><br /></td>
 </tr>

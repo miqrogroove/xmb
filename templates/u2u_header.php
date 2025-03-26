@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
-<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
-<script language="JavaScript" type="text/javascript" src="./js/u2uheader.js"></script>
+<title><?= $lang['banu2u'] ?> - <?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
+<script language="JavaScript" type="text/javascript" src="<?= $full_url ?>js/u2uheader.js"></script>
 <?= $css ?>
 </head>
 <body text="<?= $THEME['text'] ?>">
@@ -16,11 +16,11 @@
 <td>
 <table border="0" cellspacing="0" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr class="mediumtxt">
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="u2u.php"><img src="<?= $THEME['imgdir'] ?>/inbox.gif" alt="<?= $lang['textu2uinbox'] ?>" border="0" /><br /><?= $lang['textu2uinbox'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="u2u.php?folder=Outbox"><img src="<?= $THEME['imgdir'] ?>/outbox.gif" alt="<?= $lang['textu2uoutbox'] ?>" border="0" /><br /><?= $lang['textu2uoutbox'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="u2u.php?action=send"><img src="<?= $THEME['imgdir'] ?>/newu2u.gif"  alt="<?= $lang['textsendu2u'] ?>" border="0" /><br /><?= $lang['textsendu2u'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="buddy.php" onclick="javascript:aBook();return false;"><img src="<?= $THEME['imgdir'] ?>/address.gif"  alt="<?= $lang['textu2uaddressbook'] ?>" border="0" /><br /><?= $lang['textu2uaddressbook'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="u2u.php?action=ignore"><img src="<?= $THEME['imgdir'] ?>/locku2u.gif"  alt="<?= $lang['ignorelist'] ?>" border="0" /><br /><?= $lang['ignorelist'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php"><img src="<?= $THEME['imgdir'] ?>/inbox.gif" alt="<?= $lang['textu2uinbox'] ?>" border="0" /><br /><?= $lang['textu2uinbox'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?folder=Outbox"><img src="<?= $THEME['imgdir'] ?>/outbox.gif" alt="<?= $lang['textu2uoutbox'] ?>" border="0" /><br /><?= $lang['textu2uoutbox'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?action=send"><img src="<?= $THEME['imgdir'] ?>/newu2u.gif"  alt="<?= $lang['textsendu2u'] ?>" border="0" /><br /><?= $lang['textsendu2u'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>buddy.php" onclick="javascript:aBook();return false;"><img src="<?= $THEME['imgdir'] ?>/address.gif"  alt="<?= $lang['textu2uaddressbook'] ?>" border="0" /><br /><?= $lang['textu2uaddressbook'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?action=ignore"><img src="<?= $THEME['imgdir'] ?>/locku2u.gif"  alt="<?= $lang['ignorelist'] ?>" border="0" /><br /><?= $lang['ignorelist'] ?></a></td>
 </tr>
 </table>
 </td>

@@ -35,7 +35,7 @@ class U2U
 
     private int $messageCount;
     
-    private string $folder;
+    private string $folder; // The current folder name, as supplied by the user.  Used in mass editing.
     private string $footer;
     private string $header;
 
@@ -114,15 +114,13 @@ class U2U
      *
      * Assumes the current user is already authenticated and not banned from U2U.
      *
-     * This method will not handle the "Reply and delete" option.
-     *
      * @since 1.10.00
      * @param string $msgto Username, HTML encoded
      * @param string $subject Message subject line, HTML encoded
      * @param string $message Message body, HTML encoded
      * @return string Empty string on success, HTML formatted messages on failure.
      */
-    function send_single(string $msgto, string $subject, string $message): string
+    public function send_single(string $msgto, string $subject, string $message): string
     {
         $errors = '';
         $message = addslashes($message); //Messages are historically double-slashed.
@@ -191,10 +189,9 @@ class U2U
      */
     public function send(int $u2uid, string $msgto, string $subject, string $message): string
     {
-        // TODO: These action inputs would be better as DI params: forward, reply, delete, save, preview, send.
+        // TODO: These action inputs would be better as DI params: forward, reply, save, preview, send.
         $forward = getPhpInput('forward', 'g') === 'yes';
         $reply = getPhpInput('reply', 'g') === 'yes';
-        $del = getPhpInput('del', 'g') === 'yes';
 
         $username = $this->core->postedVar(
             varname: 'username',
@@ -245,11 +242,9 @@ class U2U
                 $this->error($this->vars->lang['u2umsgempty']);
             }
 
-            if ((int) $this->db->result($this->db->query("SELECT count(u2uid) FROM " . $this->vars->tablepre . "u2u WHERE msgfrom='" . $this->vars->xmbuser . "' AND dateline > ".(time() - $this->vars->settings['floodctrl'])), 0) > 0) {
+            if ((int) $this->db->result($this->db->query("SELECT count(u2uid) FROM " . $this->vars->tablepre . "u2u WHERE msgfrom = '" . $this->vars->xmbuser . "' AND dateline > " . (time() - $this->vars->settings['floodctrl']))) > 0) {
                 $this->error($this->vars->lang['floodprotect_u2u']);
             }
-
-            $u2uid = (int) $_POST['u2uid'];
 
             if (strstr($msgto, ',') && X_STAFF) {
                 $errors = $this->send_multi_recp($msgto, $subject, $message);
@@ -305,7 +300,7 @@ class U2U
     }
 
     /**
-     * Generates the web format of the specified message.
+     * Generates the web format HTML of the specified message.
      *
      * @since 1.9.1 Formerly u2u_view()
      * @since 1.10.00
@@ -373,7 +368,7 @@ class U2U
             $subTemplate->sendoptions = '<input type="radio" name="mod" value="send" /> ' . $this->vars->lang['textu2u'] . '<br />';
             $subTemplate->delchecked = ' checked="checked"';
         } elseif ($u2u['msgfrom'] !== $this->vars->self['username']) {
-            $subTemplate->sendoptions = '<input type="radio" name="mod" value="reply" checked="checked" /> ' . $this->vars->lang['textreply'] . '<br /><input type="radio" name="mod" value="replydel" /> ' . $this->vars->lang['textreplytrash'] . '<br /><input type="radio" name="mod" value="forward" /> ' . $this->vars->lang['textforward'] . '<br />';
+            $subTemplate->sendoptions = '<input type="radio" name="mod" value="reply" checked="checked" /> ' . $this->vars->lang['textreply'] . '<br /><input type="radio" name="mod" value="forward" /> ' . $this->vars->lang['textforward'] . '<br />';
             $subTemplate->delchecked = '';
         } else {
             $subTemplate->sendoptions = '';
@@ -444,7 +439,7 @@ class U2U
             $body = $this->template->process('u2u_email.php');
             $rawemail = htmlspecialchars_decode($this->vars->self['email'], ENT_QUOTES);
             $result = $this->core->xmb_mail($rawemail, $title, $body, $this->vars->lang['charset'], html: true);
-            $this->msg($this->vars->lang['textu2utoemailsent'], $this->vars->full_url . "u2u.php?action=view&u2uid=$u2uid");
+            $this->msg($this->vars->lang['textu2utoemailsent'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
         } else {
             $this->template->process('u2u_printable.php', echo: true);
             exit;
@@ -476,11 +471,10 @@ class U2U
      */
     public function modDelete(array $u2u_select)
     {
-        $in = '';
-        foreach ($u2u_select as $value) {
-            $value = (int) $value;
-            $in .= ($value > 0 ? (empty($in) ? "$value" : ", $value") : '');
-        }
+        // Sanitize input and validate it against the submitted folder name.
+        $u2u_select = array_map('intval', $u2u_select);
+        if ($this->folder !== $this->sql->getU2UFolder($u2u_select)) $this->error($this->vars->lang['textnofolder']);
+        $in = implode(',', $u2u_select);
 
         if ($this->folder == "Trash") {
             $this->db->query("DELETE FROM " . $this->vars->tablepre . "u2u WHERE u2uid IN ($in) AND owner = '" . $this->vars->xmbuser . "'");
@@ -532,21 +526,23 @@ class U2U
      */
     public function modMove(string $tofolder, array $u2u_select)
     {
+        // Sanitize input and validate it against the submitted folder name.
+        $u2u_select = array_map('intval', $u2u_select);
+        if ($this->folder !== $this->sql->getU2UFolder($u2u_select)) $this->error($this->vars->lang['textnofolder']);
+
         $in = '';
         foreach ($u2u_select as $value) {
-            $value = (int) $value;
-            if ($value > 0) {
-                // These values are related to template u2u_row.php
-                $type = getPhpInput("type$value");
-                if ((in_array($tofolder, $this->folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') && !($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) && !($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) && !($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
-                    $in .= (empty($in)) ? "$value" : ",$value";
-                }
+            if ($value <= 0) continue;
+
+            // These values are related to template u2u_row.php
+            $type = getPhpInput("type$value");
+            if ((in_array($tofolder, $this->folders) || $tofolder == 'Inbox' || $tofolder == 'Outbox' || $tofolder == 'Drafts') && !($tofolder == 'Inbox' && ($type == 'draft' || $type == 'outgoing')) && !($tofolder == 'Outbox' && ($type == 'incoming' || $type == 'draft')) && !($tofolder == 'Drafts' && ($type == 'incoming' || $type == 'outgoing'))) {
+                $in .= (empty($in)) ? "$value" : ",$value";
             }
         }
 
         if (empty($in)) {
             $this->error($this->vars->lang['textcantmove'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
-            return;
         }
 
         $this->db->escape_fast($tofolder);
@@ -591,9 +587,9 @@ class U2U
      */
     public function modMarkUnread(array $u2u_select)
     {
-        if (empty($this->folder)) {
-            $this->error($this->vars->lang['textnofolder'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
-        }
+        // Sanitize input and validate it against the submitted folder name.
+        $u2u_select = array_map('intval', $u2u_select);
+        if ($this->folder !== $this->sql->getU2UFolder($u2u_select)) $this->error($this->vars->lang['textnofolder']);
 
         if (empty($u2u_select)) {
             $this->error($this->vars->lang['textnonechosen'], $this->vars->full_url . 'u2u.php?folder=' . recodeOut($this->folder));
@@ -601,13 +597,12 @@ class U2U
 
         $in = '';
         foreach ($u2u_select as $value) {
-            $value = (int) $value;
-            if ($value > 0) {
-                // These values are related to template u2u_row.php
-                if (getPhpInput("type$value") != 'outgoing') {
-                    $value = intval($value);
-                    $in .= (empty($in)) ? "$value" : ",$value";
-                }
+            if ($value <= 0) continue;
+
+            // These values are related to template u2u_row.php
+            if (getPhpInput("type$value") != 'outgoing') {
+                $value = intval($value);
+                $in .= (empty($in)) ? "$value" : ",$value";
             }
         }
 
@@ -691,7 +686,7 @@ class U2U
     }
 
     /**
-     * Generates the left pane HTML.
+     * Generates the main HTML.
      *
      * @since 1.9.1 Formerly u2u_display()
      * @since 1.10.00
@@ -831,6 +826,7 @@ class U2U
             if (is_numeric($key)) {
                 $key = $value;
             }
+            if ($key === $this->folder) continue;
             $mtofolder[] = "<option value='$key'>$value</option>";
         }
         $mtofolder[] = '</select>';
@@ -851,7 +847,7 @@ class U2U
     {
         $this->messageCount = 0;
         $folders = empty($this->vars->self['u2ufolders']) ? [] : explode(",", $this->vars->self['u2ufolders']);
-        array_map('trim', $folders);
+        $folders = array_map('trim', $folders);
         sort($folders);
         $this->folders = array_merge([
             'Inbox' => $this->vars->lang['textu2uinbox'],
