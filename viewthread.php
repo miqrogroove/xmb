@@ -243,6 +243,9 @@ $subTemplate->tid = $tid;
 $status1 = $core->modcheck($vars->self['username'], $forum['moderator']);
 
 if ($action == '') {
+    $ranks = new \XMB\Ranks($sqlSvc, $vars);
+    $render = new \XMB\ThreadRender($core, $ranks, $sqlSvc, $vars);
+
     $mpage = $core->multipage((int) $thread['postcount'], $vars->ppp, "{$full_url}viewthread.php?tid=$tid");
     $template->multipage = '';
     if (strlen($mpage['html']) != 0) {
@@ -333,20 +336,6 @@ if ($action == '') {
 
     $subTemplate->topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
 
-    $specialrank = [];
-    $rankposts = [];
-    $queryranks = $sqlSvc->getRanks();
-    foreach($queryranks as $query) {
-        $query['posts'] = (int) $query['posts'];
-        if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
-            $specialrank[$query['title']] = &$query;
-        } else {
-            $rankposts[$query['posts']] = &$query;
-        }
-        unset($query);
-    }
-    unset($queryranks);
-
     $db->query("UPDATE " . $vars->tablepre . "threads SET views = views + 1 WHERE tid = $tid");
 
     $subTemplate->pollhtml = '';
@@ -379,23 +368,23 @@ if ($action == '') {
 
             $poll = [];
             $num_votes = 0;
-            $query = $db->query("SELECT vote_result, vote_option_text FROM " . $vars->tablepre . "vote_results WHERE vote_id = $vote_id");
-            while($result = $db->fetch_array($query)) {
-                $num_votes += (int) $result['vote_result'];
+            $options = $sqlSvc->getVoteOptions($vote_id, $quarantine);
+            foreach ($options as $option) {
+                $num_votes += (int) $option['vote_result'];
                 $pollentry = [];
                 $pollentry['name'] = $core->postify(
-                    $result['vote_option_text'],
+                    message: $option['vote_option_text'],
                     allowsmilies: $forum['allowsmilies'],
                     allowbbcode: $forum['allowbbcode'],
                     allowimgcode: 'no',
                     ismood: 'yes',
                 );
-                $pollentry['votes'] = $result['vote_result'];
+                $pollentry['votes'] = $option['vote_result'];
                 $poll[] = $pollentry;
             }
-            $db->free_result($query);
+            unset($options);
 
-            foreach($poll as $array) {
+            foreach ($poll as $array) {
                 $subTemplate->pollbar = '';
                 if ((int) $array['votes'] > 0) {
                     $orig = round($array['votes']/$num_votes*100, 2);
@@ -408,7 +397,7 @@ if ($action == '') {
                 } else {
                     $subTemplate->percentage = '0%';
                 }
-                $subTemplate->array = $array;
+                $subTemplate->subject = $thread['subject'];
                 $subTemplate->pollhtml .= $subTemplate->process('viewthread_poll_options_view.php');
             }
             $subTemplate->buttoncode = '';
@@ -416,21 +405,9 @@ if ($action == '') {
             $subTemplate->token = $token->create('View Thread/Poll Vote', (string) $vote_id, $vars::NONCE_FORM_EXP);
 
             $subTemplate->results = "- [<a href='{$full_url}viewthread.php?tid=$tid&amp;viewresults=yes'><font color='" . $vars->theme['cattext'] . "'>{$lang['viewresults']}</font></a>]";
-            $query = $db->query("SELECT vote_option_id, vote_option_text FROM " . $vars->tablepre . "vote_results WHERE vote_id = $vote_id");
-            while($result = $db->fetch_array($query)) {
-                $poll = [];
-                $poll['id'] = (int) $result['vote_option_id'];
-                $poll['name'] = $core->postify(
-                    $result['vote_option_text'],
-                    allowsmilies: $forum['allowsmilies'],
-                    allowbbcode: $forum['allowbbcode'],
-                    allowimgcode: 'no',
-                    ismood: 'yes',
-                );
-                $subTemplate->poll = $poll;
-                $subTemplate->pollhtml .= $subTemplate->process('viewthread_poll_options.php');
-            }
-            $db->free_result($query);
+
+            $subTemplate->pollhtml = $render->pollOptionsVotable($vote_id, $quarantine, $forum['allowsmilies'], $forum['allowbbcode']);
+
             $subTemplate->buttoncode = $subTemplate->process('viewthread_poll_submitbutton.php');
         }
         $subTemplate->thread = $thread;
@@ -444,10 +421,10 @@ if ($action == '') {
             if (1 == $result) {
                 $msg = $lang['moderation_replies_single'];
             } else {
-                $msg = str_replace('$result', $result, $lang['moderation_replies_eval']);
+                $msg = str_replace('$result', (string) $result, $lang['moderation_replies_eval']);
             }
-            $template->poll .= message(
-                $msg,
+            $template->poll .= $core->message(
+                msg: $msg,
                 showheader: false,
                 die: false,
                 return_as_string: true,
@@ -457,9 +434,9 @@ if ($action == '') {
         $quarantine = false;
     }
 
-    $startdate = '0';
-    $startpid = '0';
-    $enddate = '0';
+    $startdate = 0;
+    $startpid = 0;
+    $enddate = 0;
     $sql = "SELECT dateline, pid "
          . "FROM " . $vars->tablepre . "posts "
          . "WHERE tid=$tid "
@@ -469,14 +446,14 @@ if ($action == '') {
     $rowcount = $db->num_rows($query1);
     if ($rowcount > 0) {
         $row = $db->fetch_array($query1);
-        $startdate = $row['dateline'];
-        $startpid = $row['pid'];
+        $startdate = (int) $row['dateline'];
+        $startpid = (int) $row['pid'];
         if ($rowcount <= $vars->ppp) {
             $enddate = $vars->onlinetime;
         } else {
             $db->data_seek($query1, $rowcount - 1);
             $row = $db->fetch_array($query1);
-            $enddate = $row['dateline'];
+            $enddate = (int) $row['dateline'];
         }
     }
     $db->free_result($query1);
@@ -484,284 +461,64 @@ if ($action == '') {
     $subTemplate->thisbg = $vars->theme['altbg2'];
     
     if ($SETTINGS['show_logs_in_threads'] == 'on') {
-        $sql = "SELECT p.*, m.* "
-             . "FROM "
-             . "( "
-             . "  ( "
-             . "    SELECT 'post' AS type, fid, tid, author, subject, dateline, pid, message, icon, usesig, useip, bbcodeoff, smileyoff "
-             . "    FROM " . $vars->tablepre . "posts "
-             . "    WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)"
-             . "    ORDER BY dateline ASC, pid ASC "
-             . "    LIMIT " . $vars->ppp
-             . "  ) "
-             . "  UNION ALL "
-             . "  ( "
-             . "    SELECT 'modlog' AS type, fid, tid, username AS author, action AS subject, date AS dateline, '', '', '', '', '', '', '' "
-             . "    FROM " . $vars->tablepre . "logs "
-             . "    WHERE tid=$tid AND date >= $startdate AND date < $enddate "
-             . "  ) "
-             . ") AS p "
-             . "LEFT JOIN " . $vars->tablepre . "members m ON m.username=p.author "
-             . "ORDER BY p.dateline ASC, p.type DESC, p.pid ASC ";
+        $posts = $sqlSvc->getPostsAndLogsForThreadPage($tid, $startdate, $enddate, $startpid, $vars->ppp);
     } else {
-        $sql = "SELECT 'post' AS type, p.fid, p.tid, p.author, p.subject, p.dateline, p.pid, p.message, p.icon, p.usesig, p.useip, p.bbcodeoff, p.smileyoff, m.* "
-             . "FROM " . $vars->tablepre . "posts AS p "
-             . "LEFT JOIN " . $vars->tablepre . "members AS m ON m.username=p.author "
-             . "WHERE tid=$tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)"
-             . "ORDER BY dateline ASC, pid ASC "
-             . "LIMIT " . $vars->ppp;
+        $posts = $sqlSvc->getPostsForThreadPage($tid, $startdate, $startpid, $vars->ppp);
     }
-    $querypost = $db->query($sql);
 
     if ($forum['attachstatus'] == 'on') {
-        $queryattach = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM " . $vars->tablepre . "attachments AS a LEFT JOIN " . $vars->tablepre . "attachments AS thumbs ON a.aid=thumbs.parentid INNER JOIN " . $vars->tablepre . "posts AS p ON a.pid=p.pid WHERE p.tid=$tid AND a.parentid=0");
+        $pids = [];
+        foreach ($posts as $post) {
+            if ($post['pid'] != '') {
+                $pids[] = (int) $post['pid'];
+            }
+        }
+        $attachments = $sqlSvc->getAttachmentsByPIDs($pids);
+    } else {
+        $attachments = [];
     }
 
     $template->posts = '';
 
-    while ($post = $db->fetch_array($querypost)) {
+    foreach ($posts as $post) {
         // Perform automatic maintenance
         if ($post['type'] == 'post' && $post['fid'] !== $thread['fid']) {
             // Also verify the value that we expect to overwrite.
             $db->query('UPDATE ' . $vars->tablepre . "posts SET fid = {$thread['fid']} WHERE pid = {$post['pid']} AND fid = {$post['fid']}");
+            $post['fid'] = $thread['fid'];
         }
 
-        null_string($post['avatar']);
-        $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
+        $render->preparePost($post, $subTemplate);
 
-        if ($vars->onlinetime - (int) $post['lastvisit'] <= $vars::ONLINE_TIMER) {
-            if ('1' === $post['invisible']) {
-                if (! X_ADMIN) {
-                    $subTemplate->onlinenow = $lang['memberisoff'];
-                } else {
-                    $subTemplate->onlinenow = $lang['memberison'].' ('.$lang['hidden'].')';
-                }
-            } else {
-                $subTemplate->onlinenow = $lang['memberison'];
-            }
-        } else {
-            $subTemplate->onlinenow = $lang['memberisoff'];
-        }
-
-        $date = gmdate($vars->dateformat, $core->timeKludge((int) $post['dateline']));
-        $time = gmdate($vars->timecode, $core->timeKludge((int) $post['dateline']));
-
-        $subTemplate->poston = "{$lang['textposton']} $date {$lang['textat']} $time";
-
-        if ($post['icon'] != '' && file_exists(XMB_ROOT . $vars->theme['smdir'] . '/' . $post['icon'])) {
-            $post['icon'] = "<img src='{$full_url}" . $vars->theme['smdir'] . "/{$post['icon']}' alt='{$post['icon']}' border='0' />";
-        } else {
-            $post['icon'] = "<img src='{$full_url}" . $vars->theme['imgdir'] . "/default_icon.gif' alt='[*]' border='0' />";
-        }
-
-        if ($post['author'] != 'Anonymous' && $post['username'] && ('off' == $SETTINGS['hide_banned'] || $post['status'] != 'Banned')) {
-            if (X_MEMBER && $post['showemail'] == 'yes') {
-                $subTemplate->post = $post;
-                $subTemplate->email = $subTemplate->process('viewthread_post_email.php');
-            } else {
-                $subTemplate->email = '';
-            }
-
-            $post['site'] = format_member_site($post['site']);
-            if ($post['site'] == '') {
-                $subTemplate->site = '';
-            } else {
-                $subTemplate->post = $post;
-                $subTemplate->site = $subTemplate->process('viewthread_post_site.php');
-            }
-
-            $encodename = recodeOut($post['author']);
-            $subTemplate->profileURL = "{$full_url}member.php?action=viewpro&amp;member=$encodename";
-            $subTemplate->profilelink = "<a href='" . $subTemplate->profileURL . "'>{$post['author']}</a>";
-
-            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
-                $subTemplate->search = '';
-            } else {
-                $subTemplate->encodename = $encodename;
-                $subTemplate->search = $subTemplate->process('viewthread_post_search.php');
-            }
-
-            $subTemplate->profile = $subTemplate->process('viewthread_post_profile.php');
-            if (X_GUEST) {
-                $subTemplate->u2u = '';
-            } else {
-                $subTemplate->u2u = $subTemplate->process('viewthread_post_u2u.php');
-            }
-
-            $subTemplate->showtitle = $post['status'];
-
-            if ($post['status'] == 'Administrator' || $post['status'] == 'Super Administrator' || $post['status'] == 'Super Moderator' || $post['status'] == 'Moderator') {
-                // Specify the staff rank.
-                $sr = $post['status'];
-                $rank = [
-                    'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[$vars->status_translate[$vars->status_enum[$sr]]],
-                    'stars' => $specialrank[$sr]['stars'],
-                    'avatarrank' => $specialrank[$sr]['avatarrank'],
-                ];
-            } elseif ($post['status'] == 'Banned') {
-                // Specify no rank.
-                $rank = [
-                    'allowavatars' => 'no',
-                    'title' => $lang['textbanned'],
-                    'stars' => 0,
-                    'avatarrank' => '',
-                ];
-            } elseif (count($rankposts) === 0) {
-                // Specify no rank.
-                $rank = [
-                    'allowavatars' => 'no',
-                    'title' => '',
-                    'stars' => 0,
-                    'avatarrank' => '',
-                ];
-            } else {
-                // Find the appropriate member rank.
-                $max = -1;
-                $keys = array_keys($rankposts);
-                foreach($keys as $key) {
-                    if ((int) $post['postnum'] >= (int) $key && (int) $key > (int) $max) {
-                        $max = $key;
-                    }
-                }
-                $rank = &$rankposts[$max];
-            }
-
-            $subTemplate->stars = str_repeat("<img src='{$full_url}" . $vars->theme['imgdir'] . "/star.gif' alt='*' border='0' />", (int) $rank['stars']) . '<br />';
-            $subTemplate->showtitle = ($post['customstatus'] != '') ? $post['customstatus'] . '<br />' : $rank['title'] . '<br />';
-
-            // $rankAvatar is the avatar configured in rank settings.  $avatar is the user's avatar, pulled from the posts-join-members query.
-            if ($rank['avatarrank'] != '') {
-                $subTemplate->rankAvatar = "<img src='{$rank['avatarrank']}' alt='{$lang['altavatar']}' border='0' /><br />";
-            } else {
-                $subTemplate->rankAvatar = '';
-            }
-
-            if ($rank['allowavatars'] == 'no') {
-                $post['avatar'] = '';
-            }
-
-            if ('on' == $SETTINGS['images_https_only'] && strpos($post['avatar'], ':') !== false && substr($post['avatar'], 0, 6) !== 'https:') {
-                $post['avatar'] = '';
-            }
-
-            $subTemplate->avatar = '';
-            if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
-                if ($post['avatar'] !== '' && $rank['allowavatars'] != "no") {
-                    $subTemplate->avatar = "<img src='{$post['avatar']}' alt='{$lang['altavatar']}' border='0' />";
-                }
-            }
-
-            $subTemplate->tharegdate = gmdate($vars->dateformat, $core->timeKludge((int) $post['regdate']));
-
-            if ($post['mood'] != '') {
-                $subTemplate->mood = '<strong>' . $lang['mood'] . '</strong> ' . $core->postify($post['mood'], allowimgcode: 'no', ismood: 'yes');
-            } else {
-                $subTemplate->mood = '';
-            }
-
-            if ($post['location'] != '') {
-                $post['location'] = $core->rawHTMLsubject($post['location']);
-                $subTemplate->location = "<br />{$lang['textlocation']} {$post['location']}";
-            } else {
-                $subTemplate->location = '';
-            }
-        } else {
-            $post['author'] = ($post['author'] == 'Anonymous') ? $lang['textanonymous'] : $post['author'];
-            $post['postnum'] = $lang['not_applicable_abbr'];
-            $post['usesig'] = 'no';
-            $subTemplate->showtitle = $lang['textunregistered'] . '<br />';
-            $subTemplate->stars = '';
-            $subTemplate->avatar = '';
-            $subTemplate->rankAvatar = '';
-            $subTemplate->tharegdate = $lang['not_applicable_abbr'];
-            $subTemplate->email = '';
-            $subTemplate->site = '';
-            $subTemplate->profile = '';
-            $subTemplate->search = '';
-            $subTemplate->u2u = '';
-            $subTemplate->location = '';
-            $subTemplate->mood = '';
-            $subTemplate->profilelink = $post['author'];
-        }
-        $subTemplate->post = $post;
-
-        $subTemplate->ip = '';
-        if (X_ADMIN) {
-            $subTemplate->ip = $subTemplate->process('viewthread_post_ip.php');
-        }
-
-        $subTemplate->repquote = '';
         if ($perms[$vars::PERMS_REPLY] && ($thread['closed'] != 'yes' || X_SADMIN)) {
-            $subTemplate->repquote = $subTemplate->process('viewthread_post_repquote.php');
+            // Already set
+        } else {
+            $template->repquote = '';
         }
 
-        $subTemplate->reportlink = '';
-        if (X_MEMBER && $post['author'] != $vars->xmbuser && $SETTINGS['reportpost'] == 'on') {
-            // Post reporting is enabled, but is this user legit?
-            if ('on' == $SETTINGS['quarantine_new_users'] && (0 == (int) $vars->self['postnum'] || 'yes' == $vars->self['waiting_for_mod']) && ! X_STAFF) {
-                // Nope
-            } else {
-                $subTemplate->reportlink = $subTemplate->process('viewthread_post_report.php');
-            }
+        // Is this user quarantined?
+        if ('on' == $SETTINGS['quarantine_new_users'] && (0 == (int) $vars->self['postnum'] || 'yes' == $vars->self['waiting_for_mod']) && ! X_STAFF) {
+            $template->reportlink = '';
         }
 
-        $subTemplate->edit = '';
         if ($core->modcheckPost($vars->self['username'], $forum['moderator'], $post['status']) == 'Moderator' || ($thread['closed'] != 'yes' && $post['author'] == $vars->xmbuser)) {
-            $subTemplate->edit = $subTemplate->process('viewthread_post_edit.php');
+            // Already set
+        } else {
+            $template->edit = '';
         }
 
-        if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
-            $files = [];
-            $db->data_seek($queryattach, 0);
-            while ($attach = $db->fetch_array($queryattach)) {
-                if ($attach['pid'] === $post['pid']) {
-                    $files[] = $attach;
-                }
-            }
-            if (count($files) > 0) {
-                $core->bbcodeFileTags($post['message'], $files, (int) $post['pid'], ($forum['allowbbcode'] == 'yes' && $post['bbcodeoff'] == 'no'));
-            }
-        }
-
-        $post['message'] = $core->postify(
-            stripslashes($post['message']),
-            $post['smileyoff'],
-            $post['bbcodeoff'],
-            $forum['allowsmilies'],
-            allowbbcode: $forum['allowbbcode'],
-            allowimgcode: $forum['allowimgcode'],
-        );
-
-        if ($post['usesig'] == 'yes') {
-            $subTemplate->sig = $core->postify(
-                message: $post['sig'],
-                allowsmilies: $forum['allowsmilies'],
-                allowbbcode: $SETTINGS['sigbbcode'],
-                allowimgcode: $forum['allowimgcode'],
-            );
-            $post['message'] .= $subTemplate->process('viewthread_post_sig.php');
-        }
+        $render->preparePostBody($post, $forum, $attachments, $quarantine, $subTemplate);
 
         if ($post['type'] == 'post') {
-
-            if ($post['subject'] != '') {
-                $subTemplate->linktitle = $core->rawHTMLsubject(stripslashes($post['subject']));
-                $post['subject'] = wordwrap($subTemplate->linktitle, 150, '<br />', true) . '<br />';
-            } else {
+            if ($post['subject'] == '') {
                 $subTemplate->linktitle = $thread['subject'];
             }
-            $subTemplate->post = $post;
 
             $template->posts .= $subTemplate->process('viewthread_post.php');
-
         } else {
-
-            $post['message'] = $lang["modlog_{$post['subject']}"] . "<br />$date {$lang['textat']} $time";
-            $subTemplate->post = $post;
+            $subTemplate->message = $lang["modlog_{$post['subject']}"] . "<br />$date {$lang['textat']} $time";
 
             $template->posts .= $subTemplate->process('viewthread_modlog.php');
-
         }
 
         if ($subTemplate->thisbg == $vars->theme['altbg2']) {
@@ -769,11 +526,8 @@ if ($action == '') {
         } else {
             $subTemplate->thisbg = $vars->theme['altbg2'];
         }
-        
-        // Remove array reference(s)
-        unset($rank);
     } // post loop
-    $db->free_result($querypost);
+    unset($posts);
 
     $template->modoptions = '';
     if ('Moderator' == $status1) {

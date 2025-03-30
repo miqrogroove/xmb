@@ -142,9 +142,9 @@ if (X_MEMBER && 'yes' == $vars->self['waiting_for_mod']) {
         if (1 == $result) {
             $msg = $lang['moderation_threads_single'];
         } else {
-            $msg = str_replace('$result', $result, $lang['moderation_threads_eval']);
+            $msg = str_replace('$result', (string) $result, $lang['moderation_threads_eval']);
         }
-        $subforums .= $core->message(
+        $template->subforums .= $core->message(
             msg: $msg,
             showheader: false,
             die: false,

@@ -2120,6 +2120,7 @@ class Upgrade
 
 // TODO: Schema 11
 //  - Delete 'spellcheck' record from settings table.
+//  - Delete members.showemail
 //  - Delete members.useoldu2u
 
     /**

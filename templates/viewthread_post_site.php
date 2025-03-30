@@ -1,1 +1,1 @@
-<a href="<?= $post['site'] ?>" onclick="window.open(this.href); return false;" title="<?= $lang['altvisitsite'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/site.gif" border="0" alt="<?= $lang['altvisitsite'] ?>" /></a>
+<a href="<?= $url ?>" onclick="window.open(this.href); return false;" title="<?= $lang['altvisitsite'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/site.gif" border="0" alt="<?= $lang['altvisitsite'] ?>" /></a>

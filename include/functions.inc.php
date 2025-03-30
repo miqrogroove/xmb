@@ -431,23 +431,24 @@ class Core
     /**
      * Processes tags like [file]1234[/file]
      *
-     * Caller should query the attachments table and load the needed templates.
+     * Caller should query the attachments table.
      *
      * @since 1.9.11
-     * @param string $message Read/Write Variable.  Returns the processed HTML.
-     * @param array  $files   Read-Only Variable.  Contains the result rows from an attachment query.
-     * @param int    $pid     Pass zero when in newthread or reply preview.
-     * @param bool   $bBBcodeOnForThisPost
-     * @param bool   $quarantine Are these files in a private table for later review?
+     * @param string $message The post body.
+     * @param array $files Contains the result rows from an attachment query.
+     * @param int $pid Pass zero when in newthread or reply preview.
+     * @param bool $bBBcodeOnForThisPost
+     * @param bool $quarantine Are these files in a private table for review?
+     * @return string The modified post body.
      */
-    public function bbcodeFileTags(string &$message, array &$files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false)
+    public function bbcodeFileTags(string $message, array $files, int $pid, bool $bBBcodeOnForThisPost, bool $quarantine = false): string
     {
         $count = 0;
         $separator = '';
         $htmlencode = true;
         $template = new \XMB\Template($this->vars);
         $template->addRefs();
-        foreach($files as $attach) {
+        foreach ($files as $attach) {
             $post = [];
             $post['filename'] = attrOut($attach['filename']);
             $post['filetype'] = attrOut($attach['filetype']);
@@ -494,7 +495,7 @@ class Core
                 $pos = strpos($message, $find);
                 if ($pos !== FALSE) {
                     $matches = 1;
-                    $message = substr($message, 0, $pos).$output.substr($message, $pos + strlen($find));
+                    $message = substr($message, 0, $pos) . $output . substr($message, $pos + strlen($find));
                 }
             }
             if ($matches == 0) {
@@ -502,6 +503,7 @@ class Core
                 $count++;
             }
         }
+        return $message;
     }
 
     /**
@@ -2322,5 +2324,21 @@ class Core
         }
 
         return true;
+    }
+
+    /**
+     * Get rid of potentially orphaned objects for a quarantined member.
+     *
+     * @since 1.9.12
+     * @param string $username The HTML-escaped username, as in members.username
+     */
+    public function moderate_cleanup($username) {
+        if ('Anonymous' == $username) return;
+
+        $member = $this->sql->getMemberByName($username);
+        if (empty($member)) throw new InvalidArgumentException('Username invalid or not found');
+
+        $uid = $member['uid'];
+        $this->db->query("DELETE FROM " . $this->vars->tablepre . "hold_attachments WHERE uid = $uid AND pid = 0");
     }
 }

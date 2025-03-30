@@ -5,7 +5,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr class="category">
-<td colspan="3"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textpoll'] ?> <?= $thread['subject'] ?> <?= $results ?></strong></font></td>
+<td colspan="3"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textpoll'] ?> <?= $subject ?> <?= $results ?></strong></font></td>
 </tr>
 <?= $pollhtml ?>
 <?= $buttoncode ?>

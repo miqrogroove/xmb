@@ -22,66 +22,51 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
+require './header.php';
+
 $attachSvc = \XMB\Services\attach();
+$core = \XMB\Services\core();
+$db = \XMB\Services\db();
 $forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
+$tokenSvc = \XMB\Services\token();
 $tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
 
-define('X_SCRIPT', 'quarantine.php');
-require 'header.php';
-
+$lang = &$vars->lang;
 $onlinetime = $vars->onlinetime;
+$SETTINGS = &$vars->settings;
 
-nav("<a href='quarantine.php'>{$lang['moderation_meta_name']}</a>");
+$core->nav("<a href='" . $vars->full_url . "quarantine.php'>{$lang['moderation_meta_name']}</a>");
 
 if (! X_SMOD) {
     header('HTTP/1.0 403 Forbidden');
-    error($lang['notpermitted']);
+    $core->error($lang['notpermitted']);
 }
 
 $quarantine = true;
 $https_only = 'on' == $SETTINGS['images_https_only'];
 
-loadtemplates(
-'viewthread_poll',
-'viewthread_poll_options',
-'viewthread_poll_options_view',
-'viewthread_poll_submitbutton',
-'viewthread_post',
-'viewthread_post_sig',
-'viewthread_post_nosig',
-'viewthread_post_attachmentthumb',
-'viewthread_post_attachmentimage',
-'viewthread_post_attachment'
-);
-eval('$header = "'.template('header').'";');
+$template->process('header.php', echo: true);
+$template->process('quarantine_wrap.php', echo: true);
 
-echo $header;
+$action = getPhpInput('action', sourcearray: 'g');
 
-?>
-<table cellspacing="0" cellpadding="0" border="0" width="<?php echo $tablewidth; ?>" align="center">
-<tr>
-<td bgcolor="<?php echo $bordercolor; ?>">
-<table border="0" cellspacing="<?php echo $THEME['borderwidth']; ?>" cellpadding="<?php echo $tablespace; ?>" width="100%">
-<tr>
-<td class="category"><font color="<?php echo $cattext; ?>"><strong><?php echo $lang['moderation_meta_name']; ?></strong></font></td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="<?php echo $altbg1; ?>">
-<?php
+if ($action == 'viewforum' || $action == 'viewuser') {
+    $ranks = new \XMB\Ranks($sql, $vars);
+    $render = new \XMB\ThreadRender($core, $ranks, $sql, $vars);
 
-$action = postedVar('action', '', FALSE, FALSE, FALSE, 'g');
-
-switch($action) {
-case 'viewforum':
-case 'viewuser':
     if ('viewuser' == $action) {
-        $user = postedVar('u', '', true, false, false, 'g');
+        $user = $core->postedVar('u', dbescape: false, sourcearray: 'g');
         $dbuser = $db->escape($user);
         $member = $sql->getMemberByName($user);
         if (empty($member)) {
-            error($lang['nomember'], false, '', '</td></tr></table></td></tr></table>');
+            $core->error($lang['nomember'], showheader: false, append: '</td></tr></table></td></tr></table>');
         }
 
         echo "<h2>{$lang['moderation_new_member']}: {$member['username']}</h2>\n";
@@ -89,254 +74,107 @@ case 'viewuser':
         $fid = getInt('fid');
         $forum = $forums->getForum($fid);
         if (false === $forum) {
-            error($lang['textnoforum'], false, '', '</td></tr></table></td></tr></table>');
+            $core->error($lang['textnoforum'], showheader: false, append: '</td></tr></table></td></tr></table>');
         }
 
         echo "<h2>" . fnameOut($forum['name']) . "</h2>\n";
         
-        $token = \XMB\Token\create('Quarantine Panel/Anonymous Queue', 'Approve or Delete', $vars::NONCE_AYS_EXP);
+        $token = $tokenSvc->create('Quarantine Panel/Anonymous Queue', 'Approve or Delete', $vars::NONCE_AYS_EXP);
     }
 
-    $specialrank = array();
-    $rankposts = array();
-    $queryranks = $sql->getRanks();
-    foreach($queryranks as $query) {
-        $query['posts'] = (int) $query['posts'];
-        if ($query['title'] === 'Super Administrator' || $query['title'] === 'Administrator' || $query['title'] === 'Super Moderator' || $query['title'] === 'Moderator') {
-            $specialrank[$query['title']] =& $query;
-        } else {
-            $rankposts[$query['posts']] =& $query;
-        }
-        unset($query);
-    }
-    unset($queryranks);
-
-    $thisbg = $altbg2;
+    $template->thisbg = $vars->theme['altbg2'];
 
     if ('viewuser' == $action) {
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$dbuser'");
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE author = '$dbuser'");
     } else {
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE fid = $fid AND author = 'Anonymous' ORDER BY lastpost ASC");        
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE fid = $fid AND author = 'Anonymous' ORDER BY lastpost ASC");        
     }
 
     $threadcount = $db->num_rows($result);
 
     if ($threadcount > 0) {
         echo "<h3>{$lang['moderation_new_threads']}</h3>\n";
-        while($thread = $db->fetch_array($result)){
+        while ($thread = $db->fetch_array($result)){
             $tid = (int) $thread['tid'];
             $fid = (int) $thread['fid'];
             $forum = $forums->getForum($fid);
-            $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
+            $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+            $template->subject = $thread['subject'];
+
             if ('viewforum' == $action) {
                 $approve = "<form action='?action=approvethread&amp;tid=$tid' method='post' style='float:left;'><input type='submit' value='{$lang['moderation_approve']}' /><input type='hidden' name='token' value='$token' /></form>";
                 $delete  = "<form action='?action=deletethread&amp;tid=$tid' method='post' style='float:right;'><input type='submit' value='{$lang['moderation_delete']}' /><input type='hidden' name='token' value='$token' /></form>";
             }
 
-            $pollhtml = $poll = '';
-            $vote_id = $voted = 0;
+            $template->buttoncode = '';
+            $template->pollhtml = '';
+            $poll = '';
+            $vote_id = 0;
+            $voted = 0;
 
             if ('1' === $thread['pollopts']) {
                 $vote_id = $sql->getPollId($tid, true);
             }
 
             if ($vote_id > 0) {
-                $resultold = $result;
-                $results = '- [<a href=""><font color="'.$cattext.'">'.$lang['viewresults'].'</font></a>]';
-                $query = $db->query("SELECT vote_option_id, vote_option_text FROM ".X_PREFIX."hold_vote_results WHERE vote_id='$vote_id'");
-                while($result = $db->fetch_array($query)) {
-                    $poll = [];
-                    $poll['id'] = (int) $result['vote_option_id'];
-                    $poll['name'] = $result['vote_option_text'];
-                    eval('$pollhtml .= "'.template('viewthread_poll_options').'";');
-                }
-                $db->free_result($query);
-                // eval('$buttoncode = "'.template('viewthread_poll_submitbutton').'";');
-                $buttoncode = '';
-                eval('$poll = "'.template('viewthread_poll').'";');
-                $result = $resultold;
-                echo $poll;
+                $template->results = '- [<a href=""><font color="' . $vars->theme['cattext'] . '">' . $lang['viewresults'] . '</font></a>]';
+                $template->pollhtml = $render->pollOptionsVotable($vote_id, $quarantine, $forum['allowsmilies'], $forum['allowbbcode']);
+                $template->token = '';
+                $template->thread = $thread;
+                $template->fid = $fid;
+                $template->tid = $tid;
+                $template->process('viewthread_poll.php', echo: true);
             }
 
-            echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"$tablewidth\" align=\"center\">\n";
-            echo "<tr><td bgcolor=\"$bordercolor\">\n";
-            echo "<table border=\"0\" cellspacing=\"{$THEME['borderwidth']}\" cellpadding=\"$tablespace\" width=\"100%\">\n";
-            echo "<tr class=\"header\"><td width=\"18%\">{$lang['textauthor']} </td><td>{$lang['textsubject']} {$thread['subject']}</td></tr>\n";
+            $template->process('quarantine_post_wrap.php', echo: true);
 
             if ('viewuser' == $action) {
-                $result2 = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE newtid=$tid");
+                $result2 = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE newtid = $tid");
                 $post = array_merge($db->fetch_array($result2), $member);
             } else {
-                $result2 = $db->query("SELECT * FROM ".X_PREFIX."hold_posts AS p LEFT JOIN ".X_PREFIX."members AS m ON m.username=p.author WHERE p.newtid=$tid");
+                $result2 = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts AS p LEFT JOIN " . $vars->tablepre . "members AS m ON m.username = p.author WHERE p.newtid = $tid");
                 $post = $db->fetch_array($result2);
             }
             $db->free_result($result2);
-            null_string($post['avatar']);
-            $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
-            if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
-                if ('1' === $post['invisible']) {
-                    if (!X_ADMIN) {
-                        $onlinenow = $lang['memberisoff'];
-                    } else {
-                        $onlinenow = $lang['memberison'].' ('.$lang['hidden'].')';
-                    }
-                } else {
-                    $onlinenow = $lang['memberison'];
-                }
-            } else {
-                $onlinenow = $lang['memberisoff'];
-            }
-            $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
-            $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
-            $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-            if ($post['icon'] != '' && file_exists($smdir.'/'.$post['icon'])) {
-                $post['icon'] = '<img src="'.$smdir.'/'.$post['icon'].'" alt="'.$post['icon'].'" border="0" />';
-            } else {
-                $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
-            }
-            $encodename = recodeOut($post['author']);
-            $profilelink = "<a href=\"./member.php?action=viewpro&amp;member=$encodename\">{$post['author']}</a>";
-            $showtitle = $post['status'];
 
-            if ($post['status'] == 'Administrator' || $post['status'] == 'Super Administrator' || $post['status'] == 'Super Moderator' || $post['status'] == 'Moderator') {
-                // Specify the staff rank.
-                $sr = $post['status'];
-                $rank = [
-                    'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[$vars->status_translate[$vars->status_enum[$sr]]],
-                    'stars' => $specialrank[$sr]['stars'],
-                    'avatarrank' => $specialrank[$sr]['avatarrank'],
-                ];
-            } elseif ($post['status'] == 'Banned') {
-                // Specify no rank.
-                $rank = [
-                    'allowavatars' => 'no',
-                    'title' => $lang['textbanned'],
-                    'stars' => 0,
-                    'avatarrank' => '',
-                ];
-            } elseif (count($rankposts) === 0) {
-                // Specify no rank.
-                $rank = [
-                    'allowavatars' => 'no',
-                    'title' => '',
-                    'stars' => 0,
-                    'avatarrank' => '',
-                ];
-            } else {
-                // Find the appropriate member rank.
-                $max = -1;
-                $keys = array_keys($rankposts);
-                foreach($keys as $key) {
-                    if ((int) $post['postnum'] >= (int) $key && (int) $key > (int) $max) {
-                        $max = $key;
-                    }
-                }
-                $rank =& $rankposts[$max];
-            }
+            $render->preparePost($post, $template);
 
-            $allowavatars = $rank['allowavatars'];
             if ('viewuser' == $action) {
-                $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
-                $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
+                $template->profile = '';
             } else {
-                $stars = '';
-                $showtitle = $lang['textunregistered'].'<br />';
-            }
-            if ($allowavatars == 'no') {
-                $post['avatar'] = '';
-            }
-            if ($https_only && strpos($post['avatar'], ':') !== false && substr($post['avatar'], 0, 6) !== 'https:') {
-                $post['avatar'] = '';
-            }
-            if ($rank['avatarrank'] != '') {
-                $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" /><br />';
-            } else {
-                $rank['avatar'] = '';
-            }
-            if ('viewuser' == $action) {
-                $tharegdate = gmdate($dateformat, core()->timeKludge((int) $post['regdate']));
-            } else {
-                $tharegdate = 'N/A';
-            }
-            $avatar = '';
-            if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
-                if ($post['avatar'] !== '' && $allowavatars != "no") {
-                    $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
-                }
-            }
-            if ($post['mood'] != '') {
-                $mood = '<strong>'.$lang['mood'].'</strong> '.postify($post['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
-            } else {
-                $mood = '';
-            }
-            if ($post['location'] != '') {
-                $post['location'] = rawHTMLsubject($post['location']);
-                $location = '<br />'.$lang['textlocation'].' '.$post['location'];
-            } else {
-                $location = '';
-            }
-            if ('viewuser' == $action) {
-                $email = '';
-            } else {
-                $email = $approve.$delete;
-                $post['author'] = $lang['textanonymous'];
-                $post['postnum'] = 'N/A';
+                $template->profile = $approve . $delete;
+                $template->author = $lang['textanonymous'];
+                $template->profilelink = $lang['textanonymous'];
                 $post['usesig'] = 'no';
-                $profilelink = $lang['textanonymous'];
             }
-            $site = '';
-            $profile = '';
-            $search = '';
-            $u2u = '';
-            $ip = '';
-            $repquote = '';
-            $reportlink = '';
-            $edit = '';
-            $bbcodeoff = $post['bbcodeoff'];
-            $smileyoff = $post['smileyoff'];
-            $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
-            if ($forum['attachstatus'] == 'on') {
-                $queryattach = $sql->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
-            }
-            if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
-                $files = array();
-                $db->data_seek($queryattach, 0);
-                while($attach = $db->fetch_array($queryattach)) {
-                    if ($attach['pid'] === $post['pid']) {
-                        $files[] = $attach;
-                    }
-                }
-                if (count($files) > 0) {
-                    bbcodeFileTags($post['message'], $files, (int) $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'), $quarantine);
-                }
-            }
-            if ($post['usesig'] == 'yes') {
-                $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
-                eval('$post["message"] .= "'.template('viewthread_post_sig').'";');
-            } else {
-                eval('$post["message"] .= "'.template('viewthread_post_nosig').'";');
-            }
-            if ($post['subject'] != '') {
-                $linktitle = rawHTMLsubject(stripslashes($post['subject']));
-                $post['subject'] = wordwrap($linktitle, 150, '<br />', true).'<br />';
-            } else {
-                $linktitle = $thread['subject'];
-            }
-            eval('$post = "'.template('viewthread_post').'";');
-            echo $post;
-            echo "</table></td></tr></table><br />\n";
+            $template->site = '';
+            $template->search = '';
+            $template->u2u = '';
+            $template->ip = '';
+            $template->repquote = '';
+            $template->reportlink = '';
+            $template->edit = '';
 
-            // Remove array reference(s)
-            unset($rank);
+            if ($forum['attachstatus'] == 'on') {
+                $attachments = $sql->getOrphanedAttachments($quarantine, (int) $post['pid']);
+            }
+
+            $render->preparePostBody($post, $forum, $attachments, $quarantine, $template);
+
+            if ($post['subject'] == '') {
+                $template->linktitle = $thread['subject'];
+            }
+            
+            $template->process('viewthread_post.php', echo: true);
+            echo "</table></td></tr></table><br />\n";
         }
     }
     $db->free_result($result);
 
     if ('viewuser' == $action) {
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE author='$dbuser' AND tid != 0");
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE author = '$dbuser' AND tid != 0");
     } else {
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts AS p LEFT JOIN ".X_PREFIX."members AS m ON m.username=p.author WHERE p.fid = $fid AND p.author = 'Anonymous' AND p.tid != 0 ORDER BY p.tid, p.dateline");        
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts AS p LEFT JOIN " . $vars->tablepre . "members AS m ON m.username = p.author WHERE p.fid = $fid AND p.author = 'Anonymous' AND p.tid != 0 ORDER BY p.tid, p.dateline");        
     }
 
     $replycount = $db->num_rows($result);
@@ -344,7 +182,7 @@ case 'viewuser':
     if ($replycount > 0) {
         echo "<h3>{$lang['moderation_new_replies']}</h3>\n";
         $lasttid = '0';
-        while($post = $db->fetch_array($result)){
+        while ($post = $db->fetch_array($result)){
             $tid = (int) $post['tid'];
             $fid = (int) $post['fid'];
             $forum = $forums->getForum($fid);
@@ -354,191 +192,65 @@ case 'viewuser':
 
                 if ($tid !== $lasttid) {
                     if ('0' !== $lasttid) echo "</table></td></tr></table><br />\n";
-                    $thisbg = $altbg2;
+                    $template->thisbg = $vars->theme['altbg2'];
                 }
             }
 
             if ('viewuser' == $action || $tid !== $lasttid) {
                 $lasttid = $tid;
-                $result2 = $db->query("SELECT * FROM ".X_PREFIX."threads WHERE tid=$tid");
+                $result2 = $db->query("SELECT * FROM " . $vars->tablepre . "threads WHERE tid = $tid");
                 $thread = $db->fetch_array($result2);
                 $db->free_result($result2);
-                $thread['subject'] = shortenString(rawHTMLsubject(stripslashes($thread['subject'])));
-                echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"$tablewidth\" align=\"center\">\n";
-                echo "<tr><td bgcolor=\"$bordercolor\">\n";
-                echo "<table border=\"0\" cellspacing=\"{$THEME['borderwidth']}\" cellpadding=\"$tablespace\" width=\"100%\">\n";
-                echo "<tr class=\"header\"><td width=\"18%\">{$lang['textauthor']} </td><td>{$lang['textsubject']} {$thread['subject']}</td></tr>\n";
+                $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+                $template->subject = $thread['subject'];
+                $template->process('quarantine_post_wrap.php', echo: true);
             }
 
             if ('viewuser' == $action) {
                 $post = array_merge($post, $member);
             }
-            null_string($post['avatar']);
-            $post['avatar'] = str_replace("script:", "sc ript:", $post['avatar']);
-            if ($onlinetime - (int)$post['lastvisit'] <= X_ONLINE_TIMER) {
-                if ('1' === $post['invisible']) {
-                    if (!X_ADMIN) {
-                        $onlinenow = $lang['memberisoff'];
-                    } else {
-                        $onlinenow = $lang['memberison'].' ('.$lang['hidden'].')';
-                    }
-                } else {
-                    $onlinenow = $lang['memberison'];
-                }
-            } else {
-                $onlinenow = $lang['memberisoff'];
-            }
-            $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
-            $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
-            $poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-            if ($post['icon'] != '' && file_exists($smdir.'/'.$post['icon'])) {
-                $post['icon'] = '<img src="'.$smdir.'/'.$post['icon'].'" alt="'.$post['icon'].'" border="0" />';
-            } else {
-                $post['icon'] = '<img src="'.$imgdir.'/default_icon.gif" alt="[*]" border="0" />';
-            }
-            $encodename = recodeOut($post['author']);
-            $profilelink = "<a href=\"./member.php?action=viewpro&amp;member=$encodename\">{$post['author']}</a>";
-            $showtitle = $post['status'];
 
-            if ($post['status'] == 'Administrator' || $post['status'] == 'Super Administrator' || $post['status'] == 'Super Moderator' || $post['status'] == 'Moderator') {
-                // Specify the staff rank.
-                $sr = $post['status'];
-                $rank = [
-                    'allowavatars' => $specialrank[$sr]['allowavatars'],
-                    'title' => $lang[$vars->status_translate[$vars->status_enum[$sr]]],
-                    'stars' => $specialrank[$sr]['stars'],
-                    'avatarrank' => $specialrank[$sr]['avatarrank'],
-                ];
-            } elseif ($post['status'] == 'Banned') {
-                // Specify no rank.
-                $rank = [
-                    'allowavatars' => 'no',
-                    'title' => $lang['textbanned'],
-                    'stars' => 0,
-                    'avatarrank' => '',
-                ];
-            } elseif (count($rankposts) === 0) {
-                // Specify no rank.
-                $rank = [
-                    'allowavatars' => 'no',
-                    'title' => '',
-                    'stars' => 0,
-                    'avatarrank' => '',
-                ];
-            } else {
-                // Find the appropriate member rank.
-                $max = -1;
-                $keys = array_keys($rankposts);
-                foreach($keys as $key) {
-                    if ((int) $post['postnum'] >= (int) $key && (int) $key > (int) $max) {
-                        $max = $key;
-                    }
-                }
-                $rank =& $rankposts[$max];
-            }
+            $render->preparePost($post, $template);
 
-            $allowavatars = $rank['allowavatars'];
+            //$template->showtitle = $post['status'];
+
             if ('viewuser' == $action) {
-                $stars = str_repeat('<img src="'.$imgdir.'/star.gif" alt="*" border="0" />', $rank['stars']) . '<br />';
-                $showtitle = ($post['customstatus'] != '') ? $post['customstatus'].'<br />' : $rank['title'].'<br />';
+                $template->profile = '';
             } else {
-                $stars = '';
-                $showtitle = $lang['textunregistered'].'<br />';
-            }
-            if ($allowavatars == 'no') {
-                $post['avatar'] = '';
-            }
-            if ($https_only && strpos($post['avatar'], ':') !== false && substr($post['avatar'], 0, 6) !== 'https:') {
-                $post['avatar'] = '';
-            }
-            if ($rank['avatarrank'] != '') {
-                $rank['avatar'] = '<img src="'.$rank['avatarrank'].'" alt="'.$lang['altavatar'].'" border="0" /><br />';
-            } else {
-                $rank['avatar'] = '';
-            }
-            if ('viewuser' == $action) {
-                $tharegdate = gmdate($dateformat, core()->timeKludge((int) $post['regdate']));
-            } else {
-                $tharegdate = 'N/A';
-            }
-            $avatar = '';
-            if ($SETTINGS['avastatus'] == 'on' || $SETTINGS['avastatus'] == 'list') {
-                if ($post['avatar'] !== '' && $allowavatars != "no") {
-                    $avatar = '<img src="'.$post['avatar'].'" alt="'.$lang['altavatar'].'" border="0" />';
-                }
-            }
-            if ($post['mood'] != '') {
-                $mood = '<strong>'.$lang['mood'].'</strong> '.postify($post['mood'], 'no', 'no', 'yes', 'no', 'yes', 'no', true, 'yes');
-            } else {
-                $mood = '';
-            }
-            if ($post['location'] != '') {
-                $post['location'] = rawHTMLsubject($post['location']);
-                $location = '<br />'.$lang['textlocation'].' '.$post['location'];
-            } else {
-                $location = '';
-            }
-            if ('viewuser' == $action) {
-                $email = '';
-            } else {
-                $email = $approve.$delete;
+                $template->profile = $approve . $delete;
                 $post['author'] = $lang['textanonymous'];
-                $post['postnum'] = 'N/A';
                 $post['usesig'] = 'no';
-                $profilelink = $lang['textanonymous'];
+                $template->profilelink = $lang['textanonymous'];
             }
-            $site = '';
-            $profile = '';
-            $search = '';
-            $u2u = '';
-            $ip = '';
-            $repquote = '';
-            $reportlink = '';
-            $edit = '';
-            $bbcodeoff = $post['bbcodeoff'];
-            $smileyoff = $post['smileyoff'];
-            $post['message'] = postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
+            $template->site = '';
+            $template->search = '';
+            $template->u2u = '';
+            $template->ip = '';
+            $template->repquote = '';
+            $template->reportlink = '';
+            $template->edit = '';
+
             if ($forum['attachstatus'] == 'on') {
-                $queryattach = $sql->getOrphanedAttachments(quarantine: true, pid: $post['pid']);
+                $attachments = $sql->getOrphanedAttachments($quarantine, (int) $post['pid']);
             }
-            if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
-                $files = array();
-                $db->data_seek($queryattach, 0);
-                while($attach = $db->fetch_array($queryattach)) {
-                    if ($attach['pid'] === $post['pid']) {
-                        $files[] = $attach;
-                    }
-                }
-                if (count($files) > 0) {
-                    bbcodeFileTags($post['message'], $files, $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'), $quarantine);
-                }
+
+            $render->preparePostBody($post, $forum, $attachments, $quarantine, $template);
+
+            if ($post['subject'] == '') {
+                $template->linktitle = $thread['subject'];
             }
-            if ($post['usesig'] == 'yes') {
-                $post['sig'] = postify($post['sig'], 'no', 'no', $forum['allowsmilies'], 'no', $SETTINGS['sigbbcode'], $forum['allowimgcode'], false);
-                eval('$post["message"] .= "'.template('viewthread_post_sig').'";');
-            } else {
-                eval('$post["message"] .= "'.template('viewthread_post_nosig').'";');
-            }
-            if ($post['subject'] != '') {
-                $linktitle = rawHTMLsubject(stripslashes($post['subject']));
-                $post['subject'] = $linktitle.'<br />';
-            } else {
-                $linktitle = $thread['subject'];
-            }
-            eval('$post = "'.template('viewthread_post').'";');
-            echo $post;
+
+            $template->process('viewthread_post.php', echo: true);
+
             if ('viewuser' == $action) {
                 echo "</table></td></tr></table><br />\n";
             } else {
-                if ($thisbg == $altbg2) {
-                    $thisbg = $altbg1;
+                if ($template->thisbg == $vars->theme['altbg2']) {
+                    $template->thisbg = $vars->theme['altbg1'];
                 } else {
-                    $thisbg = $altbg2;
+                    $template->thisbg = $vars->theme['altbg2'];
                 }
             }
-
-            // Remove array reference(s)
-            unset($rank);
         } //wend
         if ('viewforum' == $action) {
             echo "</table></td></tr></table><br />\n";
@@ -568,10 +280,9 @@ case 'viewuser':
         echo "</form>\n";
     }
 
-    break;
-case 'modays':
-    $member = postedVar('u', '', true, false);
-    $sub = postedVar('sub');
+} elseif ($action == 'modays') {
+    $member = $core->postedVar('u', dbescape: false);
+    $sub = $core->postedVar('sub');
     if (onSubmit('approveall')) {
         $act = 'approveall';
         $phrase = 'moderation_ays_appr';
@@ -582,116 +293,115 @@ case 'modays':
         $act = 'deleteban';
         $phrase = 'moderation_ays_dele';
     } else {
-        error($lang['textnoaction'], FALSE, '', '</td></tr></table></td></tr></table>');
+        $core->error($lang['textnoaction'], showheader: false, append: '</td></tr></table></td></tr></table>');
     }
     $phrase = str_replace('$user', $member, $lang[$phrase]);
     ?>
-    <tr bgcolor="<?php echo $altbg2; ?>" class="ctrtablerow"><td><?php echo $phrase; ?><br />
+    <tr bgcolor="<?php echo $vars->theme['altbg2']; ?>" class="ctrtablerow"><td><?php echo $phrase; ?><br />
     <form action="quarantine.php?action=<?php echo $act; ?>" method="post">
-      <input type="hidden" name="token" value="<?php echo \XMB\Token\create("Quarantine Panel/$act", $member, $vars::NONCE_AYS_EXP); ?>" />
+      <input type="hidden" name="token" value="<?php echo $tokenSvc->create("Quarantine Panel/$act", $member, $vars::NONCE_AYS_EXP); ?>" />
       <input type="hidden" name="u" value="<?php echo $member; ?>" />
       <input type="submit" name="yessubmit" value="<?php echo $lang['textyes']; ?>" /> -
       <input type="submit" name="nosubmit" value="<?php echo $lang['textno']; ?>" />
     </form></td></tr>
     <?php
-    break;
-case 'approveall':
-    $member = postedVar('u');
-    $rawmember = postedVar('u', '', true, false);
-    request_secure("Quarantine Panel/approveall", $rawmember);
+} elseif ($action == 'approveall') {
+    $member = $core->postedVar('u');
+    $rawmember = $core->postedVar('u', dbescape: false);
+    $core->request_secure("Quarantine Panel/approveall", $rawmember);
 
     if (onSubmit('yessubmit')) {
         $count = $sql->countPosts($quarantine, 0, $rawmember);
         $thatime = $onlinetime - $count;
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
-        while($thread = $db->fetch_array($result)) {
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE author='$member' ORDER BY lastpost ASC");
+        while ($thread = $db->fetch_array($result)) {
             $thatime++;
             $forum = $forums->getForum((int) $thread['fid']);
             $db->query(
-                "INSERT INTO ".X_PREFIX."threads " .
+                "INSERT INTO " . $vars->tablepre . "threads " .
                 "      (fid, subject, icon,           lastpost, views, replies, author, closed, topped, pollopts) " .
                 "SELECT fid, subject, icon, '$thatime|$member', views, replies, author, closed, topped, pollopts " .
-                "FROM ".X_PREFIX."hold_threads WHERE tid = {$thread['tid']}"
+                "FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}"
             );
             $newtid = $db->insert_id();
-            $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
+            $oldpid = (int) $db->result($db->query("SELECT pid FROM " . $vars->tablepre . "hold_posts WHERE newtid = {$thread['tid']}"));
             $db->query(
-                "INSERT INTO ".X_PREFIX."posts " .
+                "INSERT INTO " . $vars->tablepre . "posts " .
                 "      (fid,     tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
                 "SELECT fid, $newtid, author, message, subject, $thatime, icon, usesig, useip, bbcodeoff, smileyoff " .
-                "FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid"
+                "FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid"
             );
             $newpid = $db->insert_id();
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|$newpid') WHERE tid = $newtid");
+            $db->query("UPDATE " . $vars->tablepre . "threads SET lastpost=concat(lastpost, '|$newpid') WHERE tid = $newtid");
             $where = "WHERE fid={$thread['fid']}";
             if ($forum['type'] == 'sub') {
                 $where .= " OR fid={$forum['fup']}";
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
+            $db->query("UPDATE " . $vars->tablepre . "forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
-            $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
+            $db->query("UPDATE " . $vars->tablepre . "members SET postnum=postnum+1 WHERE username='$member'");
             $attachSvc->approve($oldpid, $newpid);
             if (intval($thread['pollopts']) != 0) {
                 $oldpoll = $sql->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $newpoll = $sql->addVoteDesc($newtid);
                     $db->query(
-                        "INSERT INTO ".X_PREFIX."vote_results " .
+                        "INSERT INTO " . $vars->tablepre . "vote_results " .
                         "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
                         "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
-                        "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
+                        "FROM " . $vars->tablepre . "hold_vote_results WHERE vote_id = $oldpoll"
                     );
                     $sql->deleteVotesByTID([$oldpoll], quarantine: true);
                 }
             }
-            $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
+            $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
             if ($count2 != 0) {
-                $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
-                $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
+                $db->query("INSERT INTO " . $vars->tablepre . "favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
+                $db->query("DELETE FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']}");
             }
-            $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid");
-            $db->query("DELETE FROM ".X_PREFIX."hold_threads WHERE tid = {$thread['tid']}");
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}");
         }
         $db->free_result($result);
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE author='$member' ORDER BY dateline ASC");
-        while($post = $db->fetch_array($result)) {
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE author='$member' ORDER BY dateline ASC");
+        while ($post = $db->fetch_array($result)) {
             $thatime++;
             $forum = $forums->getForum((int) $post['fid']);
             $db->query(
-                "INSERT INTO ".X_PREFIX."posts " .
+                "INSERT INTO " . $vars->tablepre . "posts " .
                 "      (fid, tid, author, message, subject, dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
                 "SELECT fid, tid, author, message, subject, $thatime, icon, usesig, useip, bbcodeoff, smileyoff " .
-                "FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}"
+                "FROM " . $vars->tablepre . "hold_posts WHERE pid = {$post['pid']}"
             );
             $newpid = $db->insert_id();
-            $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$thatime|$member|$newpid', replies=replies+1 WHERE tid = {$post['tid']}");
+            $db->query("UPDATE " . $vars->tablepre . "threads SET lastpost='$thatime|$member|$newpid', replies=replies+1 WHERE tid = {$post['tid']}");
             $where = "WHERE fid={$post['fid']}";
             if ($forum['type'] == 'sub') {
                 $where .= " OR fid={$forum['fup']}";
             }
-            $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
+            $db->query("UPDATE " . $vars->tablepre . "forums SET lastpost='$thatime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
             unset($where);
-            $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
+            $db->query("UPDATE " . $vars->tablepre . "members SET postnum=postnum+1 WHERE username='$member'");
             $attachSvc->approve((int) $post['pid'], $newpid);
-            $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = {$post['pid']}");
 
-            $result2 = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE tid = {$post['tid']}");
+            $result2 = $db->query("SELECT subject FROM " . $vars->tablepre . "threads WHERE tid = {$post['tid']}");
             $thread = $db->fetch_array($result2);
             $db->free_result($result2);
-            $threadname = rawHTMLsubject(stripslashes($thread['subject']));
+            $threadname = $core->rawHTMLsubject(stripslashes($thread['subject']));
 
-            $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."posts WHERE pid <= $newpid AND tid={$post['tid']}");
+            $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE pid <= $newpid AND tid={$post['tid']}");
             $posts = $db->result($query,0);
             $db->free_result($query);
 
             $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
-            $viewperm = getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
-            $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
+            $viewperm = $core->getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
+            $date = $db->result($db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
-                                 . "FROM ".X_PREFIX."favorites f "
-                                 . "INNER JOIN ".X_PREFIX."members m USING (username) "
+                                 . "FROM " . $vars->tablepre . "favorites f "
+                                 . "INNER JOIN " . $vars->tablepre . "members m USING (username) "
                                  . "WHERE f.type = 'subscription' AND f.tid = {$post['tid']} AND m.username != '$member' AND m.lastvisit >= $date");
-            while($subs = $db->fetch_array($subquery)) {
+            while ($subs = $db->fetch_array($subquery)) {
                 if ($viewperm < $vars->status_enum[$subs['status']]) {
                     continue;
                 }
@@ -703,7 +413,7 @@ case 'approveall':
                 $translate = $lang2[$subs['langfile']];
                 $topicpages = quickpage($posts, $subs['ppp']);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-                $threadurl = $full_url.'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
+                $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
                 $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
                 $rawusername = htmlspecialchars_decode($member, ENT_QUOTES);
                 $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
@@ -715,119 +425,115 @@ case 'approveall':
         }
         $db->free_result($result);
         $sql->endMemberQuarantine($rawmember);
-        moderate_cleanup($member);
+        $core->moderate_cleanup($rawmember);
         echo $lang['moderation_approved'];
     } else {
         echo $lang['moderation_canceled'];
     }
 
-    break;
-case 'deleteall':
-case 'deleteban':
-    $member = postedVar('u');
-    $rawmember = postedVar('u', '', true, false);
-    request_secure("Quarantine Panel/$action", $rawmember);
+} elseif ($action == 'deleteall' || $action == 'deleteban') {
+    $member = $core->postedVar('u');
+    $rawmember = $core->postedVar('u', dbescape: false);
+    $core->request_secure("Quarantine Panel/$action", $rawmember);
 
     if (onSubmit('yessubmit')) {
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE author='$member' ORDER BY lastpost ASC");
-        while($thread = $db->fetch_array($result)) {
-            $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
-            $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE author='$member' ORDER BY lastpost ASC");
+        while ($thread = $db->fetch_array($result)) {
+            $oldpid = (int) $db->result($db->query("SELECT pid FROM " . $vars->tablepre . "hold_posts WHERE newtid = {$thread['tid']}"));
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_attachments WHERE pid = $oldpid");
             if (intval($thread['pollopts']) != 0) {
                 $oldpoll = $sql->getPollId($thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $sql->deleteVotesByTID([$oldpoll], quarantine: true);
                 }
             }
-            $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
-            $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid");
-            $db->query("DELETE FROM ".X_PREFIX."hold_threads WHERE tid = {$thread['tid']}");
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']}");
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}");
         }
         $db->free_result($result);
-        $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE author='$member' ORDER BY dateline ASC");
-        while($post = $db->fetch_array($result)) {
-            $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = {$post['pid']}");
-            $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE author='$member' ORDER BY dateline ASC");
+        while ($post = $db->fetch_array($result)) {
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_attachments WHERE pid = {$post['pid']}");
+            $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = {$post['pid']}");
         }
         $db->free_result($result);
-        moderate_cleanup($member);
+        $core->moderate_cleanup($rawmember);
         if ('deleteban' == $action && X_ADMIN) {
-            $db->query("UPDATE ".X_PREFIX."members SET status = 'Banned', customstatus = 'Spammer' WHERE username = '$member'");
+            $db->query("UPDATE " . $vars->tablepre . "members SET status = 'Banned', customstatus = 'Spammer' WHERE username = '$member'");
         }
         echo $lang['moderation_deleted'];
     } else {
         echo $lang['moderation_canceled'];
     }
-    break;
-case 'approvethread':
-    request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+} elseif ($action == 'approvethread') {
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
     $oldtid = getInt('tid');
-    $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE tid=$oldtid");
+    $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE tid=$oldtid");
     if ($db->num_rows($result) == 0) {
-        error($lang['textnoforum'], FALSE, '', '</td></tr></table></td></tr></table>');
+        $core->error($lang['textnoforum'], showheader: false, append: '</td></tr></table></td></tr></table>');
     }
     $thread = $db->fetch_array($result);
     $db->free_result($result);
 
     $forum = $forums->getForum((int) $thread['fid']);
     $member = $db->escape($thread['author']);
-    $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}");
+    $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE newtid = {$thread['tid']}");
     $post = $db->fetch_array($result);
     $db->free_result($result);
     $oldpid = (int) $post['pid'];
     $db->query(
-        "INSERT INTO ".X_PREFIX."threads " .
+        "INSERT INTO " . $vars->tablepre . "threads " .
         "      (fid, subject, icon,              lastpost, views, replies, author, closed, topped, pollopts) " .
         "SELECT fid, subject, icon, '$onlinetime|$member', views, replies, author, closed, topped, pollopts " .
-        "FROM ".X_PREFIX."hold_threads WHERE tid = {$thread['tid']}"
+        "FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}"
     );
     $newtid = $db->insert_id();
     $db->query(
-        "INSERT INTO ".X_PREFIX."posts " .
+        "INSERT INTO " . $vars->tablepre . "posts " .
         "      (fid,     tid, author, message, subject,    dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
         "SELECT fid, $newtid, author, message, subject, $onlinetime, icon, usesig, useip, bbcodeoff, smileyoff " .
-        "FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid"
+        "FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid"
     );
     $newpid = $db->insert_id();
-    $db->query("UPDATE ".X_PREFIX."threads SET lastpost=concat(lastpost, '|$newpid') WHERE tid = $newtid");
+    $db->query("UPDATE " . $vars->tablepre . "threads SET lastpost=concat(lastpost, '|$newpid') WHERE tid = $newtid");
     $where = "WHERE fid={$thread['fid']}";
     if ($forum['type'] == 'sub') {
         $where .= " OR fid={$forum['fup']}";
     }
-    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
+    $db->query("UPDATE " . $vars->tablepre . "forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
-    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
+    $db->query("UPDATE " . $vars->tablepre . "members SET postnum=postnum+1 WHERE username='$member'");
     $attachSvc->approve($oldpid, $newpid);
     if (intval($thread['pollopts']) != 0) {
         $oldpoll = $sql->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
             $newpoll = $sql->addVoteDesc($newtid);
             $db->query(
-                "INSERT INTO ".X_PREFIX."vote_results " .
+                "INSERT INTO " . $vars->tablepre . "vote_results " .
                 "      ( vote_id, vote_option_id, vote_option_text, vote_result) " .
                 "SELECT $newpoll, vote_option_id, vote_option_text, vote_result " .
-                "FROM ".X_PREFIX."hold_vote_results WHERE vote_id = $oldpoll"
+                "FROM " . $vars->tablepre . "hold_vote_results WHERE vote_id = $oldpoll"
             );
             $sql->deleteVotesByTID([$oldpoll], quarantine: true);
         }
     }
-    $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
+    $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
     if ($count2 != 0) {
-        $db->query("INSERT INTO ".X_PREFIX."favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
-        $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
+        $db->query("INSERT INTO " . $vars->tablepre . "favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
+        $db->query("DELETE FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']}");
     }
-    $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid");
-    $db->query("DELETE FROM ".X_PREFIX."hold_threads WHERE tid = {$thread['tid']}");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}");
 
-    moderate_cleanup($member);
+    $core->moderate_cleanup($rawmember);
     echo $lang['moderation_approved'];
-    break;
-case 'approvereply':
-    request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+} elseif ($action == 'approvereply') {
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
     $oldpid = getInt('pid');
-    $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE pid=$oldpid");
+    $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
     if ($db->num_rows($result) == 0) {
-        error($lang['textnoforum'], FALSE, '', '</td></tr></table></td></tr></table>');
+        $core->error($lang['textnoforum'], showheader: false, append: '</td></tr></table></td></tr></table>');
     }
     $post = $db->fetch_array($result);
     $db->free_result($result);
@@ -835,40 +541,40 @@ case 'approvereply':
     $forum = $forums->getForum((int) $post['fid']);
     $member = $db->escape($post['author']);
     $db->query(
-        "INSERT INTO ".X_PREFIX."posts " .
+        "INSERT INTO " . $vars->tablepre . "posts " .
         "      (fid, tid, author, message, subject,    dateline, icon, usesig, useip, bbcodeoff, smileyoff) " .
         "SELECT fid, tid, author, message, subject, $onlinetime, icon, usesig, useip, bbcodeoff, smileyoff " .
-        "FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}"
+        "FROM " . $vars->tablepre . "hold_posts WHERE pid = {$post['pid']}"
     );
     $newpid = $db->insert_id();
-    $db->query("UPDATE ".X_PREFIX."threads SET lastpost='$onlinetime|$member|$newpid', replies=replies+1 WHERE tid = {$post['tid']}");
+    $db->query("UPDATE " . $vars->tablepre . "threads SET lastpost='$onlinetime|$member|$newpid', replies=replies+1 WHERE tid = {$post['tid']}");
     $where = "WHERE fid={$post['fid']}";
     if ($forum['type'] == 'sub') {
         $where .= " OR fid={$forum['fup']}";
     }
-    $db->query("UPDATE ".X_PREFIX."forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
+    $db->query("UPDATE " . $vars->tablepre . "forums SET lastpost='$onlinetime|$member|$newpid', threads=threads+1, posts=posts+1 $where");
     unset($where);
-    $db->query("UPDATE ".X_PREFIX."members SET postnum=postnum+1 WHERE username='$member'");
+    $db->query("UPDATE " . $vars->tablepre . "members SET postnum=postnum+1 WHERE username='$member'");
     $attachSvc->approve((int) $post['pid'], $newpid);
-    $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = {$post['pid']}");
 
-    $result2 = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE tid = {$post['tid']}");
+    $result2 = $db->query("SELECT subject FROM " . $vars->tablepre . "threads WHERE tid = {$post['tid']}");
     $thread = $db->fetch_array($result2);
     $db->free_result($result2);
-    $threadname = rawHTMLsubject(stripslashes($thread['subject']));
+    $threadname = $core->rawHTMLsubject(stripslashes($thread['subject']));
 
-    $query = $db->query("SELECT COUNT(pid) FROM ".X_PREFIX."posts WHERE pid <= $newpid AND tid={$post['tid']}");
+    $query = $db->query("SELECT COUNT(pid) FROM " . $vars->tablepre . "posts WHERE pid <= $newpid AND tid={$post['tid']}");
     $posts = $db->result($query,0);
     $db->free_result($query);
 
     $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
-    $viewperm = getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
-    $date = $db->result($db->query("SELECT dateline FROM ".X_PREFIX."posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
+    $viewperm = $core->getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
+    $date = $db->result($db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
     $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
-                         . "FROM ".X_PREFIX."favorites f "
-                         . "INNER JOIN ".X_PREFIX."members m USING (username) "
+                         . "FROM " . $vars->tablepre . "favorites f "
+                         . "INNER JOIN " . $vars->tablepre . "members m USING (username) "
                          . "WHERE f.type = 'subscription' AND f.tid = {$post['tid']} AND m.username != '$member' AND m.lastvisit >= $date");
-    while($subs = $db->fetch_array($subquery)) {
+    while ($subs = $db->fetch_array($subquery)) {
         if ($viewperm < $vars->status_enum[$subs['status']]) {
             continue;
         }
@@ -880,7 +586,7 @@ case 'approvereply':
         $translate = $lang2[$subs['langfile']];
         $topicpages = quickpage($posts, $subs['ppp']);
         $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-        $threadurl = $full_url.'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
+        $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
         $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
         $rawusername = htmlspecialchars_decode($member, ENT_QUOTES);
         $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
@@ -890,85 +596,82 @@ case 'approvereply':
     }
     $db->free_result($subquery);
 
-    moderate_cleanup($member);
+    $core->moderate_cleanup($rawmember);
     echo $lang['moderation_approved'];
-    break;
-case 'deletethread':
-    request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+} elseif ($action == 'deletethread') {
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
     $oldtid = getInt('tid');
-    $result = $db->query("SELECT * FROM ".X_PREFIX."hold_threads WHERE tid=$oldtid");
+    $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE tid = $oldtid");
     if ($db->num_rows($result) == 0) {
-        error($lang['textnoforum'], FALSE, '', '</td></tr></table></td></tr></table>');
+        $core->error($lang['textnoforum'], showheader: false, append: '</td></tr></table></td></tr></table>');
     }
     $thread = $db->fetch_array($result);
     $db->free_result($result);
 
     $member = $db->escape($thread['author']);
 
-    $oldpid = $db->result($db->query("SELECT pid FROM ".X_PREFIX."hold_posts WHERE newtid = {$thread['tid']}"), 0);
-    $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = $oldpid");
+    $oldpid = (int) $db->result($db->query("SELECT pid FROM " . $vars->tablepre . "hold_posts WHERE newtid = {$thread['tid']}"));
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_attachments WHERE pid = $oldpid");
     if (intval($thread['pollopts']) != 0) {
         $oldpoll = $sql->getPollId($thread['tid'], true);
         if ($oldpoll !== 0) {
             $sql->deleteVotesByTID([$oldpoll], quarantine: true);
         }
     }
-    $db->query("DELETE FROM ".X_PREFIX."hold_favorites WHERE tid={$thread['tid']}");
-    $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = $oldpid");
-    $db->query("DELETE FROM ".X_PREFIX."hold_threads WHERE tid = {$thread['tid']}");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_favorites WHERE tid = {$thread['tid']}");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}");
 
-    moderate_cleanup($member);
+    $core->moderate_cleanup($rawmember);
     echo $lang['moderation_deleted'];
-    break;
-case 'deletereply':
-    request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+} elseif ($action == 'deletereply') {
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
     $oldpid = getInt('pid');
-    $result = $db->query("SELECT * FROM ".X_PREFIX."hold_posts WHERE pid=$oldpid");
+    $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
     if ($db->num_rows($result) == 0) {
-        error($lang['textnoforum'], FALSE, '', '</td></tr></table></td></tr></table>');
+        $core->error($lang['textnoforum'], showheader: false, append: '</td></tr></table></td></tr></table>');
     }
     $post = $db->fetch_array($result);
     $db->free_result($result);
 
     $member = $db->escape($post['author']);
 
-    $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE pid = {$post['pid']}");
-    $db->query("DELETE FROM ".X_PREFIX."hold_posts WHERE pid = {$post['pid']}");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_attachments WHERE pid = {$post['pid']}");
+    $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = {$post['pid']}");
 
-    moderate_cleanup($member);
+    $core->moderate_cleanup($rawmember);
     echo $lang['moderation_deleted'];
-    break;
-default:
+} else {
     echo "<h2>{$lang['moderation_new_memq']}</h2>\n";
     $result = $db->query(
         "SELECT m.username, COUNT(*) AS postnum " .
-        "FROM ".X_PREFIX."members AS m " .
-        "INNER JOIN ".X_PREFIX."hold_posts AS p ON m.username = p.author " .
+        "FROM " . $vars->tablepre . "members AS m " .
+        "INNER JOIN " . $vars->tablepre . "hold_posts AS p ON m.username = p.author " .
         "GROUP BY m.username " .
         "ORDER BY m.regdate ASC " .
         "LIMIT 10"
     );
     if ($db->num_rows($result) == 0) {
         // Double check to make sure there aren't any desync user records.
-        $result2 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE waiting_for_mod = 'yes' AND postnum > 0");
+        $result2 = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE waiting_for_mod = 'yes' AND postnum > 0");
         if ($db->num_rows($result2) == 0) {
             echo "<p>{$lang['moderation_empty']}</p>\n";
         } else {
             echo "<table>\n<tr><th>{$lang['textusername']}</th><th>{$lang['memposts']}</th></tr>\n";
-            while($row = $db->fetch_array($result2)) {
+            while ($row = $db->fetch_array($result2)) {
                 $user = $row['username'];
                 $userurl = recodeOut($user);
-                echo "<tr><td><a href='?action=viewuser&amp;u=$userurl'>$user</a></td><td>0</td></tr>\n";
+                echo "<tr><td><a href='" . $vars->full_url . "quarantine.php?action=viewuser&amp;u=$userurl'>$user</a></td><td>0</td></tr>\n";
             }
             echo "</table>\n";
         }
     } else {
         echo "<table>\n<tr><th>{$lang['textusername']}</th><th>{$lang['memposts']}</th></tr>\n";
-        while($row = $db->fetch_array($result)) {
+        while ($row = $db->fetch_array($result)) {
             $user = $row['username'];
             $userurl = recodeOut($user);
             $count = $row['postnum'];
-            echo "<tr><td><a href='?action=viewuser&amp;u=$userurl'>$user</a></td><td>$count</td></tr>\n";
+            echo "<tr><td><a href='" . $vars->full_url . "quarantine.php?action=viewuser&amp;u=$userurl'>$user</a></td><td>$count</td></tr>\n";
         }
         echo "</table>\n";
     }
@@ -978,44 +681,27 @@ default:
     echo "<h2>{$lang['moderation_anonq']}</h2>\n";
     $result = $db->query(
         "SELECT fid, COUNT(*) AS postnum " .
-        "FROM ".X_PREFIX."hold_posts WHERE author='Anonymous' " .
+        "FROM " . $vars->tablepre . "hold_posts WHERE author='Anonymous' " .
         "GROUP BY fid "
     );
     if ($db->num_rows($result) == 0) {
         echo "<p>{$lang['moderation_empty']}</p>\n";
     } else {
         echo "<table>\n<tr><th>{$lang['textforum']}</th><th>{$lang['memposts']}</th></tr>\n";
-        while($row = $db->fetch_array($result)) {
+        while ($row = $db->fetch_array($result)) {
             $fid = (int) $row['fid'];
             $forum = $forums->getForum($fid);
             $fname = fnameOut($forum['name']);
             $count = $row['postnum'];
-            echo "<tr><td><a href='?action=viewforum&amp;fid=$fid'>$fname</a></td><td>$count</td></tr>\n";
+            echo "<tr><td><a href='" . $vars->full_url . "quarantine.php?action=viewforum&amp;fid=$fid'>$fname</a></td><td>$count</td></tr>\n";
         }
         echo "</table>\n";
     }
     $db->free_result($result);
-
-    break;
 }
 
-end_time();
-eval('echo "</td></tr></table></td></tr></table>'.template('footer').'";');
+echo "</td></tr></table></td></tr></table>\n";
 
-/**
- * Get rid of potentially orphaned objects.
- *
- * @param string $xmbuser A DB-safe username.
- */
-function moderate_cleanup($xmbuser) {
-    global $db;
-
-    if ('Anonymous' == $xmbuser) return;
-
-    $result = $db->query("SELECT uid FROM ".X_PREFIX."members WHERE username='$xmbuser'");
-    if ($db->num_rows($result) != 0) {
-        $uid = $db->result($result, 0);
-        $db->query("DELETE FROM ".X_PREFIX."hold_attachments WHERE uid=$uid AND pid=0");
-    }
-    $db->free_result($result);
-}
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
+echo $footer;

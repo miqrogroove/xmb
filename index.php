@@ -110,9 +110,15 @@ if (X_SMOD && $gid == 0) {
         if (1 == $result) {
             $msg = $lang['moderation_notice_single'];
         } else {
-            $msg = str_replace('$result', $result, $lang['moderation_notice_eval']);
+            $msg = str_replace('$result', (string) $result, $lang['moderation_notice_eval']);
         }
-        $body->ticker .= $core->message($msg, false, '', '', false, false, true, false) . "<br />\n";
+        $body->ticker .= $core->message(
+            msg: $msg,
+            showheader: false,
+            die: false,
+            return_as_string: true,
+            showfooter: false
+        ) . "<br />\n";
     }
 }
 

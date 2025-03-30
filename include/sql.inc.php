@@ -1149,6 +1149,63 @@ class SQL
     }
 
     /**
+     * Retrieve posts from a specific thread.
+     *
+     * @since 1.10.00
+     */
+    public function getPostsForThreadPage(int $tid, int $startdate, int $startpid, int $count): array
+    {
+        $result = $this->db->query("
+            SELECT 'post' AS type, p.*, m.username, m.postnum, m.site, m.status, m.location, m.sig, m.avatar, m.customstatus, m.lastvisit, m.invisible, m.mood, m.regdate
+            FROM " . $this->tablepre . "posts AS p
+            LEFT JOIN " . $this->tablepre . "members AS m ON m.username=p.author
+            WHERE tid = $tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)
+            ORDER BY dateline ASC, pid ASC
+            LIMIT $count
+        ");
+
+        $all = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $all;
+    }
+
+    /**
+     * Retrieve posts from a specific thread.
+     *
+     * @since 1.10.00
+     */
+    public function getPostsAndLogsForThreadPage(int $tid, int $startdate, int $enddate, int $startpid, int $count): array
+    {
+        $result = $this->db->query("
+            SELECT p.*, m.username, m.postnum, m.site, m.status, m.location, m.sig, m.avatar, m.customstatus, m.lastvisit, m.invisible, m.mood, m.regdate
+            FROM
+            (
+              (
+                SELECT 'post' AS type, fid, tid, author, subject, dateline, pid, message, icon, usesig, useip, bbcodeoff, smileyoff
+                FROM " . $this->tablepre . "posts
+                WHERE tid = $tid AND (dateline > $startdate OR dateline = $startdate AND pid >= $startpid)
+                ORDER BY dateline ASC, pid ASC
+                LIMIT $count
+              )
+              UNION ALL
+              (
+                SELECT 'modlog' AS type, fid, tid, username AS author, action AS subject, date AS dateline, '', '', '', '', '', '', ''
+                FROM " . $this->tablepre . "logs
+                WHERE tid = $tid AND date >= $startdate AND date < $enddate
+              )
+            ) AS p
+            LEFT JOIN " . $this->tablepre . "members m ON m.username = p.author
+            ORDER BY p.dateline ASC, p.type DESC, p.pid ASC
+        ");
+
+        $all = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $result;
+    }
+
+    /**
      * Count posts using various filters.
      *
      * @since 1.9.12
@@ -1419,6 +1476,31 @@ class SQL
         $this->db->free_result($query);
 
         return $result;
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function getAttachmentsByPIDs(array $pids, bool $quarantine = false): array
+    {
+        $pids = array_map('intval', $pids);
+        $csv = implode(',', $pids);
+        $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
+
+        $result = $this->db->query("
+            SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size,
+                thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize
+            FROM $table AS a
+            LEFT JOIN $table AS thumbs ON a.aid = thumbs.parentid
+            WHERE a.pid IN ($csv) AND a.parentid = 0
+        ");
+
+        $all = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $all;
     }
 
     /**
@@ -1831,6 +1913,26 @@ class SQL
         $table = $quarantine ? $this->tablepre . 'hold_vote_results' : $this->tablepre . 'vote_results';
 
         $this->db->query("INSERT INTO $table (vote_id, vote_option_id, vote_option_text, vote_result) VALUES $sqlrows");
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     * @param int $voteID
+     * @param bool $quarantine Get these records from the private review table?
+     * @return array
+     */
+    public function getVoteOptions(int $voteID, bool $quarantine = false): array
+    {
+        $table = $quarantine ? $this->tablepre . 'hold_vote_results' : $this->tablepre . 'vote_results';
+
+        $result = $this->db->query("SELECT * FROM $table WHERE vote_id = $voteID");
+
+        $rows = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+        
+        return $rows;
     }
 
     /**
