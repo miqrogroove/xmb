@@ -103,7 +103,6 @@ class UserEditForm
 
         } else {
             // From memcp.php
-            $template->checked = $member['showemail'] == 'yes' ? $vars::cheHTML : '';
             $template->subschecked = $member['sub_each_post'] == 'yes' ? $vars::cheHTML : '';
             $template->newschecked = $member['newsletter'] == 'yes' ? $vars::cheHTML : '';
             $template->ogu2uchecked = $member['saveogu2u'] == 'yes' ? $vars::cheHTML : '';
@@ -143,11 +142,6 @@ class UserEditForm
         $u2ualert = formInt('u2ualert');
         if ($this->formMode == 'new' || $this->targetUser['u2ualert'] != $u2ualert) {
             $this->edits['u2ualert'] = $u2ualert;
-        }
-
-        $showemail = formYesNo('newshowemail');
-        if ($this->formMode == 'new' || $this->targetUser['showemail'] != $showemail) {
-            $this->edits['showemail'] = $showemail;
         }
 
         $newsletter = formYesNo('newsletter');

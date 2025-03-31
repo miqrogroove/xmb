@@ -1,5 +1,5 @@
 <form method="post" action="<?= $full_url ?>editprofile.php?user=<?= $userrecode ?>" name="reg">
-<input type="hidden" name="token" value="" />
+<input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
@@ -102,7 +102,6 @@
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textoptions'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>">
-<input type="checkbox" name="newshowemail" value="yes" <?= $checked ?> /> <?= $lang['textshowemail'] ?><br />
 <input type="checkbox" name="newsubs" value="yes" <?= $subschecked ?> /> <?= $lang['subdefault'] ?><br />
 <input type="checkbox" name="newsletter" value="yes" <?= $newschecked ?> /> <?= $lang['textgetnews'] ?><br />
 <input type="checkbox" name="newinv" value="1" <?= $invchecked ?> /> <?= $lang['textinvisible'] ?><br />

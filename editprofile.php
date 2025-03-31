@@ -22,50 +22,48 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
+namespace XMB;
+
+require './header.php';
+
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
+$template = \XMB\Services\template();
 $theme = \XMB\Services\theme();
+$token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
 $vars = \XMB\Services\vars();
+$lang = &$vars->lang;
 
-define('X_SCRIPT', 'editprofile.php');
+$core->nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
+$core->nav($lang['texteditpro']);
 
-require 'header.php';
-
-loadtemplates(
-'memcp_profile_avatarurl',
-'memcp_profile_avatarlist',
-'admintool_editprofile'
-);
-
-nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
-nav($lang['texteditpro']);
-
-eval('$header = "'.template('header').'";');
+$header = $template->process('header.php');
 
 if (X_GUEST) {
-    redirect("{$full_url}misc.php?action=login", 0);
+    $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
     exit;
 }
 
-if (!X_SADMIN) {
-    error($lang['superadminonly']);
+if (! X_SADMIN) {
+    $core->error($lang['superadminonly']);
 }
 
-$rawuser = postedVar('user', '', TRUE, FALSE, FALSE, 'g');
+$rawuser = $core->postedVar('user', dbescape: false, sourcearray: 'g');
 $member = $sql->getMemberByName($rawuser);
 
 if (empty($member)) {
-    error($lang['nomember']);
+    $core->error($lang['nomember']);
 }
 
 $member['password'] = '';
+$member['password2'] = '';
 
-$user = $db->escape($rawuser);
-
-$https_only = 'on' == $SETTINGS['images_https_only'];
+$https_only = 'on' == $vars->settings['images_https_only'];
 $js_https_only = $https_only ? 'true' : 'false';
 
 if (noSubmit('editsubmit')) {
@@ -79,55 +77,55 @@ if (noSubmit('editsubmit')) {
 
     $subTemplate = $form->getTemplate();
 
-    $custout = attrOut($member['customstatus']);
+    $subTemplate->custout = attrOut($member['customstatus']);
 
-    $registerdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['regdate']));
+    $subTemplate->registerdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['regdate']));
 
     if (0 == (int) $member['lastvisit']) {
-        $lastlogdate = $lang['textpendinglogin'];
+        $subTemplate->lastlogdate = $lang['textpendinglogin'];
     } else {
         $lastvisitdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['lastvisit']));
         $lastvisittime = gmdate($vars->timecode, $core->timeKludge((int) $member['lastvisit']));
-        $lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
+        $subTemplate->lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
     }
 
-    $loginfails = $member['bad_login_count'];
-    if (0 == (int) $loginfails) {
-        $loginfails = $lang['textnone'];
-        $loginfaildate = $lang['textnone'];
+    $subTemplate->loginfails = $member['bad_login_count'];
+    if (0 == (int) $subTemplate->loginfails) {
+        $subTemplate->loginfails = $lang['textnone'];
+        $subTemplate->loginfaildate = $lang['textnone'];
     } else {
         $loginfaildate = gmdate($vars->dateformat, $core->timeKludge((int) $member['bad_login_date']));
         $loginfailtime = gmdate($vars->timecode, $core->timeKludge((int) $member['bad_login_date']));
-        $loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
+        $subTemplate->loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
     }
 
-    $sessfails = $member['bad_session_count'];
-    if (0 == (int) $sessfails) {
-        $sessfails = $lang['textnone'];
-        $sessfaildate = $lang['textnone'];
+    $subTemplate->sessfails = $member['bad_session_count'];
+    if (0 == (int) $subTemplate->sessfails) {
+        $subTemplate->sessfails = $lang['textnone'];
+        $subTemplate->sessfaildate = $lang['textnone'];
     } else {
         $sessfaildate = gmdate($vars->dateformat, $core->timeKludge((int) $member['bad_session_date']));
         $sessfailtime = gmdate($vars->timecode, $core->timeKludge((int) $member['bad_session_date']));
-        $sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
+        $subTemplate->sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
     }
 
     $guess_limit = 10;
     $lockout_timer = 3600 * 2;
-    
+
     if ((int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer) {
-        $loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
+        $subTemplate->loginfaildate .= "<br />\n{$lang['editprofile_lockout']} <input type='checkbox' name='unlock' value='yes' />";
     }
 
-    $currdate = gmdate($vars->timecode, $vars->onlinetime + ($SETTINGS['addtime'] * 3600));
-    $textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
+    $currdate = gmdate($vars->timecode, $vars->onlinetime + ($vars->settings['addtime'] * 3600));
+    $subTemplate->textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
-    if ($SETTINGS['sigbbcode'] == 'on') {
-        $bbcodeis = $lang['texton'];
+    if ($vars->settings['sigbbcode'] == 'on') {
+        $subTemplate->bbcodeis = $lang['texton'];
     } else {
-        $bbcodeis = $lang['textoff'];
+        $subTemplate->bbcodeis = $lang['textoff'];
     }
 
-    $htmlis = $lang['textoff'];
+    $subTemplate->htmlis = $lang['textoff'];
 
     $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
 
@@ -138,10 +136,10 @@ if (noSubmit('editsubmit')) {
     $subTemplate->username = $member['username'];
     $subTemplate->userrecode = recodeOut($member['username']);
 
-    $template = template_secure('admintool_editprofile', 'Edit User Account', $member['uid'], $vars::NONCE_FORM_EXP);
-    eval('$editpage = "'.$template.'";');
+    $subTemplate->token = $token->create('Edit User Account', $member['uid'], $vars::NONCE_FORM_EXP);
+    $editpage = $subTemplate->process('admintool_editprofile.php');
 } else {
-    request_secure('Edit User Account', $member['uid']);
+    $core->request_secure('Edit User Account', $member['uid'], error_header: true);
 
     $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
     $form->readBirthday();
@@ -151,15 +149,21 @@ if (noSubmit('editsubmit')) {
     $form->readNumericFields();
     $form->readMiscFields();
 
-    $cusstatus = postedVar('cusstatus', '', FALSE);
+    $edits = $form->getEdits();
 
-    $email = postedVar('newemail', 'javascript', TRUE, TRUE, TRUE);
+    $email = $core->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
+    if ($member['email'] != $email) {
+        $edits['email'] = $email;
+    }
 
-    $db->query("UPDATE ".X_PREFIX."members SET status='$status', customstatus='$cusstatus', email='$email', site='$site',
-    location='$location', bio='$bio', sig='$sig', showemail='$showemail', timeoffset='$timeoffset1', avatar='$avatar',
-    theme='$thememem', bday='$bday', langfile='$langfilenew', tpp='$tppnew', ppp='$pppnew', newsletter='$newsletter', timeformat='$timeformatnew',
-    dateformat='$dateformatnew', mood='$mood', invisible='$invisible', saveogu2u='$saveogu2u', emailonu2u='$emailonu2u',
-    u2ualert=$u2ualert, sub_each_post='$newsubs' WHERE username='$user'");
+    $cusstatus = getPhpInput('cusstatus');
+    if ($member['customstatus'] != $cusstatus) {
+        $edits['customstatus'] = $cusstatus;
+    }
+
+    if (count($edits) > 0) {
+        $sql->updateMember($member['username'], $edits);
+    }
 
     if (getRawString('newpassword') != '') {
         $newPass = $core->assertPasswordPolicy('newpassword', 'newpassword');
@@ -177,9 +181,9 @@ if (noSubmit('editsubmit')) {
         $sql->unlockMember($rawuser);
     }
 
-    message($lang['adminprofilechange'], TRUE, '', '', $full_url.'cp.php', true, false, true);
+    $core->message($lang['adminprofilechange'], redirect: $full_url . 'admin/');
 }
 
-end_time();
-eval('$footer = "'.template('footer').'";');
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $editpage, $footer;

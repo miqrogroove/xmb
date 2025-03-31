@@ -460,12 +460,6 @@ switch($action) {
             while($member = $db->fetch_array($querymem)) {
                 $member['regdate'] = gmdate($dateformat, $core->timeKludge((int) $member['regdate']));
 
-                if (X_MEMBER && $member['email'] != '' && $member['showemail'] == 'yes') {
-                    eval('$email = "'.template('misc_mlist_row_email').'";');
-                } else {
-                    $email = '';
-                }
-
                 $member['site'] = format_member_site($member['site']);
                 if ($member['site'] == '') {
                     $site = '';

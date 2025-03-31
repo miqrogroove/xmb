@@ -71,10 +71,6 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="pppnew" size="4" value="<?= $ppp ?>" /> </td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textshowemail'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="newshowemail" value="yes" <?= $checked ?> /> </td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textinvisible'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="newinv" value="1" <?= $invchecked ?> /></td>
 </tr>

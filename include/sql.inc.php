@@ -194,7 +194,7 @@ class SQL
 
         $numerics = ['timeoffset'];
 
-        $strings = ['username', 'password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'showemail', 'avatar',
+        $strings = ['username', 'password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'avatar',
         'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
         'u2ufolders', 'saveogu2u', 'emailonu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
 
@@ -249,7 +249,7 @@ class SQL
 
         $numerics = ['timeoffset'];
 
-        $strings = ['password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'showemail', 'avatar',
+        $strings = ['password', 'email', 'site', 'status', 'location', 'bio', 'sig', 'avatar',
         'customstatus', 'bday', 'langfile', 'newsletter', 'regip', 'ban', 'dateformat', 'ignoreu2u', 'mood', 'invisible',
         'u2ufolders', 'saveogu2u', 'emailonu2u', 'sub_each_post', 'waiting_for_mod', 'password2'];
 

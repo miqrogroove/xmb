@@ -327,7 +327,6 @@ class Install
             'regip'      => $_SERVER['REMOTE_ADDR'],
             'email'      => $vEmail,
             'status'     => 'Super Administrator',
-            'showemail'  => 'no',
             'langfile'   => 'English',
             'timeformat' => 12,
             'dateformat' => 'dd-mm-yyyy',

@@ -60,10 +60,6 @@
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="ppp" value="<?= $ppp ?>" size="4" /></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textshowemail'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="showemail" value="yes" /></td>
-</tr>
-<tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textgetnews'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="newsletter" value="yes" checked="checked" /> </td>
 </tr>

@@ -26,13 +26,12 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%" class="tablelinks">
 <tr>
-<td colspan="7" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textmemberlist'] ?></strong></font></td>
+<td colspan="6" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textmemberlist'] ?></strong></font></td>
 </tr>
 <?= $multipage ?>
 <tr class="header" align="center">
 <td width="20%"><?= $lang['textusername'] ?></td>
 <td width="16%"><?= $lang['status'] ?></td>
-<td width="10%"><?= $lang['textemail'] ?>:</td>
 <td width="10%"><?= $lang['textsite'] ?></td>
 <td width="19%"><?= $lang['textlocation'] ?></td>
 <td width="19%"><?= $lang['textregistered'] ?></td>
