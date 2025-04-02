@@ -158,8 +158,14 @@ class ThreadRender
             $template->ip = '';
         }
 
+        // Is reporting enabled for the viewing user?
         if (X_MEMBER && $post['author'] != $this->vars->xmbuser && $this->vars->settings['reportpost'] == 'on') {
-            $template->reportlink = $template->process('viewthread_post_report.php');
+            // Is the viewing user quarantined?
+            if ('on' == $this->vars->settings['quarantine_new_users'] && (0 == (int) $this->vars->self['postnum'] || 'yes' == $this->vars->self['waiting_for_mod']) && ! X_STAFF) {
+                $template->reportlink = '';
+            } else {
+                $template->reportlink = $template->process('viewthread_post_report.php');
+            }
         } else {
             $template->reportlink = '';
         }

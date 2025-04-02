@@ -496,34 +496,28 @@ switch($action) {
         break;
 
     case 'smilies':
-        eval('$header = "'.template('popup_header').'";');
-        eval('$footer = "'.template('popup_footer').'";');
-        $smilies = smilieinsert('full');
-        eval('$misc = "'.template('misc_smilies').'";');
+        $header = $template->process('popup_header.php');
+        $template->smilies = $core->smilieinsert('full');
+        $misc = $template->process('misc_smilies.php');
+        $footer = $template->process('popup_footer.php');
         echo $header, $misc, $footer;
-        exit();
-        break;
+        exit;
 
     case 'captchaimage':
         if ($SETTINGS['captcha_status'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
+            $misc = $template->process('misc_feature_notavailable.php');
+        } else {
+            header('X-Robots-Tag: noindex');
+            $oPhpCaptcha = new Captcha($core, $vars);
+            $imagehash = getPhpInput('imagehash', sourcearray: 'g');
+            $oPhpCaptcha->Create($imagehash, $observer);
+            exit;
         }
-        require XMB_ROOT.'include/captcha.inc.php';
-        header('X-Robots-Tag: noindex');
-        $oPhpCaptcha = new Captcha($core, $vars);
-        $imagehash = getPhpInput('imagehash', sourcearray: 'g');
-        $oPhpCaptcha->Create($imagehash, $observer);
-        exit();
         break;
 
     default:
         $core->error($lang['textnoaction']);
-        break;
 }
 
 $header = $template->process('header.php');

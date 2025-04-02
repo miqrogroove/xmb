@@ -7,9 +7,9 @@
 <script language="JavaScript" type="text/javascript">
 var messageElement = opener.document.getElementById("message");
 </script>
-<script language="JavaScript" type="text/javascript" src="./js/popup.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
 <?= $bbcodescript ?>
-<title><?= $bbname ?> - <?= $lang['textpowered'] ?></title>
+<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <div align="center">

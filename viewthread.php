@@ -496,11 +496,6 @@ if ($action == '') {
             $template->repquote = '';
         }
 
-        // Is this user quarantined?
-        if ('on' == $SETTINGS['quarantine_new_users'] && (0 == (int) $vars->self['postnum'] || 'yes' == $vars->self['waiting_for_mod']) && ! X_STAFF) {
-            $template->reportlink = '';
-        }
-
         if ($core->modcheckPost($vars->self['username'], $forum['moderator'], $post['status']) == 'Moderator' || ($thread['closed'] != 'yes' && $post['author'] == $vars->xmbuser)) {
             // Already set
         } else {

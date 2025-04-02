@@ -735,6 +735,7 @@ $lang['quickreply_status'] = "Quick Reply Status:<br /><span class=\"smalltxt\">
 $lang['rankinfo'] = "Based on the number of posts you have, you are assigned to a rank. Each rank has its own status and its own amount of stars. Below are the user rank settings for this board:";
 $lang['rankingsupdate'] = "User rankings updated successfully!";
 $lang['raw_mysql'] = "Insert Raw SQL";
+$lang['raw_sql_return'] = "Return to Insert Raw SQL";
 $lang['reason'] = "Reason:";
 $lang['refreshbuddylist'] = "Refresh Address Book";
 $lang['refreshpage'] = 'Refresh Page';

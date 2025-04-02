@@ -526,7 +526,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
     $db->query("DELETE FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}");
 
-    $core->moderate_cleanup($rawmember);
+    $core->moderate_cleanup($thread['author']);
     echo $lang['moderation_approved'];
 } elseif ($action == 'approvereply') {
     $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
@@ -596,7 +596,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     }
     $db->free_result($subquery);
 
-    $core->moderate_cleanup($rawmember);
+    $core->moderate_cleanup($post['author']);
     echo $lang['moderation_approved'];
 } elseif ($action == 'deletethread') {
     $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
@@ -622,7 +622,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
     $db->query("DELETE FROM " . $vars->tablepre . "hold_threads WHERE tid = {$thread['tid']}");
 
-    $core->moderate_cleanup($rawmember);
+    $core->moderate_cleanup($thread['author']);
     echo $lang['moderation_deleted'];
 } elseif ($action == 'deletereply') {
     $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
@@ -639,7 +639,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $db->query("DELETE FROM " . $vars->tablepre . "hold_attachments WHERE pid = {$post['pid']}");
     $db->query("DELETE FROM " . $vars->tablepre . "hold_posts WHERE pid = {$post['pid']}");
 
-    $core->moderate_cleanup($rawmember);
+    $core->moderate_cleanup($post['author']);
     echo $lang['moderation_deleted'];
 } else {
     echo "<h2>{$lang['moderation_new_memq']}</h2>\n";
