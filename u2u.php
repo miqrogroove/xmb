@@ -37,10 +37,11 @@ $db = \XMB\Services\db();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
-$u2u = new U2U($core, $db, $sql, $template, $tran, $vars);
+$u2u = new U2U($core, $db, $sql, $template, $tran, $validate, $vars);
 
 $action = getPhpInput('action', 'g');
 $sendmode = ($action == 'send') ? "true" : "false";
@@ -50,16 +51,16 @@ if (X_GUEST) {
     exit;
 }
 
-$folder = $core->postedVar('folder', dbescape: false, quoteencode: true);
+$folder = $validate->postedVar('folder', dbescape: false, quoteencode: true);
 if ($folder == '') {
-    $folder = $core->postedVar('folder', dbescape: false, quoteencode: true, sourcearray: 'g');
+    $folder = $validate->postedVar('folder', dbescape: false, quoteencode: true, sourcearray: 'g');
     if ($folder == '') {
         $folder = 'Inbox';
     }
 }
 $u2u->setFolder($folder);
 
-$tofolder = $core->postedVar('tofolder', dbescape: false, quoteencode: true);
+$tofolder = $validate->postedVar('tofolder', dbescape: false, quoteencode: true);
 
 $u2ucount = $u2u->folderList();
 $u2uid = formInt('u2uid');
@@ -73,7 +74,7 @@ $template->leftpane = '';
 
 switch ($action) {
     case 'modif':
-        $mod = $core->postedVar('mod', '', FALSE, FALSE);
+        $mod = $validate->postedVar('mod', '', FALSE, FALSE);
         switch($mod) {
             // TODO: What is the purpose of any of these redirects?
             case 'send':
@@ -117,9 +118,9 @@ switch ($action) {
         }
         break;
     case 'mod':
-        $modaction = $core->postedVar('modaction', '', FALSE, FALSE);
+        $modaction = $validate->postedVar('modaction', '', FALSE, FALSE);
         $u2u_select = getFormArrayInt('u2u_select');
-        $tofolder = $core->postedVar('tofolder', '', TRUE, FALSE);
+        $tofolder = $validate->postedVar('tofolder', '', TRUE, FALSE);
         $folder_url = recodeOut($folder);
         switch ($modaction) {
             case 'delete':
@@ -150,9 +151,9 @@ switch ($action) {
         }
         break;
     case 'send':
-        $msgto = $core->postedVar('msgto', 'javascript', dbescape: false, quoteencode: true);
-        $subject = $core->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
-        $message = $core->postedVar('message', '', TRUE, FALSE);
+        $msgto = $validate->postedVar('msgto', 'javascript', dbescape: false, quoteencode: true);
+        $subject = $validate->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
+        $message = $validate->postedVar('message', '', TRUE, FALSE);
         $template->leftpane = $u2u->send($u2uid, $msgto, $subject, $message);
         break;
     case 'view':
@@ -163,7 +164,7 @@ switch ($action) {
         break;
     case 'folders':
         if (onSubmit('folderssubmit')) {
-            $u2ufolders = $core->postedVar('u2ufolders', 'javascript', dbescape: false, quoteencode: true);
+            $u2ufolders = $validate->postedVar('u2ufolders', 'javascript', dbescape: false, quoteencode: true);
             $u2u->folderSubmit($u2ufolders);
         } else {
             $template->hU2ufolders = $vars->self->u2ufolders;

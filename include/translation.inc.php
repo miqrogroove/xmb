@@ -163,11 +163,6 @@ class Translation
         if ($this->loadLang()) {
             return;
         }
-        if (file_exists(XMB_ROOT.'Upgrade/') || file_exists(XMB_ROOT.'upgrade/') || file_exists(XMB_ROOT.'upgrade.php')) {
-            header('HTTP/1.0 503 Service Unavailable');
-            header('Retry-After: 3600');
-            exit("We're sorry, a website upgrade is in progress at the moment.  Please try again in a few minutes.");
-        }
         if ($this->vars->settings['bbstatus'] == 'off') { // Possible upgrade in progress
             header('HTTP/1.0 503 Service Unavailable');
             header('Retry-After: 3600');

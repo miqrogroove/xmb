@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+namespace XMB;
+?>
 <div class="top"><span></span></div>
 <div class="center-content">
     <h1>XMB <?= $lang['config_page'] ?></h1>

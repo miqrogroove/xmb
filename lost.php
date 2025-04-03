@@ -33,6 +33,7 @@ $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -50,7 +51,7 @@ if (X_MEMBER) {
     $page = $template->process('lost_pw_reset.php');
 } elseif ($valid_post) {
     // New password from posted form received.
-    $username = $core->postedVar('username', dbescape: false);
+    $username = $validate->postedVar('username', dbescape: false);
     if ('' == $username) {
         $core->error($lang['textnousername']);
     }

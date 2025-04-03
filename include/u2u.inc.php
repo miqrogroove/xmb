@@ -45,6 +45,7 @@ class U2U
         private SQL $sql,
         private Template $template,
         private Translation $tran,
+        private Validation $validate,
         private Variables $vars,
     ) {
         $this->header = $template->process('u2u_header.php');
@@ -193,7 +194,7 @@ class U2U
         $forward = getPhpInput('forward', 'g') === 'yes';
         $reply = getPhpInput('reply', 'g') === 'yes';
 
-        $username = $this->core->postedVar(
+        $username = $this->validate->postedVar(
             varname: 'username',
             word: 'javascript',
             dbescape: false,
@@ -673,7 +674,7 @@ class U2U
     {
         $leftpane = '';
         if (onSubmit('ignoresubmit')) {
-            $ignorelist = $this->core->postedVar('ignorelist');
+            $ignorelist = $this->validate->postedVar('ignorelist');
             $this->vars->self['ignoreu2u'] = $ignorelist;
             $this->db->query("UPDATE " . $this->vars->tablepre . "members SET ignoreu2u = '" . $this->vars->self['ignoreu2u'] . "' WHERE username = '" . $this->vars->xmbuser . "'");
             $this->msg($this->vars->lang['ignoreupdate'], $this->vars->full_url . 'u2u.php?action=ignore');

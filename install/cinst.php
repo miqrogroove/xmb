@@ -33,36 +33,49 @@ namespace XMB;
  */
 class Install
 {
-    public function __construct(private DBStuff $db, private SQL $sql, private UpgradeOutput as $show, private Variables $vars)
+    public function __construct(private DBStuff $db, private Schema $schema, private SQL $sql, private UpgradeOutput $show, private Validation $validate, private Variables $vars)
     {
         // Property promotion.
     }
 
     public function go()
     {
-        while(ob_get_level() > 0) {
+        while (ob_get_level() > 0) {
             ob_end_flush();
         }
-        ob_implicit_flush(1);
+        ob_implicit_flush(true);
 
         $this->show->progress("Checking Super Administrator Account");
-        $vUsername = trim($frmUsername);
+        $vUsername = trim($this->validate->postedVar('frmUsername', dbescape: false));
         $iUsername = strtolower($vUsername);
-        $frmPassword = trim($frmPassword);
-        $vEmail = trim($frmEmail);
+        $frmPassword = getRawString('frmPassword');
+        $vEmail = trim($this->validate->postedVar('frmEmail', word: 'javascript', dbescape: false, quoteencode: true));
 
         if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
             $this->show->error('The username, password or e-mail address cannot be blank or malformed. Please press back and try again.');
         }
 
-        if ($iUsername == 'anonymous' || $iUsername == 'xguest123' || strlen($vUsername) > 32 || strlen($vUsername) < 3) {
+        if (strlen($vUsername) < $this->vars::USERNAME_MIN_LENGTH || strlen($vUsername) > $this->vars::USERNAME_MAX_LENGTH) {
+            $this->show->error($this->vars->lang['username_length_invalid']);
+        }
+
+        if ($iUsername == 'anonymous' || $iUsername == 'xguest123') {
             $this->show->error('The username you provided is not valid for XMB. Please press back and create a different username.');
         }
 
-        if ($frmPassword !== $frmPasswordCfm) {
+        if ($frmPassword !== getRawString('frmPasswordCfm')) {
             $this->show->error('The passwords do not match. Please press back and try again.');
         }
 
+        if (strlen($frmPassword) < $this->vars::PASS_MIN_LENGTH) {
+            $this->show->error($this->vars->lang['pwtooshort']);
+        }
+
+        if (strlen($frmPassword) > $this->vars::PASS_MAX_LENGTH) {
+            $this->show->error($this->vars->lang['pwtoolong']);
+        }
+
+        // Duplicates some parts of Core::usernameValidation()
         $nonprinting = '\\x00-\\x1F\\x7F-\\x9F\\xAD';
         $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
         $sequences = '|  ';  //Phrases disallowed, each separated by '|'
@@ -78,18 +91,18 @@ class Install
 
         // is XMB already installed?
         $this->show->progress('Checking for previous XMB Installations');
-        if (xmb_schema_table_exists('settings')) {
+        if ($this->schema->tableExists('settings')) {
             $errStr = 'An existing installation of XMB has been detected.  If you wish to overwrite this installation, please drop your "'
-            . X_PREFIX . 'settings" table by using <pre>DROP TABLE `'
-            . X_PREFIX . 'settings`;</pre>To install another forum on the same database, go back and enter a different table prefix.';
+            . $this->vars->tablepre . 'settings" table by using <pre>DROP TABLE `'
+            . $this->vars->tablepre . 'settings`;</pre>To install another forum on the same database, go back and enter a different table prefix.';
             $this->show->error($errStr);
         }
         $this->show->okay();
 
         // Create all tables.
-        foreach(xmb_schema_list() as $table) {
+        foreach ($this->schema->listTables() as $table) {
             $this->show->progress("Creating " . $this->vars->tablepre . $table);
-            xmb_schema_table('overwrite', $table);
+            $this->schema->table('overwrite', $table);
             $this->show->okay();
         }
 
@@ -210,13 +223,13 @@ class Install
             ('regviewonly', 'off'),
             ('reportpost', 'on'),
             ('resetsigs', 'off'),
-            ('schema_version', '".XMB_SCHEMA_VER."'),
+            ('schema_version', '" . $this->schema::VER . "'),
             ('searchstatus', 'on'),
             ('showsubforums', 'off'),
             ('show_logs_in_threads', 'off'),
             ('sigbbcode', 'on'),
             ('sitename', 'YourDomain.com'),
-            ('siteurl', '$full_url'),
+            ('siteurl', '" . $this->vars->full_url . "'),
             ('smcols', '4'),
             ('smileyinsert', 'on'),
             ('smtotal', '16'),
@@ -225,7 +238,7 @@ class Install
             ('subject_in_title', 'on'),
             ('theme', '1'),
             ('tickercode', 'html'),
-            ('tickercontents', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"{$full_url}admin/settings.php\">settings</a> first.'),
+            ('tickercontents', '<strong>Welcome to your new XMB Forum!</strong>\nWe recommend changing your forums <a href=\"" . $this->vars->full_url . "admin/settings.php\">settings</a> first.'),
             ('tickerdelay', '4000'),
             ('tickerstatus', 'on'),
             ('timeformat', '12'),

@@ -35,7 +35,7 @@ $core = \XMB\Services\core();
 $sql = \XMB\Services\sql();
 $vars = \XMB\Services\vars();
 
-$username = $core->postedVar('username', dbescape: false);
+$username = $validate->postedVar('username', dbescape: false);
 
 if (strlen($username) == 0) {
     $core->put_cookie('xmbuser');  // Make sure user is logged out.

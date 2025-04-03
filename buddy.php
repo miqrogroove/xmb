@@ -32,6 +32,7 @@ $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 
 header('X-Robots-Tag: noindex');
@@ -46,14 +47,14 @@ $buddy = new \XMB\BuddyManager($core, $db, $sql, $template, $vars);
 $action = getPhpInput('action', 'g');
 switch ($action) {
     case 'add':
-        $buddys = $core->postedArray('buddys', source: 'r');
+        $buddys = $validate->postedArray('buddys', source: 'r');
         $buddy->add($buddys);
         break;
     case 'edit':
         $buddy->edit();
         break;
     case 'delete':
-        $delete = $core->postedArray('delete');
+        $delete = $validate->postedArray('delete');
         if ($delete) {
             $buddy->delete($delete);
         } else {

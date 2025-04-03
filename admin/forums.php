@@ -34,6 +34,7 @@ $db = \XMB\Services\db();
 $template = \XMB\Services\template();
 $theme = \XMB\Services\theme();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -247,7 +248,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     while($forum = $db->fetch_array($queryforum)) {
         $displayorder = formInt('displayorder'.$forum['fid']);
         $forum['status'] = formOnOff('status'.$forum['fid']);
-        $name = addslashes(htmlspecialchars($core->postedVar('name'.$forum['fid'], 'javascript', htmlencode: false), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $name = addslashes(htmlspecialchars($validate->postedVar('name'.$forum['fid'], 'javascript', htmlencode: false), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $delete = formInt('delete'.$forum['fid']);
         $moveto = formInt('moveto'.$forum['fid']);
 
@@ -308,7 +309,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
     $querygroup = $db->query("SELECT fid FROM " . $vars->tablepre . "forums WHERE type = 'group'");
     while($group = $db->fetch_array($querygroup)) {
-        $name = addslashes(htmlspecialchars($core->postedVar('name' . $group['fid'], 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $name = addslashes(htmlspecialchars($validate->postedVar('name' . $group['fid'], 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $displayorder = formInt('displayorder'.$group['fid']);
         $group['status'] = formOnOff('status'.$group['fid']);
         $delete = formInt('delete'.$group['fid']);
@@ -333,9 +334,9 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         }
     }
 
-    $newgname = addslashes(htmlspecialchars($core->postedVar('newgname', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
-    $newfname = addslashes(htmlspecialchars($core->postedVar('newfname', 'javascript', htmlencode: false), ENT_COMPAT));
-    $newsubname = addslashes(htmlspecialchars($core->postedVar('newsubname', 'javascript', htmlencode: false), ENT_COMPAT));
+    $newgname = addslashes(htmlspecialchars($validate->postedVar('newgname', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+    $newfname = addslashes(htmlspecialchars($validate->postedVar('newfname', 'javascript', htmlencode: false), ENT_COMPAT));
+    $newsubname = addslashes(htmlspecialchars($validate->postedVar('newsubname', 'javascript', htmlencode: false), ENT_COMPAT));
     $newgorder = formInt('newgorder');
     $newforder = formInt('newforder');
     $newsuborder = formInt('newsuborder');
@@ -376,15 +377,15 @@ if (noSubmit('forumsubmit') && !$fdetails) {
             }
         }
     } else {
-        $namenew = addslashes(htmlspecialchars($core->postedVar('namenew', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
-        $descnew = $core->postedVar('descnew');
+        $namenew = addslashes(htmlspecialchars($validate->postedVar('namenew', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $descnew = $validate->postedVar('descnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
         $allowbbcodenew = formYesNo('allowbbcodenew');
         $allowimgcodenew = formYesNo('allowimgcodenew');
         $attachstatusnew = formOnOff('attachstatusnew');
         $themeforumnew = formInt('themeforumnew');
-        $userlistnew = $core->postedVar('userlistnew', 'javascript');
-        $passwordnew = $core->postedVar('passwordnew', htmlencode: false);
+        $userlistnew = $validate->postedVar('userlistnew', 'javascript');
+        $passwordnew = $validate->postedVar('passwordnew', htmlencode: false);
         $delete = formInt('delete');
 
         $overrule = [0,0,0,0];

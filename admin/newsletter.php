@@ -33,6 +33,7 @@ $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -61,10 +62,10 @@ if (noSubmit('newslettersubmit')) {
 } else {
     $core->request_secure('Control Panel/Newsletter', 'send', error_header: true);
     @set_time_limit(0);
-    $newssubject = $core->postedVar('newssubject');
-    $newsmessage = $core->postedVar('newsmessage');
-    $sendvia = $core->postedVar('sendvia', '', false, false);
-    $to = $core->postedVar('to', '', false, false);
+    $newssubject = $validate->postedVar('newssubject');
+    $newsmessage = $validate->postedVar('newsmessage');
+    $sendvia = $validate->postedVar('sendvia', '', false, false);
+    $to = $validate->postedVar('to', '', false, false);
     $newscopy = formYesNo('newscopy');
     $wait = formInt('wait');
 
@@ -93,8 +94,8 @@ if (noSubmit('newslettersubmit')) {
         }
         $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='tablerow'><td align='center'>{$lang['newslettersubmit']}</td></tr>";
     } else {
-        $rawnewssubject = $core->postedVar('newssubject', '', FALSE, FALSE);
-        $rawnewsmessage = $core->postedVar('newsmessage', '', FALSE, FALSE);
+        $rawnewssubject = $validate->postedVar('newssubject', '', FALSE, FALSE);
+        $rawnewsmessage = $validate->postedVar('newsmessage', '', FALSE, FALSE);
         $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
         $rawbbname = htmlspecialchars_decode($vars->settings['bbname'], ENT_NOQUOTES);
         $subject = "[$rawbbname] $rawnewssubject";

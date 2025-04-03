@@ -34,6 +34,7 @@ $db = \XMB\Services\db();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -66,12 +67,12 @@ if (noSubmit('censorsubmit')) {
     }
     $body .= $template->process('admin_censor_end.php');
 } else {
-    $newfind = $core->postedVar('newfind', 'javascript');
-    $newreplace = $core->postedVar('newreplace', 'javascript');
+    $newfind = $validate->postedVar('newfind', 'javascript');
+    $newreplace = $validate->postedVar('newreplace', 'javascript');
     $querycensor = $db->query("SELECT id FROM " . $vars->tablepre . "words");
     while($censor = $db->fetch_array($querycensor)) {
-        $find = $core->postedVar('find'.$censor['id']);
-        $replace = $core->postedVar('replace'.$censor['id']);
+        $find = $validate->postedVar('find'.$censor['id']);
+        $replace = $validate->postedVar('replace'.$censor['id']);
         $delete = formInt('delete'.$censor['id']);
 
         if ($delete) {

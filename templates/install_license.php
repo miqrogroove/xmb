@@ -1,9 +1,9 @@
 <div class="top"><span></span></div>
 <div class="center-content">
-    <h1>XMB <?= $vars->versionshort ?> <?= $lang['license'] ?></h1>
+    <h1>XMB <?= $versionshort ?> <?= $lang['license'] ?></h1>
     <p><?= $lang['license_detail'] ?></p>
     <textarea style="width: 90%;" rows="30"  name="agreement" style= "font-family: Verdana; font-size: 8pt; margin-left: 4%;" readonly="readonly">
-XMB <?= $vars->versionshort ?>  License (Updated November 2007)
+XMB <?= $versionshort ?>  License (Updated November 2007)
 www.xmbforum2.com
 ----------------------------------------------
 

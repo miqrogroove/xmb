@@ -42,6 +42,7 @@ use XMB\{
     Theme\Manager as ThemeMgr,
     Token,
     Translation,
+    Validation,
     Variables,
 };
 
@@ -281,6 +282,22 @@ function translation(?Translation $translation = null): Translation
     static $cache;
     
     if ($translation !== null) $cache = $translation;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared validation service.
+ *
+ * @since 1.10.00
+ * @param Validation $validate Required on first call, otherwise optional. Acts as the setter.
+ * @return Validation
+ */
+function validate(?Validation $validate = null): Validation
+{
+    static $cache;
+    
+    if ($validate !== null) $cache = $validate;
     
     return $cache;
 }

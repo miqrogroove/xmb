@@ -34,6 +34,7 @@ $db = \XMB\Services\db();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -79,18 +80,18 @@ if (noSubmit('smiliesubmit')) {
 } else {
     $core->request_secure('Control Panel/Smilies', 'mass-edit', error_header: true);
 
-    $smdelete = $core->postedArray('smdelete', 'int');
-    $smcode = $core->postedArray('smcode', word: 'javascript', quoteencode: true);
-    $smurl = $core->postedArray('smurl', word: 'javascript', quoteencode: true);
+    $smdelete = $validate->postedArray('smdelete', 'int');
+    $smcode = $validate->postedArray('smcode', word: 'javascript', quoteencode: true);
+    $smurl = $validate->postedArray('smurl', word: 'javascript', quoteencode: true);
 
-    $newcode = $core->postedVar('newcode');
-    $newurl1 = $core->postedVar('newurl1');
+    $newcode = $validate->postedVar('newcode');
+    $newurl1 = $validate->postedVar('newurl1');
     $autoinsertsmilies = formInt('autoinsertsmilies');
 
-    $pidelete = $core->postedArray('pidelete', 'int');
-    $piurl = $core->postedArray('piurl', word: 'javascript', quoteencode: true);
+    $pidelete = $validate->postedArray('pidelete', 'int');
+    $piurl = $validate->postedArray('piurl', word: 'javascript', quoteencode: true);
 
-    $newurl2 = $core->postedVar('newurl2');
+    $newurl2 = $validate->postedVar('newurl2');
     $autoinsertposticons = formInt('autoinsertposticons');
 
     if ($smcode) {

@@ -33,6 +33,7 @@ $db = \XMB\Services\db();
 $forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -182,7 +183,7 @@ if ($cusdate) {
     $cusdatesql = '';
 }
 
-$ascdesc = $core->postedVar('ascdesc', htmlencode: false, dbescape: false);
+$ascdesc = $validate->postedVar('ascdesc', htmlencode: false, dbescape: false);
 if (strtolower($ascdesc) != 'asc') {
     $ascdesc = "desc";
 }

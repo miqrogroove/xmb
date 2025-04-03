@@ -34,6 +34,7 @@ $forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -141,11 +142,11 @@ if ($action == 'report') {
         $body = $template->process('vtmisc_report.php');
     } else {
         require XMB_ROOT . 'include/u2u.inc.php';
-        $u2u = new \XMB\U2U($db, $sql, $tran, $vars);
+        $u2u = new \XMB\U2U($db, $sql, $tran, $validate, $vars);
         $modquery = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE status IN ('Super Administrator', 'Administrator', 'Super Moderator')");
         while ($modusr = $db->fetch_array($modquery)) {
             $posturl = $vars->full_url . "viewthread.php?tid=$tid&amp;goto=search&amp;pid=$pid";
-            $reason = $core->postedVar('reason', dbescape: false);
+            $reason = $validate->postedVar('reason', dbescape: false);
             $message = "{$lang['reportmessage']} $posturl\n\n{$lang['reason']} $reason";
             
             $u2u->send_single($modusr['username'], $lang['reportsubject'], $message);

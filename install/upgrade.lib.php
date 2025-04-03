@@ -146,8 +146,8 @@ class Upgrade
         $schema['u2u'] = array('u2uid', 'msgto', 'msgfrom', 'dateline', 'subject', 'message', 'folder', 'readstatus');
         $schema['words'] = array('find', 'replace1', 'id');
 
-        foreach($schema as $table => $columns) {
-            $missing = array_diff($columns, $this->schema->xmb_schema_columns_list($table));
+        foreach ($schema as $table => $columns) {
+            $missing = array_diff($columns, $this->schema->listColumns($table));
             if (!empty($missing)) {
                 $this->show->error('Unrecognized Database!  This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.');
                 throw new Exception("Admin attempted upgrade with obsolete database.  Columns missing from $table table: ".implode(', ', $missing));
@@ -173,7 +173,7 @@ class Upgrade
 
         $columns = array(
         'dateline' => "int NOT NULL DEFAULT 0");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             // Prior to MySQL 8.0, the column type was always "bigint(30)".
@@ -189,8 +189,8 @@ class Upgrade
         'ip2',
         'ip3',
         'ip4');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -210,7 +210,7 @@ class Upgrade
         $columns = array(
         'username' => "varchar(32) NOT NULL DEFAULT ''",
         'buddyname' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(40)') {
@@ -221,10 +221,10 @@ class Upgrade
 
         $columns = array(
         'username' => 'username (8)');
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
-            } elseif (!$this->schema->xmb_schema_index_exists($table, $colname, '', '8')) {
+            } elseif (! $this->schema->indexExists($table, $colname, '', '8')) {
                 $sql[] = "DROP INDEX $colname";
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
@@ -244,7 +244,7 @@ class Upgrade
         $table = 'favorites';
         $columns = array(
         'tid' => "int NOT NULL DEFAULT 0");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (stripos($row['Type'], 'smallint') === 0) {
@@ -255,7 +255,7 @@ class Upgrade
 
         $columns = array(
         'username' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(40)') {
@@ -266,7 +266,7 @@ class Upgrade
 
         $columns = array(
         'type' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(20)') {
@@ -277,8 +277,8 @@ class Upgrade
 
         $columns = array(
         'tid');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -296,13 +296,13 @@ class Upgrade
         $sql = array();
         $table = 'themes';
         $colname = 'themeid';
-        if ($this->schema->xmb_schema_index_exists($table, '', 'PRIMARY') && !$this->schema->xmb_schema_index_exists($table, $colname, 'PRIMARY')) {
+        if ($this->schema->indexExists($table, '', 'PRIMARY') && ! $this->schema->indexExists($table, $colname, 'PRIMARY')) {
             $sql[] = "DROP PRIMARY KEY";
         }
 
         $columns = array(
         'themeid' => "smallint NOT NULL auto_increment");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -312,7 +312,7 @@ class Upgrade
 
         $columns = array(
         'name' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(30)') {
@@ -323,7 +323,7 @@ class Upgrade
 
         $columns = array(
         'boardimg' => "varchar(128) DEFAULT NULL");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(50)') {
@@ -334,7 +334,7 @@ class Upgrade
 
         $columns = array(
         'dummy');
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -343,14 +343,14 @@ class Upgrade
         }
 
         $colname = 'themeid';
-        if (!$this->schema->xmb_schema_index_exists($table, $colname, 'PRIMARY')) {
+        if (! $this->schema->indexExists($table, $colname, 'PRIMARY')) {
             $sql[] = "ADD PRIMARY KEY ($colname)";
         }
 
         $columns = array(
         'name');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -375,7 +375,7 @@ class Upgrade
         'private',
         'pollstatus',
         'guestposting');
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -425,7 +425,7 @@ class Upgrade
         'mt_status',
         'mt_open',
         'mt_close');
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -436,7 +436,7 @@ class Upgrade
         $columns = array(
         'lastpost' => "varchar(54) NOT NULL DEFAULT ''",
         'password' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(30)') {
@@ -447,7 +447,7 @@ class Upgrade
 
         $columns = array(
         'theme' => "smallint NOT NULL DEFAULT 0");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(30)') {
@@ -475,8 +475,8 @@ class Upgrade
         'type',
         'displayorder',
         'status');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -495,7 +495,7 @@ class Upgrade
         $this->show->progress('Gathering schema information from the settings table');
         $sql = array();
         $table = 'settings';
-        $existing = $this->schema->xmb_schema_columns_list($table);
+        $existing = $this->schema->listColumns($table);
         $columns = array(
         'files_status',
         'files_foldername',
@@ -518,7 +518,7 @@ class Upgrade
         'files_faq',
         'files_paypal_account');
         $obsolete = array_intersect($columns, $existing);
-        foreach($obsolete as $colname) {
+        foreach ($obsolete as $colname) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
 
@@ -563,7 +563,7 @@ class Upgrade
         'onlinetodaycount' => "smallint NOT NULL DEFAULT '50'",
         'onlinetoday_status' => "set('on','off') NOT NULL DEFAULT 'on'");
         $missing = array_diff(array_keys($columns), $existing);
-        foreach($missing as $colname) {
+        foreach ($missing as $colname) {
             $coltype = $columns[$colname];
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -579,7 +579,7 @@ class Upgrade
         $columns = array(
         'langfile' => "varchar(34) NOT NULL DEFAULT 'English'",
         'bbname' => "varchar(32) NOT NULL DEFAULT 'Your Forums'");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(50)') {
@@ -590,7 +590,7 @@ class Upgrade
 
         $columns = array(
         'theme' => "smallint NOT NULL DEFAULT 1");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(30)') {
@@ -607,7 +607,7 @@ class Upgrade
 
         $columns = array(
         'dateformat' => "varchar(10) NOT NULL DEFAULT 'dd-mm-yyyy'");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(20)') {
@@ -618,7 +618,7 @@ class Upgrade
 
         $columns = array(
         'tickerdelay' => "int NOT NULL DEFAULT 4000");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'char(10)') {
@@ -634,7 +634,7 @@ class Upgrade
         'stats' => "char(3) NOT NULL DEFAULT 'on'",
         'authorstatus' => "char(3) NOT NULL DEFAULT 'on'",
         'tickercontents' => "text NOT NULL");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Null']) == 'yes') {
@@ -662,7 +662,7 @@ class Upgrade
         $table = 'members';
         $columns = array(
         'webcam');
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -781,7 +781,7 @@ class Upgrade
         'location' => "varchar(50) NOT NULL DEFAULT ''",
         'bio' => "text NOT NULL",
         'ignoreu2u' => "text NOT NULL");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Null']) == 'yes') {
@@ -791,7 +791,7 @@ class Upgrade
         }
         $columns = array(
         'bday' => "varchar(10) NOT NULL DEFAULT '0000-00-00'");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Null']) == 'yes' || strtolower($row['Type']) == 'varchar(50)') {
@@ -806,7 +806,7 @@ class Upgrade
         'saveogu2u' => "char(3) NOT NULL DEFAULT ''",
         'emailonu2u' => "char(3) NOT NULL DEFAULT ''",
         'useoldu2u' => "char(3) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -816,10 +816,10 @@ class Upgrade
 
         $columns = array(
         'username' => 'username (8)');
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
-            } elseif (!$this->schema->xmb_schema_index_exists($table, '', $colname, '8')) {
+            } elseif (! $this->schema->indexExists($table, '', $colname, '8')) {
                 $sql[] = "DROP INDEX $colname";
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
@@ -832,8 +832,8 @@ class Upgrade
         'email',
         'regdate',
         'invisible');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -856,9 +856,9 @@ class Upgrade
         $this->upgrade_query('UNLOCK TABLES');
 
         $this->show->progress('Adding new tables for polls');
-        $this->schema->xmb_schema_table('create', 'vote_desc');
-        $this->schema->xmb_schema_table('create', 'vote_results');
-        $this->schema->xmb_schema_table('create', 'vote_voters');
+        $this->schema->table('create', 'vote_desc');
+        $this->schema->table('create', 'vote_results');
+        $this->schema->table('create', 'vote_voters');
 
         $this->show->progress('Requesting to lock the polls tables');
         $this->upgrade_query('LOCK TABLES '.
@@ -933,16 +933,16 @@ class Upgrade
         }
 
         $colname = 'tid';
-        if ($this->schema->xmb_schema_index_exists($table, $colname, $colname)) {
+        if ($this->schema->indexExists($table, $colname, $colname)) {
             $sql[] = 'DROP INDEX '.$colname;
         }
 
         $columns = array(
         'author' => "author (8)");
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
-            } elseif (!$this->schema->xmb_schema_index_exists($table, '', $colname, '8')) {
+            } elseif (! $this->schema->indexExists($table, '', $colname, '8')) {
                 $sql[] = "DROP INDEX $colname";
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
@@ -952,8 +952,8 @@ class Upgrade
         'lastpost' => "lastpost",
         'closed' => "closed",
         'forum_optimize' => "fid, topped, lastpost");
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
         }
@@ -974,7 +974,7 @@ class Upgrade
         'aid' => "int NOT NULL auto_increment",
         'pid' => "int NOT NULL DEFAULT 0",
         'downloads' => "int NOT NULL DEFAULT 0");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (stripos($row['Type'], 'smallint') === 0) {
@@ -984,15 +984,15 @@ class Upgrade
         }
         $columns = array(
         'pid');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
         $filesize_was_missing = FALSE;
         $columns = array(
         'filesize' => "varchar(120) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1019,7 +1019,7 @@ class Upgrade
         $table = 'posts';
         $columns = array(
         'tid' => "int NOT NULL DEFAULT '0'");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (stripos($row['Type'], 'smallint') === 0) {
@@ -1031,7 +1031,7 @@ class Upgrade
         $columns = array(
         'author' => "varchar(32) NOT NULL DEFAULT ''",
         'useip' => "varchar(15) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(40)') {
@@ -1058,10 +1058,10 @@ class Upgrade
 
         $columns = array(
         'author' => "author (8)");
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
-            } elseif (!$this->schema->xmb_schema_index_exists($table, '', $colname, '8')) {
+            } elseif (! $this->schema->indexExists($table, '', $colname, '8')) {
                 $sql[] = "DROP INDEX $colname";
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
@@ -1071,8 +1071,8 @@ class Upgrade
         'fid' => "fid",
         'dateline' => "dateline",
         'thread_optimize' => "tid, dateline, pid");
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
         }
@@ -1091,7 +1091,7 @@ class Upgrade
         $table = 'ranks';
         $columns = array(
         'title' => "varchar(100) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(40)') {
@@ -1103,7 +1103,7 @@ class Upgrade
         $columns = array(
         'posts' => "MEDIUMINT DEFAULT 0",
         );
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (stripos($row['Type'], 'smallint') === 0) {
@@ -1114,8 +1114,8 @@ class Upgrade
 
         $columns = array(
         'title');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -1158,7 +1158,7 @@ class Upgrade
         $table = 'templates';
         $columns = array(
         'name' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(40)') {
@@ -1169,8 +1169,8 @@ class Upgrade
 
         $columns = array(
         'name');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -1191,7 +1191,7 @@ class Upgrade
         $table = 'u2u';
         $columns = array(
         'u2uid' => "bigint NOT NULL auto_increment");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (stripos($row['Type'], 'smallint') === 0 || stripos($row['Type'], 'int') === 0) {
@@ -1204,7 +1204,7 @@ class Upgrade
         'msgto' => "varchar(32) NOT NULL DEFAULT ''",
         'msgfrom' => "varchar(32) NOT NULL DEFAULT ''",
         'folder' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(40)') {
@@ -1215,7 +1215,7 @@ class Upgrade
 
         $columns = array(
         'dateline' => "int NOT NULL DEFAULT 0");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (stripos($row['Type'], 'bigint') === 0) {
@@ -1226,7 +1226,7 @@ class Upgrade
 
         $columns = array(
         'subject' => "varchar(64) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(75)') {
@@ -1239,7 +1239,7 @@ class Upgrade
         'type' => "set('incoming','outgoing','draft') NOT NULL DEFAULT ''",
         'owner' => "varchar(32) NOT NULL DEFAULT ''",
         'sentstatus' => "set('yes','no') NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1274,7 +1274,7 @@ class Upgrade
 
         $columns = array(
         'readstatus' => "set('yes','no') NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(3)') {
@@ -1285,7 +1285,7 @@ class Upgrade
 
         $columns = array(
         'new');
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -1296,10 +1296,10 @@ class Upgrade
         $columns = array(
         'msgto' => "msgto (8)",
         'msgfrom' => "msgfrom (8)");
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
-            } elseif (!$this->schema->xmb_schema_index_exists($table, $colname, '', '8')) {
+            } elseif (! $this->schema->indexExists($table, $colname, '', '8')) {
                 $sql[] = "DROP INDEX $colname";
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
@@ -1309,8 +1309,8 @@ class Upgrade
         'folder' => "folder (8)",
         'readstatus' => "readstatus",
         'owner' => "owner (8)");
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
         }
@@ -1329,8 +1329,8 @@ class Upgrade
         $table = 'words';
         $columns = array(
         'find');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -1349,7 +1349,7 @@ class Upgrade
         $table = 'restricted';
         $columns = array(
         'name' => "varchar(32) NOT NULL DEFAULT ''");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
             if (strtolower($row['Type']) == 'varchar(25)') {
@@ -1361,7 +1361,7 @@ class Upgrade
         $columns = array(
         'case_sensitivity' => "ENUM('0', '1') DEFAULT '1' NOT NULL",
         'partial' => "ENUM('0', '1') DEFAULT '1' NOT NULL");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1379,9 +1379,9 @@ class Upgrade
         $this->upgrade_query('UNLOCK TABLES');
 
         $this->show->progress('Adding new tables');
-        $this->schema->xmb_schema_table('create', 'captchaimages');
-        $this->schema->xmb_schema_table('overwrite', 'logs');
-        $this->schema->xmb_schema_table('overwrite', 'whosonline');
+        $this->schema->table('create', 'captchaimages');
+        $this->schema->table('overwrite', 'logs');
+        $this->schema->table('overwrite', 'whosonline');
     }
 
     /**
@@ -1404,7 +1404,7 @@ class Upgrade
         $table = 'settings';
         $columns = array(
         'boardurl');
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -1424,8 +1424,8 @@ class Upgrade
         'max_image_size' => "VARCHAR(9) NOT NULL DEFAULT '1000x1000'",
         'max_thumb_size' => "VARCHAR(9) NOT NULL DEFAULT '200x200'",
         'schema_version' => "TINYINT UNSIGNED NOT NULL DEFAULT 1");
-        $missing = array_diff(array_keys($columns), $this->schema->xmb_schema_columns_list($table));
-        foreach($missing as $colname) {
+        $missing = array_diff(array_keys($columns), $this->schema->listColumns($table));
+        foreach ($missing as $colname) {
             $coltype = $columns[$colname];
             $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
         }
@@ -1444,7 +1444,7 @@ class Upgrade
         $table = 'attachments';
         $columns = array(
         'tid');
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -1457,7 +1457,7 @@ class Upgrade
         'subdir' => "VARCHAR(15) NOT NULL",
         'uid' => "INT NOT NULL DEFAULT '0'",
         'updatetime' => "TIMESTAMP NOT NULL DEFAULT current_timestamp");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1467,8 +1467,8 @@ class Upgrade
         $columns = array(
         'parentid',
         'uid');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -1488,7 +1488,7 @@ class Upgrade
         $table = 'members';
         $columns = array(
         'u2ualert' => "TINYINT NOT NULL DEFAULT '0'");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1497,7 +1497,7 @@ class Upgrade
         }
         $columns = array(
         'postnum' => "postnum MEDIUMINT NOT NULL DEFAULT 0");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'CHANGE '.$colname.' '.$coltype;
@@ -1519,7 +1519,7 @@ class Upgrade
         $table = 'ranks';
         $columns = array(
         'posts' => "posts MEDIUMINT DEFAULT 0");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'CHANGE '.$colname.' '.$coltype;
@@ -1541,7 +1541,7 @@ class Upgrade
         $table = 'themes';
         $columns = array(
         'admdir' => "VARCHAR( 120 ) NOT NULL DEFAULT 'images/admin'");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1563,7 +1563,7 @@ class Upgrade
         $table = 'vote_desc';
         $columns = array(
         'topic_id' => "topic_id INT UNSIGNED NOT NULL");
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'CHANGE '.$colname.' '.$coltype;
@@ -1581,9 +1581,9 @@ class Upgrade
         $this->upgrade_query('UNLOCK TABLES');
 
         $this->show->progress('Adding new tables');
-        $this->schema->xmb_schema_table('create', 'lang_base');
-        $this->schema->xmb_schema_table('create', 'lang_keys');
-        $this->schema->xmb_schema_table('create', 'lang_text');
+        $this->schema->table('create', 'lang_base');
+        $this->schema->table('create', 'lang_keys');
+        $this->schema->table('create', 'lang_text');
 
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET schema_version = 2");
@@ -1609,8 +1609,8 @@ class Upgrade
         $columns = array(
         'date',
         'tid');
-        foreach($columns as $colname) {
-            if (!$this->schema->xmb_schema_index_exists($table, $colname)) {
+        foreach ($columns as $colname) {
+            if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
             }
         }
@@ -1645,15 +1645,15 @@ class Upgrade
         $table = 'threads';
         $columns = array(
         'fid');
-        foreach($columns as $colname) {
-            if ($this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname) {
+            if ($this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "DROP INDEX $colname";
             }
         }
         $columns = array(
         'forum_optimize' => 'fid, topped, lastpost');
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
         }
@@ -1672,15 +1672,15 @@ class Upgrade
         $table = 'posts';
         $columns = array(
         'tid');
-        foreach($columns as $colname) {
-            if ($this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname) {
+            if ($this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "DROP INDEX $colname";
             }
         }
         $columns = array(
         'thread_optimize' => 'tid, dateline, pid');
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, '', $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
         }
@@ -1719,7 +1719,7 @@ class Upgrade
         'sub_each_post' => "varchar(3) NOT NULL DEFAULT 'no'",
         'waiting_for_mod' => "varchar(3) NOT NULL DEFAULT 'no'",
         ];
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1740,13 +1740,13 @@ class Upgrade
         'password' => 'password',
         'username' => 'username',
         ];
-        foreach($columns as $colname => $coltype) {
-            if ($this->schema->xmb_schema_index_exists($table, $coltype, $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if ($this->schema->indexExists($table, $coltype, $colname)) {
                 $sql[] = "DROP INDEX $colname";
             }
         }
 
-        if (! $this->schema->xmb_schema_index_exists($table, 'username', 'userunique')) {
+        if (! $this->schema->indexExists($table, 'username', 'userunique')) {
             $this->show->progress('Removing duplicate username records');
             $query = $this->upgrade_query('SELECT username, MIN(uid) AS firstuser FROM ' . $this->vars->tablepre . $table.' GROUP BY username HAVING COUNT(*) > 1');
             while($dupe = $this->db->fetch_array($query)) {
@@ -1760,8 +1760,8 @@ class Upgrade
         $columns = [
         'lastvisit' => 'lastvisit',
         ];
-        foreach($columns as $colname => $coltype) {
-            if (!$this->schema->xmb_schema_index_exists($table, $coltype, $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if (! $this->schema->indexExists($table, $coltype, $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
             }
         }
@@ -1789,9 +1789,9 @@ class Upgrade
         unset($settings['sightml']);
 
         $this->show->progress('Replacing the settings table');
-        $this->schema->xmb_schema_table('overwrite', 'settings');
+        $this->schema->table('overwrite', 'settings');
         $sql = [];
-        foreach($settings as $name => $value) {
+        foreach ($settings as $name => $value) {
             $this->db->escape_fast($value);
             $sql[] = "('$name', '$value')";
         }
@@ -1806,7 +1806,7 @@ class Upgrade
         $columns = [
         'allowhtml',
         ];
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -1824,8 +1824,8 @@ class Upgrade
         $this->upgrade_query('UNLOCK TABLES');
 
         $this->show->progress('Adding new tables');
-        $this->schema->xmb_schema_table('create', 'sessions');
-        $this->schema->xmb_schema_table('create', 'tokens');
+        $this->schema->table('create', 'sessions');
+        $this->schema->table('create', 'tokens');
 
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '5' WHERE name = 'schema_version'");
@@ -1847,7 +1847,7 @@ class Upgrade
         $columns = [
         'version' => "int unsigned NOT NULL DEFAULT 0",
         ];
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -1879,12 +1879,12 @@ class Upgrade
     function upgrade_schema_to_v7()
     {
         $this->show->progress('Adding new tables');
-        $this->schema->xmb_schema_table('create', 'hold_attachments');
-        $this->schema->xmb_schema_table('create', 'hold_favorites');
-        $this->schema->xmb_schema_table('create', 'hold_posts');
-        $this->schema->xmb_schema_table('create', 'hold_threads');
-        $this->schema->xmb_schema_table('create', 'hold_vote_desc');
-        $this->schema->xmb_schema_table('create', 'hold_vote_results');
+        $this->schema->table('create', 'hold_attachments');
+        $this->schema->table('create', 'hold_favorites');
+        $this->schema->table('create', 'hold_posts');
+        $this->schema->table('create', 'hold_threads');
+        $this->schema->table('create', 'hold_vote_desc');
+        $this->schema->table('create', 'hold_vote_results');
 
         $this->show->progress('Requesting to lock the vote_desc table');
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "vote_desc WRITE");
@@ -1897,7 +1897,7 @@ class Upgrade
         'vote_start',
         'vote_text',
         ];
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -2013,8 +2013,8 @@ class Upgrade
         $columns = [
         'vote_user_ip' => 'vote_user_ip',
         ];
-        foreach($columns as $colname => $coltype) {
-            if ($this->schema->xmb_schema_index_exists($table, $coltype, $colname)) {
+        foreach ($columns as $colname => $coltype) {
+            if ($this->schema->indexExists($table, $coltype, $colname)) {
                 $sql[] = "DROP INDEX $colname";
             }
         }
@@ -2068,10 +2068,10 @@ class Upgrade
     function upgrade_schema_to_v10()
     {
         $this->show->progress('Dropping obsolete tables');
-        $this->schema->xmb_schema_table('drop', 'lang_base');
-        $this->schema->xmb_schema_table('drop', 'lang_keys');
-        $this->schema->xmb_schema_table('drop', 'lang_text');
-        $this->schema->xmb_schema_table('drop', 'templates');
+        $this->schema->table('drop', 'lang_base');
+        $this->schema->table('drop', 'lang_keys');
+        $this->schema->table('drop', 'lang_text');
+        $this->schema->table('drop', 'templates');
 
         $table = 'members';
 
@@ -2086,7 +2086,7 @@ class Upgrade
             'msn',
             'yahoo',
         ];
-        foreach($columns as $colname) {
+        foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 1) {
                 $sql[] = 'DROP COLUMN '.$colname;
@@ -2097,7 +2097,7 @@ class Upgrade
         $columns = [
             'password2' => "varchar(255) NOT NULL DEFAULT ''",
         ];
-        foreach($columns as $colname => $coltype) {
+        foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             if ($this->db->num_rows($query) == 0) {
                 $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
@@ -2170,7 +2170,7 @@ class Upgrade
             $polls          = $forum['pollstatus'];
 
             $translationFields = array(0=>1, 1=>2);
-            foreach($parts as $key=>$val) {
+            foreach ($parts as $key=>$val) {
                 switch($val) {
                 case 1:
                     $newFormat[$translationFields[$key]] = 31;
@@ -2252,7 +2252,7 @@ class Upgrade
                 // The most likely values for $options[$num_options] are '' and '1'.  Treat them equivalent to null.
             } else {
                 $name = array();
-                foreach($voters as $v) {
+                foreach ($voters as $v) {
                     $name[] = $this->db->escape(trim($v));
                 }
                 $name = "'".implode("', '", $name)."'";

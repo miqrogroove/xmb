@@ -120,36 +120,18 @@ class Bootup
         if (empty($this->vars->full_url)) {
             header('HTTP/1.0 500 Internal Server Error');
             exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
-        } else {
-            $array = parse_url($this->vars->full_url);
+        }
 
-            $cookiesecure = ($array['scheme'] == 'https');
+        $this->parseURL($this->vars->full_url);
 
-            $cookiedomain = $array['host'];
-            if (strpos($cookiedomain, '.') === false || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $cookiedomain)) {
-                $cookiedomain = '';
-            } elseif (substr($cookiedomain, 0, 4) === 'www.') {
-                $cookiedomain = substr($cookiedomain, 3);
-            }
-
-            if (! isset($array['path'])) {
-                $array['path'] = '/';
-            }
-            $cookiepath = $array['path'];
-
-            if ($this->vars->debug) {
-                $this->debugURLsettings($cookiesecure, $cookiedomain, $cookiepath);
-            } elseif (0 == strlen($this->vars->url)) {
-                header('HTTP/1.0 500 Internal Server Error');
-                exit('Error: URL Not Found.  Set DEBUG to TRUE in config.php to see diagnostic details.');
-            } elseif ($cookiesecure && $_SERVER['HTTPS'] !== 'on') {
-                header('HTTP/1.0 404 Not Found');
-                exit('XMB is configured for HTTPS access only.  Set DEBUG to TRUE in config.php to see diagnostic details.');
-            }
-            
-            $this->vars->cookiedomain = $cookiedomain;
-            $this->vars->cookiepath = $cookiepath;
-            $this->vars->cookiesecure = $cookiesecure;
+        if ($this->vars->debug) {
+            $this->debugURLsettings($this->vars->cookiesecure, $this->vars->cookiedomain, $this->vars->cookiepath);
+        } elseif (0 == strlen($this->vars->url)) {
+            header('HTTP/1.0 500 Internal Server Error');
+            exit('Error: URL Not Found.  Set DEBUG to TRUE in config.php to see diagnostic details.');
+        } elseif ($this->vars->cookiesecure && $_SERVER['HTTPS'] !== 'on') {
+            header('HTTP/1.0 404 Not Found');
+            exit('XMB is configured for HTTPS access only.  Set DEBUG to TRUE in config.php to see diagnostic details.');
         }
 
         // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
@@ -165,13 +147,13 @@ class Bootup
         }
 
         // Check for double-slash problems in REQUEST_URI
-        if (substr($this->vars->url, 0, strlen($cookiepath)) != $cookiepath || substr($this->vars->url, strlen($cookiepath), 1) == '/') {
+        if (substr($this->vars->url, 0, strlen($this->vars->cookiepath)) != $this->vars->cookiepath || substr($this->vars->url, strlen($this->vars->cookiepath), 1) == '/') {
             $fixed_url = str_replace('//', '/', $this->vars->url);
-            if (substr($fixed_url, 0, strlen($cookiepath)) != $cookiepath || substr($fixed_url, strlen($cookiepath), 1) == '/' || $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
+            if (substr($fixed_url, 0, strlen($this->vars->cookiepath)) != $this->vars->cookiepath || substr($fixed_url, strlen($this->vars->cookiepath), 1) == '/' || $fixed_url != preg_replace('/[^\x20-\x7e]/', '', $fixed_url)) {
                 header('HTTP/1.0 404 Not Found');
                 exit('XMB detected an invalid URL.  Set DEBUG to TRUE in config.php to see diagnostic details.');
             } else {
-                $fixed_url = $this->vars->full_url . substr($fixed_url, strlen($cookiepath));
+                $fixed_url = $this->vars->full_url . substr($fixed_url, strlen($this->vars->cookiepath));
                 header('HTTP/1.0 301 Moved Permanently');
                 header("Location: $fixed_url");
                 exit('XMB detected an invalid URL');
@@ -179,7 +161,35 @@ class Bootup
         }
     }
 
-    private function debugURLsettings($securesetting, $hostsetting, $pathsetting)
+    public function parseURL(string $full_url)
+    {
+        $array = parse_url($full_url);
+
+        $cookiesecure = ($array['scheme'] == 'https');
+
+        $cookiedomain = $array['host'];
+        if (strpos($cookiedomain, '.') === false || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $cookiedomain)) {
+            $cookiedomain = '';
+        } elseif (substr($cookiedomain, 0, 4) === 'www.') {
+            $cookiedomain = substr($cookiedomain, 3);
+        }
+
+        if (! isset($array['path'])) {
+            $array['path'] = '/';
+        }
+        $cookiepath = $array['path'];
+
+        $this->vars->cookiedomain = $cookiedomain;
+        $this->vars->cookiepath = $cookiepath;
+        $this->vars->cookiesecure = $cookiesecure;        
+    }
+
+    /**
+     * Assert reasonable accuracy of the $full_url config value.
+     *
+     * @since 1.9.11
+     */
+    public function debugURLsettings($securesetting, $hostsetting, $pathsetting)
     {
         if (! isset($_SERVER['REQUEST_URI'])) {
             if (! headers_sent()) header('HTTP/1.0 500 Internal Server Error');
@@ -220,7 +230,7 @@ class Bootup
             $success = true;
         }
 
-        if (!$success) {
+        if (! $success) {
             if (! headers_sent()) header('HTTP/1.0 500 Internal Server Error');
             exit('Error: The $full_url setting in config.php appears to be incorrect.<br />'.$reason);
         }

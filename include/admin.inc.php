@@ -41,6 +41,7 @@ class admin
         private SessionMgr $session,
         private SQL $sql,
         private Template $template,
+        private Validation $validate,
         private Variables $vars
     ) {
         // Property promotion.
@@ -290,7 +291,7 @@ class admin
      */
     public function input_string_setting(string $dbname, string $postname, bool $htmlencode = true)
     {
-        $value = $this->core->postedVar($postname, '', $htmlencode, false);
+        $value = $this->validate->postedVar($postname, '', $htmlencode, false);
         $this->input_custom_setting($dbname, $value);
     }
 

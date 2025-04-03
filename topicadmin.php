@@ -27,6 +27,7 @@ $core = \XMB\Services\core();
 $forumCache = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 
 require 'header.php';
@@ -306,7 +307,7 @@ switch($action) {
         } else {
             request_secure('Thread Admin Options/Move', (string) min($tids));
             $moveto = formInt('moveto');
-            $type = $core->postedVar('type');
+            $type = $validate->postedVar('type');
 
             $movetorow = $forumCache->getForum($moveto);
             if ($movetorow === FALSE) {

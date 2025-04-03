@@ -35,10 +35,11 @@ $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $template, $vars);
+$admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
 $schema = new \XMB\Schema($db, $vars);
 
 header('X-Robots-Tag: noindex');
@@ -77,7 +78,7 @@ if (onSubmit('nosubmit')) {
     $body = $template->process('cp_dump_query_top.php');
 
     $start = true;
-    $tables = $schema->xmb_schema_list();
+    $tables = $schema->listTables();
     foreach($tables as $val) {
         $body .= $admin->dump_query($db->query('REPAIR TABLE `' . $vars->tablepre . $val.'`'), header: $start);
         if ($start) $start = false;

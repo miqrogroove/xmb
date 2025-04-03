@@ -35,6 +35,7 @@ $db = \XMB\Services\db();
 $forums = \XMB\Services\forums();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -63,12 +64,12 @@ if (noSubmit('pruneSubmit')) {
     $body = $template->process('admin_prune.php');
 } else {
     $core->request_secure('Control Panel/Prune', '', error_header: true);
-    $pruneByDate = $core->postedArray('pruneByDate');
-    $pruneByPosts = $core->postedArray('pruneByPosts');
-    $pruneFrom = $core->postedVar('pruneFrom', '', false, false);
-    $pruneFromList = $core->postedArray('pruneFromList', 'int');
-    $pruneFromFid = $core->postedVar('pruneFromFid', '', false, false);
-    $pruneType = $core->postedArray('pruneType', 'int');
+    $pruneByDate = $validate->postedArray('pruneByDate');
+    $pruneByPosts = $validate->postedArray('pruneByPosts');
+    $pruneFrom = $validate->postedVar('pruneFrom', '', false, false);
+    $pruneFromList = $validate->postedArray('pruneFromList', 'int');
+    $pruneFromFid = $validate->postedVar('pruneFromFid', '', false, false);
+    $pruneType = $validate->postedArray('pruneType', 'int');
 
     $queryWhere = [];
     // let's check what to prune first

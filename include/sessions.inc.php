@@ -31,6 +31,7 @@ use XMB\Core;
 use XMB\Password;
 use XMB\SQL;
 use XMB\Token;
+use XMB\Validation;
 
 use function XMB\formYesNo;
 use function XMB\getPhpInput;
@@ -67,9 +68,9 @@ class Manager
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      * @param string $serror Condition prior to authentication.
      */
-    public function __construct(string $mode, private string $serror, private Core $core, SQL $sql, private Token $token)
+    public function __construct(string $mode, private string $serror, private Core $core, SQL $sql, private Token $token, private Validation $validate)
     {
-        $this->mechanisms = [new FormsAndCookies($core, $sql, $token)];
+        $this->mechanisms = [new FormsAndCookies($core, $sql, $token, $validate)];
 
         switch ($mode) {
         case 'login':
@@ -510,7 +511,7 @@ class FormsAndCookies implements Mechanism
     const TEST_COOKIE = 'test';
     const USER_COOKIE = 'xmbuser';
 
-    public function __construct(private Core $core, private SQL $sql, private Token $token)
+    public function __construct(private Core $core, private SQL $sql, private Token $token, private Validation $validate)
     {
         // Property promotion.
     }
@@ -518,7 +519,7 @@ class FormsAndCookies implements Mechanism
     public function checkUsername(): Data
     {
         $data = new Data();
-        $uinput = $this->core->postedVar('username', dbescape: false);
+        $uinput = $this->validate->postedVar('username', dbescape: false);
 
         if (strlen($uinput) < self::USER_MIN_LEN) {
             return $data;

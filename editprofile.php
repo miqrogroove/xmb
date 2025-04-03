@@ -36,6 +36,7 @@ $template = \XMB\Services\template();
 $theme = \XMB\Services\theme();
 $token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -53,7 +54,7 @@ if (! X_SADMIN) {
     $core->error($lang['superadminonly']);
 }
 
-$rawuser = $core->postedVar('user', dbescape: false, sourcearray: 'g');
+$rawuser = $validate->postedVar('user', dbescape: false, sourcearray: 'g');
 $member = $sql->getMemberByName($rawuser);
 
 if (empty($member)) {
@@ -67,7 +68,7 @@ $https_only = 'on' == $vars->settings['images_https_only'];
 $js_https_only = $https_only ? 'true' : 'false';
 
 if (noSubmit('editsubmit')) {
-    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
+    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
     $form->setOptions();
     $form->setCallables();
     $form->setOptionalFields();
@@ -141,7 +142,7 @@ if (noSubmit('editsubmit')) {
 } else {
     $core->request_secure('Edit User Account', $member['uid'], error_header: true);
 
-    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
+    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
     $form->readBirthday();
     $form->readOptionalFields();
     $form->readCallables();
@@ -151,7 +152,7 @@ if (noSubmit('editsubmit')) {
 
     $edits = $form->getEdits();
 
-    $email = $core->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
+    $email = $validate->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
     if ($member['email'] != $email) {
         $edits['email'] = $email;
     }

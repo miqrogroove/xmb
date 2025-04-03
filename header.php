@@ -78,6 +78,7 @@ require XMB_ROOT . 'include/tokens.inc.php';
 require XMB_ROOT . 'include/translation.inc.php';
 require XMB_ROOT . 'include/UserEditForm.php';
 require XMB_ROOT . 'include/validate.inc.php';
+require XMB_ROOT . 'include/Validation.php';
 
 
 /* Create base services */
@@ -107,6 +108,8 @@ unset($mtime);
 if (defined('XMB_INSTALL') && ! defined('XMB_INSTALL_P2')) {
     vars()->show_full_info = true;
     $boot->setVersion();
+    translation()->langPanic();
+    template()->addRefs();
     unset($boot);
     return;
 }
@@ -132,8 +135,8 @@ unset($boot);
 (new \XMB\SettingsLoader(db(), vars()))->readToVars();
 
 debug(new \XMB\Debug(db()));
-
 sql(new \XMB\SQL(db(), vars()->tablepre));
+validate(new \XMB\Validation(db()));
 
 forums(new \XMB\Forums(sql()));
 smile(new \XMB\SmileAndCensor(sql()));
@@ -155,7 +158,7 @@ $loader = new \XMB\BootupLoader(core(), db(), template(), vars());
 $loader->setHeaders();
 
 if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
-    $xmbuser = core()->postedVar(
+    $xmbuser = validate()->postedVar(
         varname: 'xmbuser',
         dbescape: false,
         sourcearray: 'c',
@@ -169,7 +172,7 @@ if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $params = $loader->prepareSession();
-session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql(), token()));
+session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql(), token(), validate()));
 login(new \XMB\Login(core(), db(), session(), sql(), template(), translation(), vars()));
 login()->elevateUser($params['force_inv']);
 unset($params);

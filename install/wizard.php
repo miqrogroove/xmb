@@ -101,6 +101,9 @@ require XMB_ROOT . 'header.php';
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
 
+$template->versiongeneral = $vars->versiongeneral;
+$template->versionshort = $vars->versionshort;
+
 switch ($status) {
     case 'no-config-file':
         $config_error = $vars->lang['config_error_file'];
@@ -116,13 +119,14 @@ $vStep = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 1;
 
 if ($vStep != 4) {
     header("Content-type: text/html;charset=ISO-8859-1");
-    $class = [];
-    for ($i = 1; $i <= 6; $i++) {
-        $class[$i] = 'none';
-    }
-    $class[$vStep] = 'current';
-    $template->class = $class;
 }
+
+$class = [];
+for ($i = 1; $i <= 6; $i++) {
+    $class[$i] = 'none';
+}
+$class[$vStep] = 'current';
+$template->class = $class;
 
 if ($status == 'installed') {
     $db = \XMB\Services\db();
@@ -362,31 +366,26 @@ switch($vStep) {
             'show_full_info' => 'SHOWFULLINFO',
             'comment_output' => 'COMMENTOUTPUT'
         );
-        foreach($config_array as $key => $value) {
+        foreach ($config_array as $key => $value) {
             if (${$key} === $value) {
                 error('Incorrect Configuration', 'XMB noticed that your config.php file is not fully configured.<br />Please go back to the previous step and follow the instructions carefully.<br />Be sure to click the button labeled "Configure" before proceeding.', TRUE);
             }
         }
         $vars->debug = $debug;
 
-        $boot = new \XMB\Bootup();
-        $array = parse_url($full_url);
-        if (!isset($array['path'])) {
-            $array['path'] = '/';
-        }
-        if (strpos($array['host'], '.') === false || preg_match("/^([0-9]{1,3}\.){3}[0-9]{1,3}$/", $array['host'])) {
-            $array['host'] = '';
-        } elseif (substr($array['host'], 0, 4) === 'www.') {
-            $array['host'] = substr($array['host'], 3);
-        }
-        $boot->debugURLsettings(($array['scheme'] == 'https'), $array['host'], $array['path']);
-        unset($array);
-
+        $boot = new \XMB\Bootup($template, $vars);
+        $boot->parseURL($full_url);
+        $boot->debugURLsettings($vars->cookiesecure, $vars->cookiedomain, $vars->cookiepath);
 
         $content = $template->process('install_admin_form.php');
         break;
 
     case 6: // remaining parts
+        $vars->debug = $debug;
+        $vars->full_url = $full_url;
+        $vars->tablepre = $tablepre;
+        $template->addRefs();
+
         // check db-connection.
         if (! $config_success) {
             $show->wizardError($vars->lang['config_error'], $config_error);
@@ -435,11 +434,11 @@ switch($vStep) {
         }
 
         require './cinst.php';
-        require './HttpOutput.php';
 
-        $show = new \XMB\HttpOutput($template, $vars);
+        $schema = new \XMB\Schema($db, $vars);
         $sql = new \XMB\SQL($db, $vars->tablepre);
-        $lib = new \XMB\Install($db, $sql, $show, $vars);
+        $validate = new \XMB\Validation($db);
+        $lib = new \XMB\Install($db, $schema, $sql, $show, $validate, $vars);
 
         $lib->go();
 

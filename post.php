@@ -37,6 +37,7 @@ $forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -237,7 +238,7 @@ if (! ini_get('file_uploads')) {
 }
 
 // TODO: Does this need to be set to $thread['posticon'] when $action == 'edit' and no edit submitted yet?
-$posticon = $core->postedVar('posticon', 'javascript', dbescape: false, quoteencode: true);
+$posticon = $validate->postedVar('posticon', 'javascript', dbescape: false, quoteencode: true);
 if ($posticon != '') {
     if (! isValidFilename($posticon)) {
         $posticon = '';
@@ -315,8 +316,8 @@ if (X_STAFF) {
     }
 }
 
-$messageinput = $core->postedVar('message', dbescape: false);  //postify() was responsible for decoding this if html was allowed in the past.
-$subjectinput = $core->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
+$messageinput = $validate->postedVar('message', dbescape: false);  //postify() was responsible for decoding this if html was allowed in the past.
+$subjectinput = $validate->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
 $subjectinput = trim($subjectinput);
 $subjectinput = str_replace(["\r", "\n"], ['', ''], $subjectinput);
 
@@ -413,7 +414,7 @@ switch($action) {
                     $Captcha = new Captcha($core, $vars);
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = getPhpInput('imgcode');
-                        $imghash = $core->postedVar('imghash');
+                        $imghash = $validate->postedVar('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
                             $errors .= $core->softerror($lang['captchaimageinvalid']);
                             $replyvalid = false;
@@ -759,7 +760,7 @@ switch($action) {
 
         $template->threadSubject = $lang['textpostnew'] . ' - ';
 
-        $template->pollanswers = $core->postedVar('pollanswers', dbescape: false);
+        $template->pollanswers = $validate->postedVar('pollanswers', dbescape: false);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
 
         if ($forum['attachstatus'] == 'on' && X_MEMBER) {
@@ -801,7 +802,7 @@ switch($action) {
                     $Captcha = new Captcha($core, $vars);
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = getPhpInput('imgcode');
-                        $imghash = $core->postedVar('imghash');
+                        $imghash = $validate->postedVar('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
                             $errors .= $core->softerror($lang['captchaimageinvalid']);
                             $topicvalid = false;

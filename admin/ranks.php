@@ -33,6 +33,7 @@ $core = \XMB\Services\core();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -88,18 +89,18 @@ if (noSubmit('rankssubmit')) {
     $body .= $template->process('admin_ranks_end.php');
 } else {
     $core->request_secure('Control Panel/User Ranks', 'mass-edit', error_header: true);
-    $id = $core->postedArray('id', 'int');
-    $delete = $core->postedArray('delete', 'int');
-    $title = $core->postedArray('title', htmlencode: false);
-    $posts = $core->postedArray('posts', 'int');
-    $stars = $core->postedArray('stars', 'int');
-    $allowavatars = $core->postedArray('allowavatars', 'yesno');
-    $avaurl = $core->postedArray('avaurl', word: 'javascript', quoteencode: true);
-    $newtitle = $core->postedVar('newtitle', '', false);
+    $id = $validate->postedArray('id', 'int');
+    $delete = $validate->postedArray('delete', 'int');
+    $title = $validate->postedArray('title', htmlencode: false);
+    $posts = $validate->postedArray('posts', 'int');
+    $stars = $validate->postedArray('stars', 'int');
+    $allowavatars = $validate->postedArray('allowavatars', 'yesno');
+    $avaurl = $validate->postedArray('avaurl', word: 'javascript', quoteencode: true);
+    $newtitle = $validate->postedVar('newtitle', '', false);
     $newposts = formInt('newposts');
     $newstars = formInt('newstars');
     $newallowavatars = formYesNo('newallowavatars');
-    $newavaurl = $core->postedVar('newavaurl', word: 'javascript', quoteencode: true);
+    $newavaurl = $validate->postedVar('newavaurl', word: 'javascript', quoteencode: true);
 
     // Disabled fields are not submitted with form data, so staff rank IDs have to be retrieved again from the database.
     $ranks = $sql->getRanks();

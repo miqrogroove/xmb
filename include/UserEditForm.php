@@ -51,6 +51,7 @@ class UserEditForm
         private SQL $sql,
         private Theme\Manager $theme,
         private Translation $tran,
+        private Validation $validate,
         private Variables $vars,
     ) {
         $this->template = new \XMB\Template($vars);
@@ -219,7 +220,7 @@ class UserEditForm
             $this->edits['theme'] = $thememem;
         }
 
-        $langfilenew = $this->core->postedVar('langfilenew');
+        $langfilenew = $this->validate->postedVar('langfilenew');
         if (! $this->tran->langfileExists($langfilenew)) {
             $langfilenew = $this->vars->settings['langfile'];
         }
@@ -228,7 +229,7 @@ class UserEditForm
         }
 
         if ($this->formMode == 'admin') {
-            $status = $this->core->postedVar('status', dbescape: false);
+            $status = $this->validate->postedVar('status', dbescape: false);
             $origstatus = $this->targetUser['status'];
             // Check permission.
             if ($this->editorUser['status'] != 'Super Administrator' && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
@@ -294,7 +295,7 @@ class UserEditForm
         $httpsOnly = 'on' == $this->vars->settings['images_https_only'];
 
         if ($this->vars->settings['avastatus'] == 'on') {
-            $avatar = $this->core->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true);
+            $avatar = $this->validate->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true);
             $rawavatar = getPhpInput('newavatar');
             $newavatarcheck = getPhpInput('newavatarcheck');
 
@@ -327,7 +328,7 @@ class UserEditForm
                 }
             }
             closedir($dirHandle);
-            $avatar = $filefound ? $this->core->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true) : '';
+            $avatar = $filefound ? $this->validate->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true) : '';
         } else {
             $avatar = '';
         }
@@ -423,11 +424,11 @@ class UserEditForm
         $adminEdit = $this->formMode == 'admin';
         
         if ($anyEdit || $selfEdit || $adminEdit) {
-            $location = $this->core->postedVar('newlocation', 'javascript', dbescape: false, quoteencode: true);
-            $site = $this->core->postedVar('newsite', 'javascript', dbescape: false, quoteencode: true);
-            $bio = $this->core->postedVar('newbio', 'javascript', dbescape: false, quoteencode: true);
-            $mood = $this->core->postedVar('newmood', 'javascript', dbescape: false, quoteencode: true);
-            $sig = $this->core->postedVar('newsig', 'javascript', dbescape: false, quoteencode: true);
+            $location = $this->validate->postedVar('newlocation', 'javascript', dbescape: false, quoteencode: true);
+            $site = $this->validate->postedVar('newsite', 'javascript', dbescape: false, quoteencode: true);
+            $bio = $this->validate->postedVar('newbio', 'javascript', dbescape: false, quoteencode: true);
+            $mood = $this->validate->postedVar('newmood', 'javascript', dbescape: false, quoteencode: true);
+            $sig = $this->validate->postedVar('newsig', 'javascript', dbescape: false, quoteencode: true);
             $avatar = $this->readAvatar();
         } else {
             $location = '';

@@ -40,6 +40,7 @@ $template = \XMB\Services\template();
 $theme = \XMB\Services\theme();
 $token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -218,7 +219,7 @@ switch ($action) {
                     break;
                 case 5:
                     // Check profile results
-                    $form = new \XMB\UserEditForm([], [], $core, $db, $sql, $theme, $tran, $vars);
+                    $form = new \XMB\UserEditForm([], [], $core, $db, $sql, $theme, $tran, $validate, $vars);
                     $form->readBirthday();
                     $form->readCallables();
                     $form->readOptions();
@@ -231,7 +232,7 @@ switch ($action) {
                     
                     $self = $form->getEdits();
 
-                    $self['username'] = trim($core->postedVar('username', dbescape: false));
+                    $self['username'] = trim($validate->postedVar('username', dbescape: false));
 
                     if (strlen($self['username']) < $vars::USERNAME_MIN_LENGTH || strlen($self['username']) > $vars::USERNAME_MAX_LENGTH) {
                         $core->error($lang['username_length_invalid']);
@@ -248,7 +249,7 @@ switch ($action) {
                         }
                     }
 
-                    $self['email'] = $core->postedVar('email', word: 'javascript', dbescape: false, quoteencode: true);
+                    $self['email'] = $validate->postedVar('email', word: 'javascript', dbescape: false, quoteencode: true);
                     $sql_email = $db->escape($self['email']);
                     if ($SETTINGS['doublee'] == 'off' && false !== strpos($self['email'], "@")) {
                         $email2 = "OR email = '$sql_email'";
@@ -474,7 +475,7 @@ switch ($action) {
 
             if (5 == $stepout) {
                 // Display new user form
-                $form = new \XMB\UserEditForm([], [], $core, $db, $sql, $theme, $tran, $vars);
+                $form = new \XMB\UserEditForm([], [], $core, $db, $sql, $theme, $tran, $validate, $vars);
                 $form->setOptions();
                 $form->setCallables();
                 $form->setBirthday();
@@ -535,7 +536,7 @@ switch ($action) {
         break;
 
     case 'viewpro':
-        $member = $core->postedVar('member', dbescape: false, sourcearray: 'g');
+        $member = $validate->postedVar('member', dbescape: false, sourcearray: 'g');
         if (strlen($member) < $vars::USERNAME_MIN_LENGTH || strlen($member) > $vars::USERNAME_MAX_LENGTH) {
             header('HTTP/1.0 404 Not Found');
             $core->error($lang['nomember']);

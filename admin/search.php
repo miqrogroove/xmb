@@ -32,6 +32,7 @@ require XMB_ROOT . 'header.php';
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $template = \XMB\Services\template();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -55,10 +56,10 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('searchsubmit')) {
-    $userip = $core->postedVar('userip');
-    $postip = $core->postedVar('postip');
-    $dblikeprofile = $db->like_escape($core->postedVar('profileword', dbescape: false));
-    $dblikepost = $db->like_escape($core->postedVar('postword', dbescape: false));
+    $userip = $validate->postedVar('userip');
+    $postip = $validate->postedVar('postip');
+    $dblikeprofile = $db->like_escape($validate->postedVar('profileword', dbescape: false));
+    $dblikepost = $db->like_escape($validate->postedVar('postword', dbescape: false));
 
     $found = 0;
     $list = [];

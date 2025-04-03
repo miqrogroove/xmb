@@ -38,6 +38,7 @@ $template = \XMB\Services\template();
 $themeMgr = \XMB\Services\theme();
 $token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -63,7 +64,7 @@ $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $template, $vars);
+$admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
 
 if (
     noSubmit('settingsubmit1')
@@ -173,16 +174,16 @@ if (
     $core->request_secure('Control Panel/settings', 'global', error_header: true);
 
     $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
-    $avastatusnew = $core->postedVar('avastatusnew');
+    $avastatusnew = $validate->postedVar('avastatusnew');
     if ($avastatusnew != 'on' && $avastatusnew != 'list') {
         $avastatusnew = 'off';
     }
-    $recaptchanew = $core->postedVar('recaptchanew');
-    if ($recaptchanew != 'on' || trim($core->postedVar('recaptchasecretnew')) == '' || trim($core->postedVar('recaptchakeynew')) == '') {
+    $recaptchanew = $validate->postedVar('recaptchanew');
+    if ($recaptchanew != 'on' || trim($validate->postedVar('recaptchasecretnew')) == '' || trim($validate->postedVar('recaptchakeynew')) == '') {
         $recaptchanew = 'off';
     }
 
-    $new_footer_options = $core->postedArray('new_footer_options');
+    $new_footer_options = $validate->postedArray('new_footer_options');
     if (!empty($new_footer_options)) {
         $footer_options = implode('-', $new_footer_options);
     } else {

@@ -35,6 +35,7 @@ $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -74,12 +75,12 @@ $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $template, $vars);
+$admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
 
 $single = '';
 $single_str = getPhpInput('single', 'g');
 $single_int = getInt('single');
-$newtheme = $core->postedVar('newtheme');
+$newtheme = $validate->postedVar('newtheme');
 
 if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
     $template->themenonce = $token->create('Control Panel/Themes', 'mass-edit', $vars::NONCE_FORM_EXP);
@@ -150,8 +151,8 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
         . $lang['textthemeimportsuccess'] . '</td></tr></td></tr>';
 } else if (onSubmit('themesubmit')) {
     $core->request_secure('Control Panel/Themes', 'mass-edit', error_header: true);
-    $theme_delete = $core->postedArray('theme_delete', 'int');
-    $theme_name = $core->postedArray('theme_name', word: 'javascript', quoteencode: true);
+    $theme_delete = $validate->postedArray('theme_delete', 'int');
+    $theme_name = $validate->postedArray('theme_name', word: 'javascript', quoteencode: true);
 
     $number_of_themes = (int) $db->result($db->query("SELECT count(themeid) FROM " . $vars->tablepre . "themes"), 0);
 
@@ -191,28 +192,28 @@ if ($single_int > 0) {
     $orig = formInt('orig');
     $core->request_secure('Control Panel/Themes', (string) $orig, error_header: true);
 
-    $namenew = $core->postedVar('namenew');
-    $bgcolornew = $core->postedVar('bgcolornew');
-    $altbg1new = $core->postedVar('altbg1new');
-    $altbg2new = $core->postedVar('altbg2new');
-    $linknew = $core->postedVar('linknew');
-    $bordercolornew = $core->postedVar('bordercolornew');
-    $headernew = $core->postedVar('headernew');
-    $headertextnew = $core->postedVar('headertextnew');
-    $topnew = $core->postedVar('topnew');
-    $catcolornew = $core->postedVar('catcolornew');
-    $cattextnew = $core->postedVar('cattextnew');
-    $tabletextnew = $core->postedVar('tabletextnew');
-    $textnew = $core->postedVar('textnew');
-    $borderwidthnew = $core->postedVar('borderwidthnew');
-    $tablewidthnew = $core->postedVar('tablewidthnew');
-    $tablespacenew = $core->postedVar('tablespacenew');
-    $fnew = $core->postedVar('fnew');
-    $fsizenew = $core->postedVar('fsizenew');
-    $boardlogonew = $core->postedVar('boardlogonew');
-    $imgdirnew = $core->postedVar('imgdirnew');
-    $admdirnew = $core->postedVar('admdirnew');
-    $smdirnew = $core->postedVar('smdirnew');
+    $namenew = $validate->postedVar('namenew');
+    $bgcolornew = $validate->postedVar('bgcolornew');
+    $altbg1new = $validate->postedVar('altbg1new');
+    $altbg2new = $validate->postedVar('altbg2new');
+    $linknew = $validate->postedVar('linknew');
+    $bordercolornew = $validate->postedVar('bordercolornew');
+    $headernew = $validate->postedVar('headernew');
+    $headertextnew = $validate->postedVar('headertextnew');
+    $topnew = $validate->postedVar('topnew');
+    $catcolornew = $validate->postedVar('catcolornew');
+    $cattextnew = $validate->postedVar('cattextnew');
+    $tabletextnew = $validate->postedVar('tabletextnew');
+    $textnew = $validate->postedVar('textnew');
+    $borderwidthnew = $validate->postedVar('borderwidthnew');
+    $tablewidthnew = $validate->postedVar('tablewidthnew');
+    $tablespacenew = $validate->postedVar('tablespacenew');
+    $fnew = $validate->postedVar('fnew');
+    $fsizenew = $validate->postedVar('fsizenew');
+    $boardlogonew = $validate->postedVar('boardlogonew');
+    $imgdirnew = $validate->postedVar('imgdirnew');
+    $admdirnew = $validate->postedVar('admdirnew');
+    $smdirnew = $validate->postedVar('smdirnew');
 
     $db->query("UPDATE " . $vars->tablepre . "themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew', version = version + 1 WHERE themeid='$orig'");
 
@@ -220,28 +221,28 @@ if ($single_int > 0) {
 } else if ($single_str == "submit" && $newtheme) {
     $core->request_secure('Control Panel/Themes', 'New Theme', error_header: true);
 
-    $namenew = $core->postedVar('namenew');
-    $bgcolornew = $core->postedVar('bgcolornew');
-    $altbg1new = $core->postedVar('altbg1new');
-    $altbg2new = $core->postedVar('altbg2new');
-    $linknew = $core->postedVar('linknew');
-    $bordercolornew = $core->postedVar('bordercolornew');
-    $headernew = $core->postedVar('headernew');
-    $headertextnew = $core->postedVar('headertextnew');
-    $topnew = $core->postedVar('topnew');
-    $catcolornew = $core->postedVar('catcolornew');
-    $cattextnew = $core->postedVar('cattextnew');
-    $tabletextnew = $core->postedVar('tabletextnew');
-    $textnew = $core->postedVar('textnew');
-    $borderwidthnew = $core->postedVar('borderwidthnew');
-    $tablewidthnew = $core->postedVar('tablewidthnew');
-    $tablespacenew = $core->postedVar('tablespacenew');
-    $fnew = $core->postedVar('fnew');
-    $fsizenew = $core->postedVar('fsizenew');
-    $boardlogonew = $core->postedVar('boardlogonew');
-    $imgdirnew = $core->postedVar('imgdirnew');
-    $admdirnew = $core->postedVar('admdirnew');
-    $smdirnew = $core->postedVar('smdirnew');
+    $namenew = $validate->postedVar('namenew');
+    $bgcolornew = $validate->postedVar('bgcolornew');
+    $altbg1new = $validate->postedVar('altbg1new');
+    $altbg2new = $validate->postedVar('altbg2new');
+    $linknew = $validate->postedVar('linknew');
+    $bordercolornew = $validate->postedVar('bordercolornew');
+    $headernew = $validate->postedVar('headernew');
+    $headertextnew = $validate->postedVar('headertextnew');
+    $topnew = $validate->postedVar('topnew');
+    $catcolornew = $validate->postedVar('catcolornew');
+    $cattextnew = $validate->postedVar('cattextnew');
+    $tabletextnew = $validate->postedVar('tabletextnew');
+    $textnew = $validate->postedVar('textnew');
+    $borderwidthnew = $validate->postedVar('borderwidthnew');
+    $tablewidthnew = $validate->postedVar('tablewidthnew');
+    $tablespacenew = $validate->postedVar('tablespacenew');
+    $fnew = $validate->postedVar('fnew');
+    $fsizenew = $validate->postedVar('fsizenew');
+    $boardlogonew = $validate->postedVar('boardlogonew');
+    $imgdirnew = $validate->postedVar('imgdirnew');
+    $admdirnew = $validate->postedVar('admdirnew');
+    $smdirnew = $validate->postedVar('smdirnew');
 
     $db->query("INSERT INTO " . $vars->tablepre . "themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext, admdir) VALUES ('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew', '$admdirnew')");
 

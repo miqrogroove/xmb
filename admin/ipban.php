@@ -34,6 +34,7 @@ $db = \XMB\Services\db();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -105,7 +106,7 @@ if ($vars->settings['ip_banning'] == 'on') {
         $newip[] = (is_numeric($newip2) || $newip2 == '*') ? trim($newip2) : '0';
         $newip[] = (is_numeric($newip3) || $newip3 == '*') ? trim($newip3) : '0';
         $newip[] = (is_numeric($newip4) || $newip4 == '*') ? trim($newip4) : '0';
-        $delete = $core->postedArray('delete', 'int');
+        $delete = $validate->postedArray('delete', 'int');
 
         if ($delete) {
             $dels = [];

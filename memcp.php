@@ -37,6 +37,7 @@ $template = \XMB\Services\template();
 $theme = \XMB\Services\theme();
 $token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -101,7 +102,7 @@ if ($action == 'profile') {
     $header .= $template->process('memcp_nav.php');
 
     if (noSubmit('editsubmit')) {
-        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
+        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
         $form->setOptions();
         $form->setCallables();
         $form->setBirthday();
@@ -152,7 +153,7 @@ if ($action == 'profile') {
             $session->logoutAll();
         }
 
-        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $vars);
+        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
         $form->readBirthday();
         $form->readCallables();
         $form->readOptionalFields();
@@ -162,7 +163,7 @@ if ($action == 'profile') {
 
         $edits = $form->getEdits();
 
-        $email = $core->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
+        $email = $validate->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
 
         if ($email !== $vars->self['email']) {
             if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {

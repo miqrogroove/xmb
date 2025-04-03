@@ -26,6 +26,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use InvalidArgumentException;
+
 /**
  * Database table layouts and logic.
  *
@@ -43,31 +45,33 @@ class Schema
     /**
      * Executes logic necessary to install or uninstall one of the XMB tables.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 Formerly xmb_schema_table()
+     * @since 1.10.00
      * @param string $action Must be 'drop', 'create', or 'overwrite'.
      * @param string $name The name of the XMB table, with no prefix.
      */
-    public function xmb_schema_table(string $action, string $name)
+    public function table(string $action, string $name)
     {
         // Check existence to help avoid dropping non-existent tables.
-        $exists = $this->xmb_schema_table_exists($name);
+        $exists = $this->tableExists($name);
 
         if ($exists && ('drop' == $action || 'overwrite' == $action)) {
-            $this->db->query($this->xmb_schema_drop($name));
+            $this->db->query($this->dropTable($name));
         }
-        if ('create' == $action && !$exists || 'overwrite' == $action) {
-            $this->db->query($this->xmb_schema_create($name));
+        if ('create' == $action && ! $exists || 'overwrite' == $action) {
+            $this->db->query($this->createTable($name));
         }
     }
 
     /**
      * Generates a DROP TABLE query for the XMB schema in MySQL.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 Formerly xmb_schema_drop()
+     * @since 1.10.00
      * @param string $name The name of the XMB table, with no prefix.
      * @return string
      */
-    private function xmb_schema_drop(string $name): string
+    private function dropTable(string $name): string
     {
         return "DROP TABLE IF EXISTS " . $this->vars->tablepre . $name;
     }
@@ -75,11 +79,12 @@ class Schema
     /**
      * Generates a CREATE TABLE query for the XMB schema in MySQL.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 Formerly xmb_schema_create()
+     * @since 1.10.00
      * @param string $name The name of the XMB table, with no prefix.
      * @return string
      */
-    private function xmb_schema_create(string $name): string
+    private function createTable(string $name): string
     {
         switch($name) {
             case 'attachments':
@@ -566,10 +571,11 @@ class Schema
     /**
      * Generates an array of table names in the XMB schema.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 Formerly xmb_schema_list()
+     * @since 1.10.00
      * @return array
      */
-    public function xmb_schema_list(): array
+    public function listTables(): array
     {
         return [
             'attachments',
@@ -607,11 +613,12 @@ class Schema
     /**
      * Determines if a specific table already exists in the database.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 Formerly xmb_schema_table_exists()
+     * @since 1.10.00
      * @param string $name The name of the XMB table, with no prefix.
      * @return bool
      */
-    public function xmb_schema_table_exists(string $name): bool
+    public function tableExists(string $name): bool
     {
         $sqlname = $this->db->like_escape($this->vars->tablepre . $name);
 
@@ -625,16 +632,17 @@ class Schema
     /**
      * Determines if a specific index already exists in the database.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 Formerly xmb_schema_index_exists()
+     * @since 1.10.00
      * @param string $table The name of the XMB table, with no prefix.
      * @param string $column The name of the column on which you want to find any index. Set to '' if you want to search by index name only.
      * @param string $index Optional. The name of the index to check.
      * @param string $subpart Optional. The number of indexed characters, if you want to only find indexes that have this attribute.
      * @return bool
      */
-    public function xmb_schema_index_exists(string $table, string $column, string $index = '', string $subpart = ''): bool
+    public function indexExists(string $table, string $column, string $index = '', string $subpart = ''): bool
     {
-        if (empty($column) && empty($index)) exit('Fatal Error: Invalid parameters for xmb_schema_index_exists().');
+        if (empty($column) && empty($index)) throw new InvalidArgumentException('The column and the index must not be empty');
 
         $result = $this->db->query("SHOW INDEX FROM " . $this->vars->tablepre . $table);
 
@@ -658,11 +666,12 @@ class Schema
     /**
      * Get the names of all existing columns in a table.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 Formerly xmb_schema_columns_list()
+     * @since 1.10.00
      * @param string $table The name of the XMB table, with no prefix.
      * @return array
      */
-    public function xmb_schema_columns_list(string $table): array
+    public function listColumns(string $table): array
     {
         $columns = [];
 

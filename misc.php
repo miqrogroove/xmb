@@ -38,6 +38,7 @@ $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -168,11 +169,11 @@ switch($action) {
             $misc = $template->process('misc_lostpw.php');
         } else {
             $core->request_secure('Lost Password', '', error_header: true);
-            $username = $core->postedVar('username');
+            $username = $validate->postedVar('username');
             if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
                 $core->error($lang['badinfo']);
             }
-            $email = $core->postedVar('email');
+            $email = $validate->postedVar('email');
 
             $member = $sql->getMemberByName($username, $email);
 

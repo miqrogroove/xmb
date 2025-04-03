@@ -33,6 +33,7 @@ $core = \XMB\Services\core();
 $db = \XMB\Services\db();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -81,7 +82,7 @@ if (noSubmit('restrictedsubmit')) {
 
     $queryrestricted = $db->query("SELECT id FROM " . $vars->tablepre . "restricted");
     while($restricted = $db->fetch_array($queryrestricted)) {
-        $name = $core->postedVar('name'.$restricted['id'], '', FALSE, TRUE);
+        $name = $validate->postedVar('name'.$restricted['id'], '', FALSE, TRUE);
         $delete = getInt('delete'.$restricted['id'], 'p');
         $case = getInt('case'.$restricted['id'], 'p');
         $partial = getInt('partial'.$restricted['id'], 'p');
@@ -98,7 +99,7 @@ if (noSubmit('restrictedsubmit')) {
         }
     }
 
-    $newname = $core->postedVar('newname', '', FALSE, TRUE);
+    $newname = $validate->postedVar('newname', '', FALSE, TRUE);
     $newcase = getInt('newcase', 'p');
     $newpartial = getInt('newpartial', 'p');
     if (!empty($newname)) {

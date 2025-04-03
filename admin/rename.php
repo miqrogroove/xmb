@@ -35,6 +35,7 @@ $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -62,10 +63,10 @@ $table = $template->process('admin_table.php');
 if (onSubmit('renamesubmit')) {
     $core->request_secure('Control Panel/Rename User', id: '', error_header: true);
 
-    $admin = new \XMB\admin($core, $db, $session, $sql, $template, $vars);
+    $admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
 
-    $vUserFrom = $core->postedVar('frmUserFrom', dbescape: false);
-    $vUserTo = $core->postedVar('frmUserTo', dbescape: false);
+    $vUserFrom = $validate->postedVar('frmUserFrom', dbescape: false);
+    $vUserTo = $validate->postedVar('frmUserTo', dbescape: false);
     $myErr = $admin->rename_user($vUserFrom, $vUserTo);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $myErr . '</td></tr>';
 } else {

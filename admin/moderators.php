@@ -35,6 +35,7 @@ $forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -86,7 +87,7 @@ if (noSubmit('modsubmit')) {
     $body .= $template->process('admin_moderators_end.php');
 } else {
     $core->request_secure('Control Panel/Moderators', 'mass-edit', error_header: true);
-    $mod = $core->postedArray('mod', dbescape: false);
+    $mod = $validate->postedArray('mod', dbescape: false);
     if (is_array($mod)) {
         foreach($mod as $fid => $mods) {
             $sql->setForumMods($fid, $mods);

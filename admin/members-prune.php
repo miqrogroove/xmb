@@ -36,6 +36,7 @@ $forumcache = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -58,7 +59,7 @@ $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
-$member = $core->postedVar('member', dbescape: false, sourcearray: 'g');
+$member = $validate->postedVar('member', dbescape: false, sourcearray: 'g');
 if (onSubmit('nosubmit')) {
     $core->redirect($vars->full_url . 'admin/members.php', timeout: 0);
 } elseif (noSubmit('yessubmit')) {

@@ -36,6 +36,7 @@ $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $tokenSvc = \XMB\Services\token();
 $tran = \XMB\Services\translation();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 
 $lang = &$vars->lang;
@@ -62,7 +63,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $render = new \XMB\ThreadRender($core, $ranks, $sql, $vars);
 
     if ('viewuser' == $action) {
-        $user = $core->postedVar('u', dbescape: false, sourcearray: 'g');
+        $user = $validate->postedVar('u', dbescape: false, sourcearray: 'g');
         $dbuser = $db->escape($user);
         $member = $sql->getMemberByName($user);
         if (empty($member)) {
@@ -281,8 +282,8 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     }
 
 } elseif ($action == 'modays') {
-    $member = $core->postedVar('u', dbescape: false);
-    $sub = $core->postedVar('sub');
+    $member = $validate->postedVar('u', dbescape: false);
+    $sub = $validate->postedVar('sub');
     if (onSubmit('approveall')) {
         $act = 'approveall';
         $phrase = 'moderation_ays_appr';
@@ -306,8 +307,8 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     </form></td></tr>
     <?php
 } elseif ($action == 'approveall') {
-    $member = $core->postedVar('u');
-    $rawmember = $core->postedVar('u', dbescape: false);
+    $member = $validate->postedVar('u');
+    $rawmember = $validate->postedVar('u', dbescape: false);
     $core->request_secure("Quarantine Panel/approveall", $rawmember);
 
     if (onSubmit('yessubmit')) {
@@ -432,8 +433,8 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     }
 
 } elseif ($action == 'deleteall' || $action == 'deleteban') {
-    $member = $core->postedVar('u');
-    $rawmember = $core->postedVar('u', dbescape: false);
+    $member = $validate->postedVar('u');
+    $rawmember = $validate->postedVar('u', dbescape: false);
     $core->request_secure("Quarantine Panel/$action", $rawmember);
 
     if (onSubmit('yessubmit')) {

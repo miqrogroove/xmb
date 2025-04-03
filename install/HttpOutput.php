@@ -51,7 +51,8 @@ class HttpOutput implements UpgradeOutput
      */
     public function progress(string $text)
     {
-        $text .= str_repeat('.', (75 - strlen($text)));
+        // 68 chars tested well in Firefox v136.
+        $text .= str_repeat('.', (68 - strlen($text)));
         echo '<span class="progress">' . $text;
     }
 

@@ -35,6 +35,7 @@ $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
@@ -61,10 +62,10 @@ $table = $template->process('admin_table.php');
 
 $members = getPhpInput('members', 'g');
 
-$srchmem = $core->postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
-$srchemail = $core->postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE);
-$srchip = $core->postedVar('srchip', 'javascript', TRUE, FALSE, TRUE);
-$srchstatus = $core->postedVar('srchstatus', 'javascript', TRUE, TRUE, TRUE);
+$srchmem = $validate->postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
+$srchemail = $validate->postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE);
+$srchip = $validate->postedVar('srchip', 'javascript', TRUE, FALSE, TRUE);
+$srchstatus = $validate->postedVar('srchstatus', 'javascript', TRUE, TRUE, TRUE);
 $dblikemem = $db->like_escape($srchmem);
 $dblikeemail = $db->like_escape($srchemail);
 $dblikeip = $db->like_escape($srchip);
@@ -164,7 +165,7 @@ if (noSubmit('membersubmit')) {
         $db->free_result($saquery);
 
         while ($mem = $db->fetch_array($query)) {
-            if ($mem['status'] == 'Super Administrator' && $core->postedVar('status'.$mem['uid']) != 'Super Administrator') {
+            if ($mem['status'] == 'Super Administrator' && $validate->postedVar('status'.$mem['uid']) != 'Super Administrator') {
                 $sa_count--;
             }
         }
@@ -177,7 +178,7 @@ if (noSubmit('membersubmit')) {
     // Now execute this request
     while ($mem = $db->fetch_array($query)) {
         $origstatus = $mem['status'];
-        $status = $core->postedVar('status'.$mem['uid']);
+        $status = $validate->postedVar('status'.$mem['uid']);
         if ($status == '') {
             $status = 'Member';
         }
@@ -186,8 +187,8 @@ if (noSubmit('membersubmit')) {
             continue;
         }
 
-        $banstatus = $core->postedVar('banstatus'.$mem['uid']);
-        $cusstatus = $core->postedVar('cusstatus'.$mem['uid'], '', false);
+        $banstatus = $validate->postedVar('banstatus'.$mem['uid']);
+        $cusstatus = $validate->postedVar('cusstatus'.$mem['uid'], '', false);
         $delete = getInt('delete'.$mem['uid'], 'p');
 
         if ($delete == (int) $mem['uid'] && $delete != (int) $self['uid'] && $origstatus != "Super Administrator") {
