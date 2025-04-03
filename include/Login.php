@@ -122,7 +122,7 @@ class Login
         $this->template->addRefs(); // Good idea to have this here, otherwise template translations can't be used until its called elsewhere.
 
         // Adjust any variables that require translation
-        $this->template->versionlong = $this->vars->lang['textpoweredVer'] . $this->vars->versiongeneral;
+        $this->template->versionlong = $this->vars->lang['textpoweredVer'] . ' ' . $this->vars->versiongeneral;
         if ($this->vars->debug) {
             $this->template->versionlong .= ' ' . $this->vars->lang['debugMode'];
         }

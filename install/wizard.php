@@ -368,7 +368,7 @@ switch($vStep) {
         );
         foreach ($config_array as $key => $value) {
             if (${$key} === $value) {
-                error('Incorrect Configuration', 'XMB noticed that your config.php file is not fully configured.<br />Please go back to the previous step and follow the instructions carefully.<br />Be sure to click the button labeled "Configure" before proceeding.', TRUE);
+                $show->wizardError($vars->lang['config_error'], $vars->lang['config_error_defaults']);
             }
         }
         $vars->debug = $debug;
