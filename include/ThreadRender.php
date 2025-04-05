@@ -57,7 +57,7 @@ class ThreadRender
         $html = '';
         foreach ($options as $option) {
             $template->id = (int) $option['vote_option_id'];
-            $template->name = $core->postify(
+            $template->name = $this->core->postify(
                 message: $option['vote_option_text'],
                 allowsmilies: $allowsmilies,
                 allowbbcode: $allowbbcode,

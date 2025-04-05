@@ -343,7 +343,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $db->query("UPDATE " . $vars->tablepre . "members SET postnum=postnum+1 WHERE username='$member'");
             $attachSvc->approve($oldpid, $newpid);
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = $sql->getPollId($thread['tid'], true);
+                $oldpoll = $sql->getPollId((int) $thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $newpoll = $sql->addVoteDesc($newtid);
                     $db->query(
@@ -443,7 +443,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $oldpid = (int) $db->result($db->query("SELECT pid FROM " . $vars->tablepre . "hold_posts WHERE newtid = {$thread['tid']}"));
             $db->query("DELETE FROM " . $vars->tablepre . "hold_attachments WHERE pid = $oldpid");
             if (intval($thread['pollopts']) != 0) {
-                $oldpoll = $sql->getPollId($thread['tid'], true);
+                $oldpoll = $sql->getPollId((int) $thread['tid'], true);
                 if ($oldpoll !== 0) {
                     $sql->deleteVotesByTID([$oldpoll], quarantine: true);
                 }
@@ -507,7 +507,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $db->query("UPDATE " . $vars->tablepre . "members SET postnum=postnum+1 WHERE username='$member'");
     $attachSvc->approve($oldpid, $newpid);
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = $sql->getPollId($thread['tid'], true);
+        $oldpoll = $sql->getPollId((int) $thread['tid'], true);
         if ($oldpoll !== 0) {
             $newpoll = $sql->addVoteDesc($newtid);
             $db->query(
@@ -614,7 +614,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $oldpid = (int) $db->result($db->query("SELECT pid FROM " . $vars->tablepre . "hold_posts WHERE newtid = {$thread['tid']}"));
     $db->query("DELETE FROM " . $vars->tablepre . "hold_attachments WHERE pid = $oldpid");
     if (intval($thread['pollopts']) != 0) {
-        $oldpoll = $sql->getPollId($thread['tid'], true);
+        $oldpoll = $sql->getPollId((int) $thread['tid'], true);
         if ($oldpoll !== 0) {
             $sql->deleteVotesByTID([$oldpoll], quarantine: true);
         }

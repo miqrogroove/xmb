@@ -397,7 +397,8 @@ if ($action == '') {
                 } else {
                     $subTemplate->percentage = '0%';
                 }
-                $subTemplate->subject = $thread['subject'];
+                $subTemplate->name = $array['name'];
+                $subTemplate->votes = $array['votes'];
                 $subTemplate->pollhtml .= $subTemplate->process('viewthread_poll_options_view.php');
             }
             $subTemplate->buttoncode = '';
@@ -410,7 +411,7 @@ if ($action == '') {
 
             $subTemplate->buttoncode = $subTemplate->process('viewthread_poll_submitbutton.php');
         }
-        $subTemplate->thread = $thread;
+        $subTemplate->subject = $thread['subject'];
         $template->poll = $subTemplate->process('viewthread_poll.php');
     }
 
