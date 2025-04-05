@@ -19,3 +19,7 @@ You will need a MySQL database and connection details to get started.
 Issues, requests, discussions, and reports are all welcome here.  Note that we have a primary forum and bug tracker on our website.
 
 If you would like to contribute or collaborate, feel free to offer ideas.  This project needs a website designer and more.
+
+## Credits
+
+There are many people to thank for decades of development, so look in [the Contributors file](CONTRIBUTORS.md).
