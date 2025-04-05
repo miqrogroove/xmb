@@ -89,7 +89,7 @@ class BBCode
         // Balance regex tags.
         $regex = array();
         $regex['align']  = "@\\[align=(left|center|right|justify)\\]@i";
-        $regex['font']   = "@\\[font=([a-z\\r\\n\\t 0-9]+)\\]@i";
+        $regex['font']   = "@\\[font=([a-z\\- 0-9]+)\\]@i";
         $regex['rquote'] = "@\\[rquote=(\\d+)&(?:amp;)?tid=(\\d+)&(?:amp;)?author=([^\\[\\]<>]+)\\]@s";
         $regex['size']   = "@\\[size=([+-]?[0-9]{1,2})\\]@";
         $regex['color'] = array();
