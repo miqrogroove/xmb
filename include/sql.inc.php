@@ -1485,22 +1485,7 @@ class SQL
      */
     public function getAttachmentsByPIDs(array $pids, bool $quarantine = false): array
     {
-        $pids = array_map('intval', $pids);
-        $csv = implode(',', $pids);
-        $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
-
-        $result = $this->db->query("
-            SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size,
-                thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize
-            FROM $table AS a
-            LEFT JOIN $table AS thumbs ON a.aid = thumbs.parentid
-            WHERE a.pid IN ($csv) AND a.parentid = 0
-        ");
-
-        $all = $this->db->fetch_all($result);
-        $this->db->free_result($result);
-
-        return $all;
+        return $this->getAttachmentsByPIDsOrUID($quarantine, $pids);
     }
 
     /**
@@ -1544,24 +1529,47 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function getOrphanedAttachments(bool $quarantine, int $pid = 0, ?int $uid = null): array
+    public function getOrphanedAttachments(bool $quarantine, int $uid): array
     {
-        $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
-        
-        $where = is_int($uid) ? "a.uid = $uid AND" : '';
+        $pids = [0];
 
-        $query = $this->db->query("
+        return $this->getAttachmentsByPIDsOrUID($quarantine, $pids, $uid);
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function getAttachmentsByPIDsOrUID(bool $quarantine, array $pids = [], ?int $uid = null): array
+    {
+        if (empty($pids) && is_null($uid)) throw new InvalidArgumentException('Either the pids or the uid argument must be provided.');
+
+        $where = ['a.parentid = 0'];
+        if (! empty($pids)) {
+            $pids = array_map('intval', $pids);
+            $csv = implode(',', $pids);
+            $where[] = "a.pid IN ($csv)";
+        }
+        if (is_int($uid)) {
+            $where[] = "a.uid = $uid";
+        }
+        $where = implode(' AND ', $where);
+        
+        $table = $quarantine ? $this->tablepre . 'hold_attachments' : $this->tablepre . 'attachments';
+
+        $result = $this->db->query("
             SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size,
                 thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize
             FROM $table AS a
-            LEFT JOIN $table AS thumbs ON a.aid=thumbs.parentid
-            WHERE $where a.pid = $pid AND a.parentid = 0
+            LEFT JOIN $table AS thumbs ON a.aid = thumbs.parentid
+            WHERE $where
         ");
 
-        $result = $this->db->fetch_all($query);
-        $this->db->free_result($query);
+        $all = $this->db->fetch_all($result);
+        $this->db->free_result($result);
 
-        return $result;
+        return $all;
     }
 
     /**

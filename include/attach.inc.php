@@ -134,7 +134,7 @@ class Attach
             return new UploadResult(UploadStatus::InvalidURL);
         }
         $urlparts = parse_url($url);
-        if ($urlparts === FALSE) {
+        if ($urlparts === false) {
             return new UploadResult(UploadStatus::InvalidURL);
         }
         if (!isset($urlparts['path'])) { // Parse was successful but $url had no path
@@ -143,9 +143,9 @@ class Attach
         if ($urlparts['path'] == '/') {
             return new UploadResult(UploadStatus::InvalidURL);
         }
-        $filename = FALSE;
+        $filename = false;
         $urlparts = explode('/', $urlparts['path']);
-        for($i=count($urlparts)-1; $i>=0; $i--) {
+        for ($i=count($urlparts)-1; $i>=0; $i--) {
             if (isValidFilename($urlparts[$i])) {
                 $filename = $urlparts[$i];
                 break;
@@ -154,7 +154,7 @@ class Attach
                 break;
             }
         }
-        if ($filename === FALSE) { //Failed to find a usable filename in $url.
+        if ($filename === false) { //Failed to find a usable filename in $url.
             $filename = explode('/', $filepath);
             $filename = array_pop($filename);
         }
@@ -174,7 +174,7 @@ class Attach
         }
 
         // Now grab the remote file
-        if (DEBUG) {
+        if ($this->vars->debug) {
             $file = file_get_contents($url);
         } else {
             $file = @file_get_contents($url);
@@ -190,7 +190,7 @@ class Attach
 
         // Write to disk
         $handle = fopen($filepath, 'wb');
-        if ($handle === FALSE) {
+        if ($handle === false) {
             return new UploadResult(UploadStatus::NoTempFile);
         }
         fwrite($handle, $file);
@@ -198,7 +198,7 @@ class Attach
 
         // Verify that the file is actually an image.
         $result = getimagesize($filepath);
-        if ($result === FALSE) {
+        if ($result === false) {
             unlink($filepath);
             return new UploadResult(UploadStatus::NotAnImage);
         }
@@ -394,32 +394,29 @@ class Attach
         if (! is_array($_POST['attachment'])) {
             return $return;
         }
-        foreach($_POST['attachment'] as $aid => $attachment) {
+        foreach ($_POST['attachment'] as $aid => $attachment) {
             if (false === array_search($aid, $aid_list)) {
                 continue;
             }
-            switch($attachment['action']) {
-            case 'replace':
-                $this->deleteByID($aid, $quarantine);
-                $deletes[] = $aid;
-                $result = $this->uploadedFile('replace_'.$aid, $pid, $quarantine);
-                if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
-                    $return = $result->status;
-                }
-                break;
-            case 'rename':
-                $rename = trim(getPhpInput('rename_'.$aid));
-                $status = $this->changeName($aid, $pid, $rename, $quarantine);
-                if ($status !== UploadStatus::Success) {
-                    $return = $status;
-                }
-                break;
-            case 'delete':
-                $this->deleteByID($aid, $quarantine);
-                $deletes[] = $aid;
-                break;
-            default:
-                break;
+            switch ($attachment['action']) {
+                case 'replace':
+                    $this->deleteByID($aid, $quarantine);
+                    $deletes[] = $aid;
+                    $result = $this->uploadedFile('replace_'.$aid, $pid, $quarantine);
+                    if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
+                        $return = $result->status;
+                    }
+                    break;
+                case 'rename':
+                    $rename = trim(getPhpInput('rename_'.$aid));
+                    $status = $this->changeName($aid, $pid, $rename, $quarantine);
+                    if ($status !== UploadStatus::Success) {
+                        $return = $status;
+                    }
+                    break;
+                case 'delete':
+                    $this->deleteByID($aid, $quarantine);
+                    $deletes[] = $aid;
             }
         }
         return $return;
@@ -451,7 +448,7 @@ class Attach
 
         // Find all primary attachments for $frompid
         $query = $db->query("SELECT aid, subdir FROM " . $this->vars->tablepre . "attachments WHERE pid=$frompid AND parentid=0");
-        while($attach = $db->fetch_array($query)) {
+        while ($attach = $db->fetch_array($query)) {
             $db->query("INSERT INTO " . $this->vars->tablepre . "attachments (pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
                      . "SELECT {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM " . $this->vars->tablepre . "attachments WHERE aid={$attach['aid']}");
             if ($db->affected_rows() == 1) {
@@ -459,6 +456,9 @@ class Attach
                 if ($attach['subdir'] != '') {
                     $this->copyDiskFile($attach['aid'], $aid, $attach['subdir']);
                 }
+            } else {
+                // Unlikely, but need to bail.
+                continue;
             }
 
             // Update any [file] object references in the new copy of the post messsage.
@@ -473,7 +473,7 @@ class Attach
 
             // Find all children of this attachment and copy them too.
             $childquery = $db->query("SELECT aid, subdir FROM " . $this->vars->tablepre . "attachments WHERE pid=$frompid AND parentid={$attach['aid']}");
-            while($childattach = $db->fetch_array($childquery)) {
+            while ($childattach = $db->fetch_array($childquery)) {
                 $db->query("INSERT INTO " . $this->vars->tablepre . "attachments (parentid, pid, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir) "
                          . "SELECT {$aid}, {$topid}, filename, filetype, filesize, attachment, img_size, uid, updatetime, subdir FROM " . $this->vars->tablepre . "attachments WHERE aid={$childattach['aid']}");
                 if ($db->affected_rows() == 1) {
@@ -544,7 +544,7 @@ class Attach
             $attach['updatestamp'] = $attach['dateline'];
         }
         $subdir = $this->getNewSubdir($attach['updatestamp']);
-        $path = $this->getFullPathFromSubdir($subdir, TRUE);
+        $path = $this->getFullPathFromSubdir($subdir, true);
         $newfilename = $aid;
         $path .= $newfilename;
         $file = fopen($path, 'wb');
@@ -611,7 +611,7 @@ class Attach
         $replace[] = "[oldfile]";
         $search[] = "[/file]";
         $replace[] = "[/oldfile]";
-        foreach($aidmap as $oldid => $newid) {
+        foreach ($aidmap as $oldid => $newid) {
             $search[] = "[oldfile]{$oldid}[/oldfile]";
             $replace[] = "[file]{$newid}[/file]";
         }
@@ -687,7 +687,7 @@ class Attach
                       . "WHERE ((a.uid=0 OR a.pid > 0) AND p.pid IS NULL) OR (a.parentid > 0 AND b.aid IS NULL)");
 
         $aid_list = [];
-        while($a = $db->fetch_array($q)) {
+        while ($a = $db->fetch_array($q)) {
             $aid_list[] = $a['aid'];
         }
         $db->free_result($q);
@@ -705,7 +705,7 @@ class Attach
 
         if (! $quarantine) {
             $query = $this->sql->getAttachmentPaths($aid_list);
-            while($attachment = $db->fetch_array($query)) {
+            while ($attachment = $db->fetch_array($query)) {
                 $path = $this->getFullPathFromSubdir($attachment['subdir']); // Returns FALSE if file stored in database.
                 if ($path != '') {
                     $path .= $attachment['aid'];
@@ -763,7 +763,7 @@ class Attach
                 throw new RuntimeException('A PHP extension blocked a file upload', $file['error']);
             default:
                 // See the PHP Manual for additional information.
-                if (DEBUG && is_numeric($file['error'])) {
+                if ($this->vars->debug && is_numeric($file['error'])) {
                     throw new RuntimeException("The FILES array says code {$file['error']} prevented an upload", $file['error']);
                 }
                 return new UploadResult(UploadStatus::GenericError);
@@ -944,7 +944,7 @@ class Attach
             $filepath = @tempnam($path, 'xmb-');
         }
         if (false === $filepath || ! is_writable($filepath)) {
-            if (DEBUG) {
+            if ($this->vars->debug) {
                 $filepath = tempnam('', 'xmb-');
             } else {
                 $filepath = @tempnam('', 'xmb-');
@@ -1059,7 +1059,7 @@ class Attach
     private function load_and_resize_image(string $path, CartesianSize &$thumbMaxSize, bool $load_if_smaller = FALSE, bool $enlarge_if_smaller = FALSE)
     {
         // Check if GD is available
-        if (!function_exists('imagecreatetruecolor')) {
+        if (! function_exists('imagecreatetruecolor')) {
             return false;
         }
 
@@ -1092,7 +1092,7 @@ class Attach
             break;
         case IMAGETYPE_BMP:
             // See our website for drop-in BMP support.
-            if (!class_exists('phpthumb_bmp')) {
+            if (! class_exists('phpthumb_bmp')) {
                 if (is_file(XMB_ROOT.'include/phpthumb-bmp.php')) {
                     require_once(XMB_ROOT.'include/phpthumb-bmp.php');
                 }
@@ -1111,13 +1111,13 @@ class Attach
             return false;
         }
 
-        if (!$img) {
+        if (! $img) {
             return false;
         }
 
         // Determine if a thumbnail is needed.
         if ($imgSize->isSmallerThan($thumbMaxSize)) {
-            if (!$load_if_smaller) {
+            if (! $load_if_smaller) {
                 return false;
             } elseif (!$enlarge_if_smaller) {
                 $thumbMaxSize = $imgSize;
@@ -1135,7 +1135,7 @@ class Attach
         $thumb = imagecreatetruecolor($thumbSize->getWidth(), $thumbSize->getHeight());
 
         // Resize $img
-        if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->getWidth(), $thumbSize->getHeight(), $imgSize->getWidth(), $imgSize->getHeight())) {
+        if (! imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->getWidth(), $thumbSize->getHeight(), $imgSize->getWidth(), $imgSize->getHeight())) {
             return false;
         }
 
@@ -1181,7 +1181,7 @@ class Attach
                 return UploadStatus::BadStoragePath;
             }
             $path .= $aid;
-            if (!is_file($path)) {
+            if (! is_file($path)) {
                 return UploadStatus::GenericError;
             }
             if (filesize($path) != (int) $attach['filesize']) {
@@ -1254,7 +1254,7 @@ class Attach
         // Remove the code block contents from $message.
         $messagearray = $this->bbcode->parseCodeBlocks($message);
         $message = [];
-        for($i = 0; $i < count($messagearray); $i += 2) {
+        for ($i = 0; $i < count($messagearray); $i += 2) {
             $message[$i] = $messagearray[$i];
         }
         $message = implode("<!-- code -->", $message);
@@ -1264,7 +1264,7 @@ class Attach
         $items = [];
         $pattern = '/\[img(=([0-9]*?){1}x([0-9]*?))?\](' . get_img_regexp() . ')\[\/img\]/i';
         preg_match_all($pattern, $message, $results, PREG_SET_ORDER);
-        foreach($results as $result) {
+        foreach ($results as $result) {
             if (isset($result[4])) {
                 $item['code'] = $result[0];
                 $item['url'] = htmlspecialchars_decode($result[4], ENT_NOQUOTES);
@@ -1273,22 +1273,22 @@ class Attach
         }
 
         // Process URLs
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $result = $this->remoteFile($item['url'], $pid, $quarantine);
             if ($result->status !== UploadStatus::Success) {
                 $return = $result->status;
-                $replace = '[bad '.substr($item['code'], 1, -6).'[/bad img]';
+                $replace = '[bad ' . substr($item['code'], 1, -6) . '[/bad img]';
             } else {
-                $replace = "[file]{$aid}[/file]";
+                $replace = '[file]' . $result->aid . '[/file]';
             }
             $temppos = strpos($message, $item['code']);
-            $message = substr($message, 0, $temppos).$replace.substr($message, $temppos + strlen($item['code']));
+            $message = substr($message, 0, $temppos) . $replace . substr($message, $temppos + strlen($item['code']));
         }
 
         // Replace the code block contents in $message.
         if (count($messagearray) > 1) {
             $message = explode("<!-- code -->", $message);
-            for($i = 0; $i < count($message) - 1; $i++) {
+            for ($i = 0; $i < count($message) - 1; $i++) {
                 $message[$i] .= $messagearray[$i*2+1];
             }
             $message = implode("", $message);

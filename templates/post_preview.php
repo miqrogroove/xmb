@@ -9,7 +9,7 @@
 <td><?= $thread['icon'] ?>&nbsp;<?= $poston ?></td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg1'] ?>" class="tablerow">
-<td><strong><font class="subject"><?= $dissubject ?></font></strong><br /><br /><font class="mediumtxt"><?= $message1 ?></td>
+<td><strong><font class="subject"><?= $dissubject ?></font></strong><br /><br /><font class="mediumtxt"><?= $message1 ?></font></td>
 </tr>
 </table>
 </td>

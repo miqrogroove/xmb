@@ -382,7 +382,7 @@ switch($action) {
                 $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
                 $replyvalid = false;
             }
-            foreach($deletes as $aid) {
+            foreach ($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
@@ -624,19 +624,19 @@ switch($action) {
             $files = [];
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $template->attachfile = '';
-                $orphans = $sql->getOrphanedAttachments($quarantine, uid: (int) $vars->self['uid']);
+                $files = $sql->getOrphanedAttachments($quarantine, (int) $vars->self['uid']);
                 $counter = 0;
-                foreach ($orphans as $postinfo) {
-                    $files[] = $postinfo;
+                $prevsize = '';
+                foreach ($files as $postinfo) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format((int) $postinfo['filesize'], 0, '.', ',');
                     $subTemplate->postinfo = $postinfo;
                     $template->attachfile .= $subTemplate->process('post_attachment_orphan.php');
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
-                        if (strpos($messageinput, $bbcode) === FALSE) {
-                            if ($counter == 0 || $postinfo['img_size'] == '' || $prevsize = '' || $SETTINGS['attachimgpost'] == 'off') {
-                                $messageinput .= "\r\n\r\n";
+                        if (strpos($messageinput, $bbcode) === false) {
+                            if ($counter == 0 || $postinfo['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
+                                $messageinput .= "\n\n";
                             }
                             $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
@@ -644,8 +644,7 @@ switch($action) {
                         }
                     }
                 }
-                $template->attachfile .= $core->makeAttachmentBox(count($orphans));
-                unset($orphans);
+                $template->attachfile .= $core->makeAttachmentBox(count($files));
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
@@ -675,7 +674,7 @@ switch($action) {
                     $core->postLinkBBcode($messageinput);
                 }
                 if (count($files) > 0) {
-                    $core->bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine);
+                    $messageinput = $core->bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine);
                 }
                 $subTemplate->message1 = $core->postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
@@ -780,7 +779,7 @@ switch($action) {
                 $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
                 $topicvalid = false;
             }
-            foreach($deletes as $aid) {
+            foreach ($deletes as $aid) {
                 $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
             }
             if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
@@ -967,7 +966,7 @@ switch($action) {
                 // Create poll options.  This is the part we care about.
                 $options = [];
                 $i = 1;
-                foreach($pollopts as $p) {
+                foreach ($pollopts as $p) {
                     $options[] = [
                         'vote_id' => $vote_id,
                         'vote_option_id' => $i++,
@@ -1026,22 +1025,22 @@ switch($action) {
 
         if (! $topicvalid) {
             // Fill $attachfile
-            $files = array();
+            $files = [];
             if ($forum['attachstatus'] == 'on' && X_MEMBER) {
                 $template->attachfile = '';
-                $orphans = $sql->getOrphanedAttachments($quarantine, uid: (int) $vars->self['uid']);
+                $files = $sql->getOrphanedAttachments($quarantine, (int) $vars->self['uid']);
                 $counter = 0;
-                foreach ($orphans as $postinfo) {
-                    $files[] = $postinfo;
+                $prevsize = '';
+                foreach ($files as $postinfo) {
                     $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format((int) $postinfo['filesize'], 0, '.', ',');
                     $subTemplate->postinfo = $postinfo;
                     $template->attachfile .= $subTemplate->process('post_attachment_orphan.php');
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$postinfo['aid']}[/file]";
-                        if (strpos($messageinput, $bbcode) === FALSE) {
+                        if (strpos($messageinput, $bbcode) === false) {
                             if ($counter == 0 || $postinfo['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
-                                $messageinput .= "\r\n\r\n";
+                                $messageinput .= "\n\n";
                             }
                             $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
@@ -1049,8 +1048,7 @@ switch($action) {
                         }
                     }
                 }
-                $template->attachfile .= $core->makeAttachmentBox(count($orphans));
-                unset($orphans);
+                $template->attachfile .= $core->makeAttachmentBox(count($files));
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
@@ -1080,7 +1078,7 @@ switch($action) {
                     $core->postLinkBBcode($messageinput);
                 }
                 if (count($files) > 0) {
-                    $core->bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine);
+                    $messageinput = $core->bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine);
                 }
                 $subTemplate->message1 = $core->postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 
@@ -1168,7 +1166,7 @@ switch($action) {
                     $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
                     $editvalid = false;
                 }
-                foreach($deletes as $aid) {
+                foreach ($deletes as $aid) {
                     $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
                 }
                 $temp = '';
@@ -1312,12 +1310,12 @@ switch($action) {
 
             // Fill $attachment
             $template->attachment = '';
-            $files = array();
+            $files = [];
             if ($forum['attachstatus'] == 'on') {
-                $query = $db->query("SELECT a.aid, a.pid, a.filename, a.filetype, a.filesize, a.downloads, a.img_size, thumbs.aid AS thumbid, thumbs.filename AS thumbname, thumbs.img_size AS thumbsize FROM " . $vars->tablepre . "attachments AS a LEFT JOIN " . $vars->tablepre . "attachments AS thumbs ON a.aid=thumbs.parentid WHERE a.pid=$pid AND a.parentid=0");
+                $files = $sqlSvc->getAttachmentsByPIDs([$pid]);
                 $counter = 0;
-                while ($attach = $db->fetch_array($query)) {
-                    $files[] = $attach;
+                $prevsize = '';
+                foreach ($files as $attach) {
                     $subTemplate->aInfo = [
                         'aid' => $attach['aid'],
                         'downloads' => $attach['downloads'],
@@ -1329,8 +1327,8 @@ switch($action) {
                     if ($bBBcodeOnForThisPost) {
                         $bbcode = "[file]{$attach['aid']}[/file]";
                         if (strpos($postinfo['message'], $bbcode) === false) {
-                            if ($counter == 0 || $attach['img_size'] == '' || $prevsize = '' || $SETTINGS['attachimgpost'] == 'off') {
-                                $postinfo['message'] .= "\r\n\r\n";
+                            if ($counter == 0 || $attach['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
+                                $postinfo['message'] .= "\n\n";
                             }
                             $postinfo['message'] .= ' ' . $bbcode; // Use a leading space to prevent awkward line wraps.
                             $counter++;
@@ -1339,7 +1337,6 @@ switch($action) {
                     }
                 }
                 $template->attachment .= $core->makeAttachmentBox($db->num_rows($query));
-                $db->free_result($query);
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
@@ -1369,7 +1366,7 @@ switch($action) {
                     $core->postLinkBBcode($message1);
                 }
                 if (count($files) > 0) {
-                    $core->bbcodeFileTags($message1, $files, $pid, $bBBcodeOnForThisPost);
+                    $message1 = $core->bbcodeFileTags($message1, $files, $pid, $bBBcodeOnForThisPost);
                 }
                 $message1 = $core->postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
 

@@ -157,7 +157,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $template->edit = '';
 
             if ($forum['attachstatus'] == 'on') {
-                $attachments = $sql->getOrphanedAttachments($quarantine, (int) $post['pid']);
+                $attachments = $sql->getAttachmentsByPIDs([(int) $post['pid']], $quarantine);
             }
 
             $render->preparePostBody($post, $forum, $attachments, $quarantine, $template);
@@ -232,7 +232,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $template->edit = '';
 
             if ($forum['attachstatus'] == 'on') {
-                $attachments = $sql->getOrphanedAttachments($quarantine, (int) $post['pid']);
+                $attachments = $sql->getAttachmentsByPIDs([(int) $post['pid']], $quarantine);
             }
 
             $render->preparePostBody($post, $forum, $attachments, $quarantine, $template);

@@ -605,7 +605,7 @@ if ($action == '') {
                 }
             }
             if (count($files) > 0) {
-                $core->bbcodeFileTags($post['message'], $files, (int) $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'));
+                $post['message'] = $core->bbcodeFileTags($post['message'], $files, (int) $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'));
             }
         }
         $post['message'] = $core->postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
