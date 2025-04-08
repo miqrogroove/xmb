@@ -32,13 +32,14 @@ class spelling {
     var $link     = 0;
     var $mode     = 0;
 
-    function __construct($language='en', $mode=PSPELL_NORMAL) {
+    public function __construct(string $language = 'en') {
         global $charset;
 
-        if (!extension_loaded('pspell')) {
+        if (! $this->isInstalled()) {
             error('The pspell/aspell extension is not currently loaded/built into PHP, the spellchecker will not work');
         }
 
+        $mode = PSPELL_NORMAL;
         $charset = '';
         $this->language = $language;
         @$this->link = pspell_new($language, '', '', $charset, $mode);
@@ -47,6 +48,17 @@ class spelling {
         }
         $this->mode = $mode;
         return true;
+    }
+
+    /**
+     * Check if the PHP module is loaded.
+     *
+     * @since 1.9.12.09
+     * @return bool
+     */
+    public static function isInstalled(): bool
+    {
+        return extension_loaded('pspell');
     }
 
     function check_word($word) {

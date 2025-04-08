@@ -353,12 +353,17 @@ $subjectinput = postedVar('subject', 'javascript', TRUE, FALSE, TRUE);
 $subjectinput = trim($subjectinput);
 $subjectinput = str_replace(array("\r", "\n"), array('', ''), $subjectinput);
 
+$spellingEnabled = false;
 if ($SETTINGS['spellcheck'] == 'on') {
+    require ROOT . 'include/spelling.inc.php';
+    $spellingEnabled = spelling::isInstalled();
+}
+
+if ($spellingEnabled) {
     $spelling_submit1 = '<input type="hidden" name="subaction" value="spellcheck" /><input type="submit" class="submit" name="spellchecksubmit" value="'.$lang['checkspelling'].'" />';
     $spelling_lang = '<select name="language"><option value="en" selected="selected">English</option></select>';
     if ($sc) {
         if (isset($language) && !isset($updates_submit)) {
-            require ROOT.'include/spelling.inc.php';
             $spelling = new spelling($language);
             $problems = $spelling->check_text(postedVar('message', '', FALSE, FALSE));  //Use raw value so we're not checking entity names.
             if (count($problems) > 0) {
