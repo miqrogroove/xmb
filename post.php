@@ -1312,7 +1312,7 @@ switch($action) {
             $template->attachment = '';
             $files = [];
             if ($forum['attachstatus'] == 'on') {
-                $files = $sqlSvc->getAttachmentsByPIDs([$pid]);
+                $files = $sql->getAttachmentsByPIDs([$pid]);
                 $counter = 0;
                 $prevsize = '';
                 foreach ($files as $attach) {

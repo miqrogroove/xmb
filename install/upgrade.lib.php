@@ -2122,6 +2122,7 @@ class Upgrade
 //  - Delete 'spellcheck' record from settings table.
 //  - Delete members.showemail
 //  - Delete members.useoldu2u
+//  - Increment all themes.version values.
 
     /**
      * Recalculates the value of every field in the forums.postperm column.
