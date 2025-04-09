@@ -339,36 +339,35 @@ textarea, select, input, object {
     animation: blinker 1.5s linear infinite;
 }
 
-
 @keyframes blinker {
     50% {
         opacity: 0;
-          }
+    }
 }
 
 .marquee {
-  max-width: 100%;
-  overflow: hidden;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .marquee2 {
-  display: flex;
-  align-items: center;
-  flex-grow: 0;
-  flex-shrink: 0;
-  margin: 0;
-  padding: 0 2rem;
-  list-style: none;
-  transform: translateX(100%);
-  animation: marqueeAnimation 10s linear infinite;
+    display: flex;
+    align-items: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0 2rem;
+    list-style: none;
+    transform: translateX(100%);
+    animation: marqueeAnimation 20s linear infinite;
 }
 
 @keyframes marqueeAnimation {
-  0% {
-           transform: translateX(100%);
-  }
+    0% {
+        transform: translateX(100%);
+    }
 
-  100% {
-            transform: translateX(-100%);
-  }
+    100% {
+        transform: translateX(-100%);
+    }
 }
