@@ -1336,7 +1336,7 @@ switch($action) {
                         }
                     }
                 }
-                $template->attachment .= $core->makeAttachmentBox($db->num_rows($query));
+                $template->attachment .= $core->makeAttachmentBox(count($files));
             }
 
             //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
