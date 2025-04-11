@@ -504,6 +504,8 @@ class Core
     /**
      * Check whether the current user is a privileged moderator in the specified forum.
      *
+     * @since 1.9.8 Formerly mod::statuscheck()
+     * @since 1.9.11 Formerly statuscheck()
      * @since 1.10.00
      */
     public function modcheckForum(int $fid): bool
