@@ -445,15 +445,15 @@ class Core
      * @param bool $override Whether to just return 'Moderator', for example by passing a boolean user level.
      * @return string Either 'Moderator' or an empty string.
      */
-    function modcheck(string $username, string $mods, bool $override = X_SMOD): string
+    public function modcheck(string $username, string $mods, bool $override = X_SMOD): string
     {
         $retval = '';
         if ($override) {
             $retval = 'Moderator';
-        } else if (X_MOD) {
+        } elseif (X_MOD) {
             $username = strtoupper($username);
             $mods = explode(',', $mods);
-            foreach($mods as $key=>$moderator) {
+            foreach ($mods as $key=>$moderator) {
                 if (strtoupper(trim($moderator)) === $username) {
                     $retval = 'Moderator';
                     break;
@@ -470,16 +470,15 @@ class Core
      * @since 1.9.10
      * @param string $username The username for the moderator of the post.
      * @param string $mods The forums.moderator value of the forum being moderated.
-     * @param string $origstatus The members.status value for the author of the post.
+     * @param ?string $origstatus The members.status value for the author of the post.  Nullable for anonymous posting.
      * @return string Either 'Moderator' or an empty string.
      */
-    function modcheckPost($username, $mods, $origstatus)
+    public function modcheckPost(string $username, string $mods, ?string $origstatus): string
     {
-        global $SETTINGS;
         $retval = $this->modcheck($username, $mods);
 
-        if ($retval != '' && $SETTINGS['allowrankedit'] != 'off') {
-            switch($origstatus) {
+        if ($retval != '' && $this->vars->settings['allowrankedit'] != 'off') {
+            switch ($origstatus) {
                 case 'Super Administrator':
                     if (!X_SADMIN) {
                         $retval = '';
@@ -503,12 +502,27 @@ class Core
     }
 
     /**
+     * Check whether the current user is a privileged moderator in the specified forum.
+     *
+     * @since 1.10.00
+     */
+    public function modcheckForum(int $fid): bool
+    {
+        $forum = $this->forums->getForum($fid);
+        if ($forum === false) {
+            return false;
+        }
+
+        return ($this->modcheck($this->vars->self['username'], $forum['moderator']) == 'Moderator');
+    }
+
+    /**
      * As of version 1.9.11, function forum() is not responsible for any permissions checking.
      * Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
      *
      * @since 1.0
      */
-    function forum($forum, $templateName, $index_subforums)
+    public function forum(array $forum, string $templateName, array $index_subforums): string
     {
         $lang = &$this->vars->lang;
         
@@ -1462,7 +1476,7 @@ class Core
 
         // Initialize $forumselect
         $forumselect = [];
-        if (!$multiple) {
+        if (! $multiple) {
             $forumselect[] = '<select name="'.$selectname.'">';
         } else {
             $forumselect[] = '<select name="'.$selectname.'[]" size="10" multiple="multiple">';
@@ -1474,30 +1488,30 @@ class Core
             } else {
                 $forumselect[] = '<option value="all">'.$lang['textallforumsandsubs'].'</option>';
             }
-        } else if (!$allowall && !$multiple) {
+        } elseif (!$allowall && !$multiple) {
             $forumselect[] = '<option value="" disabled="disabled" selected="selected">'.$lang['textforum'].'</option>';
         }
 
         // Populate $forumselect
         $permitted = $this->getStructuredForums(usePerms: true);
 
-        foreach($permitted['forum']['0'] as $forum) {
+        foreach ($permitted['forum']['0'] as $forum) {
             $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
             if (isset($permitted['sub'][$forum['fid']])) {
-                foreach($permitted['sub'][$forum['fid']] as $sub) {
+                foreach ($permitted['sub'][$forum['fid']] as $sub) {
                     $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                 }
             }
         }
 
         $forumselect[] = '<option value="0" disabled="disabled">&nbsp;</option>';
-        foreach($permitted['group']['0'] as $group) {
+        foreach ($permitted['group']['0'] as $group) {
             if (isset($permitted['forum'][$group['fid']]) && count($permitted['forum'][$group['fid']]) > 0) {
                 $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.fnameOut($group['name']).'</option>';
-                foreach($permitted['forum'][$group['fid']] as $forum) {
+                foreach ($permitted['forum'][$group['fid']] as $forum) {
                     $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
                     if (isset($permitted['sub'][$forum['fid']])) {
-                        foreach($permitted['sub'][$forum['fid']] as $sub) {
+                        foreach ($permitted['sub'][$forum['fid']] as $sub) {
                             $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                         }
                     }
@@ -1586,7 +1600,7 @@ class Core
      * @param string $user_status_in Optional. Masquerade as this user status, e.g. 'Guest'
      * @return array Of bools, indexed by X_PERMS_* constants.
      */
-    function checkForumPermissions($forum, ?string $user_status_in = null)
+    public function checkForumPermissions(array $forum, ?string $user_status_in = null): array
     {
         if (is_string($user_status_in)) {
             $user_status = $this->vars->status_enum[$user_status_in];

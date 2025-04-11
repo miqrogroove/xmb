@@ -324,8 +324,8 @@ if ($SETTINGS['catsonly'] != 'on') {
 $index_subforums = [];
 if ($SETTINGS['showsubforums'] == 'on') {
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
-        foreach($forums['sub'] as $subForumsByFUP) {
-            foreach($subForumsByFUP as $forum) {
+        foreach ($forums['sub'] as $subForumsByFUP) {
+            foreach ($subForumsByFUP as $forum) {
                 $index_subforums[] = $forum;
             }
         }
@@ -333,7 +333,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
 }
 
 $lastcat = '0';
-foreach($fquery as $thing) {
+foreach ($fquery as $thing) {
     if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
         $cforum = $core->forum($thing, "index_forum", $index_subforums);
     } else {
@@ -344,7 +344,7 @@ foreach($fquery as $thing) {
         $catLessForums++;
     }
 
-    if ($lastcat !== $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || !empty($cforum))) {
+    if ($lastcat !== $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || ! empty($cforum))) {
         if ($forumlist != '') {
             $forumarray[] = $forumlist;
             $forumlist = '';

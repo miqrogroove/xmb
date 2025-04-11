@@ -255,19 +255,19 @@ class SQL
 
         $sql = [];
 
-        foreach($ints as $field) {
+        foreach ($ints as $field) {
             if (isset($values[$field])) {
                 if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 $sql[] = "$field = {$values[$field]}";
             }
         }
-        foreach($numerics as $field) {
+        foreach ($numerics as $field) {
             if (isset($values[$field])) {
                 if (! is_numeric($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 $sql[] = "$field = {$values[$field]}";
             }
         }
-        foreach($strings as $field) {
+        foreach ($strings as $field) {
             if (isset($values[$field])) {
                 if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 $this->db->escape_fast($values[$field]);
@@ -521,6 +521,18 @@ class SQL
     }
 
     /**
+     * Adjust the user's post total.
+     *
+     * @since 1.10.00
+     */
+    public function adjustPostCount(string $username, int $change)
+    {
+        $this->db->escape_fast($username);
+        $op = $change > 0 ? '+' : '-';
+        $this->db->query("UPDATE " . $this->tablepre . "members SET postnum = postnum $op $change WHERE username = '$username'");
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12
@@ -693,11 +705,11 @@ class SQL
      * SQL command
      *
      * @since 1.9.12
-     * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
+     * @param array $values Field name & value list.
      * @param bool $quarantine Save this record in a private table for later review?
      * @return int Thread ID number.
      */
-    public function addThread(array &$values, bool $quarantine = false): int
+    public function addThread(array $values, bool $quarantine = false): int
     {
         // Required values:
         $req = ['fid', 'author', 'lastpost', 'subject', 'icon'];
@@ -709,15 +721,15 @@ class SQL
         $ints = ['fid', 'views', 'replies', 'topped', 'pollopts'];
         $strings = ['author', 'lastpost', 'subject', 'icon', 'closed'];
 
-        foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
-        foreach($ints as $field) {
+        foreach ($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
+        foreach ($ints as $field) {
             if (isset($values[$field])) {
                 if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             } else {
                 $values[$field] = 0;
             }
         }
-        foreach($strings as $field) {
+        foreach ($strings as $field) {
             if (isset($values[$field])) {
                 if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 $this->db->escape_fast($values[$field]);
@@ -1062,21 +1074,21 @@ class SQL
      * SQL command
      *
      * @since 1.9.12
-     * @param array $values Field name & value list. Passed by reference and modified, so don't assign references or re-use the same array.
+     * @param array $values Field name & value list.
      * @param bool $quarantine Save this record in a private table for later review?
      * @param bool $qthread When starting a quarantined thread, we need to know not to use the tid field for the post to prevent ID collisions.
      * @return int Post ID number.
      */
-    public function addPost(array &$values, bool $quarantine = false, bool $qthread = false): int
+    public function addPost(array $values, bool $quarantine = false, bool $qthread = false): int
     {
         // Required values:
         $ints = ['fid', 'tid', 'dateline'];
         $strings = ['author', 'message', 'subject', 'icon', 'usesig', 'useip', 'bbcodeoff', 'smileyoff'];
 
         $all = array_merge($ints, $strings);
-        foreach($all as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
-        foreach($ints as $field) if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
-        foreach($strings as $field) {
+        foreach ($all as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
+        foreach ($ints as $field) if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
+        foreach ($strings as $field) {
             if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             $this->db->escape_fast($values[$field]);
         }
@@ -1138,10 +1150,18 @@ class SQL
      *
      * @since 1.10.00
      */
-    public function getPostsByTID(int $tid, int $ppp, bool $ascending = true): array
+    public function getPostsByTID(int $tid, ?int $ppp = null, bool $ascending = true): array
     {
         $order = $ascending ? 'ASC' : 'DESC';
-        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "posts WHERE tid = $tid ORDER BY dateline $order, pid $order LIMIT $ppp");
+        if (is_null($ppp)) {
+            $limit = '';
+        } elseif ($ppp < 0) {
+            throw new InvalidArgumentException('The ppp argument must not be negative.');
+        } else {
+            $limit = "LIMIT $ppp";
+        }
+            
+        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "posts WHERE tid = $tid ORDER BY dateline $order, pid $order $limit");
         $result = $this->db->fetch_all($query);
         $this->db->free_result($query);
 
@@ -1407,15 +1427,15 @@ class SQL
         $ints = ['pid', 'parentid', 'uid'];
         $strings = ['filename', 'filetype', 'filesize', 'attachment', 'img_size', 'subdir'];
 
-        foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
-        foreach($ints as $field) {
+        foreach ($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
+        foreach ($ints as $field) {
             if (isset($values[$field])) {
                 if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
             } else {
                 $values[$field] = 0;
             }
         }
-        foreach($strings as $field) {
+        foreach ($strings as $field) {
             if (isset($values[$field])) {
                 if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 $this->db->escape_fast($values[$field]);
@@ -1897,16 +1917,16 @@ class SQL
         $ints = ['vote_id', 'vote_option_id', 'vote_result'];
         $strings = ['vote_option_text'];
 
-        foreach($rows as $values) {
-            foreach($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
-            foreach($ints as $field) {
+        foreach ($rows as $values) {
+            foreach ($req as $field) if (! isset($values[$field])) throw new LogicException("Missing $field");
+            foreach ($ints as $field) {
                 if (isset($values[$field])) {
                     if (! is_int($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                 } else {
                     $values[$field] = 0;
                 }
             }
-            foreach($strings as $field) {
+            foreach ($strings as $field) {
                 if (isset($values[$field])) {
                     if (! is_string($values[$field])) throw new InvalidArgumentException("Type mismatch for $field");
                     $this->db->escape_fast($values[$field]);

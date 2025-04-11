@@ -64,8 +64,8 @@ if ($vars->settings['ip_banning'] == 'on') {
         $body = $template->process('admin_ipban_start.php');
 
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "banned ORDER BY dateline");
-        while($ipaddress = $db->fetch_array($query)) {
-            for($i = 1; $i <= 4; ++$i) {
+        while ($ipaddress = $db->fetch_array($query)) {
+            for ($i = 1; $i <= 4; ++$i) {
                 $j = "ip" . $i;
                 if ('-1' === $ipaddress[$j]) {
                     $ipaddress[$j] = "*";
@@ -110,7 +110,7 @@ if ($vars->settings['ip_banning'] == 'on') {
 
         if ($delete) {
             $dels = [];
-            foreach($delete as $id => $del) {
+            foreach ($delete as $id => $del) {
                 if ($del == 1) {
                     $dels[] = $id;
                 }
@@ -121,10 +121,10 @@ if ($vars->settings['ip_banning'] == 'on') {
 
         if ('0' !== $newip[0] || '0' !== $newip[1] || '0' !== $newip[2] || '0' !== $newip[3]) {
             $invalid = 0;
-            for($i=0; $i<=3 && !$invalid; ++$i) {
+            for ($i = 0; $i <= 3 && ! $invalid; ++$i) {
                 if ($newip[$i] == "*") {
                     $ip[$i+1] = -1;
-                } else if (intval($newip[$i]) >=0 && intval($newip[$i]) <= 255) {
+                } elseif (intval($newip[$i]) >=0 && intval($newip[$i]) <= 255) {
                     $ip[$i+1] = intval($newip[$i]);
                 } else {
                     $invalid = 1;
