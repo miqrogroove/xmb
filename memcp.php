@@ -324,9 +324,13 @@ if ($action == 'profile') {
 
         $timeoffset1 = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : 0;
         $thememem = formInt('thememem');
+
         $tppnew = isset($_POST['tppnew']) ? (int) $_POST['tppnew'] : $SETTINGS['topicperpage'];
         $pppnew = isset($_POST['pppnew']) ? (int) $_POST['pppnew'] : $SETTINGS['postperpage'];
-
+        
+        if (isset($tppnew) && $tppnew > 100 || $tppnew < 5) $tppnew = $SETTINGS['topicperpage'];
+        if (isset($pppnew) && $pppnew > 100 || $pppnew < 5) $pppnew = $SETTINGS['postperpage'];
+        
         $dateformatnew = postedVar('dateformatnew', '', FALSE, TRUE);
         $dateformattest = attrOut($dateformatnew, 'javascript');  // NEVER allow attribute-special data in the date format because it can be unescaped using the date() parser.
         if ( strlen($dateformatnew) == 0 || $dateformatnew !== $dateformattest ) {
