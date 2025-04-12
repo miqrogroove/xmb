@@ -45,7 +45,7 @@ if ($vars->settings['faqstatus'] == 'off' && $page != 'forumrules') {
     exit();
 }
 
-switch($page) {
+switch ($page) {
     case 'usermaint':
         $core->setCanonicalLink("faq.php?page=$page");
         $core->nav($vars->lang['textuserman']);

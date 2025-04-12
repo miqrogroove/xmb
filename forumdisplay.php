@@ -373,7 +373,7 @@ $template->check60 = '';
 $template->check100 = '';
 $template->checkyear = '';
 $template->checkall = '';
-switch($cusdate) {
+switch ($cusdate) {
     case 86400:
         $template->check1 = $vars::selHTML;
         break;

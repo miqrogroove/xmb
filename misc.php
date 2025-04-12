@@ -42,14 +42,12 @@ $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
 $action = getPhpInput('action', 'g');
-switch($action) {
+switch ($action) {
     case 'login':
         $core->nav($lang['textlogin']);
         break;
     case 'logout':
         $core->nav($lang['textlogout']);
-        break;
-    case 'search':
         break;
     case 'lostpw':
         $core->nav($lang['textlostpw']);
@@ -72,12 +70,11 @@ switch($action) {
     default:
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnoaction']);
-        break;
 }
 
 $misc = $multipage = $nextlink = '';
 
-switch($action) {
+switch ($action) {
     case 'login':
         if (! $core->coppa_check()) {
             $core->message($lang['coppa_fail']);
@@ -141,24 +138,6 @@ switch($action) {
         }
         break;
 
-    case 'search':
-        $newurl = preg_replace('/[^\x20-\x7e]/', '', $url);
-        if (substr($newurl, -22) == 'misc.php?action=search') {
-            $newurl = substr($newurl, 0, -22).'search.php';
-        } else {
-            $newurl = str_replace('misc.php?action=search&', 'search.php?', $newurl);
-        }
-        if ($newurl === $url) { // Unexpected query string.
-            $newurl = str_replace('&action=search', '', $newurl);
-            $newurl = str_replace('/misc', '/search', $newurl);
-        }
-        $newurl = substr($vars->full_url, 0, -strlen($cookiepath)).$newurl;
-        header('HTTP/1.0 301 Moved Permanently');
-        header('Location: '.$newurl);
-        exit;
-
-        break;
-
     case 'lostpw':
         if (X_MEMBER) {
             $misc = $template->process('misc_feature_not_while_loggedin.php');
@@ -208,6 +187,7 @@ switch($action) {
         break;
 
     case 'online':
+// TODO: Refactor still needed.
         require XMB_ROOT . 'include/online.inc.php';
 
         if ($SETTINGS['whosonlinestatus'] == 'off') {

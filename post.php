@@ -352,7 +352,7 @@ if ($bBBcodeInserterEnabled || $bSmilieInserterEnabled) {
     }
 }
 
-switch($action) {
+switch ($action) {
     case 'reply':
         $core->nav('<a href="' . $vars->full_url . 'viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
         $core->nav($lang['textreply']);
