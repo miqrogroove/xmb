@@ -146,6 +146,8 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
         $tpp = (int) $self['tpp'];
         $ppp = (int) $self['ppp'];
         $memtime = (int) $self['timeformat'];
+        if ($tpp < 5 || $tpp > 99) $tpp = $SETTINGS['topicperpage'];
+        if ($ppp < 5 || $ppp > 99) $tpp = $SETTINGS['postperpage'];
         if ($self['dateformat'] != '') {
             $dateformat = $self['dateformat'];
         }
