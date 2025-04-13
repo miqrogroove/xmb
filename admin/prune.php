@@ -58,7 +58,7 @@ $table = $template->process('admin_table.php');
 
 if (noSubmit('pruneSubmit')) {
     $template->token = $token->create('Control Panel/Prune', '', $vars::NONCE_FORM_EXP);
-    $template->forumselect = $core->forumList('pruneFromList', true, false);
+    $template->forumselect = $core->forumList('pruneFromList', multiple: true, allowall: false);
     $body = $template->process('admin_prune.php');
 } else {
     $core->request_secure('Control Panel/Prune', '', error_header: true);

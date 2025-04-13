@@ -81,8 +81,8 @@ class Validation
             }
         }
 
-        foreach($input as &$theObject) {
-            switch($valueType) {
+        foreach ($input as &$theObject) {
+            switch ($valueType) {
                 case 'onoff':
                     if (strtolower($theObject) !== 'on') {
                         $theObject = 'off';

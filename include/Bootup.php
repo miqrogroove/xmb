@@ -77,7 +77,7 @@ class Bootup
             'show_full_info' => 'SHOWFULLINFO',
             'comment_output' => 'COMMENTOUTPUT',
         ];
-        foreach($config_array as $key => $value) {
+        foreach ($config_array as $key => $value) {
             if ($this->vars->$key === $value) {
                 header('HTTP/1.0 500 Internal Server Error');
                 exit('Configuration Problem: XMB is not yet installed.<br />The <code>$'.$key.'</code> has not been specified in <code>conifg.php</code>.<br /><br />To start the install, just <a href="install/">click here</a>.');
@@ -133,16 +133,14 @@ class Bootup
         }
 
         // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
-        if (basename($_SERVER['SCRIPT_NAME']) != 'search.php') {
-            $url_check = Array('%3c', '<', ':/');
-            foreach($url_check as $name) {
-                if (strpos(strtolower($this->vars->url), $name) !== false) {
-                    header('HTTP/1.0 403 Forbidden');
-                    exit('403 Forbidden - URL rejected by XMB');
-                }
+        $url_check = ['%3c', '<', ':/'];
+        foreach ($url_check as $name) {
+            if (strpos(strtolower($this->vars->url), $name) !== false) {
+                header('HTTP/1.0 403 Forbidden');
+                exit('403 Forbidden - URL rejected by XMB');
             }
-            unset($url_check);
         }
+        unset($url_check);
 
         // Check for double-slash problems in REQUEST_URI
         if (substr($this->vars->url, 0, strlen($this->vars->cookiepath)) != $this->vars->cookiepath || substr($this->vars->url, strlen($this->vars->cookiepath), 1) == '/') {

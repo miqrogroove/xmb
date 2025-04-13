@@ -50,12 +50,12 @@ if (onSubmit('gid')) {
     } elseif ($cat['type'] != 'group') {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnocat']);
-    } elseif (!isset($forums['forum'][$gid])) {
+    } elseif (! isset($forums['forum'][$gid])) {
         // Does this user not have permissions for any existing forums in this group?
         $allforums = $core->getStructuredForums(usePerms: false);
         if (isset($allforums['forum'][$gid])) {
             if (X_GUEST) {
-                $core->redirect("{$full_url}misc.php?action=login", 0);
+                $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
                 exit;
             } else {
                 $core->error($lang['privforummsg']);

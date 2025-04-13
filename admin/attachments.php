@@ -63,7 +63,7 @@ $table = $template->process('admin_table.php');
 $action = getPhpInput('action', 'g');
 
 if ($action == '' && noSubmit('attachsubmit') && noSubmit('searchsubmit')) {
-    $template->forumselect = $core->forumList('forumprune', false, true);
+    $template->forumselect = $core->forumList('forumprune');
     $body = $template->process('admin_attachments_search.php');
 }
 

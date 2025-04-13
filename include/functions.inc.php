@@ -690,7 +690,7 @@ class Core
 
             // Link to first page
             $multipage .= "\n";
-            if ($page != 1 || !$isself) {
+            if ($page != 1 || ! $isself) {
                 $extra = '';
                 if ($isself) {
                     if (2 == $page) {
@@ -757,13 +757,14 @@ class Core
     /**
      * Determine how many pages exist in a paged set of records.
      *
+     * @since 1.9
      * @param int $things Total record count.
      * @param int $thingsperpage How many records per page.
      * @return int Total pages.
      */
     public function quickpage(int $things, int $thingsperpage): int
     {
-        return ((($things > 0) && ($thingsperpage > 0) && ($things > $thingsperpage)) ? ceil($things / $thingsperpage) : 1);
+        return ($thingsperpage > 0 && $things > $thingsperpage) ? (int) ceil($things / $thingsperpage) : 1;
     }
 
     /**
@@ -1303,12 +1304,13 @@ class Core
      *
      * @since 1.9.11
      * @param bool $usePerms If TRUE then not all forums are returned, only visible forums.
+     * @param string $permLevel Whether the results should consider 'forum' visibility, or 'thread' visibility.
      * @return array
      */
-    function getStructuredForums(bool $usePerms = false): array
+    public function getStructuredForums(bool $usePerms = false, string $permLevel = 'forum'): array
     {
         if ($usePerms) {
-            $forums = $this->permittedForums('forum');
+            $forums = $this->permittedForums($permLevel);
         } else {
             $forums = $this->forums->forumCache();
         }
@@ -1352,11 +1354,9 @@ class Core
         foreach ($forumcache as $forum) {
             $perms = $this->checkforumpermissions($forum, $user_status);
             if ($mode == 'thread') {
-                // Forum groups are technically permitted. They need to be included in parent status checking later, but don't need to be included in the output.
+                // Forum groups are always permitted. They need to be included, even in thread mode.
                 if ($forum['type'] == 'group' || ($perms[$this->vars::PERMS_VIEW] && $perms[$this->vars::PERMS_PASSWORD])) {
-                    if ($forum['type'] !== 'group') {
-                        $permitted[] = $forum;
-                    }
+                    $permitted[] = $forum;
                     $fids[$forum['type']][] = $forum['fid'];
                 }
             } elseif ($mode == 'forum') {
@@ -1364,6 +1364,8 @@ class Core
                     $permitted[] = $forum;
                     $fids[$forum['type']][] = $forum['fid'];
                 }
+            } else {
+                throw new InvalidArgumentException('The mode must be set to "thread" or "forum"');
             }
         }
 
@@ -1469,8 +1471,9 @@ class Core
      * @param bool $multiple Should the element render as a multi-select control?
      * @param bool $allowall Should an "All" forums choice be offered?
      * @param int $currentfid Context-sensitive forum ID.
+     * @param string $permLevel Whether the results should consider 'forum' visibility, or 'thread' visibility.
      */
-    public function forumList(string $selectname='srchfid', bool $multiple = false, bool $allowall = true, int $currentfid = 0)
+    public function forumList(string $selectname = 'srchfid', bool $multiple = false, bool $allowall = true, int $currentfid = 0, string $permLevel = 'forum'): string
     {
         $lang = &$this->vars->lang;
 
@@ -1488,12 +1491,12 @@ class Core
             } else {
                 $forumselect[] = '<option value="all">'.$lang['textallforumsandsubs'].'</option>';
             }
-        } elseif (!$allowall && !$multiple) {
+        } elseif (! $allowall && ! $multiple) {
             $forumselect[] = '<option value="" disabled="disabled" selected="selected">'.$lang['textforum'].'</option>';
         }
 
         // Populate $forumselect
-        $permitted = $this->getStructuredForums(usePerms: true);
+        $permitted = $this->getStructuredForums(usePerms: true, permLevel: $permLevel);
 
         foreach ($permitted['forum']['0'] as $forum) {
             $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';

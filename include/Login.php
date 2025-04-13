@@ -245,7 +245,7 @@ class Login
             break;
         case 'guest':
             if (X_GUEST) {
-                if ($this->vars->settings['bboffreason']['regstatus'] == 'on') {
+                if ($this->vars->settings['regstatus'] == 'on') {
                     $message = $this->vars->lang['reggedonly'].' '.$this->template->reglink.' '.$this->vars->lang['textor'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';
                 } else {
                     $message = $this->vars->lang['reggedonly'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';

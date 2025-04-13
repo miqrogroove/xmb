@@ -1,4 +1,4 @@
-<form method="get" action="search.php">
+<form method="post" action="<?= $full_url ?>search.php">
 <input type="hidden" name="token" value="" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
@@ -33,13 +33,13 @@
 <option value="7948800"><?= $lang['month3'] ?></option>
 <option value="15897600"><?= $lang['month6'] ?></option>
 <option value="31536000"><?= $lang['lastyear'] ?></option>
-<option value="0" <?= $selHTML ?>><?= $lang['beginning'] ?></option>
+<option value="0" <?= $selected ?>><?= $lang['beginning'] ?></option>
 </select>
 </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['srchfilter_double'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="filter_distinct" value="yes" checked="checked" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="distinct" value="yes" checked="checked" /></td>
 </tr>
 <?= $captchasearchcheck ?>
 <tr class="ctrtablerow">

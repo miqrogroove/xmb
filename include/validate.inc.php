@@ -98,7 +98,7 @@ function getRawInput(string $varname, string $sourcearray = 'p'): string|array|n
 {
     $retval = null;
 
-    switch($sourcearray) {
+    switch ($sourcearray) {
         case 'p':
             $sourcearray = &$_POST;
             break;
@@ -151,7 +151,7 @@ function attrOut(string $rawstring, string $word = ''): string
 function decimalEntityDecode(string $rawstring): string
 {
     $currPos = 0;
-    while(($currPos = strpos($rawstring, '&amp;#', $currPos)) !== false) {
+    while (($currPos = strpos($rawstring, '&amp;#', $currPos)) !== false) {
         $tempPos = strpos($rawstring, ';', $currPos + 6);
         $entLen = $tempPos - ($currPos + 6);
         if ($entLen >= 3 && $entLen <= 6) {

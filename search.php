@@ -20,99 +20,81 @@
  * If not, see https://www.gnu.org/licenses/
  */
 
-// TODO: Refactor needed.
+declare(strict_types=1);
+
+namespace XMB;
+
+require './header.php';
 
 $core = \XMB\Services\core();
+$db = \XMB\Services\db();
 $smile = \XMB\Services\smile();
+$template = \XMB\Services\template();
+$validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
+$lang = &$vars->lang;
 
-require 'header.php';
+$core->nav($lang['textsearch']);
 
-loadtemplates(
-'misc_feature_notavailable',
-'search',
-'search_captcha',
-'search_nextlink',
-'search_results',
-'search_results_none',
-'search_results_row'
-);
+$misc = '';
+$multipage = '';
+$template->nextlink = '';
 
-nav($lang['textsearch']);
-
-$misc = $multipage = $nextlink = '';
-
-if ($SETTINGS['searchstatus'] != 'on') {
+if ($vars->settings['searchstatus'] != 'on') {
     header('HTTP/1.0 403 Forbidden');
-    eval('echo "'.template('header').'";');
-    eval('echo "'.template('misc_feature_notavailable').'";');
-    end_time();
-    eval('echo "'.template('footer').'";');
-    exit();
+    $header = $template->process('header.php');
+    $misc = $template->process('misc_feature_notavailable.php');
+    $template->footerstuff = $core->end_time();
+    $footer = $template->process('footer.php');
+    echo $header, $misc, $footer;
+    exit;
 }
 
-if (!isset($searchsubmit) && !isset($page)) {
-// Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
-    $url_check = Array('%3c', '<', ':/');
-    foreach($url_check as $name) {
-        if (strpos(strtolower($url), $name) !== FALSE) {
-            header('HTTP/1.0 403 Forbidden');
-            exit('403 Forbidden - URL rejected by XMB');
-        }
-    }
-    unset($url_check);
-    
-    setCanonicalLink('search.php');
+$searchsubmit = getPhpInput('searchsubmit');
+$page = formInt('page');
+$ppp = $vars->ppp;
 
-    $forumselect = forumList('f', TRUE, TRUE, getInt('fid'));
+if (empty($searchsubmit) && empty($page)) {
+    $core->setCanonicalLink('search.php');
 
-    $captchasearchcheck = '';
+    // Users won't be able to see results without thread view permission, so also restrict the forum selector to the thread permission level.
+    $template->forumselect = $core->forumList('f', multiple: true, currentfid: getInt('fid'), permLevel: 'thread');
+    $template->selected = $vars::selHTML;
+
+    $template->captchasearchcheck = '';
     if (X_GUEST) {
-        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
+        if ($vars->settings['captcha_status'] == 'on' && $vars->settings['captcha_search_status'] == 'on') {
             $Captcha = new Captcha($core, $vars);
             if ($Captcha->bCompatible !== false) {
-                $imghash = $Captcha->GenerateCode();
-                if ($SETTINGS['captcha_code_casesensitive'] == 'off') {
+                $template->imghash = $Captcha->GenerateCode();
+                if ($vars->settings['captcha_code_casesensitive'] == 'off') {
                     $lang['captchacaseon'] = '';
                 }
-                eval('$captchasearchcheck = "'.template('search_captcha').'";');
+                $template->captchasearchcheck = $template->process('search_captcha.php');
             }
         }
     }
 
-    eval('$search = "'.template('search').'";');
-    $misc = $search;
+    $misc = $template->process('search.php');
 } else {
     header('X-Robots-Tag: noindex');
 
-    $srchtxt = postedVar('srchtxt', '', FALSE, FALSE, FALSE, 'g');
-    $srchuname = postedVar('srchuname', '', TRUE, TRUE, FALSE, 'g');
-    $rawsrchuname = postedVar('srchuname', '', FALSE, FALSE, FALSE, 'g');
-    $filter_distinct = postedVar('filter_distinct', '', FALSE, FALSE, FALSE, 'g');
-    $srchfid = postedArray(
+    $srchtxt = getPhpInput('srchtxt');
+    $srchuname = $validate->postedVar('srchuname');
+    $rawsrchuname = getPhpInput('srchuname', 'g');
+    $distinct = getPhpInput('distinct');
+    // Value 'all' is coerced to 0 here, so 0 is now correctly interpreted as all selecting all forums.
+    $srchfid = $validate->postedArray(
         varname: 'f',
         valueType: 'int',
-        source: 'g',
     );
-    $srchfield = postedVar('srchfield', '', FALSE, FALSE, FALSE, 'g');
-    $page = getInt('page');
-    $srchfrom = getInt('srchfrom');
+    $srchfield = getPhpInput('srchfield');
+    $srchfrom = formInt('srchfrom');
     if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
-        error($lang['nosearchq']);
+        $core->error($lang['nosearchq']);
     }
-    if (!X_STAFF) {
-        // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
-        if ($srchtxt !== $smile->censor($srchtxt) || strpos($srchtxt, '<') !== FALSE || strpos($srchuname, '<') !== FALSE) {
-            error($lang['searchinvalid']);
-        }
-        $url_check = Array('%3c', '<', ':/');
-        foreach($url_check as $name) {
-            if (strpos(strtolower($url), $name) !== FALSE) {
-                header('HTTP/1.0 403 Forbidden');
-                exit('403 Forbidden - URL rejected by XMB');
-            }
-        }
-        unset($url_check);
+    if ($srchtxt !== $smile->censor($srchtxt)) {
+        $core->error($lang['searchinvalid']);
     }
 
     if (strlen($srchuname) < 3) {
@@ -120,35 +102,30 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
 
     if (X_GUEST) {
-        if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
+        if ($vars->settings['captcha_status'] == 'on' && $vars->settings['captcha_search_status'] == 'on') {
             if ($page > 1) {
-                error($lang['searchguesterror']);
+                $core->error($lang['searchguesterror']);
             }
             $Captcha = new Captcha($core, $vars);
             if ($Captcha->bCompatible !== false) {
-                $imgcode = postedVar('imgcode', '', FALSE, FALSE, FALSE, 'g');
-                $imghash = postedVar('imghash', '', TRUE, TRUE, FALSE, 'g');
-                if ($Captcha->ValidateCode($imgcode, $imghash) !== TRUE) {
-                    error($lang['captchaimageinvalid']);
+                $imgcode = getPhpInput('imgcode', 'g');
+                $imghash = $validate->postedVar('imghash', sourcearray: 'g');
+                if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
+                    $core->error($lang['captchaimageinvalid']);
                 }
             }
             unset($Captcha);
         }
     }
 
-    $searchresults = '';
+    $template->searchresults = '';
 
     if ($page < 1) {
         $page = 1;
     }
-    $offset = ($page-1) * ($ppp);
+    $offset = ($page - 1) * ($ppp);
     $start = $offset;
-    $pagenum = $page+1;
-
-    $forums = implode(',', $core->permittedFIDsForThreadView());
-    $sql = "SELECT p.*, t.subject AS tsubject "
-         . "FROM ".X_PREFIX."posts AS p INNER JOIN ".X_PREFIX."threads AS t USING(tid) INNER JOIN ".X_PREFIX."forums AS f ON f.fid=t.fid "
-         . "WHERE f.fid IN($forums)";
+    $template->page = $page + 1;
 
     if ($srchfrom <= 0) {
         $srchfrom = $vars->onlinetime;
@@ -158,62 +135,72 @@ if (!isset($searchsubmit) && !isset($page)) {
     }
     $srchfrom = $vars->onlinetime - $srchfrom;
 
-    $ext = array();
-    if (!empty($srchtxt)) {
-        $sqlsrch = array();
+    $where = [];
+    $ext = [];
+    if (! empty($srchtxt)) {
         $srchtxtsq = explode(' ', $srchtxt);
-        $sql .= ' AND (';
-        foreach($srchtxtsq as $stxt) {
+        foreach ($srchtxtsq as $stxt) {
             $dblikebody = $db->like_escape(addslashes(cdataOut($stxt)));  //Messages are historically double-slashed.
             $dblikesub = $db->like_escape(addslashes(attrOut($stxt)));
             if ($srchfield == 'body') {
-                $sqlsrch[] = "p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%'";
+                $where[] = "(p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%')";
                 $ext[] = 'srchfield=body';
             } else {
-                $sqlsrch[] = "p.subject LIKE '%$dblikesub%'";
+                $where[] = "p.subject LIKE '%$dblikesub%'";
             }
         }
 
-        $sql .= implode(') AND (', $sqlsrch);
-        $sql .= ')';
-        $ext[] = 'srchtxt='.rawurlencode($srchtxt);
+        $ext[] = 'srchtxt=' . rawurlencode($srchtxt);
     }
 
     if ($srchuname != '') {
-        $sql .= " AND p.author='$srchuname'";
-        $ext[] = 'srchuname='.rawurlencode($rawsrchuname);
+        $where[] = "p.author = '$srchuname'";
+        $ext[] = 'srchuname=' . rawurlencode($rawsrchuname);
     }
 
-    if (count($srchfid) > 0) {
-        if (0 != $srchfid[0]) {
-            $srchfidcsv = implode(',', $srchfid);
-            $sql .= " AND f.fid IN ($srchfidcsv)";
-            $ext[] = "f=$srchfidcsv";
-        }
+    $forums = $core->permittedFIDsForThreadView();
+    $allForums = true;
+    if (count($srchfid) > 0 && ! in_array(0, $srchfid)) {
+        $allForums = false;
+        $forums = array_intersect($forums, $srchfid);
+    }
+
+    $srchfidcsv = implode(',', $forums);
+    $where[] = "f.fid IN ($srchfidcsv)";
+    
+    if ($allForums) {
+        $f = '0';
+    } else {
+        $f = $srchfidcsv;
     }
 
     if ($srchfrom) {
-        $sql .= " AND p.dateline >= $srchfrom";
+        $where[] = "p.dateline >= $srchfrom";
         $ext[] = "srchfrom=$srchfromold";
     }
 
     $counter = 1;
     $ppp++; // Peek at next page.
-    $sql .=" ORDER BY dateline DESC LIMIT $start, $ppp";
 
-    if (strlen($forums) == 0) {
+    if (strlen($srchfidcsv) == 0) {
         $results = 0;
     } else {
+        $where = implode(' AND ', $where);
+        $sql = "SELECT p.*, t.subject AS tsubject "
+             . "FROM " . $vars->tablepre . "posts AS p INNER JOIN " . $vars->tablepre . "threads AS t USING (tid) INNER JOIN " . $vars->tablepre . "forums AS f ON f.fid = t.fid "
+             . "WHERE $where "
+             . "ORDER BY dateline DESC LIMIT $start, $ppp";
+
         $querysrch = $db->query($sql);
         $results = $db->num_rows($querysrch);
     }
 
-    $temparray = array();
+    $temparray = [];
     $searchresults = '';
 
-    while($results != 0 && $counter < $ppp && $post = $db->fetch_array($querysrch)) {
+    while ($results != 0 && $counter < $ppp && $post = $db->fetch_array($querysrch)) {
         $counter++;
-        if ($filter_distinct != 'yes' || !array_key_exists($post['tid'], $temparray)) {
+        if ($distinct != 'yes' || ! array_key_exists($post['tid'], $temparray)) {
             $temparray[$post['tid']] = true;
             $message = stripslashes($post['message']);
 
@@ -228,18 +215,18 @@ if (!isset($searchsubmit) && !isset($page)) {
 
             if ($position <= $show_num) {
                 $min = 0;
-                $add_pre = '';
+                $template->add_pre = '';
             } else {
                 $min = $position - $show_num;
-                $add_pre = '...';
+                $template->add_pre = '...';
             }
 
             if (($msg_leng - $position) <= $show_num) {
                 $max = $msg_leng;
-                $add_post = '';
+                $template->add_post = '';
             } else {
                 $max = $position + $show_num;
-                $add_post = '...';
+                $template->add_post = '...';
             }
 
             if (trim($post['subject']) == '') {
@@ -248,38 +235,49 @@ if (!isset($searchsubmit) && !isset($page)) {
 
             $show = substr($message, $min, $max - $min);
             $post['subject'] = stripslashes($post['subject']);
-            if (!empty($srchtxt)) {
-                foreach($srchtxtsq as $stxt) {
+            if (! empty($srchtxt)) {
+                foreach ($srchtxtsq as $stxt) {
                     $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
                     $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
                 }
             }
 
-            $show = postify($show, 'no', 'yes', 'yes', 'no', 'no', 'no');
-            $post['subject'] = rawHTMLsubject($post['subject']);
+            $template->show = $core->postify($show, bbcodeoff: 'yes', allowbbcode: 'no', allowimgcode: 'no');
+            $post['subject'] = $core->rawHTMLsubject($post['subject']);
 
-            $date = gmdate($dateformat, core()->timeKludge((int) $post['dateline']));
-            $time = gmdate($timecode, core()->timeKludge((int) $post['dateline']));
+            $date = gmdate($vars->dateformat, $core->timeKludge((int) $post['dateline']));
+            $time = gmdate($vars->timecode, $core->timeKludge((int) $post['dateline']));
 
-            $poston = $date.' '.$lang['textat'].' '.$time;
-            $postby = $post['author'];
-            eval('$searchresults .= "'.template('search_results_row').'";');
+            $template->poston = $date.' '.$lang['textat'].' '.$time;
+            $template->postby = $post['author'];
+            $template->tid = $post['tid'];
+            $template->pid = $post['pid'];
+            $template->subject = $post['subject'];
+
+            $template->searchresults .= $template->process('search_results_row.php');
         }
     }
 
     if ($results == 0) {
-        eval('$searchresults = "'.template('search_results_none').'";');
-    } else if ($results == $ppp) {
+        $template->searchresults = $template->process('search_results_none.php');
+    } elseif ($results == $ppp) {
         // create a string containing the stuff to search for
-        $ext = implode('&', $ext);
-        eval('$nextlink = "'.template('search_nextlink').'";');
+        $template->ext = implode('&', $ext);
+        $template->distinct = $distinct;
+        $template->nextlink = $template->process('search_nextlink.php');
     }
 
-    eval('$search = "'.template('search_results').'";');
-    $misc = $search;
+    $template->distinct = attrOut($distinct);
+    $template->f = attrOut($f);
+    $template->srchfield = attrOut($srchfield);
+    $template->srchfrom = attrOut((string) $srchfromold);
+    $template->srchtxt = attrOut($srchtxt);
+    $template->srchuname = attrOut(getPhpInput('srchuname'));
+    
+    $misc = $template->process('search_results.php');
 }
 
-eval('$header = "'.template('header').'";');
-end_time();
-eval('$footer = "'.template('footer').'";');
+$header = $template->process('header.php');
+$template->footerstuff = $core->end_time();
+$footer = $template->process('footer.php');
 echo $header, $misc, $footer;
