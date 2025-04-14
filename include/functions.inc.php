@@ -313,7 +313,7 @@ class Core
         for($i = 0; $i < sizeof($messagearray); $i++) {
             if ($i % 2 == 0) {
                 $messagearray[$i] = explode($br, $messagearray[$i]);
-                foreach($messagearray[$i] as $key => $val) {
+                foreach ($messagearray[$i] as $key => $val) {
                     $messagearray[$i][$key] = wordwrap($val, 150, "\n", TRUE);
                 }
                 $messagearray[$i] = implode($br, $messagearray[$i]);
@@ -1429,7 +1429,7 @@ class Core
         if (isset($cat['fid'])) {
             // Group forums.
             if (isset($forums['forum'][$cat['fid']])) {
-                foreach($forums['forum'][$cat['fid']] as $forum) {
+                foreach ($forums['forum'][$cat['fid']] as $forum) {
                     $forum['cat_fid'] = $cat['fid'];
                     $forum['cat_name'] = $cat['name'];
                     $sorted[] = $forum;
@@ -1437,22 +1437,22 @@ class Core
             }
         } elseif ($catsonly) {
             // Groups instead of forums.
-            foreach($forums['group']['0'] as $group) {
+            foreach ($forums['group']['0'] as $group) {
                 $group['cat_fid'] = $group['fid'];
                 $group['cat_name'] = $group['name'];
                 $sorted[] = $group;
             }
         } else {
             // Ungrouped forums.
-            foreach($forums['forum']['0'] as $forum) {
+            foreach ($forums['forum']['0'] as $forum) {
                 $forum['cat_fid'] = '0';
                 $forum['cat_name'] = '';
                 $sorted[] = $forum;
             }
             // Grouped forums.
-            foreach($forums['group']['0'] as $group) {
+            foreach ($forums['group']['0'] as $group) {
                 if (isset($forums['forum'][$group['fid']])) {
-                    foreach($forums['forum'][$group['fid']] as $forum) {
+                    foreach ($forums['forum'][$group['fid']] as $forum) {
                         $forum['cat_fid'] = $group['fid'];
                         $forum['cat_name'] = $group['name'];
                         $sorted[] = $forum;
@@ -1549,27 +1549,27 @@ class Core
             return '';
         }
 
-        foreach($permitted['forum']['0'] as $forum) {
+        foreach ($permitted['forum']['0'] as $forum) {
             $dropselc1 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
             $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
             if (isset($permitted['sub'][$forum['fid']])) {
-                foreach($permitted['sub'][$forum['fid']] as $sub) {
+                foreach ($permitted['sub'][$forum['fid']] as $sub) {
                     $dropselc2 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
                     $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                 }
             }
         }
 
-        foreach($permitted['group']['0'] as $group) {
+        foreach ($permitted['group']['0'] as $group) {
             if (isset($permitted['forum'][$group['fid']])) {
                 $dropselc3 = ($checkid == $group['fid']) ? $this->vars::selHTML : '';
                 $forumselect[] = '<option value=""></option>';
                 $forumselect[] = '<option value="' . $full_url . 'index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.fnameOut($group['name']).'</option>';
-                foreach($permitted['forum'][$group['fid']] as $forum) {
+                foreach ($permitted['forum'][$group['fid']] as $forum) {
                     $dropselc4 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
                     $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
                     if (isset($permitted['sub'][$forum['fid']])) {
-                        foreach($permitted['sub'][$forum['fid']] as $sub) {
+                        foreach ($permitted['sub'][$forum['fid']] as $sub) {
                             $dropselc5 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
                             $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
                         }
@@ -1622,7 +1622,7 @@ class Core
 
         // 2. Check Forum Postperm
         $pp = explode(',', $forum['postperm']);
-        foreach($pp as $key=>$val) {
+        foreach ($pp as $key => $val) {
             if ((intval($val) & $user_status) != 0) {
                 $ret[$key] = true;
             }
@@ -1635,9 +1635,9 @@ class Core
             if ($this->modcheck($this->vars->self['username'], $forum['moderator'], false) == "Moderator") {
                 $ret[$this->vars::PERMS_USERLIST] = true;
                 $ret[$this->vars::PERMS_VIEW] = true;
-            } elseif (!X_GUEST) {
+            } elseif (! X_GUEST) {
                 $users = explode(',', $userlist);
-                foreach($users as $user) {
+                foreach ($users as $user) {
                     if (strtolower(trim($user)) === strtolower($this->vars->self['username'])) {
                         $ret[$this->vars::PERMS_USERLIST] = true;
                         $ret[$this->vars::PERMS_VIEW] = true;
@@ -1681,10 +1681,37 @@ class Core
      * @param int $bitfield Enumerated by X_PERMS_RAW* constants.  Other X_PERMS_* values will not work!
      * @return int
      */
-    function getOneForumPerm(array $forum, int $bitfield): int
+    public function getOneForumPerm(array $forum, int $bitfield): int
     {
         $pp = explode(',', $forum['postperm']);
         return (int) $pp[$bitfield];
+    }
+
+    /**
+     * Takes a full path like /forum/faq.php and coverts it to a full URL like https://example.com/forum/faq.php
+     *
+     * @since 1.10.00
+     */
+    public function makeFullURL(string $path): string
+    {
+        $expectedLen = strlen($this->vars->cookiepath);
+        $expectedPath = substr($path, 0, $expectedLen);
+
+        if ($expectedPath == $this->vars->cookiepath) {
+            // This is normal.
+            $newurl = $this->vars->full_url . substr($path, $expectedLen);
+        } elseif (substr($path, 0, strlen($this->vars->full_url)) !== $this->vars->full_url) {
+            // This is unexpected and should be audited.  If the URI doesn't start with a slash or a full URL then something is misconfigured.
+            if ($this->vars->debug) {
+                throw new InvalidArgumentException('Unexpected URI.  Check the caller for bugs.');
+            } else {
+                throw new InvalidArgumentException('Unexpected URI.  Try debug mode.');
+            }
+        } else {
+            $newurl = $path;
+        }
+
+        return $newurl;
     }
 
     /**
@@ -1695,7 +1722,7 @@ class Core
      * @since 1.9 Formerly known as pwverify().
      * @since 1.9.9
      */
-    function handlePasswordDialog(int $fid)
+    public function handlePasswordDialog(int $fid)
     {
         $pwinput = getPhpInput('pw');
         $forum = $this->forums->getForum($fid);
@@ -1704,16 +1731,9 @@ class Core
             if ($pwinput === $forum['password']) {
                 $this->put_cookie('fidpw' . $fid, $forum['password'], time() + (86400*30));
                 $newurl = preg_replace('/[^\x20-\x7e]/', '', $this->vars->url);
-                if (substr($newurl, 0, 1) === '/') {
-                    // This is normal.
-                    $newurl = $this->vars->full_url . substr($newurl, strlen($this->vars->cookiepath));
-                } elseif (substr($newurl, 0, strlen($this->vars->full_url)) !== $this->vars->full_url) {
-                    // This is unexpected and should be audited.  If the URI doesn't start with a slash or a full URL then something is misconfigured on the client or the server.
-                    trigger_error('Forum password posted with unexpected URI: ' . $this->vars->url, E_USER_WARNING);
-                    $newurl = $this->vars->full_url;
-                }
+                $newurl = $this->makeFullURL($newurl);
                 $this->redirect($newurl, timeout: 0);
-                exit();
+                exit;
             } else {
                 $message = $this->vars->lang['invalidforumpw'];
             }

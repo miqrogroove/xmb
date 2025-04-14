@@ -28,6 +28,7 @@ require './header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$forums = \XMB\Services\forums();
 $login = \XMB\Services\login();
 $observer = \XMB\Services\observer();
 $session = \XMB\Services\session();
@@ -187,7 +188,6 @@ switch ($action) {
         break;
 
     case 'online':
-// TODO: Refactor still needed.
         require XMB_ROOT . 'include/online.inc.php';
 
         if ($SETTINGS['whosonlinestatus'] == 'off') {
@@ -200,8 +200,10 @@ switch ($action) {
             exit;
         }
 
+        $urlSvc = new URL2Text($core, $db, $forums, $smile, $vars);
+
         $count = $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "whosonline"));
-        $mpage = $core->multipage($count, $tpp, 'misc.php?action=online');
+        $mpage = $core->multipage((int) $count, $vars->tpp, $vars->full_url . 'misc.php?action=online');
         $template->multipage = $mpage['html'];
         if (strlen($mpage['html']) != 0) {
             if (X_ADMIN) {
@@ -213,7 +215,8 @@ switch ($action) {
 
         $where = "WHERE username != 'xguest123'";
         if (! X_ADMIN) {
-            $where .= " AND (invisible != '1' OR username='$xmbuser')";
+            $xmbuser = $vars->xmbuser;
+            $where .= " AND (invisible != '1' OR username = '$xmbuser')";
         }
 
         // UNION Syntax Reminder: "Use of ORDER BY for individual SELECT statements implies nothing about the order in which the rows appear."
@@ -223,28 +226,28 @@ switch ($action) {
              . "SELECT username, 2 AS sort_col, ip, `time`, location, invisible "
              . "FROM " . $vars->tablepre . "whosonline WHERE username = 'xguest123' "
              . "ORDER BY sort_col, username, `time` DESC "
-             . "LIMIT {$mpage['start']}, $tpp";
+             . "LIMIT {$mpage['start']}, " . $vars->tpp;
         $query = $db->query($sql);
 
-        $onlineusers = '';
+        $template->onlineusers = '';
         while ($online = $db->fetch_array($query)) {
-            $array = url_to_text($online['location']);
-            $template->onlinetime = gmdate($timecode, $core->timeKludge((int) $online['time']));
+            $array = $urlSvc->convert($online['location']);
+            $template->onlinetime = gmdate($vars->timecode, $core->timeKludge((int) $online['time']));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
 
             $online['location'] = shortenString($array['text'], 80);
             if (X_STAFF) {
-                $online['location'] = '<a href="'.$array['url'].'">'.shortenString($array['text'], 80).'</a>';
+                $online['location'] = "<a href='{$array['url']}'>" . shortenString($array['text'], 80) . '</a>';
             }
 
             if ('1' === $online['invisible'] && (X_ADMIN || $online['username'] === $xmbuser)) {
-                $hidden = ' ('.$lang['hidden'].')';
+                $hidden = " ({$lang['hidden']})";
             } else {
                 $hidden = '';
             }
 
             if (X_SADMIN && $online['username'] != 'xguest123' && $online['username'] !== $lang['textguest1']) {
-                $online['username'] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($online['username']).'">'.$username.'</a>'.$hidden;
+                $online['username'] = "<a href='" . $vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($online['username']) . "'>$username</a>$hidden";
             } else {
                 $online['username'] = $username;
             }
@@ -271,6 +274,7 @@ switch ($action) {
         break;
 
     case 'onlinetoday':
+// TODO: Refactor still needed.
         if ($SETTINGS['whosonlinestatus'] == 'off' || $SETTINGS['onlinetoday_status'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
             $header = $template->process('header.php');
