@@ -30,7 +30,7 @@
 <td valign="top" class="tablerow" style="height: 30px; width: 82%;">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
-<td class="smalltxt" valign="top"><?= $icon ?> <a href="<?= $full_url ?>viewthread.php?tid=<?= $tid ?>&amp;goto=search&amp;pid=<?= $pid ?>" title="<?= $linktitle ?>" rel="nofollow"><?= $poston ?></a></td>
+<td class="smalltxt" valign="top"><?= $icon ?> <a href="<?= $full_url ?>viewthread.php?tid=<?= $tid ?>&amp;goto=search&amp;pid=<?= $pid ?>" title="<?= $linktitle ?>" rel="nofollow"><?= $poston ?> (#<?= $pid ?>)</a></td>
 <td class="smalltxt" align="right" valign="top"><?= $edit ?><?= $repquote ?><?= $reportlink ?></td>
 </tr>
 </table>
