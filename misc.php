@@ -192,26 +192,27 @@ switch ($action) {
 
         if ($SETTINGS['whosonlinestatus'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
+            $header = $template->process('header.php');
+            $misc = $template->process('misc_feature_notavailable.php');
+            $template->footerstuff = $core->end_time();
+            $footer = $template->process('footer.php');
+            echo $header, $misc, $footer;
+            exit;
         }
 
-        $count = $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "whosonline"), 0);
-        $mpage = multipage($count, $tpp, 'misc.php?action=online');
-        $multipage =& $mpage['html'];
+        $count = $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "whosonline"));
+        $mpage = $core->multipage($count, $tpp, 'misc.php?action=online');
+        $template->multipage = $mpage['html'];
         if (strlen($mpage['html']) != 0) {
             if (X_ADMIN) {
-                eval('$multipage = "'.template('misc_online_multipage_admin').'";');
+                $template->multipage = $template->process('misc_online_multipage_admin.php');
             } else {
-                eval('$multipage = "'.template('misc_online_multipage').'";');
+                $template->multipage = $template->process('misc_online_multipage.php');
             }
         }
 
         $where = "WHERE username != 'xguest123'";
-        if (!X_ADMIN) {
+        if (! X_ADMIN) {
             $where .= " AND (invisible != '1' OR username='$xmbuser')";
         }
 
@@ -226,9 +227,9 @@ switch ($action) {
         $query = $db->query($sql);
 
         $onlineusers = '';
-        while($online = $db->fetch_array($query)) {
+        while ($online = $db->fetch_array($query)) {
             $array = url_to_text($online['location']);
-            $vars->onlinetime = gmdate ($timecode, $core->timeKludge((int) $online['time']));
+            $template->onlinetime = gmdate($timecode, $core->timeKludge((int) $online['time']));
             $username = str_replace('xguest123', $lang['textguest1'], $online['username']);
 
             $online['location'] = shortenString($array['text'], 80);
@@ -248,20 +249,23 @@ switch ($action) {
                 $online['username'] = $username;
             }
 
+            $template->online = $online;
             if (X_ADMIN) {
-                eval('$onlineusers .= "'.template('misc_online_row_admin').'";');
+                $template->online = $online;
+                $template->onlineusers .= $template->process('misc_online_row_admin.php');
             } else {
                 $online['invisible'] = '';
                 $online['ip'] = '';
-                eval('$onlineusers .= "'.template('misc_online_row').'";');
+                $template->online = $online;
+                $template->onlineusers .= $template->process('misc_online_row.php');
             }
         }
         $db->free_result($query);
 
         if (X_ADMIN) {
-            eval('$misc = "'.template('misc_online_admin').'";');
+            $misc = $template->process('misc_online_admin.php');
         } else {
-            eval('$misc = "'.template('misc_online').'";');
+            $misc = $template->process('misc_online.php');
         }
 
         break;
@@ -269,11 +273,12 @@ switch ($action) {
     case 'onlinetoday':
         if ($SETTINGS['whosonlinestatus'] == 'off' || $SETTINGS['onlinetoday_status'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
+            $header = $template->process('header.php');
+            $misc = $template->process('misc_feature_notavailable.php');
+            $template->footerstuff = $core->end_time();
+            $footer = $template->process('footer.php');
+            echo $header, $misc, $footer;
+            exit;
         }
 
         $datecut = $vars->onlinetime - (3600 * 24);
@@ -286,7 +291,7 @@ switch ($action) {
         $todaymembersnum = 0;
         $todaymembers = array();
         $pre = $suff = '';
-        while($memberstoday = $db->fetch_array($query)) {
+        while ($memberstoday = $db->fetch_array($query)) {
             $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
             $suff = '</span>';
             $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff. '</a>';
@@ -436,7 +441,7 @@ switch ($action) {
         if ($db->num_rows($querymem) == 0) {
             eval('$members = "'.template('misc_mlist_results_none').'";');
         } else {
-            while($member = $db->fetch_array($querymem)) {
+            while ($member = $db->fetch_array($querymem)) {
                 $member['regdate'] = gmdate($dateformat, $core->timeKludge((int) $member['regdate']));
 
                 $member['site'] = format_member_site($member['site']);
