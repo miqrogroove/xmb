@@ -63,7 +63,7 @@ $table = $template->process('admin_table.php');
 if (onSubmit('upgradesubmit')) {
     $core->request_secure('Control Panel/Insert Raw SQL', id: '', error_header: true);
 
-    $admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
+    $admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
 
     $upgrade = getPhpInput('upgrade');
     if (isset($_FILES['sql_file'])) {

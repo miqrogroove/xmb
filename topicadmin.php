@@ -613,7 +613,7 @@ switch ($action) {
                 $core->error($lang['cannotmergesamethread']);
             }
 
-            $queryadd1 = $db->query("SELECT t.replies, t.fid, f.type, f.fup FROM " . $vars->tablepre . "threads AS t LEFT JOIN " . $vars->tablepre . "forums AS f USING(fid) WHERE t.tid = '$othertid'");
+            $queryadd1 = $db->query("SELECT t.replies, t.fid, f.type, f.fup FROM " . $vars->tablepre . "threads AS t LEFT JOIN " . $vars->tablepre . "forums AS f USING (fid) WHERE t.tid = '$othertid'");
 
             if ($db->num_rows($queryadd1) == 0) {
                 $db->free_result($queryadd1);
@@ -647,7 +647,7 @@ switch ($action) {
             $query = $db->query("SELECT subject, author, icon FROM " . $vars->tablepre . "posts WHERE tid = $tid OR tid = '$othertid' ORDER BY dateline, pid ASC LIMIT 1");
             $thread = $db->fetch_array($query);
             $db->free_result($query);
-            $query = $db->query("SELECT author, dateline, pid FROM " . $vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline DESC LIMIT 0, 1");
+            $query = $db->query("SELECT author, dateline, pid FROM " . $vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline DESC LIMIT 1");
             $lastpost = $db->fetch_array($query);
             $db->free_result($query);
             $db->escape_fast($thread['author']);

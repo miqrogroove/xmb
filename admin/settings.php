@@ -62,7 +62,7 @@ $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
+$admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
 
 if (
     noSubmit('settingsubmit1')

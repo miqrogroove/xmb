@@ -38,7 +38,6 @@ class admin
         private DBStuff $db,
         private SessionMgr $session,
         private SQL $sql,
-        private Template $template,
         private Validation $validate,
         private Variables $vars
     ) {

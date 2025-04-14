@@ -61,7 +61,7 @@ $table = $template->process('admin_table.php');
 if (onSubmit('renamesubmit')) {
     $core->request_secure('Control Panel/Rename User', id: '', error_header: true);
 
-    $admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
+    $admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
 
     $vUserFrom = $validate->postedVar('frmUserFrom', dbescape: false);
     $vUserTo = $validate->postedVar('frmUserTo', dbescape: false);

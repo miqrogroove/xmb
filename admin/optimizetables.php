@@ -37,7 +37,7 @@ $validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
+$admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
 $schema = new \XMB\Schema($db, $vars);
 
 header('X-Robots-Tag: noindex');

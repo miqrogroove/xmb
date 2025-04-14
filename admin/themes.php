@@ -73,7 +73,7 @@ $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $template, $validate, $vars);
+$admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
 
 $single = '';
 $single_str = getPhpInput('single', 'g');
