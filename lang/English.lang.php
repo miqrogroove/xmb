@@ -529,7 +529,7 @@ $lang['memcp_otherinfo'] = "Other Information";
 $lang['memcp_otheroptions'] = "Other Options";
 $lang['memposts'] = "Posts";
 $lang['mergethreadmsg'] = "The topics have been merged. You are now being forwarded back to the thread list.";
-$lang['mergewithmsg'] = "TID of the topic to be merged and deleted:<br /><span class=\"smalltxt\">viewthread.php?tid=48, the tid would be 48</span>";
+$lang['mergewithmsg'] = "TID of the topic to be merged and deleted:<br /><span class=\"smalltxt\">(Warning: the thread's subject may be changed to the subject of the oldest post from the deleted thread.)</span>";
 $lang['message'] = "Message";
 $lang['misconlinetoday'] = "The following ";
 $lang['misconlinetoday2'] = " members have visited today...";
