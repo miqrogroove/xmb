@@ -58,7 +58,7 @@ class admin
         $db = $this->db;
         $lang = &$this->vars->lang;
 
-        if (strlen($userto) < $vars::USERNAME_MIN_LENGTH || strlen($userto) > $vars::USERNAME_MAX_LENGTH) {
+        if (strlen($userto) < $this->vars::USERNAME_MIN_LENGTH || strlen($userto) > $this->vars::USERNAME_MAX_LENGTH) {
             return $lang['username_length_invalid'];
         }
 
@@ -67,19 +67,23 @@ class admin
         $dblikeuserfrom = $db->like_escape($userfrom);
         $dbregexuserfrom = $db->regexp_escape($userfrom);
 
-        $query = $db->query("SELECT username FROM " . $this->vars->tablepre . "members WHERE username='$dbuserfrom'");
+        $query = $db->query("SELECT username FROM " . $this->vars->tablepre . "members WHERE username = '$dbuserfrom'");
         $cUsrFrm = $db->num_rows($query);
         $db->free_result($query);
+
+        if ($cUsrFrm != 1) {
+            return $lang['admin_rename_fail_from'];
+        }
 
         $query = $db->query("SELECT username FROM " . $this->vars->tablepre . "members WHERE username='$dbuserto'");
         $cUsrTo = $db->num_rows($query);
         $db->free_result($query);
 
-        if (! ($cUsrFrm == 1 && $cUsrTo == 0)) {
-            return $lang['admin_rename_fail'];
+        if ($cUsrTo != 0) {
+            return $lang['admin_rename_fail_to'];
         }
 
-        if (! $core->usernameValidation($userto)) {
+        if (! $this->core->usernameValidation($userto)) {
             return $lang['restricted'];
         }
 
@@ -149,7 +153,7 @@ class admin
         }
         $db->free_result($query);
 
-        return (($this->vars->self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] : '') . $lang['admin_rename_success'];
+        return (($this->vars->self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] . ' ' : '') . $lang['admin_rename_success'];
     }
 
     /**
