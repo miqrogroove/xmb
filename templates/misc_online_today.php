@@ -9,7 +9,7 @@
 <td colspan="6" class="category"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['misconlinetoday'] ?> <?= $todaymembersnum ?> <?= $lang['misconlinetoday2'] ?></font></strong></td>
 </tr>
 <tr>
-<td bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow" width="4%"><img src="<?= $THEME['imgdir'] ?>/online.gif" alt="<?= $lang['whosonline'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow" width="4%"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/online.gif" alt="<?= $lang['whosonline'] ?>" /></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="5" class="mediumtxt"><?= $todaymembers ?></td>
 </tr>
 </table>

@@ -619,13 +619,13 @@ class Core
      * @param mixed $canonical Optional. Specify FALSE if the $baseurl param is not a canonical URL. Specify a Relative URL string to override $baseurl.
      * @return array Associative indexes: 'html' the link bar string, 'start' the LIMIT int used in queries.
      */
-    public function multipage(int $num, int $perpage, string $baseurl, bool $canonical = true): array
+    public function multipage(int $num, int $perpage, string $baseurl, bool|string $canonical = true): array
     {
         // Initialize
         $return = [];
         $page = getInt('page');
         $max_page = $this->quickpage(intval($num), intval($perpage));
-        if ($canonical === true) $canonical = &$baseurl;
+        if ($canonical === true) $canonical = $baseurl;
 
         // Calculate the LIMIT start number for queries
         if ($page > 1 && $page <= $max_page) {

@@ -274,7 +274,6 @@ switch ($action) {
         break;
 
     case 'onlinetoday':
-// TODO: Refactor still needed.
         if ($SETTINGS['whosonlinestatus'] == 'off' || $SETTINGS['onlinetoday_status'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
             $header = $template->process('header.php');
@@ -287,50 +286,43 @@ switch ($action) {
 
         $datecut = $vars->onlinetime - (3600 * 24);
         if (X_ADMIN) {
-            $query = $db->query("SELECT username, status FROM " . $vars->tablepre . "members WHERE lastvisit >= '$datecut' ORDER BY username ASC");
+            $extra = '';
         } else {
-            $query = $db->query("SELECT username, status FROM " . $vars->tablepre . "members WHERE lastvisit >= '$datecut' AND invisible != '1' ORDER BY username ASC");
+            $extra = "AND invisible != '1'";
         }
+        $query = $db->query("SELECT username, status FROM " . $vars->tablepre . "members WHERE lastvisit >= '$datecut' $extra ORDER BY username ASC");
 
-        $todaymembersnum = 0;
-        $todaymembers = array();
-        $pre = $suff = '';
+        $template->todaymembersnum = $db->num_rows($query);
+        $todaymembers = [];
         while ($memberstoday = $db->fetch_array($query)) {
-            $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
+            $pre = '<span class="status_' . str_replace(' ', '_', $memberstoday['status']) . '">';
             $suff = '</span>';
-            $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff. '</a>';
-            ++$todaymembersnum;
+            $todaymembers[] = "<a href='" . $vars->full_url . "member.php?action=viewpro&amp;member=" . recodeOut($memberstoday['username']) . "'>$pre{$memberstoday['username']}$suff</a>";
         }
-        $todaymembers = implode(', ', $todaymembers);
+        $template->todaymembers = implode(', ', $todaymembers);
         $db->free_result($query);
 
-        if ($todaymembersnum == 1) {
-            $memontoday = $todaymembersnum.$lang['textmembertoday'];
-        } else {
-            $memontoday = $todaymembersnum.$lang['textmemberstoday'];
-        }
-        eval('$misc = "'.template('misc_online_today').'";');
+        $misc = $template->process('misc_online_today.php');
         break;
 
     case 'list':
         if ($SETTINGS['memliststatus'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
-            eval('echo "'.template('header').'";');
-            eval('echo "'.template('misc_feature_notavailable').'";');
-            end_time();
-            eval('echo "'.template('footer').'";');
-            exit();
+            $header = $template->process('header.php');
+            $misc = $template->process('misc_feature_notavailable.php');
+            $template->footerstuff = $core->end_time();
+            $footer = $template->process('footer.php');
+            echo $header, $misc, $footer;
+            exit;
         }
 
-
-        /* Validate All Inputs */
-
-        $order = postedVar('order', '', FALSE, FALSE, FALSE, 'g');
-        $desc = postedVar('desc', '', FALSE, FALSE, FALSE, 'g');
+        // Validate All Inputs
+        $order = getPhpInput('order', 'g');
+        $desc = getPhpInput('desc', 'g');
         $page = getInt('page');
-        $dblikemem = $db->like_escape(postedVar('srchmem', '', TRUE, FALSE, FALSE, 'g'));
-        $dblikeemail = $db->like_escape(postedVar('srchemail', '', TRUE, FALSE, TRUE, 'g'));
-        $dblikeip = $db->like_escape(postedVar('srchip', '', TRUE, FALSE, TRUE, 'g'));
+        $dblikemem = $db->like_escape($validate->postedVar('srchmem', dbescape: false, sourcearray: 'g'));
+        $dblikeemail = $db->like_escape($validate->postedVar('srchemail', dbescape: false, quoteencode: true, sourcearray: 'g'));
+        $dblikeip = $db->like_escape($validate->postedVar('srchip', dbescape: false, quoteencode: true, sourcearray: 'g'));
 
         if (strtolower($desc) != 'desc') {
             $desc = 'asc';
@@ -339,86 +331,101 @@ switch ($action) {
         if ($order != 'username' && $order != 'postnum' && $order != 'status' && $order != 'location') {
             $order = '';
             $orderby = 'regdate';
-        } else if ($order == 'status') {
-            $orderby = "if (status='Super Administrator',1, if (status='Administrator', 2, if (status='Super Moderator', 3, if (status='Moderator', 4, if (status='Member', 5, if (status='Banned',6,7))))))";
+        } elseif ($order == 'status') {
+            $orderby = "if (status='Super Administrator', 1, if (status='Administrator', 2, if (status='Super Moderator', 3, if (status='Moderator', 4, if (status='Member', 5, if (status='Banned',6,7))))))";
         } else {
             $orderby = $order;
         }
 
-        if (!X_ADMIN) {
+        if (! X_ADMIN) {
             $dblikeip = '';
             $dblikeemail = '';
-            $misc_mlist_template = 'misc_mlist';
+            $misc_mlist_template = 'misc_mlist.php';
         } else {
-            $misc_mlist_template = 'misc_mlist_admin';
+            $misc_mlist_template = 'misc_mlist_admin.php';
         }
 
-        $where = array();
-        $ext = array();
+        $where = [];
+        $ext = [];
 
         if ($desc != 'asc') {
             $ext[] = "desc=$desc";
         }
 
         if ($order != '') {
-            $ext[] = 'order='.$order;
+            $ext[] = "order=$order";
         }
 
         if ($dblikeemail != '') {
-            if (!X_SADMIN) {
+            if (! X_SADMIN) {
                 $where[] = "email LIKE '%$dblikeemail%'";
                 $where[] = "showemail='yes'";
             } else {
                 $where[] = "email LIKE '%$dblikeemail%'";
             }
-            $ext[] = 'srchemail='.rawurlencode(postedVar('srchemail', '', FALSE, FALSE, FALSE, 'g'));
-            $srchemail = postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE, 'g');
-            /* Warning: $srchemail is used for template output */
+            $ext[] = 'srchemail=' . rawurlencode(getPhpInput('srchemail', 'g'));
+            $template->srchemail = $validate->postedVar(
+                varname: 'srchemail',
+                word: 'javascript',
+                dbescape: false,
+                quoteencode: true,
+                sourcearray: 'g'
+            );
         } else {
-            $srchemail = '';
+            $template->srchemail = '';
         }
 
         if ($dblikeip != '') {
             $where[] = "regip LIKE '%$dblikeip%'";
-            $ext[] = 'srchip='.rawurlencode(postedVar('srchip', '', FALSE, FALSE, FALSE, 'g'));
-            $srchip = postedVar('srchip', 'javascript', TRUE, FALSE, TRUE, 'g');
-            /* Warning: $srchip is used for template output */
+            $ext[] = 'srchip=' . rawurlencode(getPhpInput('srchip', 'g'));
+            $template->srchip = $validate->postedVar(
+                varname: 'srchip',
+                word: 'javascript',
+                dbescape: false,
+                quoteencode: true,
+                sourcearray: 'g'
+            );
         } else {
-            $srchip = '';
+            $template->srchip = '';
         }
 
         if ($dblikemem != '') {
             $where[] = "username LIKE '%$dblikemem%'";
-            $ext[] = 'srchmem='.rawurlencode(postedVar('srchmem', '', FALSE, FALSE, FALSE, 'g'));
-            $srchmem = postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE, 'g');
-            /* Warning: $srchmem is used for template output */
+            $ext[] = 'srchmem=' . rawurlencode(getPhpInput('srchmem', 'g'));
+            $template->srchmem = $validate->postedVar(
+                varname: 'srchmem',
+                word: 'javascript',
+                dbescape: false,
+                quoteencode: true,
+                sourcearray: 'g'
+            );
         } else {
-            $srchmem = '';
+            $template->srchmem = '';
         }
 
         if (count($ext) > 0) {
-            $params = '&amp;'.implode('&amp;', $ext);
+            $params = '&amp;' . implode('&amp;', $ext);
 
             if ($ext[0] == 'desc=desc') {
                 array_shift($ext);
-                $sflip = '';
+                $template->sflip = '';
             } else {
-                $sflip = '&amp;desc=desc';
+                $template->sflip = '&amp;desc=desc';
             }
             if (count($ext) > 0) {
                 if (substr($ext[0], 0, 6) == 'order=') {
-                    $sflip .= '&amp;'.array_shift($ext);
+                    $template->sflip .= '&amp;' . array_shift($ext);
                 }
             }
             if (count($ext) > 0) {
-                $ext = '&amp;'.implode('&amp;', $ext);
+                $template->ext = '&amp;' . implode('&amp;', $ext);
             } else {
-                $ext = '';
+                $template->ext = '';
             }
         } else {
             $params = '';
-            $sflip = '&amp;desc=desc';
-            $ext = '';
+            $template->sflip = '&amp;desc=desc';
+            $template->ext = '';
         }
 
         $where[] = "lastvisit != 0";
@@ -426,13 +433,14 @@ switch ($action) {
             $where[] = "status != 'Banned' ";
         }
         $q = implode(' AND ', $where);
-        $num = $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "members WHERE $q"), 0);
-        $canonical = 'misc.php?action=list';
-        $baseurl = $canonical.$params;
-        $mpage = multipage($num, $memberperpage, $baseurl, $canonical);
-        $multipage =& $mpage['html'];
+        $num = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "members WHERE $q"));
+        $canonical = $vars->full_url . 'misc.php?action=list';
+        $baseurl = $canonical . $params;
+        $memberperpage = (int) $vars->settings['memberperpage'];
+        $mpage = $core->multipage($num, $memberperpage, $baseurl, $canonical);
+        $template->multipage = $mpage['html'];
         if (strlen($mpage['html']) != 0) {
-            eval('$multipage = "'.template('misc_mlist_multipage').'";');
+            $template->multipage = $template->process('misc_mlist_multipage.php');
         }
         unset($num, $where);
 
@@ -441,46 +449,50 @@ switch ($action) {
 
         $querymem = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
 
-        $members = $oldst = '';
+        $template->members = '';
+        $oldst = '';
         if ($db->num_rows($querymem) == 0) {
-            eval('$members = "'.template('misc_mlist_results_none').'";');
+            $template->members = $template->process('misc_mlist_results_none.php');
         } else {
             while ($member = $db->fetch_array($querymem)) {
-                $member['regdate'] = gmdate($dateformat, $core->timeKludge((int) $member['regdate']));
+                $template->regdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['regdate']));
 
                 $member['site'] = format_member_site($member['site']);
                 if ($member['site'] == '') {
-                    $site = '';
+                    $template->site = '';
                 } else {
-                    eval('$site = "'.template('misc_mlist_row_site').'";');
+                    $template->site = $member['site'];
+                    $template->site = $template->process('misc_mlist_row_site.php');
                 }
 
                 if ($member['location'] != '') {
-                    $member['location'] = $smile->censor($member['location']);
+                    $template->location = $smile->censor($member['location']);
                 } else {
-                    $member['location'] = '';
+                    $template->location = '';
                 }
 
-                $memurl = recodeOut($member['username']);
+                $template->memurl = recodeOut($member['username']);
+                $template->username = $member['username'];
                 if ($order == 'status') {
                     if ($oldst != $member['status']) {
                         $oldst = $member['status'];
-                        $seperator_text = (trim($member['status']) == '' ? $lang['onlineother'] : $member['status']);
-                        eval('$members .= "'.template('misc_mlist_separator').'";');
+                        $template->seperator_text = (trim($member['status']) == '' ? $lang['onlineother'] : $member['status']);
+                        $template->members .= $template->process('misc_mlist_separator.php');
                     }
                 }
-                eval('$members .= "'.template('misc_mlist_row').'";');
+                $template->postnum = $member['postnum'];
+                $template->status = $member['status'];
+                $template->members .= $template->process('misc_mlist_row.php');
             }
             $db->free_result($querymem);
         }
 
         if (strtolower($desc) == 'desc') {
-            $ascdesc = $lang['asc'];
+            $template->ascdesc = $lang['asc'];
         } else {
-            $ascdesc = $lang['desc'];
+            $template->ascdesc = $lang['desc'];
         }
-        eval('$memlist = "'.template($misc_mlist_template).'";');
-        $misc = $memlist;
+        $misc = $template->process($misc_mlist_template);
         break;
 
     case 'smilies':
