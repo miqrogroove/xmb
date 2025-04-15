@@ -1,6 +1,4 @@
-        </div><!-- center-content -->
-        <div class="bottom"><span></span></div>
-    </div><!-- content -->
+    </div><!-- config -->
     <div id="footer">
         <div class="top"><span></span></div>
         <div class="center-content">

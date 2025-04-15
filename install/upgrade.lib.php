@@ -53,7 +53,6 @@ class Upgrade
                 $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = 'off' WHERE name = 'bbstatus'");
             }
             $this->show->warning('Your forums were turned off by the upgrader.  They will remain unavailable to your members until you reset the Board Status setting in the Admin Panel.');
-            trigger_error('Admin attempted upgrade without turning off the board.  Board now turned off.', E_USER_NOTICE);
         }
 
         $this->show->progress('Selecting the appropriate change set');
@@ -62,30 +61,41 @@ class Upgrade
                 $this->show->progress('Database schema is current, skipping ALTER commands');
                 break;
             case 0:
-                //Ambiguous case.  Attempt a backward-compatible schema change.
+                // Ambiguous case.  Attempt a backward-compatible schema change.
                 $this->upgrade_schema_to_v0();
-                //No breaks.
+                // No break
             case 1:
                 $this->upgrade_schema_to_v2();
+                // No break
             case 2:
                 $this->upgrade_schema_to_v3();
+                // No break
             case 3:
                 $this->upgrade_schema_to_v4();
+                // No break
             case 4:
                 $this->upgrade_schema_to_v5();
+                // No break
             case 5:
                 $this->upgrade_schema_to_v6();
+                // No break
             case 6:
                 $this->upgrade_schema_to_v7();
+                // No break
             case 7:
                 $this->upgrade_schema_to_v8();
+                // No break
             case 8:
                 $this->upgrade_schema_to_v9();
+                // No break
             case 9:
                 $this->upgrade_schema_to_v10();
-                break;
+                // No break
             case 10:
-                //Future use. Break only before case default.
+                $this->upgrade_schema_to_v11();
+                // No break
+            case 11:
+                // Future use. Break only before case default.
                 break;
             default:
                 $this->show->error('Unrecognized Database!  This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.');
@@ -124,25 +134,45 @@ class Upgrade
     {
         $this->show->progress('Checking for legacy version tables');
 
-        $schema = array();
-        $schema['attachments'] = array('aid', 'pid', 'filename', 'filetype', 'attachment', 'downloads');
-        $schema['banned'] = array('ip1', 'ip2', 'ip3', 'ip4', 'dateline', 'id');
-        $schema['buddys'] = array('username', 'buddyname');
-        $schema['favorites'] = array('tid', 'username', 'type');
-        $schema['forums'] = array('type', 'fid', 'name', 'status', 'lastpost', 'moderator', 'displayorder', 'description', 'allowhtml', 'allowsmilies', 'allowbbcode', 'userlist', 'theme', 'posts', 'threads', 'fup', 'postperm', 'allowimgcode', 'attachstatus', 'password');
-        $schema['members'] = array('uid', 'username', 'password', 'regdate', 'postnum', 'email', 'site', 'aim', 'status', 'location', 'bio', 'sig', 'showemail', 'timeoffset', 'icq', 'avatar', 'yahoo', 'customstatus', 'theme', 'bday', 'langfile', 'tpp', 'ppp', 'newsletter', 'regip', 'timeformat', 'msn', 'dateformat', 'ban', 'ignoreu2u', 'lastvisit', 'mood', 'pwdate');
-        $schema['posts'] = array('fid', 'tid', 'pid', 'author', 'message', 'subject', 'dateline', 'icon', 'usesig', 'useip', 'bbcodeoff', 'smileyoff');
-        $schema['ranks'] = array('title', 'posts', 'id', 'stars', 'allowavatars', 'avatarrank');
-        $schema['restricted'] = array('name', 'id');
-        $schema['settings'] = array('langfile', 'bbname', 'postperpage', 'topicperpage', 'hottopic', 'theme', 'bbstatus', 'whosonlinestatus', 'regstatus', 'bboffreason', 'regviewonly', 'floodctrl', 'memberperpage', 'catsonly', 'hideprivate',
-            'emailcheck', 'bbrules', 'bbrulestxt', 'searchstatus', 'faqstatus', 'memliststatus', 'sitename', 'siteurl', 'avastatus', 'u2uquota', 'gzipcompress', 'coppa', 'timeformat', 'adminemail', 'dateformat', 'sigbbcode', 'sightml',
-            'reportpost', 'bbinsert', 'smileyinsert', 'doublee', 'smtotal', 'smcols', 'editedby', 'dotfolders', 'attachimgpost', 'todaysposts', 'stats', 'authorstatus', 'tickerstatus', 'tickercontents', 'tickerdelay');
-        $schema['smilies'] = array('type', 'code', 'url', 'id');
-        $schema['templates'] = array('id', 'name', 'template');
-        $schema['themes'] = array('name', 'bgcolor', 'altbg1', 'altbg2', 'link', 'bordercolor', 'header', 'headertext', 'top', 'catcolor', 'tabletext', 'text', 'borderwidth', 'tablewidth', 'tablespace', 'font', 'fontsize', 'boardimg', 'imgdir', 'smdir', 'cattext');
-        $schema['threads'] = array('tid', 'fid', 'subject', 'icon', 'lastpost', 'views', 'replies', 'author', 'closed', 'topped', 'pollopts');
-        $schema['u2u'] = array('u2uid', 'msgto', 'msgfrom', 'dateline', 'subject', 'message', 'folder', 'readstatus');
-        $schema['words'] = array('find', 'replace1', 'id');
+        $schema = [
+            'attachments' => ['aid', 'pid', 'filename', 'filetype', 'attachment', 'downloads'],
+            'banned' => ['ip1', 'ip2', 'ip3', 'ip4', 'dateline', 'id'],
+            'buddys' => ['username', 'buddyname'],
+            'favorites' => ['tid', 'username', 'type'],
+            'forums' => [
+                'type', 'fid', 'name', 'status', 'lastpost', 'moderator', 'displayorder', 'description', 'allowhtml',
+                'allowsmilies', 'allowbbcode', 'userlist', 'theme', 'posts', 'threads', 'fup', 'postperm',
+                'allowimgcode', 'attachstatus', 'password'
+            ],
+            'members' => [
+                'uid', 'username', 'password', 'regdate', 'postnum', 'email', 'site', 'aim', 'status', 'location', 'bio',
+                'sig', 'showemail', 'timeoffset', 'icq', 'avatar', 'yahoo', 'customstatus', 'theme', 'bday', 'langfile',
+                'tpp', 'ppp', 'newsletter', 'regip', 'timeformat', 'msn', 'dateformat', 'ban', 'ignoreu2u', 'lastvisit',
+                'mood', 'pwdate'
+            ],
+            'posts' => ['fid', 'tid', 'pid', 'author', 'message', 'subject', 'dateline', 'icon', 'usesig', 'useip', 'bbcodeoff', 'smileyoff'],
+            'ranks' => ['title', 'posts', 'id', 'stars', 'allowavatars', 'avatarrank'],
+            'restricted' => ['name', 'id'],
+            'settings' => [
+                'langfile', 'bbname', 'postperpage', 'topicperpage', 'hottopic', 'theme', 'bbstatus', 'whosonlinestatus',
+                'regstatus', 'bboffreason', 'regviewonly', 'floodctrl', 'memberperpage', 'catsonly', 'hideprivate',
+                'emailcheck', 'bbrules', 'bbrulestxt', 'searchstatus', 'faqstatus', 'memliststatus', 'sitename',
+                'siteurl', 'avastatus', 'u2uquota', 'gzipcompress', 'coppa', 'timeformat', 'adminemail', 'dateformat',
+                'sigbbcode', 'sightml', 'reportpost', 'bbinsert', 'smileyinsert', 'doublee', 'smtotal', 'smcols',
+                'editedby', 'dotfolders', 'attachimgpost', 'todaysposts', 'stats', 'authorstatus', 'tickerstatus',
+                'tickercontents', 'tickerdelay'
+            ],
+            'smilies' => ['type', 'code', 'url', 'id'],
+            'templates' => ['id', 'name', 'template'],
+            'themes' => [
+                'name', 'bgcolor', 'altbg1', 'altbg2', 'link', 'bordercolor', 'header', 'headertext', 'top', 'catcolor',
+                'tabletext', 'text', 'borderwidth', 'tablewidth', 'tablespace', 'font', 'fontsize', 'boardimg', 'imgdir',
+                'smdir', 'cattext'
+            ],
+            'threads' => ['tid', 'fid', 'subject', 'icon', 'lastpost', 'views', 'replies', 'author', 'closed', 'topped', 'pollopts'],
+            'u2u' => ['u2uid', 'msgto', 'msgfrom', 'dateline', 'subject', 'message', 'folder', 'readstatus'],
+            'words' => ['find', 'replace1', 'id'],
+        ];
 
         foreach ($schema as $table => $columns) {
             $missing = array_diff($columns, $this->schema->listColumns($table));
@@ -158,10 +188,10 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "banned WRITE");
 
         $this->show->progress('Gathering schema information from the banned table');
-        $sql = array();
+        $sql = [];
         $table = 'banned';
         $colname = 'id';
-        $coltype = "smallint NOT NULL AUTO_INCREMENT";
+        $coltype = 'smallint NOT NULL AUTO_INCREMENT';
         $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
         $row = $this->db->fetch_array($query);
         if (strtolower($row['Extra']) != 'auto_increment') {
@@ -169,8 +199,9 @@ class Upgrade
         }
         $this->db->free_result($query);
 
-        $columns = array(
-        'dateline' => "int NOT NULL DEFAULT 0");
+        $columns = [
+            'dateline' => 'int NOT NULL DEFAULT 0',
+        ];
         foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
@@ -182,11 +213,12 @@ class Upgrade
             $this->db->free_result($query);
         }
 
-        $columns = array(
-        'ip1',
-        'ip2',
-        'ip3',
-        'ip4');
+        $columns = [
+            'ip1',
+            'ip2',
+            'ip3',
+            'ip4',
+        ];
         foreach ($columns as $colname) {
             if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
@@ -203,11 +235,12 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "buddys WRITE");
 
         $this->show->progress('Gathering schema information from the buddys table');
-        $sql = array();
+        $sql = [];
         $table = 'buddys';
-        $columns = array(
-        'username' => "varchar(32) NOT NULL DEFAULT ''",
-        'buddyname' => "varchar(32) NOT NULL DEFAULT ''");
+        $columns = [
+            'username' => "varchar(32) NOT NULL DEFAULT ''",
+            'buddyname' => "varchar(32) NOT NULL DEFAULT ''",
+        ];
         foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
@@ -217,8 +250,9 @@ class Upgrade
             $this->db->free_result($query);
         }
 
-        $columns = array(
-        'username' => 'username (8)');
+        $columns = [
+            'username' => 'username (8)',
+        ];
         foreach ($columns as $colname => $coltype) {
             if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
@@ -238,10 +272,11 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "favorites WRITE");
 
         $this->show->progress('Gathering schema information from the favorites table');
-        $sql = array();
+        $sql = [];
         $table = 'favorites';
-        $columns = array(
-        'tid' => "int NOT NULL DEFAULT 0");
+        $columns = [
+            'tid' => "int NOT NULL DEFAULT 0",
+        ];
         foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
@@ -251,8 +286,9 @@ class Upgrade
             $this->db->free_result($query);
         }
 
-        $columns = array(
-        'username' => "varchar(32) NOT NULL DEFAULT ''");
+        $columns = [
+            'username' => "varchar(32) NOT NULL DEFAULT ''",
+        ];
         foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
@@ -262,8 +298,9 @@ class Upgrade
             $this->db->free_result($query);
         }
 
-        $columns = array(
-        'type' => "varchar(32) NOT NULL DEFAULT ''");
+        $columns = [
+            'type' => "varchar(32) NOT NULL DEFAULT ''",
+        ];
         foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
             $row = $this->db->fetch_array($query);
@@ -291,7 +328,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "themes WRITE");
 
         $this->show->progress('Gathering schema information from the themes table');
-        $sql = array();
+        $sql = [];
         $table = 'themes';
         $colname = 'themeid';
         if ($this->schema->indexExists($table, '', 'PRIMARY') && ! $this->schema->indexExists($table, $colname, 'PRIMARY')) {
@@ -367,7 +404,7 @@ class Upgrade
         $upgrade_permissions = TRUE;
 
         $this->show->progress('Gathering schema information from the forums table');
-        $sql = array();
+        $sql = [];
         $table = 'forums';
         $columns = array(
         'private',
@@ -405,7 +442,7 @@ class Upgrade
             $this->show->progress('Deleting the old permissions data');
             $sql = 'ALTER TABLE ' . $this->vars->tablepre . $table.' '.implode(', ', $sql);
             $this->upgrade_query($sql);
-            $sql = array();
+            $sql = [];
 
         } else {
 
@@ -491,75 +528,77 @@ class Upgrade
             X_PREFIX.'themes READ');
 
         $this->show->progress('Gathering schema information from the settings table');
-        $sql = array();
+        $sql = [];
         $table = 'settings';
         $existing = $this->schema->listColumns($table);
-        $columns = array(
-        'files_status',
-        'files_foldername',
-        'files_screenshot',
-        'files_shotsize',
-        'files_guests',
-        'files_cpp',
-        'files_mouseover',
-        'files_fpp',
-        'files_report',
-        'files_jumpbox',
-        'files_search',
-        'files_spp',
-        'files_searchcolor',
-        'files_stats',
-        'files_notify',
-        'files_content_types',
-        'files_comment_report',
-        'files_navigation',
-        'files_faq',
-        'files_paypal_account');
+        $columns = [
+            'files_status',
+            'files_foldername',
+            'files_screenshot',
+            'files_shotsize',
+            'files_guests',
+            'files_cpp',
+            'files_mouseover',
+            'files_fpp',
+            'files_report',
+            'files_jumpbox',
+            'files_search',
+            'files_spp',
+            'files_searchcolor',
+            'files_stats',
+            'files_notify',
+            'files_content_types',
+            'files_comment_report',
+            'files_navigation',
+            'files_faq',
+            'files_paypal_account',
+        ];
         $obsolete = array_intersect($columns, $existing);
         foreach ($obsolete as $colname) {
             $sql[] = 'DROP COLUMN '.$colname;
         }
 
-        $columns = array(
-        'addtime' => "DECIMAL(4,2) NOT NULL DEFAULT 0",
-        'max_avatar_size' => "varchar(9) NOT NULL DEFAULT '100x100'",
-        'footer_options' => "varchar(45) NOT NULL DEFAULT 'queries-phpsql-loadtimes-totaltime'",
-        'space_cats' => "char(3) NOT NULL DEFAULT 'no'",
-        'spellcheck' => "char(3) NOT NULL DEFAULT 'off'",
-        'allowrankedit' => "char(3) NOT NULL DEFAULT 'on'",
-        'notifyonreg' => "SET('off','u2u','email') NOT NULL DEFAULT 'off'",
-        'subject_in_title' => "char(3) NOT NULL DEFAULT ''",
-        'def_tz' => "decimal(4,2) NOT NULL DEFAULT '0.00'",
-        'indexshowbar' => "tinyint NOT NULL DEFAULT 2",
-        'resetsigs' => "char(3) NOT NULL DEFAULT 'off'",
-        'pruneusers' => "smallint NOT NULL DEFAULT 0",
-        'ipreg' => "char(3) NOT NULL DEFAULT 'on'",
-        'maxdayreg' => "smallint UNSIGNED NOT NULL DEFAULT 25",
-        'maxattachsize' => "int UNSIGNED NOT NULL DEFAULT 256000",
-        'captcha_status' => "set('on','off') NOT NULL DEFAULT 'on'",
-        'captcha_reg_status' => "set('on','off') NOT NULL DEFAULT 'on'",
-        'captcha_post_status' => "set('on','off') NOT NULL DEFAULT 'on'",
-        'captcha_code_charset' => "varchar(128) NOT NULL DEFAULT 'A-Z'",
-        'captcha_code_length' => "int NOT NULL DEFAULT '8'",
-        'captcha_code_casesensitive' => "set('on','off') NOT NULL DEFAULT 'off'",
-        'captcha_code_shadow' => "set('on','off') NOT NULL DEFAULT 'off'",
-        'captcha_image_type' => "varchar(4) NOT NULL DEFAULT 'png'",
-        'captcha_image_width' => "int NOT NULL DEFAULT '250'",
-        'captcha_image_height' => "int NOT NULL DEFAULT '50'",
-        'captcha_image_bg' => "varchar(128) NOT NULL DEFAULT ''",
-        'captcha_image_dots' => "int NOT NULL DEFAULT '0'",
-        'captcha_image_lines' => "int NOT NULL DEFAULT '70'",
-        'captcha_image_fonts' => "varchar(128) NOT NULL DEFAULT ''",
-        'captcha_image_minfont' => "int NOT NULL DEFAULT '16'",
-        'captcha_image_maxfont' => "int NOT NULL DEFAULT '25'",
-        'captcha_image_color' => "set('on','off') NOT NULL DEFAULT 'off'",
-        'showsubforums' => "set('on','off') NOT NULL DEFAULT 'off'",
-        'regoptional' => "set('on','off') NOT NULL DEFAULT 'off'",
-        'quickreply_status' => "set('on','off') NOT NULL DEFAULT 'on'",
-        'quickjump_status' => "set('on','off') NOT NULL DEFAULT 'on'",
-        'index_stats' => "set('on','off') NOT NULL DEFAULT 'on'",
-        'onlinetodaycount' => "smallint NOT NULL DEFAULT '50'",
-        'onlinetoday_status' => "set('on','off') NOT NULL DEFAULT 'on'");
+        $columns = [
+            'addtime' => "DECIMAL(4,2) NOT NULL DEFAULT 0",
+            'max_avatar_size' => "varchar(9) NOT NULL DEFAULT '100x100'",
+            'footer_options' => "varchar(45) NOT NULL DEFAULT 'queries-phpsql-loadtimes-totaltime'",
+            'space_cats' => "char(3) NOT NULL DEFAULT 'no'",
+            'spellcheck' => "char(3) NOT NULL DEFAULT 'off'",
+            'allowrankedit' => "char(3) NOT NULL DEFAULT 'on'",
+            'notifyonreg' => "SET('off','u2u','email') NOT NULL DEFAULT 'off'",
+            'subject_in_title' => "char(3) NOT NULL DEFAULT ''",
+            'def_tz' => "decimal(4,2) NOT NULL DEFAULT '0.00'",
+            'indexshowbar' => "tinyint NOT NULL DEFAULT 2",
+            'resetsigs' => "char(3) NOT NULL DEFAULT 'off'",
+            'pruneusers' => "smallint NOT NULL DEFAULT 0",
+            'ipreg' => "char(3) NOT NULL DEFAULT 'on'",
+            'maxdayreg' => "smallint UNSIGNED NOT NULL DEFAULT 25",
+            'maxattachsize' => "int UNSIGNED NOT NULL DEFAULT 256000",
+            'captcha_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+            'captcha_reg_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+            'captcha_post_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+            'captcha_code_charset' => "varchar(128) NOT NULL DEFAULT 'A-Z'",
+            'captcha_code_length' => "int NOT NULL DEFAULT '8'",
+            'captcha_code_casesensitive' => "set('on','off') NOT NULL DEFAULT 'off'",
+            'captcha_code_shadow' => "set('on','off') NOT NULL DEFAULT 'off'",
+            'captcha_image_type' => "varchar(4) NOT NULL DEFAULT 'png'",
+            'captcha_image_width' => "int NOT NULL DEFAULT '250'",
+            'captcha_image_height' => "int NOT NULL DEFAULT '50'",
+            'captcha_image_bg' => "varchar(128) NOT NULL DEFAULT ''",
+            'captcha_image_dots' => "int NOT NULL DEFAULT '0'",
+            'captcha_image_lines' => "int NOT NULL DEFAULT '70'",
+            'captcha_image_fonts' => "varchar(128) NOT NULL DEFAULT ''",
+            'captcha_image_minfont' => "int NOT NULL DEFAULT '16'",
+            'captcha_image_maxfont' => "int NOT NULL DEFAULT '25'",
+            'captcha_image_color' => "set('on','off') NOT NULL DEFAULT 'off'",
+            'showsubforums' => "set('on','off') NOT NULL DEFAULT 'off'",
+            'regoptional' => "set('on','off') NOT NULL DEFAULT 'off'",
+            'quickreply_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+            'quickjump_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+            'index_stats' => "set('on','off') NOT NULL DEFAULT 'on'",
+            'onlinetodaycount' => "smallint NOT NULL DEFAULT '50'",
+            'onlinetoday_status' => "set('on','off') NOT NULL DEFAULT 'on'",
+        ];
         $missing = array_diff(array_keys($columns), $existing);
         foreach ($missing as $colname) {
             $coltype = $columns[$colname];
@@ -656,7 +695,7 @@ class Upgrade
         $this->fixBirthdays();
 
         $this->show->progress('Gathering schema information from the members table');
-        $sql = array();
+        $sql = [];
         $table = 'members';
         $columns = array(
         'webcam');
@@ -870,7 +909,7 @@ class Upgrade
         $this->fixPolls();
 
         $this->show->progress('Gathering schema information from the threads table');
-        $sql = array();
+        $sql = [];
         $table = 'threads';
         $colname = 'subject';
         $coltype = "varchar(128) NOT NULL DEFAULT ''";
@@ -966,7 +1005,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "attachments WRITE");
 
         $this->show->progress('Gathering schema information from the attachments table');
-        $sql = array();
+        $sql = [];
         $table = 'attachments';
         $columns = array(
         'aid' => "int NOT NULL auto_increment",
@@ -1013,7 +1052,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "posts WRITE");
 
         $this->show->progress('Gathering schema information from the posts table');
-        $sql = array();
+        $sql = [];
         $table = 'posts';
         $columns = array(
         'tid' => "int NOT NULL DEFAULT '0'");
@@ -1085,7 +1124,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "ranks WRITE");
 
         $this->show->progress('Gathering schema information from the ranks table');
-        $sql = array();
+        $sql = [];
         $table = 'ranks';
         $columns = array(
         'title' => "varchar(100) NOT NULL DEFAULT ''");
@@ -1152,7 +1191,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "templates WRITE");
 
         $this->show->progress('Gathering schema information from the templates table');
-        $sql = array();
+        $sql = [];
         $table = 'templates';
         $columns = array(
         'name' => "varchar(32) NOT NULL DEFAULT ''");
@@ -1185,7 +1224,7 @@ class Upgrade
         $upgrade_u2u = FALSE;
 
         $this->show->progress('Gathering schema information from the u2u table');
-        $sql = array();
+        $sql = [];
         $table = 'u2u';
         $columns = array(
         'u2uid' => "bigint NOT NULL auto_increment");
@@ -1254,7 +1293,7 @@ class Upgrade
                 $this->upgrade_query($sql);
             }
 
-            $sql = array();
+            $sql = [];
 
             // Mimic old function upgradeU2U() but with fewer queries
             $this->show->progress('Upgrading U2Us');
@@ -1323,7 +1362,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "words WRITE");
 
         $this->show->progress('Gathering schema information from the words table');
-        $sql = array();
+        $sql = [];
         $table = 'words';
         $columns = array(
         'find');
@@ -1343,7 +1382,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "restricted WRITE");
 
         $this->show->progress('Gathering schema information from the restricted table');
-        $sql = array();
+        $sql = [];
         $table = 'restricted';
         $columns = array(
         'name' => "varchar(32) NOT NULL DEFAULT ''");
@@ -1398,7 +1437,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "settings WRITE");
 
         $this->show->progress('Gathering schema information from the settings table');
-        $sql = array();
+        $sql = [];
         $table = 'settings';
         $columns = array(
         'boardurl');
@@ -1438,7 +1477,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "attachments WRITE");
 
         $this->show->progress('Gathering schema information from the attachments table');
-        $sql = array();
+        $sql = [];
         $table = 'attachments';
         $columns = array(
         'tid');
@@ -1482,7 +1521,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "members WRITE");
 
         $this->show->progress('Gathering schema information from the members table');
-        $sql = array();
+        $sql = [];
         $table = 'members';
         $columns = array(
         'u2ualert' => "TINYINT NOT NULL DEFAULT '0'");
@@ -1513,7 +1552,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "ranks WRITE");
 
         $this->show->progress('Gathering schema information from the ranks table');
-        $sql = array();
+        $sql = [];
         $table = 'ranks';
         $columns = array(
         'posts' => "posts MEDIUMINT DEFAULT 0");
@@ -1535,7 +1574,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "themes WRITE");
 
         $this->show->progress('Gathering schema information from the themes table');
-        $sql = array();
+        $sql = [];
         $table = 'themes';
         $columns = array(
         'admdir' => "VARCHAR( 120 ) NOT NULL DEFAULT 'images/admin'");
@@ -1557,7 +1596,7 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "vote_desc WRITE");
 
         $this->show->progress('Gathering schema information from the vote_desc table');
-        $sql = array();
+        $sql = [];
         $table = 'vote_desc';
         $columns = array(
         'topic_id' => "topic_id INT UNSIGNED NOT NULL");
@@ -1602,11 +1641,12 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "logs WRITE");
 
         $this->show->progress('Gathering schema information from the logs table');
-        $sql = array();
+        $sql = [];
         $table = 'logs';
-        $columns = array(
-        'date',
-        'tid');
+        $columns = [
+            'date',
+            'tid',
+        ];
         foreach ($columns as $colname) {
             if (! $this->schema->indexExists($table, $colname)) {
                 $sql[] = "ADD INDEX ($colname)";
@@ -1639,17 +1679,19 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "threads WRITE");
 
         $this->show->progress('Gathering schema information from the threads table');
-        $sql = array();
+        $sql = [];
         $table = 'threads';
-        $columns = array(
-        'fid');
+        $columns = [
+            'fid',
+        ];
         foreach ($columns as $colname) {
             if ($this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "DROP INDEX $colname";
             }
         }
-        $columns = array(
-        'forum_optimize' => 'fid, topped, lastpost');
+        $columns = [
+            'forum_optimize' => 'fid, topped, lastpost',
+        ];
         foreach ($columns as $colname => $coltype) {
             if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
@@ -1666,17 +1708,19 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . "posts WRITE");
 
         $this->show->progress('Gathering schema information from the posts table');
-        $sql = array();
+        $sql = [];
         $table = 'posts';
-        $columns = array(
-        'tid');
+        $columns = [
+            'tid',
+        ];
         foreach ($columns as $colname) {
             if ($this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "DROP INDEX $colname";
             }
         }
-        $columns = array(
-        'thread_optimize' => 'tid, dateline, pid');
+        $columns = [
+            'thread_optimize' => 'tid, dateline, pid',
+        ];
         foreach ($columns as $colname => $coltype) {
             if (! $this->schema->indexExists($table, '', $colname)) {
                 $sql[] = "ADD INDEX $colname ($coltype)";
@@ -1710,12 +1754,12 @@ class Upgrade
         $sql = [];
         $table = 'members';
         $columns = [
-        'bad_login_date' => "int unsigned NOT NULL DEFAULT 0",
-        'bad_login_count' => "int unsigned NOT NULL DEFAULT 0",
-        'bad_session_date' => "int unsigned NOT NULL DEFAULT 0",
-        'bad_session_count' => "int unsigned NOT NULL DEFAULT 0",
-        'sub_each_post' => "varchar(3) NOT NULL DEFAULT 'no'",
-        'waiting_for_mod' => "varchar(3) NOT NULL DEFAULT 'no'",
+            'bad_login_date' => "int unsigned NOT NULL DEFAULT 0",
+            'bad_login_count' => "int unsigned NOT NULL DEFAULT 0",
+            'bad_session_date' => "int unsigned NOT NULL DEFAULT 0",
+            'bad_session_count' => "int unsigned NOT NULL DEFAULT 0",
+            'sub_each_post' => "varchar(3) NOT NULL DEFAULT 'no'",
+            'waiting_for_mod' => "varchar(3) NOT NULL DEFAULT 'no'",
         ];
         foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
@@ -1734,9 +1778,9 @@ class Upgrade
         }
 
         $columns = [
-        'invisible' => 'invisible',
-        'password' => 'password',
-        'username' => 'username',
+            'invisible' => 'invisible',
+            'password' => 'password',
+            'username' => 'username',
         ];
         foreach ($columns as $colname => $coltype) {
             if ($this->schema->indexExists($table, $coltype, $colname)) {
@@ -1756,7 +1800,7 @@ class Upgrade
         }
 
         $columns = [
-        'lastvisit' => 'lastvisit',
+            'lastvisit' => 'lastvisit',
         ];
         foreach ($columns as $colname => $coltype) {
             if (! $this->schema->indexExists($table, $coltype, $colname)) {
@@ -1802,7 +1846,7 @@ class Upgrade
         $sql = [];
         $table = 'forums';
         $columns = [
-        'allowhtml',
+            'allowhtml',
         ];
         foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
@@ -1843,7 +1887,7 @@ class Upgrade
         $sql = [];
         $table = 'themes';
         $columns = [
-        'version' => "int unsigned NOT NULL DEFAULT 0",
+            'version' => "int unsigned NOT NULL DEFAULT 0",
         ];
         foreach ($columns as $colname => $coltype) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
@@ -1891,9 +1935,9 @@ class Upgrade
         $sql = [];
         $table = 'vote_desc';
         $columns = [
-        'vote_length',
-        'vote_start',
-        'vote_text',
+            'vote_length',
+            'vote_start',
+            'vote_text',
         ];
         foreach ($columns as $colname) {
             $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
@@ -2009,7 +2053,7 @@ class Upgrade
 
         $sql = [];
         $columns = [
-        'vote_user_ip' => 'vote_user_ip',
+            'vote_user_ip' => 'vote_user_ip',
         ];
         foreach ($columns as $colname => $coltype) {
             if ($this->schema->indexExists($table, $coltype, $colname)) {
@@ -2116,11 +2160,50 @@ class Upgrade
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '10' WHERE name = 'schema_version'");
     }
 
-// TODO: Schema 11
-//  - Delete 'spellcheck' record from settings table.
-//  - Delete members.showemail
-//  - Delete members.useoldu2u
-//  - Increment all themes.version values.
+    /**
+     * Performs all tasks needed to raise the database schema_version number to 11.
+     *
+     * @since 1.10.00
+     */
+    function upgrade_schema_to_v11()
+    {
+        $table = 'members';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table." WRITE");
+        $this->show->progress("Gathering schema information from the $table table");
+
+        $sql = [];
+        $columns = [
+            'showemail',
+            'useoldu2u',
+        ];
+        foreach ($columns as $colname) {
+            $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
+            if ($this->db->num_rows($query) == 1) {
+                $sql[] = 'DROP COLUMN '.$colname;
+            }
+            $this->db->free_result($query);
+        }
+
+        if (count($sql) > 0) {
+            $this->show->progress("Deleting columns in the $table table");
+            $sql = 'ALTER TABLE ' . $this->vars->tablepre . $table.' ' . implode(', ', $sql);
+            $this->upgrade_query($sql);
+        }
+
+        $this->show->progress("Releasing the lock on the $table table");
+        $this->upgrade_query('UNLOCK TABLES');
+
+        $this->show->progress('Deleting obsolete settings');
+        $this->upgrade_query("DELETE FROM " . $this->vars->tablepre . "settings WHERE name = 'spellcheck'");
+
+        $this->show->progress('Resetting the theme version numbers');
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "themes SET version = version + 1");
+
+        $this->show->progress('Resetting the schema version number');
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '11' WHERE name = 'schema_version'");
+    }
 
     /**
      * Recalculates the value of every field in the forums.postperm column.
@@ -2250,13 +2333,13 @@ class Upgrade
             if (1 == count($voters) && strlen($voters[0]) < 3) {
                 // The most likely values for $options[$num_options] are '' and '1'.  Treat them equivalent to null.
             } else {
-                $name = array();
+                $name = [];
                 foreach ($voters as $v) {
                     $name[] = $this->db->escape(trim($v));
                 }
                 $name = "'".implode("', '", $name)."'";
                 $query = $this->upgrade_query("SELECT uid FROM " . $this->vars->tablepre . "members WHERE username IN ($name)");
-                $values = array();
+                $values = [];
                 while($u = $this->db->fetch_array($query)) {
                     $values[] = "($poll_id, {$u['uid']})";
                 }
@@ -2266,7 +2349,7 @@ class Upgrade
                 }
             }
 
-            $values = array();
+            $values = [];
             for($i = 0; $i < $num_options; $i++) {
                 $bit = explode('||~|~||', $options[$i]);
                 $option_name = $this->db->escape(trim($bit[0]));
@@ -2290,8 +2373,8 @@ class Upgrade
      */
     function fixBirthdays()
     {
-        $cachedLanguages = array();
-        $lang = array();
+        $cachedLanguages = [];
+        $lang = [];
 
         require XMB_ROOT.'lang/English.lang.php';
         $baselang = $lang;
@@ -2307,7 +2390,7 @@ class Upgrade
                 continue;
             }
 
-            $lang = array();
+            $lang = [];
 
             if (!isset($cachedLanguages[$m['langfile']])) {
                 if (!file_exists(XMB_ROOT.'lang/'.$m['langfile'].'.lang.php')) {

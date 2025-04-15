@@ -25,3 +25,5 @@
         <div class="bottom"><span></span></div>
     </div>
     <div id="content">
+        <div class="top"><span></span></div>
+        <div class="center-content">

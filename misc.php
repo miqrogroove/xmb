@@ -321,8 +321,13 @@ switch ($action) {
         $desc = getPhpInput('desc', 'g');
         $page = getInt('page');
         $dblikemem = $db->like_escape($validate->postedVar('srchmem', dbescape: false, sourcearray: 'g'));
-        $dblikeemail = $db->like_escape($validate->postedVar('srchemail', dbescape: false, quoteencode: true, sourcearray: 'g'));
-        $dblikeip = $db->like_escape($validate->postedVar('srchip', dbescape: false, quoteencode: true, sourcearray: 'g'));
+        if (X_ADMIN) {
+            $dblikeemail = $db->like_escape($validate->postedVar('srchemail', dbescape: false, quoteencode: true, sourcearray: 'g'));
+            $dblikeip = $db->like_escape($validate->postedVar('srchip', dbescape: false, quoteencode: true, sourcearray: 'g'));
+        } else {
+            $dblikeemail = '';
+            $dblikeip = '';
+        }
 
         if (strtolower($desc) != 'desc') {
             $desc = 'asc';
@@ -337,13 +342,7 @@ switch ($action) {
             $orderby = $order;
         }
 
-        if (! X_ADMIN) {
-            $dblikeip = '';
-            $dblikeemail = '';
-            $misc_mlist_template = 'misc_mlist.php';
-        } else {
-            $misc_mlist_template = 'misc_mlist_admin.php';
-        }
+        $misc_mlist_template = X_ADMIN ? 'misc_mlist_admin.php' : 'misc_mlist.php';
 
         $where = [];
         $ext = [];
@@ -357,12 +356,7 @@ switch ($action) {
         }
 
         if ($dblikeemail != '') {
-            if (! X_SADMIN) {
-                $where[] = "email LIKE '%$dblikeemail%'";
-                $where[] = "showemail='yes'";
-            } else {
-                $where[] = "email LIKE '%$dblikeemail%'";
-            }
+            $where[] = "email LIKE '%$dblikeemail%'";
             $ext[] = 'srchemail=' . rawurlencode(getPhpInput('srchemail', 'g'));
             $template->srchemail = $validate->postedVar(
                 varname: 'srchemail',

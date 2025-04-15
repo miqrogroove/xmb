@@ -185,8 +185,8 @@ if ($status == 'installed') {
         // The trigger.php frame will create the logged output and display any fatal errors.
         // These requests for separate frames avoid buffering of script output while the upgrade gets processed.
         $template->process('install_upgrade_window.php', echo: true);
-        $template->process('install_footer.php', echo: true);
     }
+    $template->process('install_footer.php', echo: true);
     exit;
 }
 
@@ -332,7 +332,9 @@ switch($vStep) {
                     $content = 'You did not specify a method of configuration.  Please go back and do so now.';
                     break;
             } // for method
-            break; // for substep 'create'
+            $footer = $template->process('install_footer_no_sidebar.php');
+            echo $content, $footer;
+            exit;
 
         default:
             header("Content-type: text/html;charset=ISO-8859-1");

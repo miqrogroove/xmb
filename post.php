@@ -544,7 +544,7 @@ switch ($action) {
                                      . "FROM " . $vars->tablepre . "favorites f "
                                      . "INNER JOIN " . $vars->tablepre . "members m USING (username) "
                                      . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
-                while($subs = $db->fetch_array($subquery)) {
+                while ($subs = $db->fetch_array($subquery)) {
                     if ($viewperm < $vars->status_enum[$subs['status']]) {
                         continue;
                     }

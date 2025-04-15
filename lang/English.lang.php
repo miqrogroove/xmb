@@ -1179,7 +1179,6 @@ $lang['textsep'] = "September";
 $lang['textserverload'] = "Server Load:";
 $lang['textsettings'] = "Settings";
 $lang['textsettingsupdate'] = "Settings updated successfully!";
-$lang['textshowemail'] = "Make e-mail address viewable by others?";
 $lang['textsig'] = "Signature:";
 $lang['textsite'] = "Site:";
 $lang['textsitename'] = "Site Name:";

@@ -178,7 +178,7 @@ unset($params);
 if (defined('XMB_UPGRADE')) {
     return;
 } elseif (X_SADMIN && (int) vars()->settings['schema_version'] < \XMB\Schema::VER) {
-    $core->redirect(vars()->full_url . 'install/', timeout: 0);
+    core()->redirect(vars()->full_url . 'install/', timeout: 0);
 }
 
 
