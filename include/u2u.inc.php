@@ -26,7 +26,7 @@ namespace XMB;
 
 class U2U
 {
-    private const int U2U_FOLDER_COL_SIZE = 32;
+    private const U2U_FOLDER_COL_SIZE = 32;
 
     private array $farray = []; // Array of ints, message counts indexed by English internal folder name.
     private array $folders = []; // Array of strings, translated folder names.

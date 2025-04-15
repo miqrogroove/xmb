@@ -26,31 +26,31 @@ namespace XMB;
 
 class Variables
 {
-    public const int NONCE_AYS_EXP = 300; // Yes/no prompt expiration, in seconds.
-    public const int NONCE_FORM_EXP = 3600; // Form expiration, in seconds.
-    public const int NONCE_MAX_AGE = 43200; // CAPTCHA expiration, in seconds.
-    public const int NONCE_KEY_LEN = 12; // Size of captchaimages.imagestring.
-    public const int ONLINE_TIMER = 600; // Visitors are offline after this many seconds.
-    public const int PASS_MIN_LENGTH = 8; // New passwords may not be shorter than this.
-    public const int PASS_MAX_LENGTH = 72; // Hash input maximum to avoid truncation.
-    public const int USERNAME_MIN_LENGTH = 3; // New usernames may not be shorter than this.
-    public const int USERNAME_MAX_LENGTH = 32; // Size of members.username.
+    public const NONCE_AYS_EXP = 300; // Yes/no prompt expiration, in seconds.
+    public const NONCE_FORM_EXP = 3600; // Form expiration, in seconds.
+    public const NONCE_MAX_AGE = 43200; // CAPTCHA expiration, in seconds.
+    public const NONCE_KEY_LEN = 12; // Size of captchaimages.imagestring.
+    public const ONLINE_TIMER = 600; // Visitors are offline after this many seconds.
+    public const PASS_MIN_LENGTH = 8; // New passwords may not be shorter than this.
+    public const PASS_MAX_LENGTH = 72; // Hash input maximum to avoid truncation.
+    public const USERNAME_MIN_LENGTH = 3; // New usernames may not be shorter than this.
+    public const USERNAME_MAX_LENGTH = 32; // Size of members.username.
     // permissions constants
-    public const int PERMS_COUNT = 4; //Number of raw bit sets stored in postperm setting.
+    public const PERMS_COUNT = 4; //Number of raw bit sets stored in postperm setting.
     // indexes used in permissions arrays
-    public const int PERMS_RAWPOLL = 0;
-    public const int PERMS_RAWTHREAD = 1;
-    public const int PERMS_RAWREPLY = 2;
-    public const int PERMS_RAWVIEW = 3;
-    public const int PERMS_POLL = 40;
-    public const int PERMS_THREAD = 41;
-    public const int PERMS_REPLY = 42;
-    public const int PERMS_VIEW = 43; //View is now = Rawview || Userlist
-    public const int PERMS_USERLIST = 44;
-    public const int PERMS_PASSWORD = 45;
+    public const PERMS_RAWPOLL = 0;
+    public const PERMS_RAWTHREAD = 1;
+    public const PERMS_RAWREPLY = 2;
+    public const PERMS_RAWVIEW = 3;
+    public const PERMS_POLL = 40;
+    public const PERMS_THREAD = 41;
+    public const PERMS_REPLY = 42;
+    public const PERMS_VIEW = 43; //View is now = Rawview || Userlist
+    public const PERMS_USERLIST = 44;
+    public const PERMS_PASSWORD = 45;
 
-    public const string cheHTML = 'checked="checked"';
-    public const string selHTML = 'selected="selected"';
+    public const cheHTML = 'checked="checked"';
+    public const selHTML = 'selected="selected"';
 
     // status string to bit field assignments
     public array $status_enum = [

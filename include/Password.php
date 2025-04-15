@@ -34,9 +34,9 @@ use SensitiveParameter;
  */
 class Password
 {
-    public const int MAX_LENGTH = 72;
+    public const MAX_LENGTH = 72;
 
-    private const string ALGO = PASSWORD_DEFAULT;
+    private const ALGO = PASSWORD_DEFAULT;
 
     /**
      * When creating a Password object, the stored credentials are required.
