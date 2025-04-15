@@ -166,7 +166,7 @@ class URL2Text
                             $member = preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $member);
                             // TODO: This needs to be validated or removed rather than censored.
                             $member = cdataOut($this->smile->censor($member));
-                            eval('$location = "'.$lang['onlineviewpro'].'";');
+                            $location = str_replace('$member', $member, $lang['onlineviewpro']);
                             break;
                         }
                     }
