@@ -54,10 +54,10 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Fix Last Posts', 'Forums', error_header: true);
+    $core->request_secure('Control Panel/Fix Last Posts', 'Forums');
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Fix Last Posts', 'Forums', error_header: true);
+    $core->request_secure('Control Panel/Fix Last Posts', 'Forums');
 
     // Update all forums using as few queries as possible
     $data = $sql->getLatestPostForAllForums();

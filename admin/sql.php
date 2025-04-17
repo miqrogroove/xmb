@@ -61,7 +61,7 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('upgradesubmit')) {
-    $core->request_secure('Control Panel/Insert Raw SQL', id: '', error_header: true);
+    $core->request_secure('Control Panel/Insert Raw SQL', id: '');
 
     $admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
 

@@ -65,7 +65,7 @@ if (onSubmit('nosubmit')) {
     $template->memberLink = recodeOut($member);
     $body = $template->process('admin_members_prune_ays.php');
 } else {
-    $core->request_secure('Control Panel/Members/Del Posts', $member, error_header: true);
+    $core->request_secure('Control Panel/Members/Del Posts', $member);
 
     // Get TIDs
     $dirty = [];

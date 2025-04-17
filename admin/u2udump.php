@@ -56,10 +56,10 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Clear All U2Us', '', error_header: true);
+    $core->request_secure('Control Panel/Clear All U2Us', '');
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Clear All U2Us', '', error_header: true);
+    $core->request_secure('Control Panel/Clear All U2Us', '');
 
     $db->query("TRUNCATE " . $vars->tablepre . "u2u");
 

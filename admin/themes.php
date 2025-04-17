@@ -111,7 +111,7 @@ if (noSubmit('themesubmit') && $single_str == '' && noSubmit('importsubmit')) {
 }
 
 if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
-    $core->request_secure('Control Panel/Themes', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/Themes', 'mass-edit');
     if (!is_uploaded_file($_FILES['themefile']['tmp_name'])) {
         $core->error($lang['textthemeimportfail']);
     }
@@ -148,7 +148,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
         . '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'
         . $lang['textthemeimportsuccess'] . '</td></tr></td></tr>';
 } else if (onSubmit('themesubmit')) {
-    $core->request_secure('Control Panel/Themes', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/Themes', 'mass-edit');
     $theme_delete = $validate->postedArray('theme_delete', 'int');
     $theme_name = $validate->postedArray('theme_name', word: 'javascript', quoteencode: true);
 
@@ -188,7 +188,7 @@ if ($single_int > 0) {
     $body = $template->process('admin_themes_new.php');
 } else if ($single_str == "submit" && !$newtheme) {
     $orig = formInt('orig');
-    $core->request_secure('Control Panel/Themes', (string) $orig, error_header: true);
+    $core->request_secure('Control Panel/Themes', (string) $orig);
 
     $namenew = $validate->postedVar('namenew');
     $bgcolornew = $validate->postedVar('bgcolornew');
@@ -217,7 +217,7 @@ if ($single_int > 0) {
 
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['themeupdate'] . '</td></tr>';
 } else if ($single_str == "submit" && $newtheme) {
-    $core->request_secure('Control Panel/Themes', 'New Theme', error_header: true);
+    $core->request_secure('Control Panel/Themes', 'New Theme');
 
     $namenew = $validate->postedVar('namenew');
     $bgcolornew = $validate->postedVar('bgcolornew');

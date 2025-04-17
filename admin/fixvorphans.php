@@ -54,10 +54,10 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Fix Orphans', 'Polls', error_header: true);
+    $core->request_secure('Control Panel/Fix Orphans', 'Polls');
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Fix Orphans', 'Polls', error_header: true);
+    $core->request_secure('Control Panel/Fix Orphans', 'Polls');
 
     $result = $db->query("
         SELECT topic_id

@@ -84,7 +84,7 @@ if (noSubmit('modsubmit')) {
     }
     $body .= $template->process('admin_moderators_end.php');
 } else {
-    $core->request_secure('Control Panel/Moderators', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/Moderators', 'mass-edit');
     $mod = $validate->postedArray('mod', dbescape: false);
     if (is_array($mod)) {
         foreach($mod as $fid => $mods) {

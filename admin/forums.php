@@ -241,7 +241,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     }
     $body .= $template->process('admin_forums_detail_end.php');
 } else if (onSubmit('forumsubmit') && !$fdetails) {
-    $core->request_secure('Control Panel/Forums', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/Forums', 'mass-edit');
     $queryforum = $db->query("SELECT fid, type, fup FROM " . $vars->tablepre . "forums WHERE type='forum' OR type='sub'");
     while($forum = $db->fetch_array($queryforum)) {
         $displayorder = formInt('displayorder'.$forum['fid']);
@@ -359,7 +359,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
     $body .= '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textforumupdate'] . $link . '</p></td></tr>';
 } else {
-    $core->request_secure('Control Panel/Forums', (string) $fdetails, error_header: true);
+    $core->request_secure('Control Panel/Forums', (string) $fdetails);
 
     $success = true;
     if ($delete) {

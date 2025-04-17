@@ -54,10 +54,10 @@ $header = $template->process('header.php');
 $table = $template->process('admin_table.php');
 
 if (onSubmit('nosubmit')) {
-    $core->request_secure('Control Panel/Fix Last Posts', 'Threads', error_header: true);
+    $core->request_secure('Control Panel/Fix Last Posts', 'Threads');
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
-    $core->request_secure('Control Panel/Fix Last Posts', 'Threads', error_header: true);
+    $core->request_secure('Control Panel/Fix Last Posts', 'Threads');
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
     $sql->fixLastPostForAllThreads();

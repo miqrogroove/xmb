@@ -138,7 +138,7 @@ if (noSubmit('editsubmit')) {
     $subTemplate->token = $token->create('Edit User Account', $member['uid'], $vars::NONCE_FORM_EXP);
     $editpage = $subTemplate->process('admintool_editprofile.php');
 } else {
-    $core->request_secure('Edit User Account', $member['uid'], error_header: true);
+    $core->request_secure('Edit User Account', $member['uid']);
 
     $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
     $form->readBirthday();

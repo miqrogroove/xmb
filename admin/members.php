@@ -153,7 +153,7 @@ if (noSubmit('membersubmit')) {
         $body .= $template->process('admin_members_edit_end.php');
     }
 } elseif (onSubmit('membersubmit')) {
-    $core->request_secure('Control Panel/Members', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/Members', 'mass-edit');
     $query = $db->query("SELECT uid, username, status FROM " . $vars->tablepre . "members $where");
 
     // Guarantee this request will not remove all Super Administrators.

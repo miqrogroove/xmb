@@ -169,7 +169,7 @@ if (
 
     $body = $template->process('admin_settings.php');
 } else {
-    $core->request_secure('Control Panel/settings', 'global', error_header: true);
+    $core->request_secure('Control Panel/settings', 'global');
 
     $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
     $avastatusnew = $validate->postedVar('avastatusnew');

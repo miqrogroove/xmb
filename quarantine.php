@@ -307,7 +307,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
 } elseif ($action == 'approveall') {
     $member = $validate->postedVar('u');
     $rawmember = $validate->postedVar('u', dbescape: false);
-    $core->request_secure("Quarantine Panel/approveall", $rawmember);
+    $core->request_secure("Quarantine Panel/approveall", $rawmember, error_header: false);
 
     if (onSubmit('yessubmit')) {
         $count = $sql->countPosts($quarantine, 0, $rawmember);
@@ -433,7 +433,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
 } elseif ($action == 'deleteall' || $action == 'deleteban') {
     $member = $validate->postedVar('u');
     $rawmember = $validate->postedVar('u', dbescape: false);
-    $core->request_secure("Quarantine Panel/$action", $rawmember);
+    $core->request_secure("Quarantine Panel/$action", $rawmember, error_header: false);
 
     if (onSubmit('yessubmit')) {
         $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE author='$member' ORDER BY lastpost ASC");
@@ -466,7 +466,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
         echo $lang['moderation_canceled'];
     }
 } elseif ($action == 'approvethread') {
-    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete', error_header: false);
     $oldtid = getInt('tid');
     $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE tid=$oldtid");
     if ($db->num_rows($result) == 0) {
@@ -528,7 +528,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $core->moderate_cleanup($thread['author']);
     echo $lang['moderation_approved'];
 } elseif ($action == 'approvereply') {
-    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete', error_header: false);
     $oldpid = getInt('pid');
     $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
     if ($db->num_rows($result) == 0) {
@@ -598,7 +598,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $core->moderate_cleanup($post['author']);
     echo $lang['moderation_approved'];
 } elseif ($action == 'deletethread') {
-    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete', error_header: false);
     $oldtid = getInt('tid');
     $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE tid = $oldtid");
     if ($db->num_rows($result) == 0) {
@@ -624,7 +624,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $core->moderate_cleanup($thread['author']);
     echo $lang['moderation_deleted'];
 } elseif ($action == 'deletereply') {
-    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete');
+    $core->request_secure('Quarantine Panel/Anonymous Queue', 'Approve or Delete', error_header: false);
     $oldpid = getInt('pid');
     $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE pid = $oldpid");
     if ($db->num_rows($result) == 0) {

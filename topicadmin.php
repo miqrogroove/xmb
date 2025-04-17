@@ -192,7 +192,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Delete', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_delete.php');
         } else {
-            $core->request_secure('Thread Admin Options/Delete', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Delete', (string) min($tids));
 
             foreach ($tids as $tid) {
                 $tid = (int) $tid;
@@ -236,7 +236,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/OpenOrClose', (string) $tid, $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_openclose.php');
         } else {
-            $core->request_secure('Thread Admin Options/OpenOrClose', (string) $tid, error_header: true);
+            $core->request_secure('Thread Admin Options/OpenOrClose', (string) $tid);
             if ($closed == 'yes') {
                 $db->query("UPDATE " . $vars->tablepre . "threads SET closed = '' WHERE tid = $tid");
             } else {
@@ -258,7 +258,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Close', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_openclose.php');
         } else {
-            $core->request_secure('Thread Admin Options/Close', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Close', (string) min($tids));
             if (count($tids) > 0) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE " . $vars->tablepre . "threads SET closed = 'yes' WHERE tid IN ($csv)");
@@ -279,7 +279,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Open', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_openclose.php');
         } else {
-            $core->request_secure('Thread Admin Options/Open', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Open', (string) min($tids));
             if (count($tids) > 0) {
                 $csv = implode(',', $tids);
                 $db->query("UPDATE " . $vars->tablepre . "threads SET closed = '' WHERE tid IN ($csv)");
@@ -299,7 +299,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Move', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_move.php');
         } else {
-            $core->request_secure('Thread Admin Options/Move', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Move', (string) min($tids));
             $moveto = formInt('moveto');
             $type = $validate->postedVar('type');
 
@@ -383,7 +383,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Top', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_topuntop.php');
         } else {
-            $core->request_secure('Thread Admin Options/Top', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Top', (string) min($tids));
             foreach ($tids as $tid) {
                 $tid = (int) $tid;
                 $query = $db->query("SELECT topped FROM " . $vars->tablepre . "threads WHERE tid = $tid");
@@ -465,7 +465,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Bump', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_bump.php');
         } else {
-            $core->request_secure('Thread Admin Options/Bump', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Bump', (string) min($tids));
             foreach ($tids as $tid) {
                 $tid = (int) $tid;
                 $query = $db->query("SELECT pid FROM " . $vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline DESC, pid DESC LIMIT 1");
@@ -493,7 +493,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Empty', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_empty.php');
         } else {
-            $core->request_secure('Thread Admin Options/Empty', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Empty', (string) min($tids));
             foreach ($tids as $tid) {
                 $tid = (int) $tid;
                 $query = $db->query("SELECT pid FROM " . $vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline ASC LIMIT 1");
@@ -551,7 +551,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Split', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_split.php');
         } else {
-            $core->request_secure('Thread Admin Options/Split', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Split', (string) min($tids));
             $subject = addslashes($validate->postedVar('subject', 'javascript', quoteencode: true));  // Subjects are historically double-quoted
             if ($subject == '') {
                 $core->error($lang['textnosubject']);
@@ -606,7 +606,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Merge', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_merge.php');
         } else {
-            $core->request_secure('Thread Admin Options/Merge', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Merge', (string) min($tids));
             if ($othertid == 0) {
                 $core->error($lang['invalidtid']);
             } elseif ($tid == $othertid) {
@@ -713,7 +713,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Prune', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_threadprune.php');
         } else {
-            $core->request_secure('Thread Admin Options/Prune', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Prune', (string) min($tids));
             $postcount = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE tid = $tid"));
             $delcount = 0;
             foreach ($_POST as $key => $val) {
@@ -770,7 +770,7 @@ switch ($action) {
             $template->token = $token->create('Thread Admin Options/Copy', (string) min($tids), $vars::NONCE_AYS_EXP);
             $page = $template->process('topicadmin_copy.php');
         } else {
-            $core->request_secure('Thread Admin Options/Copy', (string) min($tids), error_header: true);
+            $core->request_secure('Thread Admin Options/Copy', (string) min($tids));
             if (! formInt('newfid')) {
                 $core->error($lang['privforummsg']);
             }

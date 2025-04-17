@@ -86,7 +86,7 @@ if (noSubmit('rankssubmit')) {
     }
     $body .= $template->process('admin_ranks_end.php');
 } else {
-    $core->request_secure('Control Panel/User Ranks', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/User Ranks', 'mass-edit');
     $id = $validate->postedArray('id', 'int');
     $delete = $validate->postedArray('delete', 'int');
     $title = $validate->postedArray('title', htmlencode: false);

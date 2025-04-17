@@ -76,7 +76,7 @@ if (noSubmit('restrictedsubmit')) {
     }
     $body .= $template->process('admin_restrictions_end.php');
 } else {
-    $core->request_secure('Control Panel/Restrictions', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/Restrictions', 'mass-edit');
 
     $queryrestricted = $db->query("SELECT id FROM " . $vars->tablepre . "restricted");
     while($restricted = $db->fetch_array($queryrestricted)) {

@@ -90,11 +90,11 @@ if ($vars->settings['ip_banning'] == 'on') {
 
         $body .= $template->process('admin_ipban_end.php');
     } elseif (onSubmit('ipbandisable')) {
-        $core->request_secure('Control Panel/IP Banning', 'mass-edit', error_header: true);
+        $core->request_secure('Control Panel/IP Banning', 'mass-edit');
         $sql->updateSetting('ip_banning', 'off');
         $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '"><td class="ctrtablerow">' . $lang['textipupdate'] . '</td></tr>';
     } else {
-        $core->request_secure('Control Panel/IP Banning', 'mass-edit', error_header: true);
+        $core->request_secure('Control Panel/IP Banning', 'mass-edit');
         $newip1 = getPhpInput('newip1');
         $newip2 = getPhpInput('newip2');
         $newip3 = getPhpInput('newip3');
@@ -154,7 +154,7 @@ if ($vars->settings['ip_banning'] == 'on') {
 
         $body = $template->process('admin_ipban_enable.php');
     } else {
-        $core->request_secure('Control Panel/IP Banning', 'enable', error_header: true);
+        $core->request_secure('Control Panel/IP Banning', 'enable');
         $sql->updateSetting('ip_banning', 'on');
         $link = '</p><p><a href="' . $vars->full_url . 'admin/ipban.php">' . $lang['textipbanlink'] . '</a>';
         $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textipupdate'] . $link . '</p></td></tr>';

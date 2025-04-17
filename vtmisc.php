@@ -188,7 +188,7 @@ if ($action == 'report') {
 
     // Okay, the user is about to vote
 
-    $core->request_secure('View Thread/Poll Vote', (string) $vote_id, error_header: true);
+    $core->request_secure('View Thread/Poll Vote', (string) $vote_id);
 
     if ((int) $vars->settings['schema_version'] < 9 || strlen($vars->onlineip) > 39) {
         $userip = '';

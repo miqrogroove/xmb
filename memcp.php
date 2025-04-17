@@ -129,7 +129,7 @@ if ($action == 'profile') {
     }
 
     if (onSubmit('editsubmit')) {
-        $core->request_secure('User Control Panel/Edit Profile', $vars->self['uid'], error_header: true);
+        $core->request_secure('User Control Panel/Edit Profile', $vars->self['uid']);
 
         if (getRawString('newpassword') != '') {
             $storedPass = $vars->self['password'] !== '' ? $vars->self['password'] : $vars->self['password2'];

@@ -157,29 +157,6 @@ class Core
     }
 
     /**
-     * Get a template with the token filled in.
-     *
-     * DEPRECATED by XMB 1.10.00
-     *
-     * TODO: This method should be removed prior to beta testing.  The new Template system makes this awkward and unnecessary.
-     *
-     * @since 1.9.11.11
-     * @param string $name   The template name.
-     * @param string $action The action for which the token is valid.
-     * @param string $id     The object for which the token is valid.
-     * @param int    $ttl    Validity time in seconds.
-     * @return string
-     */
-    function template_secure(string $name, string $action, string $id, int $ttl): string
-    {
-        trigger_error('Function template_secure() is deprecated in this version of XMB', E_USER_DEPRECATED);
-        $token = $this->token->create($action, $id, $ttl);
-        $placeholder = '<input type="hidden" name="token" value="" />';
-        $replace = "<input type='hidden' name='token' value='$token' />";
-        return str_replace($placeholder, $replace, $this->template->process($name));
-    }
-
-    /**
      * Assert token validity for a user request.
      *
      * @since 1.9.11.11
@@ -187,7 +164,7 @@ class Core
      * @param string $id     The object for which the token is valid.
      * @param bool   $error_header Display header template on errors?
      */
-    function request_secure(string $action, string $id, bool $error_header = false)
+    public function request_secure(string $action, string $id, bool $error_header = true)
     {
         $token = getPhpInput('token');
 

@@ -146,7 +146,7 @@ switch ($action) {
             $template->token = $token->create('Lost Password', '', $vars::NONCE_FORM_EXP, anonymous: true);
             $misc = $template->process('misc_lostpw.php');
         } else {
-            $core->request_secure('Lost Password', '', error_header: true);
+            $core->request_secure('Lost Password', '');
             $username = $validate->postedVar('username');
             if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
                 $core->error($lang['badinfo']);

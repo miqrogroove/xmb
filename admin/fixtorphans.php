@@ -63,7 +63,7 @@ if (noSubmit('orphsubmit')) {
     $template->select = $core->forumList('export_fid', allowall: false);
     $body = $template->process('admin_fixtorphans.php');
 } else {
-    $core->request_secure('Control Panel/Fix Orphans', 'Threads', error_header: true);
+    $core->request_secure('Control Panel/Fix Orphans', 'Threads');
 
     $export_fid = formInt('export_fid');
     $export_forum = $forums->getForum($export_fid);

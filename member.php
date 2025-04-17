@@ -113,7 +113,7 @@ switch ($action) {
                     
                     if ($cookieToken != $postToken) $core->error($lang['bad_token']);
                     
-                    $core->request_secure('Registration', (string) $stepin, error_header: true);
+                    $core->request_secure('Registration', (string) $stepin);
                     break;
                 default:
                     // Step value was invalid.

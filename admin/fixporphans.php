@@ -62,7 +62,7 @@ if (noSubmit('orphsubmit')) {
     $template->formURL = $vars->full_url . $relpath;
     $body = $template->process('admin_fixporphans.php');
 } else {
-    $core->request_secure('Control Panel/Fix Orphans', 'Posts', error_header: true);
+    $core->request_secure('Control Panel/Fix Orphans', 'Posts');
 
     $export_tid = formInt('export_tid');
 

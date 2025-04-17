@@ -76,7 +76,7 @@ if (noSubmit('smiliesubmit')) {
 
     $body .= $template->process('admin_smilies_end.php');
 } else {
-    $core->request_secure('Control Panel/Smilies', 'mass-edit', error_header: true);
+    $core->request_secure('Control Panel/Smilies', 'mass-edit');
 
     $smdelete = $validate->postedArray('smdelete', 'int');
     $smcode = $validate->postedArray('smcode', word: 'javascript', quoteencode: true);
