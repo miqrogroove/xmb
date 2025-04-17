@@ -31,6 +31,8 @@ class Variables
     public const NONCE_MAX_AGE = 43200; // CAPTCHA expiration, in seconds.
     public const NONCE_KEY_LEN = 12; // Size of captchaimages.imagestring.
     public const ONLINE_TIMER = 600; // Visitors are offline after this many seconds.
+    public const PAGING_MAX = 100; // $this->tpp and $this->ppp may not be more than this value.
+    public const PAGING_MIN = 5; // $this->tpp and $this->ppp may not be less than this value.
     public const PASS_MIN_LENGTH = 8; // New passwords may not be shorter than this.
     public const PASS_MAX_LENGTH = 72; // Hash input maximum to avoid truncation.
     public const USERNAME_MIN_LENGTH = 3; // New usernames may not be shorter than this.

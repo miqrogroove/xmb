@@ -480,13 +480,13 @@ class UserEditForm
     {
         $tpp = formInt('tpp');
         $ppp = formInt('ppp');
-        if ($tpp < 5) $tpp = $this->vars->settings['topicperpage'];
-        if ($ppp < 5) $ppp = $this->vars->settings['postperpage'];
+        if ($tpp < $this->vars::PAGING_MIN || $tpp > $this->vars::PAGING_MAX) $tpp = (int) $this->vars->settings['topicperpage'];
+        if ($ppp < $this->vars::PAGING_MIN || $ppp > $this->vars::PAGING_MAX) $ppp = (int) $this->vars->settings['postperpage'];
         if ($this->formMode == 'new' || $this->targetUser['tpp'] != $tpp) {
-            $this->edits['tpp'] = (int) $tpp;
+            $this->edits['tpp'] = $tpp;
         }
         if ($this->formMode == 'new' || $this->targetUser['ppp'] != $ppp) {
-            $this->edits['ppp'] = (int) $ppp;
+            $this->edits['ppp'] = $ppp;
         }
     }
 

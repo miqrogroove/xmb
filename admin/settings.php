@@ -202,6 +202,16 @@ if (
     $max_image_size = $max_image_size_w_new.'x'.$max_image_size_h_new;
     $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
 
+    $mpp = formInt('memberperpagenew');
+    $ppp = formInt('postperpagenew');
+    $tpp = formInt('topicperpagenew');
+    if ($mpp < $vars::PAGING_MIN || $mpp > $vars::PAGING_MAX) $mpp = 30;
+    if ($tpp < $vars::PAGING_MIN || $tpp > $vars::PAGING_MAX) $tpp = 30;
+    if ($ppp < $vars::PAGING_MIN || $ppp > $vars::PAGING_MAX) $ppp = 30;
+    $mpp = (string) $mpp;
+    $ppp = (string) $ppp;
+    $tpp = (string) $tpp;
+
     $admin->input_custom_setting('addtime', $addtimenew);
     $admin->input_string_setting('adminemail', 'adminemailnew');
     $admin->input_onoff_setting('allowrankedit', 'allowrankeditnew');
@@ -266,12 +276,12 @@ if (
     $admin->input_custom_setting('max_avatar_size', $max_avatar_size);
     $admin->input_custom_setting('max_image_size', $max_image_size);
     $admin->input_custom_setting('max_thumb_size', $max_thumb_size);
-    $admin->input_int_setting('memberperpage', 'memberperpagenew');
+    $admin->input_custom_setting('memberperpage', $mpp);
     $admin->input_onoff_setting('memliststatus', 'memliststatusnew');
     $admin->input_custom_setting('notifyonreg', $notifyonregnew);
     $admin->input_int_setting('onlinetodaycount', 'onlinetodaycountnew');
     $admin->input_onoff_setting('onlinetoday_status', 'onlinetoday_statusnew');
-    $admin->input_int_setting('postperpage', 'postperpagenew');
+    $admin->input_custom_setting('postperpage', $ppp);
     $admin->input_int_setting('pruneusers', 'pruneusersnew');
     $admin->input_onoff_setting('quarantine_new_users', 'quarantinenew');
     $admin->input_onoff_setting('quickjump_status', 'quickjump_statusnew');
@@ -300,7 +310,7 @@ if (
     $admin->input_onoff_setting('tickerstatus', 'tickerstatusnew');
     $admin->input_int_setting('timeformat', 'timeformatnew');
     $admin->input_onoff_setting('todaysposts', 'todaystatusnew');
-    $admin->input_int_setting('topicperpage', 'topicperpagenew');
+    $admin->input_custom_setting('topicperpage', $tpp);
     $admin->input_int_setting('u2uquota', 'u2uquotanew');
     $admin->input_onoff_setting('whosonlinestatus', 'whos_on');
 

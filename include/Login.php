@@ -184,9 +184,6 @@ class Login
             $vars->self['username'] = '';
         }
 
-        if ($vars->tpp < 5) $vars->tpp = 30;
-        if ($vars->ppp < 5) $vars->ppp = 30;
-
         if ($force_inv) {
             $invisible = '1';
         }

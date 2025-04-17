@@ -2205,6 +2205,9 @@ class Upgrade
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '11' WHERE name = 'schema_version'");
     }
 
+// TODO: Schema 12
+//  Reset any members.tpp and members.ppp values that don't conform to $this->vars::PAGING_MIN and $this->vars::PAGING_MAX.
+
     /**
      * Recalculates the value of every field in the forums.postperm column.
      *
