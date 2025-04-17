@@ -64,9 +64,6 @@ if ($threadcount == 0) {
     $multipage = '';
     eval('$rows = "'.template('today_noposts').'";');
 } else {
-    validateTpp();
-    validatePpp();
-
     if ($daysold == 1) {
         $mpage = multipage($threadcount, $tpp, 'today.php');
     } else {

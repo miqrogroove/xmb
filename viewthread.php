@@ -26,7 +26,6 @@ define('X_SCRIPT', 'viewthread.php');
 
 require 'header.php';
 
-validatePpp();
 $printable_ppp = 100;
 
 $pid = getInt('pid');

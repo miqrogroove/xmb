@@ -145,6 +145,8 @@ function elevateUser(bool $force_inv = false, string $serror = '') {
         $status = $self['status'];
         $tpp = (int) $self['tpp'];
         $ppp = (int) $self['ppp'];
+        validatePpp();
+        validateTpp();
         $memtime = (int) $self['timeformat'];
         if ($self['dateformat'] != '') {
             $dateformat = $self['dateformat'];

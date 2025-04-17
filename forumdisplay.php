@@ -107,9 +107,6 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 // Search-link
 $searchlink = makeSearchLink($forum['fid']);
 
-validateTpp();
-validatePpp();
-
 $threadcount = (int) $db->result($db->query("SELECT COUNT(*) FROM ".X_PREFIX."threads WHERE fid=$fid"), 0);
 
 // Perform automatic maintenance

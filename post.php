@@ -156,8 +156,6 @@ if (X_GUEST) {
     $username = $self['username'];
 }
 
-validatePpp();
-
 $poll = postedVar('poll', '', FALSE, FALSE, FALSE, 'g');
 if ($poll != 'yes') {
     $poll = '';

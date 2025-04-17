@@ -133,8 +133,6 @@ if (!isset($searchsubmit) && !isset($page)) {
         }
     }
 
-    validatePpp();
-
     $searchresults = '';
 
     if ($page < 1) {
