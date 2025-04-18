@@ -479,7 +479,7 @@ class Captcha
     private function SetFonts($vFonts)
     {
         // override any pre-defined file path
-        putenv('GDFONTPATH=' . realpath(XMB_ROOT));
+        putenv('GDFONTPATH=' . realpath(ROOT));
 
         // check for input type
         if (is_array($vFonts)) {
@@ -498,22 +498,22 @@ class Captcha
 
         // loop through items
         foreach($aFonts as $sCurrentItem) {
-            if (is_dir(XMB_ROOT . $sCurrentItem)) {
-                $dir = opendir(XMB_ROOT . $sCurrentItem);
+            if (is_dir(ROOT . $sCurrentItem)) {
+                $dir = opendir(ROOT . $sCurrentItem);
                 while($file = readdir($dir)) {
                     if (false !== strpos($file, '.ttf')) {
-                        $this->aFonts[] = XMB_ROOT . $sCurrentItem . '/' . $file;
+                        $this->aFonts[] = ROOT . $sCurrentItem . '/' . $file;
                     }
                 }
             } else {
-                if (is_file(XMB_ROOT . $sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
+                if (is_file(ROOT . $sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
                     $this->aFonts[] = $sCurrentItem;
-                } else if (is_file(XMB_ROOT . $sCurrentItem . '.ttf')) {
-                    $this->aFonts[] = XMB_ROOT . $sCurrentItem . '.ttf';
-                } else if (is_file(XMB_ROOT . 'fonts/' . $sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
-                    $this->aFonts[] = XMB_ROOT . 'fonts/' . $sCurrentItem;
-                } else if (is_file(XMB_ROOT . 'fonts/' . $sCurrentItem . '.ttf')) {
-                    $this->aFonts[] = XMB_ROOT . 'fonts/' . $sCurrentItem . '.ttf';
+                } else if (is_file(ROOT . $sCurrentItem . '.ttf')) {
+                    $this->aFonts[] = ROOT . $sCurrentItem . '.ttf';
+                } else if (is_file(ROOT . 'fonts/' . $sCurrentItem) && false !== strpos($sCurrentItem, '.ttf')) {
+                    $this->aFonts[] = ROOT . 'fonts/' . $sCurrentItem;
+                } else if (is_file(ROOT . 'fonts/' . $sCurrentItem . '.ttf')) {
+                    $this->aFonts[] = ROOT . 'fonts/' . $sCurrentItem . '.ttf';
                 }
             }
         }
@@ -538,28 +538,28 @@ class Captcha
 
         // loop through items
         foreach($aBackgroundImages as $sCurrentItem) {
-            if (is_dir(XMB_ROOT . $sCurrentItem)) {
-                $dir = opendir(XMB_ROOT . $sCurrentItem);
+            if (is_dir(ROOT . $sCurrentItem)) {
+                $dir = opendir(ROOT . $sCurrentItem);
                 while($file = readdir($dir)) {
                     if (false !== strpos($file, '.png')) {
-                        $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.gif')) {
-                        $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.jpg')) {
-                        $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.jpeg')) {
-                        $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem . '/' . $file;
+                        $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     }
                 }
-            } elseif (is_file(XMB_ROOT . $sCurrentItem)) {
+            } elseif (is_file(ROOT . $sCurrentItem)) {
                 if (false !== strpos($sCurrentItem, '.png')) {
-                    $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem;
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
                 } elseif (false !== strpos($sCurrentItem, '.gif')) {
-                    $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem;
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
                 } elseif (false !== strpos($sCurrentItem, '.jpg')) {
-                    $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem;
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
                 } elseif (false !== strpos($sCurrentItem, '.jpeg')) {
-                    $this->aBackgroundImages[] = XMB_ROOT . $sCurrentItem;
+                    $this->aBackgroundImages[] = ROOT . $sCurrentItem;
                 }
             }
         }

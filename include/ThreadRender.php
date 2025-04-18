@@ -116,7 +116,7 @@ class ThreadRender
     {
         $relPath = $this->vars->theme['smdir'] . '/' . $icon;
 
-        if ($icon != '' && file_exists(XMB_ROOT . $relPath)) {
+        if ($icon != '' && file_exists(ROOT . $relPath)) {
             $src = $this->vars->full_url . $relPath;
             $alt = $icon;
         } else {

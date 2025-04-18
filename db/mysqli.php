@@ -373,11 +373,12 @@ class MySQLiDatabase implements DBStuff
             $log_advice = "Please set LOG_MYSQL_ERRORS to true in config.php.<br />\n";
         }
 
-    	if ($this->debug && (!defined('X_SADMIN') || X_SADMIN)) {
-            require_once(XMB_ROOT.'include/validate.inc.php');
+    	if ($this->debug && (! defined('XMB\X_SADMIN') || X_SADMIN)) {
+            // If an error was found in already_installed() then the header hasn't been included yet.
+            require_once ROOT . 'include/validate.inc.php';
 
             // MySQL error text may contain sensitive file path info.
-            if (defined('X_SADMIN')) {
+            if (defined('XMB\X_SADMIN')) {
                 echo 'MySQL encountered the following error: ' . cdataOut($error) . "<br />\n(errno = $errno)<br /><br />\n";
                 if ($sql != '') {
                     echo "In the following query:<br />\n<pre>" . cdataOut($sql) . "</pre>\n";
@@ -394,7 +395,7 @@ class MySQLiDatabase implements DBStuff
             }
         } else {
             echo "The system has failed to process your request.<br />\n", $log_advice;
-            if (defined('X_SADMIN') && X_SADMIN && ! $this->debug) {
+            if (defined('XMB\X_SADMIN') && X_SADMIN && ! $this->debug) {
                 echo "To display details, please set DEBUG to true in config.php.<br />\n";
             }
     	}
@@ -550,7 +551,7 @@ class MySQLiDatabase implements DBStuff
                     $this->free_result($query3);
                 }
             }
-            if (!defined('X_SADMIN') || X_SADMIN) {
+            if (! defined('XMB\X_SADMIN') || X_SADMIN) {
                 $this->querylist[] = $sql;
             }
         }
@@ -582,7 +583,7 @@ class MySQLiDatabase implements DBStuff
             }
         }
         $this->querynum++;
-    	if ($this->debug && (!defined('X_SADMIN') || X_SADMIN)) {
+    	if ($this->debug && (! defined('XMB\X_SADMIN') || X_SADMIN)) {
             $this->querylist[] = $sql;
         }
         $this->querytimes[] = $this->stop_timer();

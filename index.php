@@ -126,11 +126,11 @@ if ($SETTINGS['index_stats'] == 'on' && $gid == 0) {
     if ('on' == $SETTINGS['hide_banned']) {
         $where = "AND status != 'Banned'";
     }
-    $query1 = $db->query("SELECT username FROM ".X_PREFIX."members WHERE lastvisit != 0 $where ORDER BY regdate DESC LIMIT 1");
+    $query1 = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE lastvisit != 0 $where ORDER BY regdate DESC LIMIT 1");
     if ($db->num_rows($query1) == 1) {
         $lastmember = $db->fetch_array($query1);
 
-        $query = $db->query("SELECT COUNT(*) FROM ".X_PREFIX."members UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."threads UNION ALL SELECT COUNT(*) FROM ".X_PREFIX."posts");
+        $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "members UNION ALL SELECT COUNT(*) FROM " . $vars->tablepre . "threads UNION ALL SELECT COUNT(*) FROM " . $vars->tablepre . "posts");
         $members = (int) $db->result($query, 0);
         $threads = (int) $db->result($query, 1);
         $posts = (int) $db->result($query, 2);
@@ -158,13 +158,13 @@ if ($gid == 0) {
     if ($SETTINGS['whosonlinestatus'] == 'on') {
         $hiddencount = 0;
         $membercount = 0;
-        $guestcount = (int) $db->result($db->query("SELECT COUNT(DISTINCT ip) AS guestcount FROM ".X_PREFIX."whosonline WHERE username = 'xguest123'"), 0);
+        $guestcount = (int) $db->result($db->query("SELECT COUNT(DISTINCT ip) AS guestcount FROM " . $vars->tablepre . "whosonline WHERE username = 'xguest123'"), 0);
         $member = array();
         $where = '';
         if ('on' == $SETTINGS['hide_banned']) {
             $where = "WHERE m.status != 'Banned'";
         }
-        $query = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM ".X_PREFIX."members AS m INNER JOIN ".X_PREFIX."whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
+        $query = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM " . $vars->tablepre . "members AS m INNER JOIN " . $vars->tablepre . "whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
         while($online = $db->fetch_array($query)) {
             if ('1' === $online['invisible'] && X_ADMIN) {
                 $member[] = $online;
@@ -252,9 +252,9 @@ if ($gid == 0) {
                 $where = "AND status != 'Banned'";
             }
             if (X_ADMIN) {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' $where ORDER BY lastvisit DESC");
+                $query = $db->query("SELECT username, status FROM " . $vars->tablepre . "members WHERE lastvisit >= '$datecut' $where ORDER BY lastvisit DESC");
             } else {
-                $query = $db->query("SELECT username, status FROM ".X_PREFIX."members WHERE lastvisit >= '$datecut' AND invisible != '1' $where ORDER BY lastvisit DESC");
+                $query = $db->query("SELECT username, status FROM " . $vars->tablepre . "members WHERE lastvisit >= '$datecut' AND invisible != '1' $where ORDER BY lastvisit DESC");
             }
 
             $todaymembersnum = $db->num_rows($query);

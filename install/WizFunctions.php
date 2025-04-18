@@ -47,14 +47,14 @@ function already_installed(
     string $tablepre,
 ): string {
     // When config.php has default values, XMB is not installed.
-    $config_array = array(
+    $config_array = [
         'dbname' => 'DB/NAME',
         'dbuser' => 'DB/USER',
         'dbpw' => 'DB/PW',
         'dbhost' => 'DB_HOST',
         'tablepre' => 'TABLE/PRE',
-    );
-    foreach($config_array as $key => $value) {
+    ];
+    foreach ($config_array as $key => $value) {
         if (${$key} === $value) {
             return 'no-db-config';
         }
@@ -63,9 +63,9 @@ function already_installed(
     // Force upgrade to mysqli
     if ('mysql' === $database) $database = 'mysqli';
 
-    if (! is_readable(XMB_ROOT . "db/{$database}.php")) return false;
-    require_once XMB_ROOT . 'db/DBStuff.php';
-    require_once XMB_ROOT . "db/{$database}.php";
+    if (! is_readable(ROOT . "db/{$database}.php")) return false;
+    require_once ROOT . 'db/DBStuff.php';
+    require_once ROOT . "db/{$database}.php";
 
     $db = new \XMB\MySQLiDatabase(debug: true, logErrors: true);
     $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);

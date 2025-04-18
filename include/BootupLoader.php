@@ -107,7 +107,7 @@ class BootupLoader
         $force_inv = false;
         if ((int) $this->vars->settings['schema_version'] < 5) {
             $mode = 'disabled';
-        } else if (defined('XMB_UPGRADE') && isset($_POST['xmbpw'])) {
+        } else if (defined('XMB\UPGRADE') && isset($_POST['xmbpw'])) {
             $mode = 'login';
         } else if ($action == 'login' && onSubmit('loginsubmit') && $script == 'misc.php') {
             $mode = 'login';

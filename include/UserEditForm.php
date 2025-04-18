@@ -47,7 +47,7 @@ class UserEditForm
         private Core $core,
         private DBStuff $db,
         private SQL $sql,
-        private Theme\Manager $theme,
+        private ThemeManager $theme,
         private Translation $tran,
         private Validation $validate,
         private Variables $vars,
@@ -269,9 +269,9 @@ class UserEditForm
             }
         } elseif ($this->vars->settings['avastatus'] == 'list')  {
             $avatars = ['<option value="" />' . $this->vars->lang['textnone'] . '</option>'];
-            $dir1 = opendir(XMB_ROOT . 'images/avatars');
+            $dir1 = opendir(ROOT . 'images/avatars');
             while ($avFile = readdir($dir1)) {
-                if (is_file(XMB_ROOT . 'images/avatars/' . $avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                if (is_file(ROOT . 'images/avatars/' . $avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                     $avatars[] = '<option value="' . $this->vars->full_url . 'images/avatars/' . $avFile . '" />' . $avFile . '</option>';
                 }
             }
@@ -315,11 +315,11 @@ class UserEditForm
             }
         } elseif ($this->vars->settings['avastatus'] == 'list') {
             $rawavatar = getPhpInput('newavatar');
-            $dirHandle = opendir(XMB_ROOT . 'images/avatars');
+            $dirHandle = opendir(ROOT . 'images/avatars');
             $filefound = false;
             while ($avFile = readdir($dirHandle)) {
                 if ($rawavatar == $this->vars->full_url . 'images/avatars/' . $avFile) {
-                    if (is_file(XMB_ROOT . 'images/avatars/' . $avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
+                    if (is_file(ROOT . 'images/avatars/' . $avFile) && $avFile != '.' && $avFile != '..' && $avFile != 'index.html') {
                         $filefound = true;
                         break;
                     }

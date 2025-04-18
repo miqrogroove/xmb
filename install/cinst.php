@@ -352,10 +352,10 @@ class Install
         // Debug mode is enabled by default during install. Try to turn it off so the new forums will look normal.
         if ($this->vars->debug) {
             $this->show->progress("Deactivating debug mode");
-            if (is_writable(XMB_ROOT . 'config.php')) {
-                $configuration = file_get_contents(XMB_ROOT . 'config.php');
-                $configuration = str_ireplace("define('DEBUG', true);", "define('DEBUG', false);", $configuration);
-                $result = file_put_contents(XMB_ROOT . 'config.php', $configuration);
+            if (is_writable(ROOT . 'config.php')) {
+                $configuration = file_get_contents(ROOT . 'config.php');
+                $configuration = str_ireplace('$debug = true;', '$debug = false;', $configuration);
+                $result = file_put_contents(ROOT . 'config.php', $configuration);
                 if (false === $result){
                     $this->show->warning('Please disable debug mode in the config.php file after a successful installation.');
                 } else {

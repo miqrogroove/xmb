@@ -27,7 +27,7 @@ namespace XMB;
 use Exception;
 use XMBVersion;
 
-if (! defined('XMB_ROOT')) {
+if (! defined('XMB\ROOT')) {
     header('HTTP/1.0 403 Forbidden');
     exit('Not allowed to run this file directly.');
 }
@@ -39,7 +39,7 @@ if (
     ! is_readable('./UpgradeOutput.php') ||
     ! is_readable('./upgrade.lib.php') ||
     ! is_readable('./WizFunctions.php') ||
-    ! is_readable(XMB_ROOT . 'header.php')
+    ! is_readable(ROOT . 'header.php')
 ) {
     echo "Could not find the installer files!\n<br />\nPlease make sure the entire XMB folder contents are available.";
     throw new Exception('Attempted install by ' . $_SERVER['REMOTE_ADDR'] . ' without the required files.');
@@ -54,9 +54,9 @@ require './WizFunctions.php';
 $config_success = true;
 $config_error = '';
 $status = '';
-if (is_readable(XMB_ROOT . 'config.php')) {
+if (is_readable(ROOT . 'config.php')) {
     try {
-        include XMB_ROOT . 'config.php';
+        include ROOT . 'config.php';
     } catch (Throwable $e) {
         $status = 'bad-config-file';
         $config_success = false;
@@ -83,18 +83,18 @@ if ($config_success) {
 }
 
 if ($status == 'installed') {
-    define('XMB_UPGRADE', true);
+    define('XMB\UPGRADE', true);
 } else {
-    define('XMB_INSTALL', true);
+    define('XMB\INSTALL', true);
 }
 
 // Check location
-if (! is_readable(XMB_ROOT . 'header.php')) {
+if (! is_readable(ROOT . 'header.php')) {
     echo 'Could not find XMB!<br />Please make sure the install folder is in the same folder as header.php.<br />';
     throw new Exception('Attempted upgrade by ' . $_SERVER['REMOTE_ADDR'] . ' from wrong location.');
 }
 
-require XMB_ROOT . 'header.php';
+require ROOT . 'header.php';
 
 $template = \XMB\Services\template();
 $vars = \XMB\Services\vars();
@@ -134,7 +134,7 @@ if ($status == 'installed') {
         exit($vars->lang['already_installed']);
     }
 
-    if (! defined('X_SADMIN') || ! X_SADMIN) {
+    if (! defined('XMB\X_SADMIN') || ! X_SADMIN) {
         header('HTTP/1.0 403 Forbidden');
         echo "<br /><br />\n" . $vars->lang['upgrade_admin'] . "<br />\n" . str_replace('$url', $vars->full_url . 'install/login.php', $vars->lang['upgrade_admin_login']) . "<br />\n";
         throw new Exception(str_replace('$ipAddress', $_SERVER['REMOTE_ADDR'], $vars->lang['upgrade_admin_error']));
@@ -165,7 +165,7 @@ if ($status == 'installed') {
 
     $template->process('install_header.php', echo: true);
 
-    if (XMB_ERR_DISPLAY_FORCED_OFF) {
+    if (ERR_DISPLAY_FORCED_OFF) {
         trigger_error($vars->lang['upgrade_display_errors'], E_USER_WARNING);
     }
 
@@ -207,7 +207,7 @@ if (! empty($full_url) && $full_url != 'FULLURL') {
 
 $show = new \XMB\HttpOutput($template, $vars);
 
-switch($vStep) {
+switch ($vStep) {
     case 1: // welcome
         $content = $template->process('install_welcome.php');
         break;
@@ -222,128 +222,128 @@ switch($vStep) {
 
     case 4: // config.php set-up
         $vSubStep = isset($_REQUEST['substep']) ? trim($_REQUEST['substep']) : '';
-        switch($vSubStep) {
-        case 'create':
-            // Open config.php
-            if (is_readable(XMB_ROOT . 'config-dist.php')) {
-                $configuration = file_get_contents(XMB_ROOT . 'config-dist.php');
-            } else {
-                $configuration = '';
-            }
-
-            // Now, replace the main text values with those given by user
-            $find = [
-                "'DB/NAME'",
-                "'DB/USER'",
-                "'DB/PW'",
-                "'localhost'",
-                "'TABLE/PRE'",
-                "'FULLURL'",
-                "'default'",
-                "'MAILER_USER'",
-                "'MAILER_PASS'",
-                "'MAILER_HOST'",
-                "'MAILER_PORT'",
-            ];
-            $replace = [
-                input_to_literal(getPhpInput('db_name')),
-                input_to_literal(getPhpInput('db_user')),
-                input_to_literal(getPhpInput('db_pw')),
-                input_to_literal(getPhpInput('db_host')),
-                input_to_literal(getPhpInput('table_pre')),
-                input_to_literal(getPhpInput('fullurl')),
-                input_to_literal(getPhpInput('MAILER_TYPE')),
-                input_to_literal(getPhpInput('MAILER_USER')),
-                input_to_literal(getPhpInput('MAILER_PASS')),
-                input_to_literal(getPhpInput('MAILER_HOST')),
-                input_to_literal(getPhpInput('MAILER_PORT')),
-            ];
-            foreach ($find as $phrase) {
-                if (strpos($configuration, $phrase) === false) {
-                    $configuration = "<?php\n"
-                        . "\$dbname   = 'DB/NAME';\n"
-                        . "\$dbuser   = 'DB/USER';\n"
-                        . "\$dbpw     = 'DB/PW';\n"
-                        . "\$dbhost   = 'localhost';\n"
-                        . "\$database = 'mysql';\n"
-                        . "\$pconnect = false;\n"
-                        . "\$tablepre = 'TABLE/PRE';\n"
-                        . "\$full_url = 'FULLURL';\n"
-                        . "\$comment_output = false;\n"
-                        . "\$mailer['type']     = 'default';\n"
-                        . "\$mailer['username'] = 'MAILER_USER';\n"
-                        . "\$mailer['password'] = 'MAILER_PASS';\n"
-                        . "\$mailer['host']     = 'MAILER_HOST';\n"
-                        . "\$mailer['port']     = 'MAILER_PORT';\n"
-                        . "\$i = 1;\n"
-                        . "\$plugname[\$i]  = '';\n"
-                        . "\$plugurl[\$i]   = '';\n"
-                        . "\$plugadmin[\$i] = false;\n"
-                        . "\$plugimg[\$i]   = '';\n"
-                        . "\$i++;\n"
-                        . "\$ipcheck          = false;\n"
-                        . "\$allow_spec_q     = false;\n"
-                        . "\$show_full_info   = true;\n\n"
-                        . "\$debug            = false;\n"
-                        . "\$log_mysql_errors = false;\n\n"
-                        . "\n// Do not edit below this line.\nreturn;\n";
-                    break;
+        switch ($vSubStep) {
+            case 'create':
+                // Open config.php
+                if (is_readable(ROOT . 'config-dist.php')) {
+                    $configuration = file_get_contents(ROOT . 'config-dist.php');
+                } else {
+                    $configuration = '';
                 }
-            }
 
-            $configuration = str_replace($find, $replace, $configuration);
-
-            // Show Full Footer Info
-            if (! isset($_REQUEST['showfullinfo'])) {
-                $configuration = str_ireplace('show_full_info = true;', 'show_full_info = false;', $configuration);
-            }
-
-            switch ($_REQUEST['method']) {
-                case 1: // Show configuration on screen
-                    header("Content-type: text/html;charset=ISO-8859-1");
-                    $template->configuration = $configuration;
-                    $content = $template->process('install_config_inline.php');
-                    break;
-
-                case 2: // Save configuration to disk
-                    header("Content-type: text/html;charset=ISO-8859-1");
-
-                    if (file_put_contents(XMB_ROOT . 'config.php', $configuration) === false) {
-                        $template->result = $vars->lang['config_write_error'];
-                    } else {
-                        $template->result = $vars->lang['config_write_success'];
+                // Now, replace the main text values with those given by user
+                $find = [
+                    "'DB/NAME'",
+                    "'DB/USER'",
+                    "'DB/PW'",
+                    "'localhost'",
+                    "'TABLE/PRE'",
+                    "'FULLURL'",
+                    "'default'",
+                    "'MAILER_USER'",
+                    "'MAILER_PASS'",
+                    "'MAILER_HOST'",
+                    "'MAILER_PORT'",
+                ];
+                $replace = [
+                    input_to_literal(getPhpInput('db_name')),
+                    input_to_literal(getPhpInput('db_user')),
+                    input_to_literal(getPhpInput('db_pw')),
+                    input_to_literal(getPhpInput('db_host')),
+                    input_to_literal(getPhpInput('table_pre')),
+                    input_to_literal(getPhpInput('fullurl')),
+                    input_to_literal(getPhpInput('MAILER_TYPE')),
+                    input_to_literal(getPhpInput('MAILER_USER')),
+                    input_to_literal(getPhpInput('MAILER_PASS')),
+                    input_to_literal(getPhpInput('MAILER_HOST')),
+                    input_to_literal(getPhpInput('MAILER_PORT')),
+                ];
+                foreach ($find as $phrase) {
+                    if (strpos($configuration, $phrase) === false) {
+                        $configuration = "<?php\n"
+                            . "\$dbname   = 'DB/NAME';\n"
+                            . "\$dbuser   = 'DB/USER';\n"
+                            . "\$dbpw     = 'DB/PW';\n"
+                            . "\$dbhost   = 'localhost';\n"
+                            . "\$database = 'mysql';\n"
+                            . "\$pconnect = false;\n"
+                            . "\$tablepre = 'TABLE/PRE';\n"
+                            . "\$full_url = 'FULLURL';\n"
+                            . "\$comment_output = false;\n"
+                            . "\$mailer['type']     = 'default';\n"
+                            . "\$mailer['username'] = 'MAILER_USER';\n"
+                            . "\$mailer['password'] = 'MAILER_PASS';\n"
+                            . "\$mailer['host']     = 'MAILER_HOST';\n"
+                            . "\$mailer['port']     = 'MAILER_PORT';\n"
+                            . "\$i = 1;\n"
+                            . "\$plugname[\$i]  = '';\n"
+                            . "\$plugurl[\$i]   = '';\n"
+                            . "\$plugadmin[\$i] = false;\n"
+                            . "\$plugimg[\$i]   = '';\n"
+                            . "\$i++;\n"
+                            . "\$ipcheck          = false;\n"
+                            . "\$allow_spec_q     = false;\n"
+                            . "\$show_full_info   = true;\n\n"
+                            . "\$debug            = true;\n"
+                            . "\$log_mysql_errors = false;\n\n"
+                            . "\n// Do not edit below this line.\nreturn;\n";
+                        break;
                     }
-                    $content = $template->process('install_config_write.php');
-                    break;
+                }
 
-                case 3: // Send configuration as a file
-                    $size = strlen($configuration);
-                    header("Content-type: application/octet-stream");
-                    header("Content-length: $size");
-                    header("Content-Disposition: attachment; filename=config.php");
-                    header("Content-Description: XMB Configuration");
-                    header("Pragma: no-cache");
-                    header("Expires: 0");
-                    // Start file download
-                    echo $configuration;
-                    exit;
-                default:
-                    // This shouldn't happen because the template below has a default value in the select element.
-                    $content = 'You did not specify a method of configuration.  Please go back and do so now.';
-                    break;
-            } // for method
-            $footer = $template->process('install_footer_no_sidebar.php');
-            echo $content, $footer;
-            exit;
+                $configuration = str_replace($find, $replace, $configuration);
 
-        default:
-            header("Content-type: text/html;charset=ISO-8859-1");
+                // Show Full Footer Info
+                if (! isset($_REQUEST['showfullinfo'])) {
+                    $configuration = str_ireplace('show_full_info = true;', 'show_full_info = false;', $configuration);
+                }
 
-            // Get the DB types...
-            $template->types = '<select name="db_type"><option selected="selected" value="mysql">mysql</option></select>';
+                switch ($_REQUEST['method']) {
+                    case 1: // Show configuration on screen
+                        header("Content-type: text/html;charset=ISO-8859-1");
+                        $template->configuration = $configuration;
+                        $content = $template->process('install_config_inline.php');
+                        break;
 
-            $content = $template->process('install_config_form.php');
-            break;
+                    case 2: // Save configuration to disk
+                        header("Content-type: text/html;charset=ISO-8859-1");
+
+                        if (file_put_contents(ROOT . 'config.php', $configuration) === false) {
+                            $template->result = $vars->lang['config_write_error'];
+                        } else {
+                            $template->result = $vars->lang['config_write_success'];
+                        }
+                        $content = $template->process('install_config_write.php');
+                        break;
+
+                    case 3: // Send configuration as a file
+                        $size = strlen($configuration);
+                        header("Content-type: application/octet-stream");
+                        header("Content-length: $size");
+                        header("Content-Disposition: attachment; filename=config.php");
+                        header("Content-Description: XMB Configuration");
+                        header("Pragma: no-cache");
+                        header("Expires: 0");
+                        // Start file download
+                        echo $configuration;
+                        exit;
+                    default:
+                        // This shouldn't happen because the template below has a default value in the select element.
+                        $content = 'You did not specify a method of configuration.  Please go back and do so now.';
+                        break;
+                } // for method
+                $footer = $template->process('install_footer_no_sidebar.php');
+                echo $content, $footer;
+                exit;
+
+            default:
+                header("Content-type: text/html;charset=ISO-8859-1");
+
+                // Get the DB types...
+                $template->types = '<select name="db_type"><option selected="selected" value="mysql">mysql</option></select>';
+
+                $content = $template->process('install_config_form.php');
+                break;
         }
         break; // end case 4
 
@@ -394,7 +394,7 @@ switch($vStep) {
         // Force upgrade to mysqli
         if ('mysql' === $database) $database = 'mysqli';
 
-        require_once XMB_ROOT . "db/{$database}.php";
+        require_once ROOT . "db/{$database}.php";
 
         $db = new \XMB\MySQLiDatabase($debug, $log_mysql_errors);
         
@@ -415,11 +415,12 @@ switch($vStep) {
         $source = new XMBVersion();
         $data = $source->get();
         if (version_compare($sqlver, $data['mysqlMinVer'], '<')) {
-            $show->wizardError($vars->lang['version_check'], str_replace(
+            $message = str_replace(
                 ['$minimum', '$current'],
                 [$data['mysqlMinVer'], $sqlver],
                 $vars->lang['mysql_min_ver'],
-            ));
+            );
+            $show->wizardError($vars->lang['version_check'], $message);
         }
 
         // throw in all stuff then :)
@@ -428,7 +429,7 @@ switch($vStep) {
 
         $show->progress('Checking Database Username Security');
         if ($dbuser == 'root') {
-            $show->warning('You have configured XMB to use root access to the database, this is a security hazard. If your server gets hacked, or php itself crashes, the config.php file might be available freely to anyone looking at it, and thus reveal your root username/password. Please consider making a new user for XMB to use the database.');
+            $show->warning('You have configured XMB to use root access to the database. This is a security hazard. If your server gets hacked, or php itself crashes, the config.php file might be available freely to anyone looking at it, and thus reveal your root username/password. Please consider making a new user for XMB to use the database.');
         } else {
             $show->okay();
         }
@@ -451,7 +452,7 @@ switch($vStep) {
 }
     
 $template->process('install_header.php', echo: true);
-if (XMB_ERR_DISPLAY_FORCED_OFF) {
+if (ERR_DISPLAY_FORCED_OFF) {
     trigger_error($vars->lang['upgrade_display_errors'], E_USER_WARNING);
 }
 echo $content;

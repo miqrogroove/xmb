@@ -49,7 +49,7 @@ class Translation
     {
         $lang = [];
 
-        include XMB_ROOT . "lang/$devname.lang.php";
+        include ROOT . "lang/$devname.lang.php";
 
         // Load the $lang array.
         if (count($lang) > 0) {
@@ -97,7 +97,7 @@ class Translation
             if ($alreadyCached) continue;
 
             $lang = [];
-            include XMB_ROOT . "lang/$filename";
+            include ROOT . "lang/$filename";
 
             foreach ($langkeys as $key) {
                 $this->langCache[$devname][$key] = $lang[$key];
@@ -122,7 +122,7 @@ class Translation
         if ($langfile === '') throw new InvalidArgumentException('The langfile string argument must not be empty.');
 
         // Get the current file
-        $filepath = XMB_ROOT . "lang/$langfile.lang.php";
+        $filepath = ROOT . "lang/$langfile.lang.php";
         if (! is_readable($filepath)) return false;
         if (! is_writable($filepath)) throw new RuntimeException("Wrong file permissions for the $langfile translation.");
         $text = file_get_contents($filepath);
@@ -214,7 +214,7 @@ class Translation
     {
         if ($this->dirCacheStatus) return;
 
-        $languages = scandir(XMB_ROOT . 'lang/');
+        $languages = scandir(ROOT . 'lang/');
 
         if (false === $languages) {
             $msg = 'Unable to read the /lang/ directory.  ';

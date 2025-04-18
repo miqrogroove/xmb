@@ -148,7 +148,7 @@ if ($threadcount == 0) {
         $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
         $template->lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
-        if ($thread['icon'] != '' && file_exists(XMB_ROOT . $vars->theme['smdir'] . '/' . $thread['icon'])) {
+        if ($thread['icon'] != '' && file_exists(ROOT . $vars->theme['smdir'] . '/' . $thread['icon'])) {
             $thread['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'] . '" alt="' . $thread['icon'] . '" border="0" />';
         } else {
             $thread['icon'] = '';

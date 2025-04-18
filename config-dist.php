@@ -20,7 +20,7 @@
  * If not, see https://www.gnu.org/licenses/
  */
 
-if (! defined('XMB_ROOT')) {
+if (! defined('XMB\ROOT')) {
     header('HTTP/1.0 403 Forbidden');
     exit("Not allowed to run this file directly.");
 }

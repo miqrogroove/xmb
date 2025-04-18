@@ -26,8 +26,6 @@ namespace XMB;
 
 require './header.php';
 
-require XMB_ROOT . 'include/u2u.inc.php';
-
 header('X-Robots-Tag: noindex');
 
 $core = \XMB\Services\core();

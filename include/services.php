@@ -37,7 +37,7 @@ use XMB\{
     SmileAndCensor,
     SQL,
     Template,
-    Theme\Manager as ThemeMgr,
+    ThemeManager,
     Token,
     Translation,
     Validation,
@@ -240,10 +240,10 @@ function template(?Template $template = null): Template
  * Get the shared theme manager.
  *
  * @since 1.10.00
- * @param ThemeMgr $theme Required on first call, otherwise optional. Acts as the setter.
- * @return ThemeMgr
+ * @param ThemeManager $theme Required on first call, otherwise optional. Acts as the setter.
+ * @return ThemeManager
  */
-function theme(?ThemeMgr $theme = null): ThemeMgr
+function theme(?ThemeManager $theme = null): ThemeManager
 {
     static $cache;
     

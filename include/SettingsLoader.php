@@ -45,7 +45,7 @@ class SettingsLoader
         // Assume XMB is not installed if first query fails.
         if (false === $squery) {
             header('HTTP/1.0 500 Internal Server Error');
-            if (file_exists(XMB_ROOT.'install/')) {
+            if (file_exists(ROOT . 'install/')) {
                 exit('XMB is not yet installed. Please do so at this time. Just <a href="./install/index.php">click here</a>.');
             }
             exit('Fatal Error: XMB is not installed. Please upload the /install/ directory to begin.');

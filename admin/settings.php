@@ -24,8 +24,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
-define('XMB_ROOT', '../');
-require XMB_ROOT . 'header.php';
+const ROOT = '../';
+require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
@@ -100,7 +100,7 @@ if (
     $template->indexShowBarCats = false;
     $template->indexShowBarTop = false;
     $template->indexShowBarNone = false;
-    switch($SETTINGS['indexshowbar']) {
+    switch ($SETTINGS['indexshowbar']) {
         case 1:
             $template->indexShowBarCats = true;
             break;

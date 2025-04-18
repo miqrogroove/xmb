@@ -425,8 +425,8 @@ class U2U
         if ($eMail) {
             // Make an HTML-formatted email containing the U2U body.
             $css = $this->template->process('css.php');
-            if (file_exists(XMB_ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
-                $extra = file_get_contents(XMB_ROOT . $this->vars->theme['imgdir'] . '/theme.css');
+            if (file_exists(ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
+                $extra = file_get_contents(ROOT . $this->vars->theme['imgdir'] . '/theme.css');
                 if (false !== $extra) {
                     $css .= $extra;
                 }

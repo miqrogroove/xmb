@@ -40,7 +40,7 @@ class Bootup
 
     public function loadConfig()
     {
-        require XMB_ROOT . 'config.php';
+        require ROOT . 'config.php';
         
         if ($ipcheck === 'on') $ipcheck = true;
         
@@ -266,14 +266,12 @@ class Bootup
 
     public function connectDB(): DBStuff
     {
-        define('X_PREFIX', $this->vars->tablepre); // Historical table name prefix constant
-
         // Force upgrade to mysqli.
         if ('mysql' === $this->vars->database) {
             $this->vars->database = 'mysqli';
         }
 
-        require_once XMB_ROOT . 'db/' . $this->vars->database . '.php';
+        require_once ROOT . 'db/' . $this->vars->database . '.php';
 
         switch ($this->vars->database) {
             default:

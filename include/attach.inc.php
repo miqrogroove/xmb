@@ -276,55 +276,55 @@ class Attach
 
             // Coerce filename extension and mime type when they are incorrect.
             $filetypei = strtolower($result->filetype);
-            switch($sizeArray[2]) {
-            case IMAGETYPE_JPEG:
-                if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'jpe') {
-                    $result->filename .= '.jpg';
-                }
-                if (strpos($filetypei, 'jpeg') === FALSE) {
-                    $result->filetype = 'image/jpeg';
-                }
-                break;
-            case IMAGETYPE_GIF:
-                if ($extension != 'gif') {
-                    $result->filename .= '.gif';
-                }
-                if (strpos($filetypei, 'gif') === FALSE) {
-                    $result->filetype = 'image/gif';
-                }
-                break;
-            case IMAGETYPE_PNG:
-                if ($extension != 'png') {
-                    $result->filename .= '.png';
-                }
-                if (strpos($filetypei, 'png') === FALSE) {
-                    $result->filetype = 'image/png';
-                }
-                break;
-            case IMAGETYPE_BMP:
-                if ($extension != 'bmp') {
-                    $result->filename .= '.bmp';
-                }
-                if (strpos($filetypei, 'bmp') === FALSE) {
-                    $result->filetype = 'image/bmp';
-                }
-                break;
-            case IMAGETYPE_WBMP: // Added in PHP 4.4.
-                if ($extension != 'wbmp' && $extension != 'wbm') {
-                    $result->filename .= '.wbmp';
-                }
-                if (strpos($filetypei, 'wbmp') === FALSE) {
-                    $result->filetype = 'image/vnd.wap.wbmp';
-                }
-                break;
-            case IMAGETYPE_ICO:
-                if ($extension != 'ico') {
-                    $result->filename .= '.ico';
-                }
-                if (strpos($filetypei, 'ico') === FALSE) {
-                    $result->filetype = 'image/vnd.microsoft.icon';
-                }
-                break;
+            switch ($sizeArray[2]) {
+                case IMAGETYPE_JPEG:
+                    if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'jpe') {
+                        $result->filename .= '.jpg';
+                    }
+                    if (strpos($filetypei, 'jpeg') === FALSE) {
+                        $result->filetype = 'image/jpeg';
+                    }
+                    break;
+                case IMAGETYPE_GIF:
+                    if ($extension != 'gif') {
+                        $result->filename .= '.gif';
+                    }
+                    if (strpos($filetypei, 'gif') === FALSE) {
+                        $result->filetype = 'image/gif';
+                    }
+                    break;
+                case IMAGETYPE_PNG:
+                    if ($extension != 'png') {
+                        $result->filename .= '.png';
+                    }
+                    if (strpos($filetypei, 'png') === FALSE) {
+                        $result->filetype = 'image/png';
+                    }
+                    break;
+                case IMAGETYPE_BMP:
+                    if ($extension != 'bmp') {
+                        $result->filename .= '.bmp';
+                    }
+                    if (strpos($filetypei, 'bmp') === FALSE) {
+                        $result->filetype = 'image/bmp';
+                    }
+                    break;
+                case IMAGETYPE_WBMP: // Added in PHP 4.4.
+                    if ($extension != 'wbmp' && $extension != 'wbm') {
+                        $result->filename .= '.wbmp';
+                    }
+                    if (strpos($filetypei, 'wbmp') === FALSE) {
+                        $result->filetype = 'image/vnd.wap.wbmp';
+                    }
+                    break;
+                case IMAGETYPE_ICO:
+                    if ($extension != 'ico') {
+                        $result->filename .= '.ico';
+                    }
+                    if (strpos($filetypei, 'ico') === FALSE) {
+                        $result->filetype = 'image/vnd.microsoft.icon';
+                    }
+                    break;
             }
         }
 
@@ -740,7 +740,7 @@ class Attach
             return new UploadResult(UploadStatus::EmptyUpload);
         }
 
-        switch($file['error']) {
+        switch ($file['error']) {
             case UPLOAD_ERR_OK:
                 break;
             case UPLOAD_ERR_INI_SIZE:
@@ -825,31 +825,31 @@ class Attach
             $format = (int) $this->vars->settings['file_url_format'];
         }
 
-        switch($format) {
-        case 1:
-            if ($htmlencode) {
-                $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
-            } else {
-                $url = "{$virtual_path}files.php?pid=$pid&aid=$aid";
-            }
-            break;
-        case 2:
-            $url = "{$virtual_path}files/$pid/$aid/";
-            break;
-        case 3:
-            $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
-            break;
-        case 4:
-            $url = "{$virtual_path}$pid/$aid/";
-            break;
-        case 5:
-            $url = "{$virtual_path}$aid/".rawurlencode($filename);
-            break;
-        case 99:
-            $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
-            break;
-        default:
-            $url = '';
+        switch ($format) {
+            case 1:
+                if ($htmlencode) {
+                    $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
+                } else {
+                    $url = "{$virtual_path}files.php?pid=$pid&aid=$aid";
+                }
+                break;
+            case 2:
+                $url = "{$virtual_path}files/$pid/$aid/";
+                break;
+            case 3:
+                $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
+                break;
+            case 4:
+                $url = "{$virtual_path}$pid/$aid/";
+                break;
+            case 5:
+                $url = "{$virtual_path}$aid/".rawurlencode($filename);
+                break;
+            case 99:
+                $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
+                break;
+            default:
+                $url = '';
         }
 
         return $url;
@@ -1063,7 +1063,7 @@ class Attach
 
         $result = getimagesize($path);
 
-        if (FALSE === $result) {
+        if (false === $result) {
             return false;
         }
 
@@ -1078,35 +1078,35 @@ class Attach
         }
 
         // Load the image.
-        switch($result[2]) {
-        case IMAGETYPE_JPEG:
-            $img = @imagecreatefromjpeg($path);
-            break;
-        case IMAGETYPE_GIF:
-            $img = @imagecreatefromgif($path);
-            break;
-        case IMAGETYPE_PNG:
-            $img = @imagecreatefrompng($path);
-            break;
-        case IMAGETYPE_BMP:
-            // See our website for drop-in BMP support.
-            if (! class_exists('phpthumb_bmp')) {
-                if (is_file(XMB_ROOT.'include/phpthumb-bmp.php')) {
-                    require_once(XMB_ROOT.'include/phpthumb-bmp.php');
+        switch ($result[2]) {
+            case IMAGETYPE_JPEG:
+                $img = @imagecreatefromjpeg($path);
+                break;
+            case IMAGETYPE_GIF:
+                $img = @imagecreatefromgif($path);
+                break;
+            case IMAGETYPE_PNG:
+                $img = @imagecreatefrompng($path);
+                break;
+            case IMAGETYPE_BMP:
+                // See our website for drop-in BMP support.
+                if (! class_exists('phpthumb_bmp')) {
+                    if (is_file(ROOT . 'include/phpthumb-bmp.php')) {
+                        require_once(ROOT . 'include/phpthumb-bmp.php');
+                    }
                 }
-            }
-            if (class_exists('phpthumb_bmp')) {
-                $ns = new phpthumb_bmp;
-                $img = $ns->phpthumb_bmpfile2gd($path);
-            } else {
-                $img = FALSE;
-            }
-            break;
-        case 15: //IMAGETYPE_WBMP
-            $img = @imagecreatefromwbmp($path);
-            break;
-        default:
-            return false;
+                if (class_exists('phpthumb_bmp')) {
+                    $ns = new phpthumb_bmp;
+                    $img = $ns->phpthumb_bmpfile2gd($path);
+                } else {
+                    $img = false;
+                }
+                break;
+            case 15: //IMAGETYPE_WBMP
+                $img = @imagecreatefromwbmp($path);
+                break;
+            default:
+                return false;
         }
 
         if (! $img) {

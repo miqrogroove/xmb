@@ -107,7 +107,7 @@ class Upgrade
         $this->show->progress('Checking for new themes');
         if ((int) $SETTINGS['schema_version'] < 3) {
             $query = $this->upgrade_query("SELECT themeid FROM " . $this->vars->tablepre . "themes WHERE name='XMB Davis'");
-            if ($this->db->num_rows($query) == 0 && is_dir(XMB_ROOT.'images/davis')) {
+            if ($this->db->num_rows($query) == 0 && is_dir(ROOT . 'images/davis')) {
                 $this->show->progress('Adding Davis as the new default theme');
                 $this->upgrade_query("INSERT INTO " . $this->vars->tablepre . "themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
                                                      ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
@@ -397,9 +397,10 @@ class Upgrade
         }
 
         $this->show->progress('Requesting to lock the forums table');
-        $this->upgrade_query('LOCK TABLES '.
-            X_PREFIX.'forums WRITE, '.
-            X_PREFIX.'themes READ');
+        $this->upgrade_query('LOCK TABLES ' .
+            $this->vars->tablepre . 'forums WRITE, ' .
+            $this->vars->tablepre . 'themes READ'
+        );
 
         $upgrade_permissions = TRUE;
 
@@ -523,9 +524,10 @@ class Upgrade
         }
 
         $this->show->progress('Requesting to lock the settings table');
-        $this->upgrade_query('LOCK TABLES '.
-            X_PREFIX.'settings WRITE, '.
-            X_PREFIX.'themes READ');
+        $this->upgrade_query('LOCK TABLES ' .
+            $this->vars->tablepre . 'settings WRITE, ' .
+            $this->vars->tablepre . 'themes READ'
+        );
 
         $this->show->progress('Gathering schema information from the settings table');
         $sql = [];
@@ -687,9 +689,10 @@ class Upgrade
         }
 
         $this->show->progress('Requesting to lock the members table');
-        $this->upgrade_query('LOCK TABLES '.
-            X_PREFIX.'members WRITE, '.
-            X_PREFIX.'themes READ');
+        $this->upgrade_query('LOCK TABLES ' .
+            $this->vars->tablepre . 'members WRITE, ' .
+            $this->vars->tablepre . 'themes READ'
+        );
 
         $this->show->progress('Fixing birthday values');
         $this->fixBirthdays();
@@ -898,12 +901,13 @@ class Upgrade
         $this->schema->table('create', 'vote_voters');
 
         $this->show->progress('Requesting to lock the polls tables');
-        $this->upgrade_query('LOCK TABLES '.
-            X_PREFIX.'threads WRITE, '.
-            X_PREFIX.'vote_desc WRITE, '.
-            X_PREFIX.'vote_results WRITE, '.
-            X_PREFIX.'vote_voters WRITE, '.
-            X_PREFIX.'members READ');
+        $this->upgrade_query('LOCK TABLES ' .
+            $this->vars->tablepre . 'threads WRITE, ' .
+            $this->vars->tablepre . 'vote_desc WRITE, ' .
+            $this->vars->tablepre . 'vote_results WRITE, ' .
+            $this->vars->tablepre . 'vote_voters WRITE, ' .
+            $this->vars->tablepre . 'members READ'
+        );
 
         $this->show->progress('Upgrading polls to new system');
         $this->fixPolls();
@@ -2379,12 +2383,12 @@ class Upgrade
         $cachedLanguages = [];
         $lang = [];
 
-        require XMB_ROOT.'lang/English.lang.php';
+        require ROOT . 'lang/English.lang.php';
         $baselang = $lang;
         $cachedLanguages['English'] = $lang;
 
         $q = $this->upgrade_query("SELECT uid, bday, langfile FROM " . $this->vars->tablepre . "members WHERE bday != ''");
-        while($m = $this->db->fetch_array($q)) {
+        while ($m = $this->db->fetch_array($q)) {
             $uid = $m['uid'];
 
             // check if the birthday is already in proper format
@@ -2395,25 +2399,25 @@ class Upgrade
 
             $lang = [];
 
-            if (!isset($cachedLanguages[$m['langfile']])) {
-                if (!file_exists(XMB_ROOT.'lang/'.$m['langfile'].'.lang.php')) {
+            if (! isset($cachedLanguages[$m['langfile']])) {
+                if (! file_exists(ROOT . 'lang/' . $m['langfile'] . '.lang.php')) {
                     // Re-try in case the old file was named english.lang.php instead of English.lang.php for some reason.
                     $test = $m['langfile'];
                     $test[0] = strtoupper($test[0]);
                     if (isset($cachedLanguages[$test])) {
                         $m['langfile'] = $test;
-                    } elseif (file_exists(XMB_ROOT.'lang/'.$test.'.lang.php')) {
+                    } elseif (file_exists(ROOT . 'lang/' . $test . '.lang.php')) {
                         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "members SET langfile='$test' WHERE langfile = '{$m['langfile']}'");
                         $m['langfile'] = $test;
                     } else {
-                        $this->show->error('A needed file is missing for date translation: '.XMB_ROOT.'lang/'.$m['langfile'].'.lang.php.  Upgrade halted to prevent damage.');
-                        throw new Exception('fixBirthdays() stopped the upgrade because language "'.$m['langfile'].'" was missing.');
+                        $this->show->error('A needed file is missing for date translation: ' . ROOT . 'lang/' . $m['langfile'] . '.lang.php.  Upgrade halted to prevent damage.');
+                        throw new Exception('fixBirthdays() stopped the upgrade because language "' . $m['langfile'] . '" was missing.');
                     }
                 }
-                if (!isset($cachedLanguages[$m['langfile']])) {
+                if (! isset($cachedLanguages[$m['langfile']])) {
                     $old_error_level = error_reporting();
                     error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR);
-                    require XMB_ROOT.'lang/'.$m['langfile'].'.lang.php';
+                    require ROOT . 'lang/' . $m['langfile'] . '.lang.php';
                     error_reporting($old_error_level);
                     $cachedLanguages[$m['langfile']] = $lang;
                 }

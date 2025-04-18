@@ -22,20 +22,9 @@
 
 declare(strict_types=1);
 
-namespace XMB\Theme;
+namespace XMB;
 
-use XMB\{
-    Forums,
-    SQL,
-    Template,
-    Variables,
-};
-
-use function XMB\getInt;
-use function XMB\getPhpInput;
-use function XMB\null_string;
-
-class Manager
+class ThemeManager
 {
     public function __construct(private Forums $forums, private SQL $sql, private Template $template, private Variables $vars)
     {
@@ -122,7 +111,7 @@ class Manager
         }
 
         // additional CSS to load?
-        if (file_exists(XMB_ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
+        if (file_exists(ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
             $this->template->css .= "\n<link rel='stylesheet' type='text/css' href='"
                 . $this->vars->full_url . $this->vars->theme['imgdir']
                 . "/theme.css' />";

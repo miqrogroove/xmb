@@ -32,23 +32,23 @@ header('X-Frame-Options: deny');
 header('X-Robots-Tag: noindex');
 
 // XMB Constants
-if (! defined('XMB_ROOT')) define('XMB_ROOT', '../');
-define('XMB_ERR_DISPLAY_FORCED_OFF', (bool) ini_get('display_errors'));
+if (! defined('XMB\ROOT')) define('XMB\ROOT', '../');
+define('XMB\ERR_DISPLAY_FORCED_OFF', (bool) ini_get('display_errors'));
 
 // PHP configuration
-if (XMB_ERR_DISPLAY_FORCED_OFF) ini_set('display_errors', '0');
+if (constant('XMB\ERR_DISPLAY_FORCED_OFF')) ini_set('display_errors', '0');
 error_reporting(-1);
 
 // Check location
-if (! is_readable(XMB_ROOT . 'include/version.php') || ! is_readable(XMB_ROOT . 'install/wizard.php')) {
+if (! is_readable(constant('XMB\ROOT') . 'include/version.php') || ! is_readable(constant('XMB\ROOT') . 'install/wizard.php')) {
     exit("Could not find the installer files!\n<br />\nPlease make sure the entire <code>include</code> and <code>install</code> folder contents are available.");
 }
 
 // PHP Version Test
-require XMB_ROOT . 'include/version.php';
+require constant('XMB\ROOT') . 'include/version.php';
 $version = new XMBVersion();
 $version->assertPHP();
 unset($version);
 
 // Proceed with modern scripting.
-require XMB_ROOT . 'install/wizard.php';
+require constant('XMB\ROOT') . 'install/wizard.php';

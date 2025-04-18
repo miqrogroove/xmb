@@ -127,9 +127,9 @@ class Login
 
         // Set the user status constants.
         if ($vars->xmbuser != '') {
-            if (! defined('X_GUEST')) {
-                define('X_MEMBER', true);
-                define('X_GUEST', false);
+            if (! defined('XMB\X_GUEST')) {
+                define('XMB\X_MEMBER', true);
+                define('XMB\X_GUEST', false);
             }
             // Save some write locks by updating in 60-second intervals.
             if (abs(time() - (int) $vars->self['lastvisit']) > 60) {
@@ -137,9 +137,9 @@ class Login
                 // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
             }
         } else {
-            if (! defined('X_GUEST')) {
-                define('X_MEMBER', false);
-                define('X_GUEST', true);
+            if (! defined('XMB\X_GUEST')) {
+                define('XMB\X_MEMBER', false);
+                define('XMB\X_GUEST', true);
             }
         }
 
@@ -150,12 +150,12 @@ class Login
             $int_status = $this->vars->status_enum['Member']; // If $self['status'] contains an unknown value, default to Member.
         }
 
-        if (! defined('X_STAFF')) {
-            define('X_SADMIN', ($vars->self['status'] == 'Super Administrator'));
-            define('X_ADMIN', ($int_status <= $this->vars->status_enum['Administrator']));
-            define('X_SMOD', ($int_status <= $this->vars->status_enum['Super Moderator']));
-            define('X_MOD', ($int_status <= $this->vars->status_enum['Moderator']));
-            define('X_STAFF', X_MOD);
+        if (! defined('XMB\X_STAFF')) {
+            define('XMB\X_SADMIN', ($vars->self['status'] == 'Super Administrator'));
+            define('XMB\X_ADMIN', ($int_status <= $this->vars->status_enum['Administrator']));
+            define('XMB\X_SMOD', ($int_status <= $this->vars->status_enum['Super Moderator']));
+            define('XMB\X_MOD', ($int_status <= $this->vars->status_enum['Moderator']));
+            define('XMB\X_STAFF', X_MOD);
         }
 
         // Set variables
@@ -198,7 +198,7 @@ class Login
 
         // Save This Session
         $serror = $this->session->getSError();
-        if (! defined('XMB_UPGRADE')
+        if (! defined('XMB\UPGRADE')
             && basename($_SERVER['SCRIPT_NAME']) != 'css.php'
             && basename($_SERVER['SCRIPT_NAME']) != 'files.php'
             && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)

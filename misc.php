@@ -188,8 +188,6 @@ switch ($action) {
         break;
 
     case 'online':
-        require XMB_ROOT . 'include/online.inc.php';
-
         if ($SETTINGS['whosonlinestatus'] == 'off') {
             header('HTTP/1.0 403 Forbidden');
             $header = $template->process('header.php');

@@ -240,7 +240,7 @@ $posticon = $validate->postedVar('posticon', 'javascript', dbescape: false, quot
 if ($posticon != '') {
     if (! isValidFilename($posticon)) {
         $posticon = '';
-    } elseif (! file_exists(XMB_ROOT . $vars->theme['smdir'] . '/' . $posticon)) {
+    } elseif (! file_exists(ROOT . $vars->theme['smdir'] . '/' . $posticon)) {
         $posticon = '';
     }
 }

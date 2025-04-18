@@ -139,7 +139,6 @@ if ($action == 'report') {
         $template->fid = $fid;
         $body = $template->process('vtmisc_report.php');
     } else {
-        require XMB_ROOT . 'include/u2u.inc.php';
         $u2u = new \XMB\U2U($db, $sql, $tran, $validate, $vars);
         $modquery = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE status IN ('Super Administrator', 'Administrator', 'Super Moderator')");
         while ($modusr = $db->fetch_array($modquery)) {

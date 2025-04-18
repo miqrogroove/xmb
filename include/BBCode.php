@@ -24,8 +24,6 @@ declare(strict_types=1);
 
 namespace XMB;
 
-use XMB\Theme\Manager as ThemeMgr;
-
 class BBCode
 {
     private array $colors = [
@@ -178,7 +176,7 @@ class BBCode
         'yellowgreen',
     ];
 
-    public function __construct(private ThemeMgr $theme, private Variables $vars)
+    public function __construct(private ThemeManager $theme, private Variables $vars)
     {
         // Property promotion
     }

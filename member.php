@@ -130,7 +130,7 @@ switch ($action) {
                     if ('on' == $SETTINGS['google_captcha']) {
                         // Check Google's results
                         $response = getPhpInput('g-recaptcha-response');
-                        $ssl_lib = XMB_ROOT . 'trust.pem';
+                        $ssl_lib = ROOT . 'trust.pem';
                         $installed = time() < 2097705600; // PEM expires 2036-06-21 and after that it won't be used until updated.
                         $curl = curl_init('https://www.google.com/recaptcha/api/siteverify');
 
@@ -307,7 +307,7 @@ switch ($action) {
                         $core->error($lang['emailrestricted']);
                     }
 
-                    require XMB_ROOT . 'include/validate-email.inc.php';
+                    require ROOT . 'include/validate-email.inc.php';
                     $test = new EmailAddressValidator();
                     $rawemail = getPhpInput('email');
                     if (false === $test->check_email_address($rawemail)) {

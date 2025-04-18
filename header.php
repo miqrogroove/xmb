@@ -24,6 +24,11 @@ declare(strict_types=1);
 
 namespace XMB\Services;
 
+use const XMB\ROOT;
+use const XMB\X_ADMIN;
+use const XMB\X_MEMBER;
+use const XMB\X_SADMIN;
+
 /* Front Matter */
 
 if (count(get_included_files()) === 1) {
@@ -32,51 +37,53 @@ if (count(get_included_files()) === 1) {
 }
 error_reporting(-1); // Report all errors until config.php loads successfully.
 $mtime = explode(" ", microtime());
-if (! defined('XMB_ROOT')) define('XMB_ROOT', './');
+if (! defined('XMB\ROOT')) define('XMB\ROOT', './');
 
 
 /* Load Common Files. None of them should produce any output. */
 
 ob_start();
 
-// Interfaces and base dependencies go first.
-require_once XMB_ROOT . 'db/DBStuff.php';
-require XMB_ROOT . 'include/CartesianSize.php';
-require XMB_ROOT . 'include/UploadResult.php';
-require XMB_ROOT . 'include/UploadStatus.php';
-require XMB_ROOT . 'include/Variables.php';
-require_once XMB_ROOT . 'include/version.php';
+// Interfaces
+require_once ROOT . 'db/DBStuff.php';
 
-// Implementations
-require XMB_ROOT . 'include/admin.inc.php';
-require XMB_ROOT . 'include/attach.inc.php';
-require XMB_ROOT . 'include/BBCode.php';
-require XMB_ROOT . 'include/Bootup.php';
-require XMB_ROOT . 'include/BootupLoader.php';
-require XMB_ROOT . 'include/buddy.inc.php';
-require XMB_ROOT . 'include/captcha.inc.php';
-require XMB_ROOT . 'include/debug.inc.php';
-require XMB_ROOT . 'include/format.php';
-require XMB_ROOT . 'include/Forums.php';
-require XMB_ROOT . 'include/functions.inc.php';
-require XMB_ROOT . 'include/Login.php';
-require XMB_ROOT . 'include/Observer.php';
-require XMB_ROOT . 'include/Password.php';
-require XMB_ROOT . 'include/Ranks.php';
-require XMB_ROOT . 'include/schema.inc.php';
-require XMB_ROOT . 'include/services.php';
-require XMB_ROOT . 'include/sessions.inc.php';
-require XMB_ROOT . 'include/SmileAndCensor.php';
-require XMB_ROOT . 'include/sql.inc.php';
-require XMB_ROOT . 'include/SettingsLoader.php';
-require XMB_ROOT . 'include/Template.php';
-require XMB_ROOT . 'include/ThreadRender.php';
-require XMB_ROOT . 'include/ThemeManager.php';
-require XMB_ROOT . 'include/tokens.inc.php';
-require XMB_ROOT . 'include/translation.inc.php';
-require XMB_ROOT . 'include/UserEditForm.php';
-require XMB_ROOT . 'include/validate.inc.php';
-require XMB_ROOT . 'include/Validation.php';
+// Classes
+require ROOT . 'include/admin.inc.php';
+require ROOT . 'include/attach.inc.php';
+require ROOT . 'include/BBCode.php';
+require ROOT . 'include/Bootup.php';
+require ROOT . 'include/BootupLoader.php';
+require ROOT . 'include/buddy.inc.php';
+require ROOT . 'include/captcha.inc.php';
+require ROOT . 'include/CartesianSize.php';
+require ROOT . 'include/debug.inc.php';
+require ROOT . 'include/format.php';
+require ROOT . 'include/Forums.php';
+require ROOT . 'include/functions.inc.php';
+require ROOT . 'include/Login.php';
+require ROOT . 'include/Observer.php';
+require ROOT . 'include/online.inc.php';
+require ROOT . 'include/Password.php';
+require ROOT . 'include/Ranks.php';
+require ROOT . 'include/schema.inc.php';
+require ROOT . 'include/services.php';
+require ROOT . 'include/sessions.inc.php';
+require ROOT . 'include/SmileAndCensor.php';
+require ROOT . 'include/sql.inc.php';
+require ROOT . 'include/SettingsLoader.php';
+require ROOT . 'include/Template.php';
+require ROOT . 'include/ThreadRender.php';
+require ROOT . 'include/ThemeManager.php';
+require ROOT . 'include/tokens.inc.php';
+require ROOT . 'include/translation.inc.php';
+require ROOT . 'include/u2u.inc.php';
+require ROOT . 'include/UploadResult.php';
+require ROOT . 'include/UploadStatus.php';
+require ROOT . 'include/UserEditForm.php';
+require ROOT . 'include/validate.inc.php';
+require ROOT . 'include/Validation.php';
+require ROOT . 'include/Variables.php';
+require_once ROOT . 'include/version.php';
 
 
 /* Create base services */
@@ -103,7 +110,7 @@ unset($mtime);
 
 /* Load the Configuration Created by Install */
 
-if (defined('XMB_INSTALL') && ! defined('XMB_INSTALL_P2')) {
+if (defined('XMB\INSTALL') && ! defined('XMB\INSTALL_P2')) {
     vars()->show_full_info = true;
     $boot->setVersion();
     translation()->langPanic();
@@ -140,7 +147,7 @@ forums(new \XMB\Forums(sql()));
 smile(new \XMB\SmileAndCensor(sql()));
 token(new \XMB\Token(sql(), vars()));
 
-theme(new \XMB\Theme\Manager(forums(), sql(), template(), vars()));
+theme(new \XMB\ThemeManager(forums(), sql(), template(), vars()));
 
 bbcode(new \XMB\BBCode(theme(), vars()));
 
@@ -155,14 +162,14 @@ $loader = new \XMB\BootupLoader(core(), db(), template(), vars());
 
 $loader->setHeaders();
 
-if (defined('XMB_UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
+if (defined('XMB\UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
     $xmbuser = validate()->postedVar(
         varname: 'xmbuser',
         dbescape: false,
         sourcearray: 'c',
     );
     $xmbpw = getPhpInput('xmbpw', 'c');
-    define('X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
+    define('XMB\X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
     unset($loader, $xmbuser, $xmbpw);
     return;
 }
@@ -175,7 +182,7 @@ login(new \XMB\Login(core(), db(), session(), sql(), template(), translation(), 
 login()->elevateUser($params['force_inv']);
 unset($params);
 
-if (defined('XMB_UPGRADE')) {
+if (defined('XMB\UPGRADE')) {
     return;
 } elseif (X_SADMIN && (int) vars()->settings['schema_version'] < \XMB\Schema::VER) {
     core()->redirect(vars()->full_url . 'install/', timeout: 0);

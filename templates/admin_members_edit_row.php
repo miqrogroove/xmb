@@ -1,3 +1,8 @@
+<?php
+
+namespace XMB;
+
+?>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td align="center"><input type="checkbox" name="delete<?= $uid ?>" onclick="addUserDel(<?= $uid ?>, '<?= $username ?>', this)" value="<?= $uid ?>"<?= $disabledelete; ?> /></td>
 <td><a href="<?= $full_url ?>member.php?action=viewpro&amp;member=<?= $userLink ?>"><?= $username ?></a>

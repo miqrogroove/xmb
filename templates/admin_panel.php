@@ -1,3 +1,8 @@
+<?php
+
+namespace XMB;
+
+?>
 <tr bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow">
 <td>
 <br />

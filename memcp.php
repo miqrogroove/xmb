@@ -199,7 +199,7 @@ if ($action == 'profile') {
                 $core->error($lang['emailrestricted']);
             }
 
-            require XMB_ROOT . 'include/validate-email.inc.php';
+            require ROOT . 'include/validate-email.inc.php';
             $test = new EmailAddressValidator();
             $rawemail = getPhpInput('newemail');
             if (false === $test->check_email_address($rawemail)) {

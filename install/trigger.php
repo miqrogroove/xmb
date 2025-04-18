@@ -32,8 +32,8 @@ header('Expires: 0');
 header('X-Frame-Options: sameorigin');
 
 //Script constants
-define('XMB_UPGRADE', true);
-define('XMB_ROOT', '../');
+const ROOT = '../';
+const UPGRADE = true;
 
 //Check configuration
 error_reporting(-1);
@@ -42,7 +42,7 @@ if (ini_get('display_errors')) {
 }
 
 //Authenticate Browser
-require XMB_ROOT . 'header.php';
+require ROOT . 'header.php';
 require './UpgradeOutput.php';
 require './LoggedOutput.php';
 require './upgrade.lib.php';
@@ -53,7 +53,7 @@ $schema = new \XMB\Schema($db, $vars);
 $show = new \XMB\LoggedOutput();
 $lib = new \XMB\Upgrade($db, $show, $schema, $vars);
 
-if (! defined('X_SADMIN') || ! X_SADMIN) {
+if (! defined('XMB\X_SADMIN') || ! X_SADMIN) {
     header('HTTP/1.0 403 Forbidden');
     echo 'Not allowed to run this file directly.';
     throw new Exception('Unauthenticated upgrade attempt by ' . $_SERVER['REMOTE_ADDR']);

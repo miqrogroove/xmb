@@ -1119,11 +1119,11 @@ class Core
         $subject = str_replace(["\r", "\n"], ['', ''], $subject);
 
         if ($mailer['type'] == 'socket_SMTP') {
-            require_once(XMB_ROOT . 'include/smtp.inc.php');
+            require_once(ROOT . 'include/smtp.inc.php');
 
             if (! isset($this->mailConnections['socket_SMTP'])) {
                 if ($this->vars->debug) {
-                    $mail = new socket_SMTP(true, XMB_ROOT . 'smtp-log.txt');
+                    $mail = new socket_SMTP(true, ROOT . 'smtp-log.txt');
                 } else {
                     $mail = new socket_SMTP;
                 }
@@ -1567,7 +1567,7 @@ class Core
      *  $perms = checkForumPermissions($forum);
      *  if ($perms[X_PERMS_VIEW]) { //$self is allowed to view $forum }
      * Masquerade Example
-     *  $result = $db->query('SELECT * FROM '.X_PREFIX.'members WHERE uid=1');
+     *  $result = $db->query('SELECT * FROM ' . $vars->tablepre . 'members WHERE uid = 1');
      *  $user = $db->fetch_array($result);
      *  $perms = checkForumPermissions($forum, $user['status']);
      *  if ($perms[X_PERMS_VIEW]) { //$user is allowed to view $forum }
