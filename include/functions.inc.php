@@ -428,7 +428,7 @@ class Core
         } elseif (X_MOD) {
             $username = strtoupper($username);
             $mods = explode(',', $mods);
-            foreach ($mods as $key=>$moderator) {
+            foreach ($mods as $moderator) {
                 if (strtoupper(trim($moderator)) === $username) {
                     $retval = 'Moderator';
                     break;

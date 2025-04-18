@@ -63,7 +63,7 @@ if (noSubmit('modsubmit')) {
 
     $oldfid = '0';
     $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM " . $vars->tablepre . "forums f LEFT JOIN " . $vars->tablepre . "forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
-    while($forum = $db->fetch_array($query)) {
+    while ($forum = $db->fetch_array($query)) {
         if ($oldfid !== $forum['cat_fid']) {
             $oldfid = $forum['cat_fid'];
             $template->catName = fnameOut($forum['cat_name']);
@@ -87,8 +87,31 @@ if (noSubmit('modsubmit')) {
     $core->request_secure('Control Panel/Moderators', 'mass-edit');
     $mod = $validate->postedArray('mod', dbescape: false);
     if (is_array($mod)) {
-        foreach($mod as $fid => $mods) {
-            $sql->setForumMods($fid, $mods);
+        // Retrieve valid staff names.
+        $staff = $sql->getStaffNames();
+        $staff = array_map('strtoupper', $staff);
+
+        // Loop through each posted FID.
+        foreach ($mod as $fid => $mods) {
+            $list = explode(',', $mods);
+            $newlist = [];
+
+            // Loop through each submitted name.
+            foreach ($list as $moderator) {
+
+                // Build up a new list of valid names.
+                if (in_array(strtoupper($moderator), $staff)) {
+                    $newlist[] = $moderator;
+                }
+            }
+
+            // Save any valid names.
+            if (empty($newlist)) {
+                $sql->setForumMods($fid, '');
+            } else {
+                $mods = implode(', ', $newlist);
+                $sql->setForumMods($fid, $mods);
+            }
         }
     }
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmodupdate'] . '</td></tr>';

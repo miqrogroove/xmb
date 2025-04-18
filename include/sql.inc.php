@@ -433,6 +433,22 @@ class SQL
     /**
      * SQL command
      *
+     * @since 1.10.00
+     * @return array List of usernames.
+     */
+    public function getStaffNames(): array
+    {
+        $result = $this->db->query("SELECT username FROM " . $this->tablepre . "members WHERE status IN ('Moderator', 'Super Moderator', 'Super Administrator', 'Administrator')");
+
+        $rows = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return array_column($rows, 'username');
+    }
+
+    /**
+     * SQL command
+     *
      * @since 1.9.12
      */
     public function checkUpgradeOldLogin(string $username, string $password): bool
