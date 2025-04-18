@@ -100,7 +100,7 @@ if (noSubmit('modsubmit')) {
             foreach ($list as $moderator) {
 
                 // Build up a new list of valid names.
-                if (in_array(strtoupper($moderator), $staff)) {
+                if (in_array(strtoupper(trim($moderator)), $staff)) {
                     $newlist[] = $moderator;
                 }
             }
