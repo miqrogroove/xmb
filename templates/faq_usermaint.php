@@ -1,3 +1,16 @@
+<?php
+$answer6 = str_replace(
+    [
+        '$u2uAnchor',
+        '$memcpURL'
+    ],
+    [
+        "href='{$full_url}u2u.php' onclick=\"Popup(this.href, 'Window', 700, 450); return false;\"",
+        $full_url . 'memcp.php'
+    ],
+    $lang['textfaqans6'],
+);
+?>
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
@@ -30,7 +43,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="1"></a><?= $lang['textfaq1'] ?></strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans1'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= str_replace('$url', $full_url . 'member.php?action=reg', $lang['textfaqans1']) ?></td>
 </tr>
 </table>
 </td>
@@ -45,7 +58,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="2"></a><?= $lang['textfaq2'] ?></strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans2'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= str_replace('$url', $full_url . 'misc.php?action=logout', $lang['textfaqans2']) ?></td>
 </tr>
 </table>
 </td>
@@ -59,7 +72,7 @@
 <tr>
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="3"></a><?= $lang['textfaq3'] ?></strong></font></td></tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans3'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= str_replace('$url', $full_url . 'memcp.php', $lang['textfaqans3']) ?></td>
 </tr>
 </table>
 </td>
@@ -74,7 +87,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="4"></a><?= $lang['textfaq4'] ?></strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans4'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= str_replace('$url', $full_url . 'memcp.php', $lang['textfaqans4']) ?></td>
 </tr>
 </table>
 </td>
@@ -89,7 +102,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="5"></a><?= $lang['textfaq5'] ?></strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans5'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= str_replace('$url', $full_url . 'misc.php?action=lostpw', $lang['textfaqans5']) ?></td>
 </tr>
 </table>
 </td>
@@ -104,7 +117,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="6"></a><?= $lang['textfaq6'] ?></strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans6'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $answer6 ?></td>
 </tr>
 </table>
 </td>

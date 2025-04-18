@@ -106,9 +106,17 @@ if (X_SMOD && $gid == 0) {
     $result = $sql->countPosts($quarantine);
     if ($result > 0) {
         if (1 == $result) {
-            $msg = $lang['moderation_notice_single'];
+            $msg = str_replace(
+                ['$url'],
+                [$vars->full_url . 'quarantine.php'],
+                $lang['moderation_notice_single'],
+            );
         } else {
-            $msg = str_replace('$result', (string) $result, $lang['moderation_notice_eval']);
+            $msg = str_replace(
+                ['$result', '$url'],
+                [(string) $result, $vars->full_url . 'quarantine.php'],
+                $lang['moderation_notice_eval'],
+            );
         }
         $body->ticker .= $core->message(
             msg: $msg,

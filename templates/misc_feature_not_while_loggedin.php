@@ -6,8 +6,8 @@
 <td class="category" colspan="2"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['fnasorry'] ?></strong></font></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="8%" align="center"><img src="<?= $THEME['admdir'] ?>/exclamation.gif" border="0" alt="<?= $lang['featurewarning'] ?>" /></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><span class="smalltxt"><strong><?= $lang['fnasorry2'] ?></strong></span><br /><?= $lang['plogtuf'] ?><br /></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>" width="8%" align="center"><img src="<?= $full_url ?><?= $THEME['admdir'] ?>/exclamation.gif" border="0" alt="<?= $lang['featurewarning'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><span class="smalltxt"><strong><?= $lang['fnasorry2'] ?></strong></span><br /><?= str_replace('$url', $full_url . 'misc.php?action=logout', $lang['plogtuf']) ?><br /></td>
 </tr>
 </table>
 </td>

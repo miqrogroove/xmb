@@ -21,7 +21,7 @@
 <tr>
 <td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $lang['textmessage'] ?><br /><span class="smalltxt"><?= $lang['texthtmlis'] ?> <?= $allowhtml ?><br />
 <?= $lang['textsmiliesare'] ?> <?= $allowsmilies ?><br />
-<?= $lang['textbbcodeis'] ?> <?= $allowbbcode ?><br />
+<?= str_replace('$url', $full_url . 'faq.php?page=messages#7', $lang['textbbcodeis']) ?> <?= $allowbbcode ?><br />
 <?= $lang['textimgcodeis'] ?> <?= $allowimgcode ?></span></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <table width="100%">

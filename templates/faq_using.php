@@ -1,3 +1,10 @@
+<?php
+$answer9 = str_replace(
+    '$u2uAnchor',
+    "href='{$full_url}u2u.php' onclick=\"Popup(this.href, 'Window', 700, 450); return false;\"",
+    $lang['textfaqans9'],
+);
+?>
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
@@ -76,7 +83,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="4"></a><?= $lang['textfaq9'] ?></strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans9'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $answer9 ?></td>
 </tr>
 </table>
 </td>
@@ -91,7 +98,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><a name="5"></a><?= $lang['textfaq10'] ?></strong></font></td>
 </tr>
 <tr>
-<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textfaqans10'] ?></td>
+<td width="100%" class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= str_replace('$url', $full_url . 'misc.php?action=list', $lang['textfaqans10']) ?></td>
 </tr>
 </table>
 </td>

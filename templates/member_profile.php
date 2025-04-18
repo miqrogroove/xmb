@@ -77,7 +77,7 @@
 <td colspan="2" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['memcp_otheroptions'] ?></strong></font></td>
 </tr>
 <tr>
-<td bgcolor="<?= $THEME['altbg1'] ?>" colspan="2" class="tablerow"><strong><?= $lang['searchusermsg'] ?></strong> <?= $admin_edit ?></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>" colspan="2" class="tablerow"><strong><?= $postSearchLink ?></strong> <?= $admin_edit ?></td>
 </tr>
 </table>
 </td>

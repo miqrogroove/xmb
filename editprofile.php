@@ -126,7 +126,8 @@ if (noSubmit('editsubmit')) {
 
     $subTemplate->htmlis = $lang['textoff'];
 
-    $lang['searchusermsg'] = str_replace('*USER*', $member['username'], $lang['searchusermsg']);
+    $url = $vars->full_url . 'search.php?srchuname=' . recodeOut($member['username']) . '&amp;searchsubmit=a';
+    $subTemplate->postSearchLink = str_replace('$url', $url, $lang['searchusermsg']);
 
     $subTemplate->email = $member['email'];
     $subTemplate->emailURL = recodeOut($member['email']);

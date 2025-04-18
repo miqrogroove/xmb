@@ -8,7 +8,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['loggedinuser'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $hUsername ?> <?= $lang['textminilogout'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $hUsername ?> <?= str_replace('$url', $full_url . 'misc.php?action=logout', $lang['textminilogout']) ?></td>
 </tr>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>"><input type="hidden" name="fid" value="<?= $fid ?>" /><input type="hidden" name="tid" value="<?= $tid ?>" /><input type="submit" class="submit" name="emptysubmit" value="<?= $lang['textemptythread'] ?>" /></td>

@@ -54,7 +54,7 @@
 <?= $bio ?></textarea></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsig'] ?><br /><span class="smalltxt"><?= $lang['texthtmlis'] ?> <?= $htmlis ?><br /><?= $lang['textbbcodeis'] ?> <?= $bbcodeis ?></span></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsig'] ?><br /><span class="smalltxt"><?= $lang['texthtmlis'] ?> <?= $htmlis ?><br /><?= str_replace('$url', $full_url . 'faq.php?page=messages#7', $lang['textbbcodeis']) ?> <?= $bbcodeis ?></span></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><textarea rows="5" cols="45" name="newsig">
 <?= $sig ?></textarea></td>
 </tr>
@@ -143,7 +143,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['editprosearch'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $lang['searchusermsg'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $postSearchLink ?></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input type="submit" class="submit" name="editsubmit" value="<?= $lang['texteditpro'] ?>"/></td>

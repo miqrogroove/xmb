@@ -50,7 +50,7 @@ if ($vars->settings['searchstatus'] != 'on') {
     exit;
 }
 
-$searchsubmit = getPhpInput('searchsubmit');
+$searchsubmit = getPhpInput('searchsubmit', 'r');
 $page = formInt('page');
 $ppp = $vars->ppp;
 
@@ -79,17 +79,28 @@ if (empty($searchsubmit) && empty($page)) {
 } else {
     header('X-Robots-Tag: noindex');
 
-    $srchtxt = getPhpInput('srchtxt');
-    $srchuname = $validate->postedVar('srchuname');
-    $rawsrchuname = getPhpInput('srchuname', 'g');
-    $distinct = getPhpInput('distinct');
-    // Value 'all' is coerced to 0 here, so 0 is now correctly interpreted as all selecting all forums.
-    $srchfid = $validate->postedArray(
-        varname: 'f',
-        valueType: 'int',
-    );
-    $srchfield = getPhpInput('srchfield');
-    $srchfrom = formInt('srchfrom');
+    if (empty(getPhpInput('searchsubmit'))) {
+        // Allow limited input from GET method
+        $srchuname = $validate->postedVar('srchuname', sourcearray: 'g');
+        $rawsrchuname = getPhpInput('srchuname', 'g');
+        $srchtxt = '';
+        $distinct = '';
+        $srchfid = [0];
+        $srchfield = '';
+        $srchfrom = 0;
+    } else {
+        $srchuname = $validate->postedVar('srchuname');
+        $rawsrchuname = getPhpInput('srchuname');
+        $srchtxt = getPhpInput('srchtxt');
+        $distinct = getPhpInput('distinct');
+        // Value 'all' is coerced to 0 here, so 0 is now correctly interpreted as selecting all forums.
+        $srchfid = $validate->postedArray(
+            varname: 'f',
+            valueType: 'int',
+        );
+        $srchfield = getPhpInput('srchfield');
+        $srchfrom = formInt('srchfrom');
+    }
     if (strlen($srchuname) < 3 && (empty($srchtxt) || strlen($srchtxt) < 3)) {
         $core->error($lang['nosearchq']);
     }
@@ -272,7 +283,7 @@ if (empty($searchsubmit) && empty($page)) {
     $template->srchfield = attrOut($srchfield);
     $template->srchfrom = attrOut((string) $srchfromold);
     $template->srchtxt = attrOut($srchtxt);
-    $template->srchuname = attrOut(getPhpInput('srchuname'));
+    $template->srchuname = attrOut($rawsrchuname);
     
     $misc = $template->process('search_results.php');
 }
