@@ -158,7 +158,7 @@ if (noSubmit('membersubmit')) {
 
     // Guarantee this request will not remove all Super Administrators.
     if (X_SADMIN && $db->num_rows($query) > 0) {
-        $saquery = $db->query("SELECT COUNT(uid) FROM " . $vars->tablepre . "members WHERE status='Super Administrator'");
+        $saquery = $sql->countSuperAdmins();
         $sa_count = (int) $db->result($saquery, 0);
         $db->free_result($saquery);
 

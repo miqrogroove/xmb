@@ -135,6 +135,7 @@ if (noSubmit('editsubmit')) {
     $subTemplate->uid = $member['uid'];
     $subTemplate->username = $member['username'];
     $subTemplate->userrecode = recodeOut($member['username']);
+    $subTemplate->userStatus = $core->userStatusControl('status', $member['status']);
 
     $subTemplate->token = $token->create('Edit User Account', $member['uid'], $vars::NONCE_FORM_EXP);
     $editpage = $subTemplate->process('admintool_editprofile.php');
@@ -161,6 +162,23 @@ if (noSubmit('editsubmit')) {
         $edits['customstatus'] = $cusstatus;
     }
 
+    $status = getPhpInput('status');
+    if ($member['status'] != $status) {
+        if ($member['status'] == 'Super Administrator') {
+            $count = $sql->countSuperAdmins();
+            if ($count == 1) {
+                $core->error($lang['lastsadmin']);
+            }
+        }
+        if ($status == '') {
+            $status = 'Member';
+        }
+        $list = array_keys($vars->status_enum);
+        if (in_array($status, $list)) {
+            $edits['status'] = $status;
+        }
+    }
+
     if (count($edits) > 0) {
         $sql->updateMember($member['username'], $edits);
     }
@@ -181,7 +199,7 @@ if (noSubmit('editsubmit')) {
         $sql->unlockMember($rawuser);
     }
 
-    $core->message($lang['adminprofilechange'], redirect: $full_url . 'admin/');
+    $core->message($lang['adminprofilechange'], redirect: $vars->full_url . 'admin/');
 }
 
 $template->footerstuff = $core->end_time();

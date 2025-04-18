@@ -361,6 +361,20 @@ class SQL
     /**
      * SQL command
      *
+     * @since 1.10.00
+     */
+    public function countSuperAdmins(): int
+    {
+        $result = $this->db->query("SELECT COUNT(*) FROM " . $this->tablepre . "members WHERE status = 'Super Administrator'");
+        $count = (int) $this->db->result($result);
+        $this->db->free_result($result);
+
+        return $count;
+    }
+
+    /**
+     * SQL command
+     *
      * @since 1.9.12
      * @param string $username
      * @return int The new value of bad_login_count for this member.

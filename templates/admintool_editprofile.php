@@ -93,11 +93,11 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttpp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tppnew" size="4" value="<?= $tpp ?>" /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="tpp" size="4" value="<?= $tpp ?>" /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textppp'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="pppnew" size="4" value="<?= $ppp ?>" /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="ppp" size="4" value="<?= $ppp ?>" /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textoptions'] ?></td>
