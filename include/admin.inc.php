@@ -163,7 +163,7 @@ class admin
     public function settingHTML(string $setting, string &$on, string &$off)
     {
         $on = $off = '';
-        switch($this->vars->settings[$setting]) {
+        switch ($this->vars->settings[$setting]) {
             case 'on':
                 $on = $this->vars::selHTML;
                 break;
@@ -270,7 +270,7 @@ class admin
         $template->description = $description;
         $template->htmlName = $htmlName;
 
-        switch($this->vars->settings[$xmbName]) {
+        switch ($this->vars->settings[$xmbName]) {
             case 'on':
                 $template->check1 = $this->vars::selHTML;
                 break;

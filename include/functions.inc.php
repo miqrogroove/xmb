@@ -1172,8 +1172,7 @@ class Core
                 $return = mail($to, $subject, $message, $additional_headers, $additional_parameters);
             }
             if (! $return) {
-                $msg = 'XMB failed to send an e-mail because the PHP mail() function returned FALSE!  This might be caused by using an invalid address in XMB\'s Administrator E-Mail setting.';
-                trigger_error($msg, E_USER_WARNING);
+                trigger_error($this->vars->lang['emailErrorPhp'], E_USER_WARNING);
             }
             return $return;
         }
@@ -1212,35 +1211,41 @@ class Core
     }
 
     /**
-     * @since 1.9.8 SP2
+     * Performs translation of the 'F' and 'M' month codes for date formatting.
      *
-     * This function is recursive.  Why?
+     * Does not respect character escaping.
+     *
+     * TODO: This can't work properly.  The $pos2 variable is never used.
+     * TODO: This method is recursive but does not have a recursive purpose.  A simple call to str_replace() would take care of most of this nonsense.
+     * TODO: Use $this->timeKludge() to do away with the logic duplication.
+     *
+     * @since 1.9.8 SP2
      */
-    public function printGmDate($timestamp=null, $altFormat=null, $altOffset=0)
+    public function printGmDate($timestamp = null, $altFormat = null, $altOffset = 0): string
     {
-        global $dateformat, $SETTINGS, $timeoffset;
-
         if ($timestamp === null) {
             $timestamp = time();
         }
 
         if ($altFormat === null) {
-            $altFormat = $dateformat;
+            $altFormat = $this->vars->dateformat;
         }
 
-        $f = false;
+        $f = false; // Sloppy code, used to determine if the entire month name should be included.
         if ((($pos = strpos($altFormat, 'F')) !== false && $f = true) || ($pos2 = strpos($altFormat, 'M')) !== false) {
             $startStr = substr($altFormat, 0, $pos);
-            $endStr = substr($altFormat, $pos+1);
-            $month = gmdate('m', intval($timestamp + ($timeoffset*3600)+(($altOffset+$SETTINGS['addtime'])*3600)));
+            $endStr = substr($altFormat, $pos + 1);
+            $month = (int) gmdate('m', intval($timestamp + ($this->vars->timeoffset * 3600)+(($altOffset + $this->vars->settings['addtime'])*3600)));
             $textM = $this->month2text($month);
             return $this->printGmDate($timestamp, $startStr, $altOffset) . substr($textM,0, ($f ? strlen($textM) : 3)) . $this->printGmDate($timestamp, $endStr, $altOffset);
         } else {
-            return gmdate($altFormat, intval($timestamp + ($timeoffset * 3600) + (($altOffset+$SETTINGS['addtime']) * 3600)));
+            return gmdate($altFormat, intval($timestamp + ($this->vars->timeoffset * 3600) + (($altOffset + $this->vars->settings['addtime']) * 3600)));
         }
     }
 
     /**
+     * Converts a month integer to a translated word.
+     *
      * @since 1.9.8
      */
     private function month2text(int $num): string
@@ -1797,8 +1802,6 @@ class Core
      */
     public function nonce_create(string $key): string
     {
-        global $self;
-        
         $db = $this->db;
 
         $key = substr($key, 0, $this->vars::NONCE_KEY_LEN);
@@ -1879,9 +1882,7 @@ class Core
      */
     public function xmb_mail(string $to, string $subject, string $message, string $charset, bool $html = false): bool
     {
-        global $self, $bbname, $cookiedomain;
-
-        if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32') {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
+        if (PHP_OS_FAMILY == 'Windows') {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
             ini_set('sendmail_from', $this->vars->settings['adminemail']);
         }
 

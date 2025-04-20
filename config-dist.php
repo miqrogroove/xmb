@@ -53,7 +53,7 @@ if (! defined('XMB\ROOT')) {
     // choice, and will send the mail trough that. The following mailer-options are available:
     // 'default'        => php's internal mail() function. No additional values need to be set:
     //                     (does not require a username/password/host/port)
-    // 'socket_SMTP'    => a connection to the SMTP server trough sockets. Requires the username,
+    // 'socket_SMTP'    => a connection to the SMTP server through sockets. Requires the username,
     //                     password, host and port values to be entered correctly to work.
     $mailer['type']     = 'default';
 
@@ -88,16 +88,16 @@ if (! defined('XMB\ROOT')) {
 
 // Registration settings
     /***************
-     * The ipcheck, checks if your server is reading a valid IPv4 format. If not, it will kill the script.
-     * This is a legacy "feature" of XMB that should be turned off by changing the $ipcheck variable to 'off'
+     * The ipcheck requires your server to read a valid IPv4 address from the client. If not, it will kill the script.
+     * This is a legacy "feature" of XMB that should be turned off by changing the $ipcheck variable to false.
      ****************
      * The allow_spec_q variable specifies if Special queries (eg. USE database and SHOW DATABASES) are allowed.
-     * By default, they are not, meaning $allow_spec_q = FALSE;
+     * By default, they are not, meaning $allow_spec_q = false;
      * To allow them, change $allow_spec_q to true ($allow_spec_q = true;)
      ****************
      * The show_full_info variable lets you decide whether to show the Build and Alpha/Beta/SP markings in the HTML or not.
      * Change the value to true to show them, or false to turn them off.
-     * Default = TRUE;
+     * Default = true;
      ****************/
 
     $ipcheck        = false;

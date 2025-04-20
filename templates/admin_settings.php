@@ -40,13 +40,13 @@ $admin->printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bbo
 $admin->printsetting6($lang['gzipcompression'], 'gzipcompressnew', 'gzipcompress');
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit1" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="2" />&raquo;&nbsp;<?= $lang['admin_main_settings2'] ?></font></strong></td>
 </tr>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textlanguage' ] ?></td>
+<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textlanguage'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $langfileselect ?></td>
 </tr>
 <tr class="tablerow">
@@ -66,7 +66,7 @@ $admin->printsetting2($lang['textmpp'], 'memberperpagenew', ((int) $SETTINGS['me
 $admin->printsetting2($lang['dateformat'], 'dateformatnew', $SETTINGS['dateformat'], 20);
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit2" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="3" />&raquo;&nbsp;<?= $lang['admin_main_settings3'] ?></font></strong></td>
@@ -81,7 +81,7 @@ $admin->printsetting6($lang['coppastatus'], 'coppanew', 'coppa');
 $admin->printsetting6($lang['reportpoststatus'], 'reportpostnew', 'reportpost');
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit3" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="4" />&raquo;&nbsp;<?= $lang['admin_main_settings4'] ?></font></strong></td>
@@ -101,7 +101,7 @@ $admin->printsetting6($lang['editedby'], 'editedbynew', 'editedby');
 $admin->printsetting6($lang['show_logs_in_threads'], 'showlogsnew', 'show_logs_in_threads');
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit4" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="9" />&raquo;&nbsp;<?= $lang['admin_main_settings9'] ?></font></strong></td>
@@ -118,7 +118,7 @@ $admin->printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['t
 $admin->printsetting3($lang['tickercode'], 'tickercodenew', array($lang['plaintext'], $lang['textbbcode'], $lang['texthtml']), array('plain', 'bbcode', 'html'), $tickercodechecked, false);
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit5" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="5" />&raquo;&nbsp;<?= $lang['admin_main_settings5'] ?></font></strong></td>
@@ -143,21 +143,21 @@ $admin->printsetting6($lang['moderation_setting'], 'quarantinenew', 'quarantine_
 $admin->printsetting6($lang['hide_banned_users'], 'hidebannednew', 'hide_banned');
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit6" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="8" />&raquo;&nbsp;<?= $lang['admin_main_settings8'] ?></font></strong></td>
 </tr>
 <?php
 if (! ini_get('file_uploads')) {
-    $admin->printsetting5($lang['status'], 'The file upload feature is disabled.  Please check the configuration of your PHP server.');
+    $admin->printsetting5($lang['status'], $lang['uploadDisabled']);
 }
 $max_image_sizes = explode('x', $SETTINGS['max_image_size']);
 $max_thumb_sizes = explode('x', $SETTINGS['max_thumb_size']);
-for($i=0; $i<=4; $i++) {
+for ($i = 0; $i <= 4; $i++) {
     $urlformatchecked[$i] = ($SETTINGS['file_url_format'] == $i + 1);
 }
-for($i=0; $i<=1; $i++) {
+for ($i = 0; $i <= 1; $i++) {
     $subdirchecked[$i] = ($SETTINGS['files_subdir_format'] == $i + 1);
 }
 $admin->printsetting2($lang['textfilesperpost'], 'filesperpostnew', ((int) $SETTINGS['filesperpost']), 3);
@@ -179,7 +179,7 @@ $admin->printsetting3($lang['textfilesurlpath'], 'filesurlpathnew', array($lang[
 $admin->printsetting2($lang['textfilesbase'], 'filesbasenew', $SETTINGS['files_virtual_url'], 50);
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit7" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="6" />&raquo;&nbsp;<?= $lang['admin_main_settings6'] ?></font></strong></td>
@@ -200,7 +200,7 @@ if (! ini_get('allow_url_fopen')) {
 }
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit8" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="7" />&raquo;&nbsp;<?= $lang['admin_main_settings7'] ?></font></strong></td>
@@ -230,7 +230,7 @@ if (! $goodCaptcha) {
 }
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit9" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="10" />&raquo;&nbsp;<?= $lang['admin_main_settings10'] ?></font></strong></td>
@@ -242,7 +242,7 @@ $admin->printsetting2($lang['google_captcha_sitekey'].$recaptcha_link, 'recaptch
 $admin->printsetting2($lang['google_captcha_secretkey'], 'recaptchasecretnew', $SETTINGS['google_captcha_secret'], 50);
 ?>
 <tr class="ctrtablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit10" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
 </table>
 </td>

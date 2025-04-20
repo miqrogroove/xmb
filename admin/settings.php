@@ -64,18 +64,7 @@ $table = $template->process('admin_table.php');
 
 $admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
 
-if (
-    noSubmit('settingsubmit1')
-    && noSubmit('settingsubmit2')
-    && noSubmit('settingsubmit3')
-    && noSubmit('settingsubmit4')
-    && noSubmit('settingsubmit5')
-    && noSubmit('settingsubmit6')
-    && noSubmit('settingsubmit7')
-    && noSubmit('settingsubmit8')
-    && noSubmit('settingsubmit9')
-    && noSubmit('settingsubmit10')
-) {
+if (noSubmit('settingsubmit')) {
     $template->admin = $admin;
     $template->core = $core;
 
@@ -171,7 +160,16 @@ if (
 } else {
     $core->request_secure('Control Panel/settings', 'global');
 
-    $notifyonregnew = ($_POST['notifyonregnew'] == 'off') ? 'off' : ($_POST['notifyonregnew'] == 'u2u' ? 'u2u' : 'email');
+    $notifyonregnew = getPhpInput('notifyonregnew');
+    switch ($notifyonregnew) {
+        case 'off':
+        case 'u2u':
+        case 'email':
+            // These are valid.
+            break;
+        default:
+            $notifyonregnew = 'email';
+    }
     $avastatusnew = $validate->postedVar('avastatusnew');
     if ($avastatusnew != 'on' && $avastatusnew != 'list') {
         $avastatusnew = 'off';
@@ -182,15 +180,13 @@ if (
     }
 
     $new_footer_options = $validate->postedArray('new_footer_options');
-    if (!empty($new_footer_options)) {
+    if (! empty($new_footer_options)) {
         $footer_options = implode('-', $new_footer_options);
     } else {
         $footer_options = '';
     }
 
     $maxAttachSize = (string) min(phpShorthandValue('upload_max_filesize'), formInt('maxAttachSize'));
-    $def_tz_new = isset($_POST['timeoffset1']) && is_numeric($_POST['timeoffset1']) ? $_POST['timeoffset1'] : '0';
-    $addtimenew = isset($_POST['addtimenew']) && is_numeric($_POST['addtimenew']) ? $_POST['addtimenew'] : '0';
     $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
     $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
     $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
@@ -212,7 +208,7 @@ if (
     $ppp = (string) $ppp;
     $tpp = (string) $tpp;
 
-    $admin->input_custom_setting('addtime', $addtimenew);
+    $admin->input_int_setting('addtime', 'addtimenew');
     $admin->input_string_setting('adminemail', 'adminemailnew');
     $admin->input_onoff_setting('allowrankedit', 'allowrankeditnew');
     $admin->input_onoff_setting('attachimgpost', 'attachimgpostnew');
@@ -245,7 +241,7 @@ if (
     $admin->input_onoff_setting('catsonly', 'catsonlynew');
     $admin->input_onoff_setting('coppa', 'coppanew');
     $admin->input_string_setting('dateformat', 'dateformatnew');
-    $admin->input_custom_setting('def_tz', $def_tz_new);
+    $admin->input_int_setting('def_tz', 'timeoffset1');
     $admin->input_onoff_setting('dotfolders', 'dotfoldersnew');
     $admin->input_onoff_setting('doublee', 'doubleenew');
     $admin->input_onoff_setting('editedby', 'editedbynew');
