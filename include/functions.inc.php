@@ -232,7 +232,7 @@ class Core
             //Remove the code block contents from $message.
             $messagearray = $this->bbcode->parseCodeBlocks($message);
             $message = array();
-            for($i = 0; $i < count($messagearray); $i += 2) {
+            for ($i = 0; $i < count($messagearray); $i += 2) {
                 $message[$i] = $messagearray[$i];
             }
             $message = implode("<!-- code -->", $message);
@@ -249,7 +249,7 @@ class Core
             // Replace the code block contents in $message.
             if (count($messagearray) > 1) {
                 $message = explode("<!-- code -->", $message);
-                for($i = 0; $i < count($message) - 1; $i++) {
+                for ($i = 0; $i < count($message) - 1; $i++) {
                     $message[$i] .= $this->smile->censor($messagearray[$i*2+1]);
                 }
                 $message = implode("", $message);
@@ -287,7 +287,7 @@ class Core
     {
         $br = trim(nl2br("\n"));
         $messagearray = preg_split("#<!-- nobr -->|<!-- /nobr -->#", $input);
-        for($i = 0; $i < sizeof($messagearray); $i++) {
+        for ($i = 0; $i < sizeof($messagearray); $i++) {
             if ($i % 2 == 0) {
                 $messagearray[$i] = explode($br, $messagearray[$i]);
                 foreach ($messagearray[$i] as $key => $val) {
@@ -494,6 +494,8 @@ class Core
     }
 
     /**
+     * Builds and processes templates forumdisplay_subforum.php and index_forum.php.
+     *
      * As of version 1.9.11, function forum() is not responsible for any permissions checking.
      * Caller should use permittedForums() or getStructuredForums() instead of querying for the parameters.
      *
@@ -547,9 +549,10 @@ class Core
 
         if (! empty($forum['moderator'])) {
             $list = [];
-            $moderators = explode(', ', $forum['moderator']);
+            $moderators = explode(',', $forum['moderator']);
+            $moderators = array_map('trim', $moderators);
             foreach ($moderators as $moderator) {
-                $list[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($moderator).'">'.$moderator.'</a>';
+                $list[] = "<a href='member.php?action=viewpro&amp;member=" . recodeOut($moderator) . "'>$moderator</a>";
             }
             $moderators = implode(', ', $list);
             $forum['moderator'] = "{$lang['textmodby']} $moderators";
@@ -561,7 +564,7 @@ class Core
 
         $subforums = [];
         if (count($index_subforums) > 0) {
-            for($i=0; $i < count($index_subforums); $i++) {
+            for ($i = 0; $i < count($index_subforums); $i++) {
                 $sub = $index_subforums[$i];
                 if ($sub['fup'] === $forum['fid']) {
                     $subforums[] = '<a href="forumdisplay.php?fid='.intval($sub['fid']).'">'.fnameOut($sub['name']).'</a>';
@@ -569,7 +572,7 @@ class Core
             }
         }
 
-        if (!empty($subforums)) {
+        if (! empty($subforums)) {
             $subforums = implode(', ', $subforums);
             $subforums = "{$lang['textsubforums']} <span class='plainlinks'>$subforums</span>";
             if ('' !== $forum['description'] || '' != $forum['moderator']) {
@@ -686,7 +689,7 @@ class Core
 
             // Link to current page and up to 2 prev and 2 next pages.
             $multipage .= "\n";
-            for($i = $from; $i <= $to; $i++) {
+            for ($i = $from; $i <= $to; $i++) {
                 if ($i != $page) {
                     $extra = '';
                     if ($isself) {

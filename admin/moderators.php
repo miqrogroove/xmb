@@ -94,13 +94,14 @@ if (noSubmit('modsubmit')) {
         // Loop through each posted FID.
         foreach ($mod as $fid => $mods) {
             $list = explode(',', $mods);
+            $list = array_map('trim', $list);
             $newlist = [];
 
             // Loop through each submitted name.
             foreach ($list as $moderator) {
 
                 // Build up a new list of valid names.
-                if (in_array(strtoupper(trim($moderator)), $staff)) {
+                if (in_array(strtoupper($moderator), $staff)) {
                     $newlist[] = $moderator;
                 }
             }

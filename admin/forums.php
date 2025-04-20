@@ -68,14 +68,14 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     $subs = [];
     $i = 0;
     $query = $db->query("SELECT fid, type, name, displayorder, status, fup FROM " . $vars->tablepre . "forums ORDER BY fup ASC, displayorder ASC");
-    while($selForums = $db->fetch_array($query)) {
+    while ($selForums = $db->fetch_array($query)) {
         if ($selForums['type'] == 'group') {
             $groups[$i]['fid'] = $selForums['fid'];
             $groups[$i]['name'] = $selForums['name'];
             $groups[$i]['displayorder'] = $selForums['displayorder'];
             $groups[$i]['status'] = $selForums['status'];
             $groups[$i]['fup'] = $selForums['fup'];
-        } else if ($selForums['type'] == 'forum') {
+        } elseif ($selForums['type'] == 'forum') {
             $id = (empty($selForums['fup'])) ? 0 : $selForums['fup'];
             $forums[$id][$i]['fid'] = $selForums['fid'];
             $forums[$id][$i]['name'] = $selForums['name'];
@@ -84,7 +84,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
             $forums[$id][$i]['fup'] = $selForums['fup'];
             $forumlist[$i]['fid'] = $selForums['fid'];
             $forumlist[$i]['name'] = $selForums['name'];
-        } else if ($selForums['type'] == 'sub') {
+        } elseif ($selForums['type'] == 'sub') {
             $subs[$selForums['fup']][$i]['fid'] = $selForums['fid'];
             $subs[$selForums['fup']][$i]['name'] = $selForums['name'];
             $subs[$selForums['fup']][$i]['displayorder'] = $selForums['displayorder'];
@@ -105,7 +105,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     $template->selHTML = $vars::selHTML;
 
     // Loop through ungrouped forums.
-    foreach($forums[0] as $forum) {
+    foreach ($forums[0] as $forum) {
         if ($forum['status'] == 'on') {
             $template->off = '';
             $template->on = $vars::selHTML;
@@ -119,7 +119,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
         // Loop through subforums of the ungrouped forum.
         if (array_key_exists($forum['fid'], $subs)) {
-            foreach($subs[$forum['fid']] as $subforum) {
+            foreach ($subs[$forum['fid']] as $subforum) {
                 if ($subforum['status'] == 'on') {
                     $template->off = '';
                     $template->on = $vars::selHTML;
@@ -135,7 +135,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     }
 
     // Loop through groups.
-    foreach($groups as $group) {
+    foreach ($groups as $group) {
         if ($group['status'] == 'on') {
             $template->off = '';
             $template->on = $vars::selHTML;
@@ -149,7 +149,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
         // Loop through grouped forums.
         if (array_key_exists($group['fid'], $forums)) {
-            foreach($forums[$group['fid']] as $forum) {
+            foreach ($forums[$group['fid']] as $forum) {
                 if ($forum['status'] == 'on') {
                     $template->off = '';
                     $template->on = $vars::selHTML;
@@ -163,7 +163,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
                 // Loop through subforums of grouped forums.
                 if (array_key_exists($forum['fid'], $subs)) {
-                    foreach($subs[$forum['fid']] as $subforum) {
+                    foreach ($subs[$forum['fid']] as $subforum) {
                         if ($subforum['status'] == 'on') {
                             $template->off = '';
                             $template->on = $vars::selHTML;
@@ -223,7 +223,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
     $template->perms = explode(',', $forum['postperm']);
     
-    foreach($vars->status_enum as $key=>$val) {
+    foreach ($vars->status_enum as $key=>$val) {
         if ($key != '' && $val <= $vars->status_enum['Guest']) {
             $template->val = $val;
             $template->statusKey = $vars->status_translate[$val];
@@ -240,10 +240,10 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         }
     }
     $body .= $template->process('admin_forums_detail_end.php');
-} else if (onSubmit('forumsubmit') && !$fdetails) {
+} elseif (onSubmit('forumsubmit') && ! $fdetails) {
     $core->request_secure('Control Panel/Forums', 'mass-edit');
     $queryforum = $db->query("SELECT fid, type, fup FROM " . $vars->tablepre . "forums WHERE type='forum' OR type='sub'");
-    while($forum = $db->fetch_array($queryforum)) {
+    while ($forum = $db->fetch_array($queryforum)) {
         $displayorder = formInt('displayorder'.$forum['fid']);
         $forum['status'] = formOnOff('status'.$forum['fid']);
         $name = addslashes(htmlspecialchars($validate->postedVar('name'.$forum['fid'], 'javascript', htmlencode: false), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
@@ -275,7 +275,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
             }
         }
 
-        if (!$dsuccess) {
+        if (! $dsuccess) {
             $settype = '';
             if ($moveto != (int) $forum['fup'] && $moveto != (int) $forum['fid'] && $forum['type'] != 'group') { //Forum is being moved
                 if ($moveto == 0) {
@@ -285,10 +285,10 @@ if (noSubmit('forumsubmit') && !$fdetails) {
                     if ($frow = $db->fetch_array($query)) {
                         if ($frow['type'] == 'group') {
                             $settype = ", type='forum', fup=$moveto";
-                        } else if ($frow['type'] == 'forum') {
+                        } elseif ($frow['type'] == 'forum') {
                             if ($forum['type'] == 'sub') {
                                 $settype = ", fup=$moveto";
-                            } else if ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
+                            } elseif ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
                                 $query2 = $db->query("SELECT COUNT(*) AS subcount FROM " . $vars->tablepre . "forums WHERE fup = {$forum['fid']}");
                                 $frow = $db->fetch_array($query2);
                                 $db->free_result($query2);
@@ -306,7 +306,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     }
 
     $querygroup = $db->query("SELECT fid FROM " . $vars->tablepre . "forums WHERE type = 'group'");
-    while($group = $db->fetch_array($querygroup)) {
+    while ($group = $db->fetch_array($querygroup)) {
         $name = addslashes(htmlspecialchars($validate->postedVar('name' . $group['fid'], 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $displayorder = formInt('displayorder'.$group['fid']);
         $group['status'] = formOnOff('status'.$group['fid']);
@@ -390,7 +390,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         if (! X_SADMIN) {
             $forum = $db->fetch_array($db->query("SELECT postperm FROM " . $vars->tablepre . "forums WHERE fid = $fdetails"));
             $parts = explode(',', $forum['postperm']);
-            foreach($parts as $p=>$v) {
+            foreach ($parts as $p=>$v) {
                 if ($v & 1 == 1) {
                     // super admin status set
                     $overrule[$p] = 1;
@@ -399,7 +399,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         }
 
         $perms = array(0,0,0,0);
-        foreach($_POST['permsNew'] as $key=>$val) {
+        foreach ($_POST['permsNew'] as $key=>$val) {
             $perms[$key] = array_sum($_POST['permsNew'][$key]);
             $perms[$key] |= $overrule[$key];
         }
