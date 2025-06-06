@@ -44,6 +44,11 @@ if (! is_readable(constant('XMB\ROOT') . 'include/version.php') || ! is_readable
     exit("Could not find the installer files!\n<br />\nPlease make sure the entire <code>include</code> and <code>install</code> folder contents are available.");
 }
 
+// Check mysqli is enabled
+if (! extension_loaded('mysqli')) {
+    exit('The MySQLi function is not loaded. Please install/enable the extension and restart your web server to start the XMB installation process. If you are unsure what this means, contact your hosting provider for support.');
+}
+
 // PHP Version Test
 require constant('XMB\ROOT') . 'include/version.php';
 $version = new XMBVersion();
