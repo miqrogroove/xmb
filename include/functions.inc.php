@@ -2147,10 +2147,10 @@ class Core
             $this->error($this->vars->lang['textnopassword']);
         }
         if (strlen($password1) < $this->vars::PASS_MIN_LENGTH) {
-            $core->error($this->vars->lang['pwtooshort']);
+            $this->error($this->vars->lang['pwtooshort']);
         }
         if (strlen($password1) > $this->vars::PASS_MAX_LENGTH) {
-            $core->error($this->vars->lang['pwtoolong']);
+            $this->error($this->vars->lang['pwtoolong']);
         }
         if ($password1 !== $password2) {
             $this->error($this->vars->lang['pwnomatch']);
