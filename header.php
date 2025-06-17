@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace XMB\Services;
 
+use UnexpectedValueException;
+
 use const XMB\ROOT;
 use const XMB\X_ADMIN;
 use const XMB\X_MEMBER;
@@ -81,9 +83,11 @@ require ROOT . 'include/UploadResult.php';
 require ROOT . 'include/UploadStatus.php';
 require ROOT . 'include/UserEditForm.php';
 require ROOT . 'include/validate.inc.php';
+require ROOT . 'include/validate-email.inc.php';
 require ROOT . 'include/Validation.php';
 require ROOT . 'include/Variables.php';
 require_once ROOT . 'include/version.php';
+require ROOT . 'vendor/autoload.php';
 
 
 /* Create base services */
@@ -121,7 +125,12 @@ if (defined('XMB\INSTALL') && ! defined('XMB\INSTALL_P2')) {
 
 $boot->loadConfig();
 observer()->assertEmptyOutputStream('config.php');
-if (! vars()->debug) {
+if (vars()->debug) {
+    if (error_reporting() !== -1) {
+        echo 'XMB was unable to set the error_reporting level. Your host might be using a proprietary PHP extension to block error reporting. Please disable the XMB debug mode and contact your hostmaster for more information.';
+        throw new UnexpectedValueException('The PHP error_reporting() function failed to return the correct value after XMB set it to -1');
+    }
+} else {
     error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
 $boot->setBrowser();

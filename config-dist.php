@@ -47,7 +47,7 @@ if (! defined('XMB\ROOT')) {
     // Default value: false;
     $comment_output = false;
 
-    // Alternative mailer
+// Mailer Configuration (optional)
     // some hosts prevent the direct use of sendmail, which php uses to send out emails by default.
     // To get around this, we have included code which will contact a separate SMTP server of your
     // choice, and will send the mail trough that. The following mailer-options are available:
@@ -55,13 +55,13 @@ if (! defined('XMB\ROOT')) {
     //                     (does not require a username/password/host/port)
     // 'socket_SMTP'    => a connection to the SMTP server through sockets. Requires the username,
     //                     password, host and port values to be entered correctly to work.
-    $mailer['type']     = 'default';
+    // $mailer['type']     = 'default';
 
     // mailer-options (for socket_SMTP only, currently)
-    $mailer['username'] = 'MAILER_USER';
-    $mailer['password'] = 'MAILER_PASS';
-    $mailer['host']     = 'MAILER_HOST';
-    $mailer['port']     = 'MAILER_PORT';
+    // $mailer['username'] = 'MAILER_USER';
+    // $mailer['password'] = 'MAILER_PASS';
+    // $mailer['host']     = 'MAILER_HOST';
+    // $mailer['port']     = 'MAILER_PORT';
 
 // Plugin Settings
     $i = 1;

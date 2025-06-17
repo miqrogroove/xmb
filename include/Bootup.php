@@ -53,7 +53,7 @@ class Bootup
         $this->vars->tablepre = $tablepre;
         $this->vars->full_url = $full_url;
         $this->vars->comment_output = $comment_output;
-        $this->vars->mailer = $mailer;
+        if (isset($mailer)) $this->vars->mailer = $mailer;
         $this->vars->plugname = $plugname;
         $this->vars->plugurl = $plugurl;
         $this->vars->plugadmin = $plugadmin;

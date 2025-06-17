@@ -239,11 +239,6 @@ switch ($vStep) {
                     "'localhost'",
                     "'TABLE/PRE'",
                     "'FULLURL'",
-                    "'default'",
-                    "'MAILER_USER'",
-                    "'MAILER_PASS'",
-                    "'MAILER_HOST'",
-                    "'MAILER_PORT'",
                 ];
                 $replace = [
                     input_to_literal(getPhpInput('db_name')),
@@ -252,11 +247,6 @@ switch ($vStep) {
                     input_to_literal(getPhpInput('db_host')),
                     input_to_literal(getPhpInput('table_pre')),
                     input_to_literal(getPhpInput('fullurl')),
-                    input_to_literal(getPhpInput('MAILER_TYPE')),
-                    input_to_literal(getPhpInput('MAILER_USER')),
-                    input_to_literal(getPhpInput('MAILER_PASS')),
-                    input_to_literal(getPhpInput('MAILER_HOST')),
-                    input_to_literal(getPhpInput('MAILER_PORT')),
                 ];
                 foreach ($find as $phrase) {
                     if (strpos($configuration, $phrase) === false) {
@@ -270,11 +260,6 @@ switch ($vStep) {
                             . "\$tablepre = 'TABLE/PRE';\n"
                             . "\$full_url = 'FULLURL';\n"
                             . "\$comment_output = false;\n"
-                            . "\$mailer['type']     = 'default';\n"
-                            . "\$mailer['username'] = 'MAILER_USER';\n"
-                            . "\$mailer['password'] = 'MAILER_PASS';\n"
-                            . "\$mailer['host']     = 'MAILER_HOST';\n"
-                            . "\$mailer['port']     = 'MAILER_PORT';\n"
                             . "\$i = 1;\n"
                             . "\$plugname[\$i]  = '';\n"
                             . "\$plugurl[\$i]   = '';\n"

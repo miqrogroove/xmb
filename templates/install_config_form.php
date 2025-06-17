@@ -63,32 +63,6 @@ namespace XMB;
             <td><?= $lang['config_form_forum_showinfo'] ?><br /><span><?= $lang['config_form_forum_showinfo_def'] ?></span></td>
             <td><input type="checkbox" name="showfullinfo" value="off" /></td>
         </tr>
-        <tr class="category">
-            <td colspan="2"><?= $lang['config_form_email'] ?></td>
-        </tr>
-        <tr>
-            <td colspan="2"><p><?= $lang['config_form_email_detail'] ?></p></td>
-        </tr>
-        <tr>
-            <td><?= $lang['config_form_email_handler'] ?><br /><span><?= $lang['config_form_email_handler_def'] ?></span></td>
-            <td><select name="MAILER_TYPE"><option value="default"><?= $lang['default'] ?></option><option value="socket_SMTP"><?= $lang['config_form_smtp'] ?></option></select></td>
-        </tr>
-        <tr>
-            <td><?= $lang['config_form_smtp_username'] ?>:</td>
-            <td><input type="text" name="MAILER_USER" value="username" /></td>
-        </tr>
-        <tr>
-            <td><?= $lang['config_form_smtp_password'] ?>:</td>
-            <td><input type="password" name="MAILER_PASS" value="password" /></td>
-        </tr>
-        <tr>
-            <td><?= $lang['config_form_smtp_host'] ?>:</td>
-            <td><input type="text" name="MAILER_HOST" value="mail.example.com" /></td>
-        </tr>
-        <tr>
-            <td><?= $lang['config_form_smtp_port'] ?>:</td>
-            <td><input type="text" name="MAILER_PORT" value="25" /></td>
-        </tr>
     </table>
     <p class="button"><input type="submit" value="<?= $lang['config_form_save'] ?>" /></p>
 </form>

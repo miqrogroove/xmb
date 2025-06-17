@@ -252,5 +252,4 @@ class Login
             break;
         }
     }
-
 }

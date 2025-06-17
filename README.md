@@ -8,11 +8,23 @@ The Master branch is currently unstable.  It is a future version under developme
 
 Visit [xmbforum2.com](https://www.xmbforum2.com) for more resources.
 
-## Getting Started
+## Getting Started (stable)
 
 Copy the XMB files to your web server.  Keep the "install" or "upgrade" folder as needed and delete the other one.
 
 You will need a MySQL database and connection details to get started.
+
+## Getting Started (master branch)
+
+Composer is now required.  Install it according to the [instructions](https://getcomposer.org/doc/00-intro.md).
+
+Clone or download the master branch files to the website directory.
+
+Install the XMB dependencies using `composer install` in the same directory as the composer.lock file.
+
+Visit the /install/ path on the website to create the config file and the database tables.
+
+Outgoing SMTP configuration is currently under construction.  Please use the PHP defaults for now.
 
 ## Getting Involved
 

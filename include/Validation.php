@@ -93,7 +93,6 @@ class Validation
                         $theObject = 'no';
                     }
                     break;
-                    break;
                 case 'int':
                     $theObject = (int) $theObject;
                     break;

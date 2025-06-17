@@ -2211,6 +2211,7 @@ class Upgrade
 
 // TODO: Schema 12
 //  Reset any members.tpp and members.ppp values that don't conform to $this->vars::PAGING_MIN and $this->vars::PAGING_MAX.
+//  Add settings mailer_host, mailer_password, mailer_port, mailer_type, mailer_username.
 
     /**
      * Recalculates the value of every field in the forums.postperm column.

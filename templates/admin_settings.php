@@ -32,7 +32,6 @@ namespace XMB;
 $admin->printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'], 50);
 $admin->printsetting2($lang['bbname'], 'bbnamenew', $SETTINGS['bbname'], 50);
 $admin->printsetting2($lang['textsiteurl'], 'siteurlnew', $SETTINGS['siteurl'], 50);
-$admin->printsetting2($lang['adminemail'], 'adminemailnew', $SETTINGS['adminemail'], 50);
 $admin->printsetting6($lang['textbbrules'], 'bbrulesnew', 'bbrules');
 $admin->printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', cdataOut($SETTINGS['bbrulestxt']), 5, 50);
 $admin->printsetting6($lang['textbstatus'], 'bbstatusnew', 'bbstatus');

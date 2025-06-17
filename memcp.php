@@ -199,10 +199,9 @@ if ($action == 'profile') {
                 $core->error($lang['emailrestricted']);
             }
 
-            require ROOT . 'include/validate-email.inc.php';
             $test = new EmailAddressValidator();
             $rawemail = getPhpInput('newemail');
-            if (false === $test->check_email_address($rawemail)) {
+            if (! $test->isValid($rawemail)) {
                 $core->error($lang['bademail']);
             }
         }

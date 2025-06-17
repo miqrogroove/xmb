@@ -162,7 +162,8 @@ class admin
      */
     public function settingHTML(string $setting, string &$on, string &$off)
     {
-        $on = $off = '';
+        $on = '';
+        $off = '';
         switch ($this->vars->settings[$setting]) {
             case 'on':
                 $on = $this->vars::selHTML;
@@ -292,7 +293,7 @@ class admin
      */
     public function input_string_setting(string $dbname, string $postname, bool $htmlencode = true)
     {
-        $value = $this->validate->postedVar($postname, '', $htmlencode, false);
+        $value = $this->validate->postedVar($postname, '', $htmlencode, dbescape: false);
         $this->input_custom_setting($dbname, $value);
     }
 
