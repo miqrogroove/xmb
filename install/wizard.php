@@ -150,6 +150,9 @@ function already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnec
     require_once ROOT."db/{$database}.php";
 
     $db = new dbstuff;
+    if (! $db->installed()) {
+        error('Database Handler', 'XMB has determined that your php installation does not support the functions required to use <i>'.$database.'</i> to store all data.', true);
+    }
     $result = $db->test_connect($dbhost, $dbuser, $dbpw, $dbname);
     if (!$result) return;
     
@@ -783,7 +786,6 @@ www.xmbforum2.com
 
         if (!$db->installed()) {
             error('Database Handler', 'XMB has determined that your php installation does not support the functions required to use <i>'.$database.'</i> to store all data.', true);
-            unset($err);
         }
         show_result(X_INST_OK);
 
