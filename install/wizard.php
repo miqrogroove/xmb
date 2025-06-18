@@ -71,8 +71,7 @@ if ($config_success) {
         $status = already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre);
         switch ($status) {
             case 'no-db-config':
-                $config_success = false;
-                break;
+            case 'no-db-extension':
             case 'no-connection':
                 $config_success = false;
         }
@@ -108,6 +107,9 @@ switch ($status) {
         break;
     case 'no-db-config':
         $config_error = $vars->lang['config_error_defaults'];
+        break;
+    case 'no-db-extension':
+        $config_error = $vars->lang['install_db_ext_error'];
         break;
     case 'no-connection':
         $config_error = $vars->lang['config_error_connect'];

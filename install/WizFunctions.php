@@ -67,7 +67,12 @@ function already_installed(
     require_once ROOT . 'db/DBStuff.php';
     require_once ROOT . "db/{$database}.php";
 
-    $db = new \XMB\MySQLiDatabase(debug: true, logErrors: true);
+    $db = new MySQLiDatabase(debug: true, logErrors: true);
+
+    if (! $db->isInstalled()) {
+        return 'no-db-extension';
+    }
+
     $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
     if (! $result) return 'no-connection';
 
