@@ -125,12 +125,12 @@ function getRawInput(string $varname, string $sourcearray = 'p'): string|array|n
 
 function recodeOut(string $rawstring): string
 {
-    return rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES));
+    return rawurlencode(rawHTML($rawstring));
 }
 
 function recodeJavaOut(string $rawstring): string
 {
-    return rawurlencode(rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES)));
+    return rawurlencode(rawurlencode(rawHTML($rawstring)));
 }
 
 function cdataOut(string $rawstring): string
@@ -145,7 +145,14 @@ function attrOut(string $rawstring, string $word = ''): string
     if ($word != '') {
         $retval = str_ireplace($word, "_".$word, $retval);
     }
-    return htmlspecialchars($retval, ENT_QUOTES);
+    return htmlspecialchars($retval, ENT_QUOTES | ENT_XHTML);
+}
+
+/**
+ * @since 1.9.12.09
+ */
+function rawHTML(string $encodedText) {
+    return htmlspecialchars_decode($encodedText, ENT_QUOTES | ENT_XHTML);
 }
 
 function decimalEntityDecode(string $rawstring): string

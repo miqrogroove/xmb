@@ -126,7 +126,7 @@ class Validation
 
         if ($htmlencode) {
             if ($quoteencode) {
-                $retval = htmlspecialchars($retval, ENT_QUOTES);
+                $retval = htmlspecialchars($retval, ENT_QUOTES | ENT_XHTML);
             } else {
                 $retval = htmlspecialchars($retval, ENT_NOQUOTES);
             }

@@ -112,8 +112,8 @@ class Core
                 $mailquery = $this->sql->getSuperEmails();
                 foreach ($mailquery as $admin) {
                     $translate = $lang2[$admin['langfile']];
-                    $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
-                    $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
+                    $adminemail = rawHTML($admin['email']);
+                    $name = rawHTML($member['username']);
                     $body = "{$translate['login_audit_mail']}\n\n$name";
                     $this->xmb_mail($adminemail, $translate['security_subject'], $body, $translate['charset']);
                 }
@@ -1889,8 +1889,8 @@ class Core
             ini_set('sendmail_from', $this->vars->settings['adminemail']);
         }
 
-        $rawbbname = htmlspecialchars_decode($this->vars->settings['bbname'], ENT_NOQUOTES);
-        $rawusername = htmlspecialchars_decode($this->vars->self['username'] ?? '', ENT_QUOTES);
+        $rawbbname = rawHTML($this->vars->settings['bbname']);
+        $rawusername = rawHTML($this->vars->self['username'] ?? '');
 
         if ($html) {
             $content_type = 'text/html';

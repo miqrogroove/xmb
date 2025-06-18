@@ -413,9 +413,9 @@ if ($action == 'viewforum' || $action == 'viewuser') {
                 $topicpages = quickpage($posts, $subs['ppp']);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
-                $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
-                $rawusername = htmlspecialchars_decode($member, ENT_QUOTES);
-                $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
+                $rawsubject = rawHTML($threadname);
+                $rawusername = rawHTML($member);
+                $rawemail = rawHTML($subs['email']);
                 $title = "$rawsubject ({$translate['textsubsubject']})";
                 $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
                 xmb_mail($rawemail, $title, $body, $translate['charset']);
@@ -586,9 +586,9 @@ if ($action == 'viewforum' || $action == 'viewuser') {
         $topicpages = quickpage($posts, $subs['ppp']);
         $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
         $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
-        $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
-        $rawusername = htmlspecialchars_decode($member, ENT_QUOTES);
-        $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
+        $rawsubject = rawHTML($threadname);
+        $rawusername = rawHTML($member);
+        $rawemail = rawHTML($subs['email']);
         $title = "$rawsubject ({$translate['textsubsubject']})";
         $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
         xmb_mail($rawemail, $title, $body, $translate['charset']);

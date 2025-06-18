@@ -94,8 +94,8 @@ if (noSubmit('newslettersubmit')) {
     } else {
         $rawnewssubject = $validate->postedVar('newssubject', '', FALSE, FALSE);
         $rawnewsmessage = $validate->postedVar('newsmessage', '', FALSE, FALSE);
-        $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-        $rawbbname = htmlspecialchars_decode($vars->settings['bbname'], ENT_NOQUOTES);
+        $rawuser = rawHTML($self['username']);
+        $rawbbname = rawHTML($vars->settings['bbname']);
         $subject = "[$rawbbname] $rawnewssubject";
 
         $i = 0;
@@ -115,7 +115,7 @@ if (noSubmit('newslettersubmit')) {
                 $i++;
             }
 
-            $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES);
+            $rawemail = rawHTML($memnews['email']);
             $core->xmb_mail($rawemail, $subject, $rawnewsmessage, $charset);
             $total++;
         }

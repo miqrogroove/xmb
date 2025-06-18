@@ -92,7 +92,7 @@ if ($SETTINGS['tickerstatus'] == 'on' && $gid == 0) {
         if ('bbcode' == $SETTINGS['tickercode']) {
             $item = $core->postify($item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no');
         } elseif ('html' == $SETTINGS['tickercode']) {
-            $item = $core->rawHTMLmessage($item, 'yes');
+            $item = rawHTML($item);
         }
         $item = str_replace('\"', '"', addslashes($item));
         $template->contents .= "\tcontents[$counter]='$item';\n";

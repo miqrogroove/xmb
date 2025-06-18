@@ -160,8 +160,8 @@ class U2U
                     $lang2 = $tran->loadPhrases(['charset', 'textnewu2uemail', 'textnewu2ubody']);
                     $translate = $lang2[$rcpt['langfile']];
                     $u2uurl = $this->vars->full_url . 'u2u.php';
-                    $rawusername = htmlspecialchars_decode($this->vars->self['username'], ENT_QUOTES);
-                    $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
+                    $rawusername = rawHTML($this->vars->self['username']);
+                    $rawaddress = rawHTML($rcpt['email']);
                     $body = "$rawusername {$translate['textnewu2ubody']} \n$u2uurl";
                     $this->core->xmb_mail($rawaddress, $translate['textnewu2uemail'], $body, $translate['charset']);
                 }
@@ -436,7 +436,7 @@ class U2U
             $this->template->mailFooter = $this->template->process('email_html_footer.php');
             $title = $this->vars->lang['textu2utoemail'] . ' ' . $this->template->u2usubject;
             $body = $this->template->process('u2u_email.php');
-            $rawemail = htmlspecialchars_decode($this->vars->self['email'], ENT_QUOTES);
+            $rawemail = rawHTML($this->vars->self['email']);
             $result = $this->core->xmb_mail($rawemail, $title, $body, $this->vars->lang['charset'], html: true);
             $this->msg($this->vars->lang['textu2utoemailsent'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
         } else {

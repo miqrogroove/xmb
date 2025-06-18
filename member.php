@@ -353,7 +353,7 @@ switch ($action) {
                                     timestamp: $vars->onlinetime,
                                 );
                             } else {
-                                $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
+                                $adminemail = rawHTML($admin['email']);
                                 $body = $translate['textnewmember2'] . "\n\n" . $vars->full_url;
                                 $core->xmb_mail($SETTINGS['adminemail'], $translate['textnewmember'], $body, $translate['charset']);
                             }
@@ -363,7 +363,7 @@ switch ($action) {
                     if ($SETTINGS['emailcheck'] == 'on') {
                         $translate = $lang2[$langfilenew];
                         $username = trim(getPhpInput('username'));
-                        $rawbbname = htmlspecialchars_decode($SETTINGS['bbname'], ENT_NOQUOTES);
+                        $rawbbname = rawHTML($SETTINGS['bbname']);
                         $subject = "[$rawbbname] {$translate['textyourpw']}";
                         $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $newPass\n\n" . $vars->full_url;
                         $core->xmb_mail($rawemail, $subject, $body, $translate['charset']);

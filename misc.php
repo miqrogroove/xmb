@@ -174,9 +174,9 @@ switch ($action) {
 
             $lang2 = $tran->loadPhrases(['charset', 'textyourpw', 'lostpw_body_eval']);
             $translate = $lang2[$member['langfile']];
-            $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
-            $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
-            $rawbbname = htmlspecialchars_decode($SETTINGS['bbname'], ENT_NOQUOTES);
+            $name = rawHTML($member['username']);
+            $emailaddy = rawHTML($member['email']);
+            $rawbbname = rawHTML($SETTINGS['bbname']);
             $subject = "[$rawbbname] {$translate['textyourpw']}";
             $search  = ['$name', '$link'];
             $replace = [$name, $link];

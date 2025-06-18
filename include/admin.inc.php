@@ -293,7 +293,10 @@ class admin
      */
     public function input_string_setting(string $dbname, string $postname, bool $htmlencode = true)
     {
-        $value = $this->validate->postedVar($postname, '', $htmlencode, dbescape: false);
+        $word = '';
+        $dbescape = false;
+        $quoteencode = $htmlencode;
+        $value = $this->validate->postedVar($postname, $word, $htmlencode, $dbescape, $quoteencode);
         $this->input_custom_setting($dbname, $value);
     }
 
