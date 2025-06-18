@@ -86,7 +86,7 @@ function postedVar($varname, $word='', $htmlencode=TRUE, $dbescape=TRUE, $quotee
 
             if ($htmlencode) {
                 if ($quoteencode) {
-                    $retval = htmlspecialchars($retval, ENT_QUOTES);
+                    $retval = htmlspecialchars($retval, ENT_QUOTES | ENT_XHTML);
                 } else {
                     $retval = htmlspecialchars($retval, ENT_NOQUOTES);
                 }
@@ -168,7 +168,7 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
 
                     if ($htmlencode) {
                         if ($quoteencode) {
-                            $theObject = htmlspecialchars($theObject, ENT_QUOTES);
+                            $theObject = htmlspecialchars($theObject, ENT_QUOTES | ENT_XHTML);
                         } else {
                             $theObject = htmlspecialchars($theObject, ENT_NOQUOTES);
                         }
@@ -190,11 +190,11 @@ function postedArray($varname, $type = 'string', $word='', $htmlencode=TRUE, $db
 }
 
 function recodeOut($rawstring) {
-    return rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES));
+    return rawurlencode(rawHTML($rawstring));
 }
 
 function recodeJavaOut($rawstring) {
-    return rawurlencode(rawurlencode(htmlspecialchars_decode($rawstring, ENT_QUOTES)));
+    return rawurlencode(rawurlencode(rawHTML($rawstring)));
 }
 
 function cdataOut($rawstring) {
@@ -206,7 +206,14 @@ function attrOut($rawstring, $word='') { //Never safe for STYLE attributes.
     if ($word != '') {
         $retval = str_ireplace($word, "_".$word, $retval);
     }
-    return htmlspecialchars($retval, ENT_QUOTES);
+    return htmlspecialchars($retval, ENT_QUOTES | ENT_XHTML);
+}
+
+/**
+ * @since 1.9.12.09
+ */
+function rawHTML(string $encodedText) {
+    return htmlspecialchars_decode($encodedText, ENT_QUOTES | ENT_XHTML);
 }
 
 function rawHTMLmessage($rawstring, $allowhtml='no') {
@@ -460,7 +467,7 @@ function isValidFilename($filename) {
  */
 function bbcode_out(string $message): string {
     $retval = $message;
-    $retval = htmlspecialchars($retval, ENT_QUOTES, null, false);
+    $retval = htmlspecialchars($retval, ENT_QUOTES | ENT_XHTML, null, false);
     $retval = str_replace(array('[', ']'), array('&#91;', '&#93;'), $retval);
     return $retval;
 }

@@ -258,8 +258,8 @@ function auditBadLogin( array $member ) {
             $mailquery = \XMB\SQL\getSuperEmails();
             foreach ( $mailquery as $admin ) {
                 $translate = $lang2[$admin['langfile']];
-                $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
-                $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
+                $adminemail = rawHTML($admin['email']);
+                $name = rawHTML($member['username']);
                 $body = "{$translate['login_audit_mail']}\n\n$name";
                 xmb_mail( $adminemail, $translate['security_subject'], $body, $translate['charset'] );
             }
@@ -2618,7 +2618,7 @@ function xmb_mail( string $to, string $subject, string $message, string $charset
 
     $rawbbname = htmlspecialchars_decode( $bbname, ENT_NOQUOTES );
     if ( ! empty( $self ) ) {
-        $rawusername = htmlspecialchars_decode( $self['username'], ENT_QUOTES );
+        $rawusername = rawHTML($self['username']);
     }
 
     if ( $html ) {

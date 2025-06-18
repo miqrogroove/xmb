@@ -634,9 +634,9 @@ switch($action) {
                     $topicpages = quickpage($posts, $subs['ppp']);
                     $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                     $threadurl = $full_url.'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
-                    $rawsubject = htmlspecialchars_decode($threadname, ENT_QUOTES);
-                    $rawusername = htmlspecialchars_decode($username, ENT_QUOTES);
-                    $rawemail = htmlspecialchars_decode($subs['email'], ENT_QUOTES);
+                    $rawsubject = rawHTML($threadname);
+                    $rawusername = rawHTML($username);
+                    $rawemail = rawHTML($subs['email']);
                     $title = "$rawsubject ({$translate['textsubsubject']})";
                     $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
                     xmb_mail( $rawemail, $title, $body, $translate['charset'] );

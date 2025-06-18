@@ -452,7 +452,7 @@ switch($action) {
                             if ($SETTINGS['notifyonreg'] == 'u2u') {
                                 $db->query("INSERT INTO ".X_PREFIX."u2u (u2uid, msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('', '$admin[username]', '".$db->escape($bbname)."', 'incoming', '$admin[username]', 'Inbox', '$translate[textnewmember]', '$translate[textnewmember2]', '".$onlinetime."', 'no', 'yes')");
                             } else {
-                                $adminemail = htmlspecialchars_decode($admin['email'], ENT_QUOTES);
+                                $adminemail = rawHTML($admin['email']);
                                 $body = "{$translate['textnewmember2']}\n\n$full_url";
                                 xmb_mail($adminemail, $translate['textnewmember'], $body, $translate['charset']);
                             }

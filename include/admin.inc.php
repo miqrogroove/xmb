@@ -400,9 +400,12 @@ function printsetting5($settingDesc, $errorMsg) {
  * @param string $postname   The HTML input name.
  * @param bool   $htmlencode Optional. Whether to escape HTML special chars. Usually true.
  */
-function input_string_setting( string $dbname, string $postname, bool $htmlencode = true ) {
-    $value = postedVar( $postname, '', $htmlencode, false );
-    input_custom_setting( $dbname, $value );
+function input_string_setting(string $dbname, string $postname, bool $htmlencode = true) {
+    $word = '';
+    $dbescape = false;
+    $quoteencode = $htmlencode;
+    $value = postedVar($postname, $word, $htmlencode, $dbescape, $quoteencode);
+    input_custom_setting($dbname, $value);
 }
 
 /**

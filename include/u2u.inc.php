@@ -92,8 +92,8 @@ function u2u_send_recp($msgto, $subject, $message, $u2uid=0) {
                 $lang2 = loadPhrases(array('charset','textnewu2uemail','textnewu2ubody'));
                 $translate = $lang2[$rcpt['langfile']];
                 $u2uurl = $full_url.'u2u.php';
-                $rawusername = htmlspecialchars_decode($self['username'], ENT_QUOTES);
-                $rawaddress = htmlspecialchars_decode($rcpt['email'], ENT_QUOTES);
+                $rawusername = rawHTML($self['username']);
+                $rawaddress = rawHTML($rcpt['email']);
                 $body = "$rawusername {$translate['textnewu2ubody']} \n$u2uurl";
                 xmb_mail( $rawaddress, $translate['textnewu2uemail'], $body, $translate['charset'] );
             }
@@ -351,7 +351,7 @@ function u2u_print($u2uid, $eMail = false) {
             $html = true;
             $title = "{$lang['textu2utoemail']} $u2usubject";
             $body = $mailHeader.$lang['textsubject']." ".$u2usubject."<br />\n".$lang['textfrom']." ".$u2ufrom."<br />\n".$lang['textto']." ".$u2uto."<br />\n".$lang['textu2ufolder']." ".$u2ufolder."<br />\n".$lang['textsent']." ".$u2udateline."<br />\n<br />\n".$u2umessage."<br />\n<br />\n".$full_url.$mailFooter;
-            $rawemail = htmlspecialchars_decode($self['email'], ENT_QUOTES);
+            $rawemail = rawHTML($self['email']);
             $result = xmb_mail( $rawemail, $title, $body, $lang['charset'], $html );
             u2u_msg($lang['textu2utoemailsent'], $full_url.'u2u.php?action=view&u2uid='.$u2uid);
         } else {

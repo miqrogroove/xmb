@@ -206,8 +206,8 @@ switch($action) {
 
             $lang2 = loadPhrases( ['charset', 'textyourpw', 'lostpw_body_eval'] );
             $translate = $lang2[$member['langfile']];
-            $name = htmlspecialchars_decode($member['username'], ENT_QUOTES);
-            $emailaddy = htmlspecialchars_decode($member['email'], ENT_QUOTES);
+            $name = rawHTML($member['username']);
+            $emailaddy = rawHTML($member['email']);
             $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
             $subject = "[$rawbbname] {$translate['textyourpw']}";
             $search  = [ '$name', '$link' ];

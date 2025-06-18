@@ -1533,7 +1533,7 @@ if ($action == "newsletter") {
         } else {
             $rawnewssubject = postedVar('newssubject', '', FALSE, FALSE);
             $rawnewsmessage = postedVar('newsmessage', '', FALSE, FALSE);
-            $rawuser = htmlspecialchars_decode($self['username'], ENT_QUOTES);
+            $rawuser = rawHTML($self['username']);
             $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
             $subject = "[$rawbbname] $rawnewssubject";
 
@@ -1554,7 +1554,7 @@ if ($action == "newsletter") {
                     $i++;
                 }
 
-                $rawemail = htmlspecialchars_decode($memnews['email'], ENT_QUOTES);
+                $rawemail = rawHTML($memnews['email']);
                 xmb_mail( $rawemail, $subject, $rawnewsmessage, $charset );
                 $total++;
             }

@@ -44,7 +44,7 @@ class spelling {
         $this->language = $language;
         @$this->link = pspell_new($language, '', '', $charset, $mode);
         if ($this->link === FALSE) {
-            error('Failed to open the spelling dictionary for language "'.htmlspecialchars($language, ENT_QUOTES).'"');
+            error('Failed to open the spelling dictionary for language "'.htmlspecialchars($language, ENT_QUOTES | ENT_XHTML).'"');
         }
         $this->mode = $mode;
         return true;

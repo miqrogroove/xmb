@@ -55,7 +55,7 @@ if ($SETTINGS['tickerstatus'] == 'on') {
         if ( 'bbcode' == $SETTINGS['tickercode'] ) {
             $item = postify( $item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no' );
         } elseif ( 'html' == $SETTINGS['tickercode'] ) {
-            $item = rawHTMLmessage( $item, 'yes' );
+            $item = rawHTML($item);
         }
         $item = str_replace( '\"', '"', addslashes( $item ) );
         $contents .= "\tcontents[$counter]='$item';\n";
