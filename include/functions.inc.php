@@ -2616,7 +2616,7 @@ function xmb_mail( string $to, string $subject, string $message, string $charset
         ini_set( 'sendmail_from', $adminemail );
     }
 
-    $rawbbname = htmlspecialchars_decode( $bbname, ENT_NOQUOTES );
+    $rawbbname = rawHTML($bbname);
     if ( ! empty( $self ) ) {
         $rawusername = rawHTML($self['username']);
     }

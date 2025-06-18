@@ -462,7 +462,7 @@ switch($action) {
                     if ($SETTINGS['emailcheck'] == 'on') {
                         $translate = $lang2[$langfilenew];
                         $username = trim(postedVar('username', '', FALSE, FALSE));
-                        $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
+                        $rawbbname = rawHTML($bbname);
                         $subject = "[$rawbbname] {$translate['textyourpw']}";
                         $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $password2\n\n$full_url";
                         xmb_mail($rawemail, $subject, $body, $translate['charset']);

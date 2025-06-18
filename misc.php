@@ -208,7 +208,7 @@ switch($action) {
             $translate = $lang2[$member['langfile']];
             $name = rawHTML($member['username']);
             $emailaddy = rawHTML($member['email']);
-            $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
+            $rawbbname = rawHTML($bbname);
             $subject = "[$rawbbname] {$translate['textyourpw']}";
             $search  = [ '$name', '$link' ];
             $replace = [  $name,   $link  ];

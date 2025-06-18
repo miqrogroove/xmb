@@ -1534,7 +1534,7 @@ if ($action == "newsletter") {
             $rawnewssubject = postedVar('newssubject', '', FALSE, FALSE);
             $rawnewsmessage = postedVar('newsmessage', '', FALSE, FALSE);
             $rawuser = rawHTML($self['username']);
-            $rawbbname = htmlspecialchars_decode($bbname, ENT_NOQUOTES);
+            $rawbbname = rawHTML($bbname);
             $subject = "[$rawbbname] $rawnewssubject";
 
             $i = 0;
