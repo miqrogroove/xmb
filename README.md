@@ -24,8 +24,6 @@ Install the XMB dependencies using `composer install` in the same directory as t
 
 Visit the /install/ path on the website to create the config file and the database tables.
 
-Outgoing SMTP configuration is currently under construction.  Please use the PHP defaults for now.
-
 ## Getting Involved
 
 Issues, requests, discussions, and reports are all welcome here.  Note that we have a primary forum and bug tracker on our website.
