@@ -115,7 +115,7 @@ if ($vars->settings['ip_banning'] == 'on') {
             }
             $sql->deleteIPBansByList($dels);
         }
-        $self['status'] = $lang['textipupdate'];
+        $status = $lang['textipupdate'];
 
         if ('0' !== $newip[0] || '0' !== $newip[1] || '0' !== $newip[2] || '0' !== $newip[3]) {
             $invalid = 0;
@@ -130,15 +130,15 @@ if ($vars->settings['ip_banning'] == 'on') {
             }
 
             if ($invalid) {
-                $self['status'] = $lang['invalidip'];
+                $status = $lang['invalidip'];
             } else {
                 if ('-1' === $ip[1] && '-1' === $ip[2] && '-1' === $ip[3] && '-1' === $ip[4]) {
-                    $self['status'] = $lang['impossiblebanall'];
+                    $status = $lang['impossiblebanall'];
                 } else {
                     $query = $db->query("SELECT id FROM " . $vars->tablepre . "banned WHERE (ip1='$ip[1]' OR ip1='-1') AND (ip2='$ip[2]' OR ip2='-1') AND (ip3='$ip[3]' OR ip3='-1') AND (ip4='$ip[4]' OR ip4='-1')");
                     $result = $db->fetch_array($query);
                     if ($result) {
-                        $self['status'] = $lang['existingip'];
+                        $status = $lang['existingip'];
                     } else {
                         $query = $db->query("INSERT INTO " . $vars->tablepre . "banned (ip1, ip2, ip3, ip4, dateline) VALUES ('$ip[1]', '$ip[2]', '$ip[3]', '$ip[4]', " . $vars->onlinetime . ")");
                     }
@@ -146,7 +146,7 @@ if ($vars->settings['ip_banning'] == 'on') {
             }
         }
         $link = '</p><p><a href="' . $vars->full_url . 'admin/ipban.php">' . $lang['textipbanlink'] . '</a>';
-        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textipupdate'] . $link . '</p></td></tr>';
+        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $status . $link . '</p></td></tr>';
     }
 } else {
     if (noSubmit('ipbanenable')) {

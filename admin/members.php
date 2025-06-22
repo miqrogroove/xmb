@@ -189,7 +189,7 @@ if (noSubmit('membersubmit')) {
         $cusstatus = $validate->postedVar('cusstatus'.$mem['uid'], '', false);
         $delete = getInt('delete'.$mem['uid'], 'p');
 
-        if ($delete == (int) $mem['uid'] && $delete != (int) $self['uid'] && $origstatus != "Super Administrator") {
+        if ($delete == (int) $mem['uid'] && $delete != (int) $vars->self['uid'] && $origstatus != "Super Administrator") {
             $db->escape_fast($mem['username']);
             $db->query("DELETE FROM " . $vars->tablepre . "members WHERE uid=$delete");
             $db->query("DELETE FROM " . $vars->tablepre . "buddys WHERE username='{$mem['username']}'");

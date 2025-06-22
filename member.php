@@ -30,6 +30,7 @@ require './header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$email = \XMB\Services\email();
 $forums = \XMB\Services\forums();
 $session = \XMB\Services\session();
 $smile = \XMB\Services\smile();
@@ -355,7 +356,7 @@ switch ($action) {
                             } else {
                                 $adminemail = rawHTML($admin['email']);
                                 $body = $translate['textnewmember2'] . "\n\n" . $vars->full_url;
-                                $core->xmb_mail($SETTINGS['adminemail'], $translate['textnewmember'], $body, $translate['charset']);
+                                $email->send($adminemail, $translate['textnewmember'], $body, $translate['charset']);
                             }
                         }
                     }
@@ -366,7 +367,7 @@ switch ($action) {
                         $rawbbname = rawHTML($SETTINGS['bbname']);
                         $subject = "[$rawbbname] {$translate['textyourpw']}";
                         $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $newPass\n\n" . $vars->full_url;
-                        $core->xmb_mail($rawemail, $subject, $body, $translate['charset']);
+                        $email->send($rawemail, $subject, $body, $translate['charset']);
                     } else {
                         $session->newUser($self);
                     }

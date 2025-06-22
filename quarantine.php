@@ -29,6 +29,7 @@ require './header.php';
 $attachSvc = \XMB\Services\attach();
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$email = \XMB\Services\email();
 $forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
@@ -418,7 +419,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
                 $rawemail = rawHTML($subs['email']);
                 $title = "$rawsubject ({$translate['textsubsubject']})";
                 $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
-                xmb_mail($rawemail, $title, $body, $translate['charset']);
+                $email->send($rawemail, $title, $body, $translate['charset']);
             }
             $db->free_result($subquery);
         }
@@ -591,7 +592,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
         $rawemail = rawHTML($subs['email']);
         $title = "$rawsubject ({$translate['textsubsubject']})";
         $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
-        xmb_mail($rawemail, $title, $body, $translate['charset']);
+        $email->send($rawemail, $title, $body, $translate['charset']);
     }
     $db->free_result($subquery);
 

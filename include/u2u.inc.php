@@ -40,6 +40,7 @@ class U2U
     public function __construct(
         private Core $core,
         private DBStuff $db,
+        private Email $email,
         private SQL $sql,
         private Template $template,
         private Translation $tran,
@@ -163,7 +164,7 @@ class U2U
                     $rawusername = rawHTML($this->vars->self['username']);
                     $rawaddress = rawHTML($rcpt['email']);
                     $body = "$rawusername {$translate['textnewu2ubody']} \n$u2uurl";
-                    $this->core->xmb_mail($rawaddress, $translate['textnewu2uemail'], $body, $translate['charset']);
+                    $this->email->send($rawaddress, $translate['textnewu2uemail'], $body, $translate['charset']);
                 }
             } else {
                 $errors = '<br />'.$this->vars->lang['u2ublocked'];
@@ -437,7 +438,7 @@ class U2U
             $title = $this->vars->lang['textu2utoemail'] . ' ' . $this->template->u2usubject;
             $body = $this->template->process('u2u_email.php');
             $rawemail = rawHTML($this->vars->self['email']);
-            $result = $this->core->xmb_mail($rawemail, $title, $body, $this->vars->lang['charset'], html: true);
+            $result = $this->email->send($rawemail, $title, $body, $this->vars->lang['charset'], html: true);
             $this->msg($this->vars->lang['textu2utoemailsent'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
         } else {
             $this->template->process('u2u_printable.php', echo: true);

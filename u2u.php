@@ -30,6 +30,7 @@ header('X-Robots-Tag: noindex');
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$email = \XMB\Services\email();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $tran = \XMB\Services\translation();
@@ -37,7 +38,7 @@ $validate = \XMB\Services\validate();
 $vars = \XMB\Services\vars();
 $lang = &$vars->lang;
 
-$u2u = new U2U($core, $db, $sql, $template, $tran, $validate, $vars);
+$u2u = new U2U($core, $db, $email, $sql, $template, $tran, $validate, $vars);
 
 $action = getPhpInput('action', 'g');
 $sendmode = ($action == 'send') ? "true" : "false";

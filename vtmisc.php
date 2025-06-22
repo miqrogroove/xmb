@@ -124,7 +124,7 @@ if ($action == 'report') {
     $core->nav($lang['textreportpost']);
     $header = $template->process('header.php');
 
-    if ('off' == $vars->settings['reportpost'] || ('on' == $vars->settings['quarantine_new_users'] && (0 == (int) $self['postnum'] || 'yes' == $self['waiting_for_mod']) && ! X_STAFF)) {
+    if ('off' == $vars->settings['reportpost'] || ('on' == $vars->settings['quarantine_new_users'] && (0 == (int) $vars->self['postnum'] || 'yes' == $vars->self['waiting_for_mod']) && ! X_STAFF)) {
         header('HTTP/1.0 403 Forbidden');
         $featureoff = $template->process('misc_feature_notavailable.php');
         $template->footerstuff = $core->end_time();

@@ -28,6 +28,7 @@ require './header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$emailSvc = \XMB\Services\email();
 $forums = \XMB\Services\forums();
 $login = \XMB\Services\login();
 $observer = \XMB\Services\observer();
@@ -181,7 +182,7 @@ switch ($action) {
             $search  = ['$name', '$link'];
             $replace = [$name, $link];
             $body = str_replace($search, $replace, $lang['lostpw_body_eval']);
-            $core->xmb_mail($emailaddy, $subject, $body, $translate['charset']);
+            $emailSvc->send($emailaddy, $subject, $body, $translate['charset']);
 
             $core->message($lang['emailpw']);
         }

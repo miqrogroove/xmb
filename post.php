@@ -31,6 +31,7 @@ require './header.php';
 $attachSvc = \XMB\Services\attach();
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$email = \XMB\Services\email();
 $forums = \XMB\Services\forums();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
@@ -562,7 +563,7 @@ switch ($action) {
                     $rawemail = rawHTML($subs['email']);
                     $title = "$rawsubject ({$translate['textsubsubject']})";
                     $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
-                    $core->xmb_mail($rawemail, $title, $body, $translate['charset']);
+                    $email->send($rawemail, $title, $body, $translate['charset']);
                 }
                 $db->free_result($subquery);
             }

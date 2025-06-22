@@ -29,6 +29,7 @@ require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$email = \XMB\Services\email();
 $session = \XMB\Services\session();
 $sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
@@ -68,14 +69,7 @@ if (noSubmit('settingsubmit')) {
     $template->mailerInConfig = ! empty($vars->mailer);
     $template->passwordAttr = attrOut($vars->settings['mailer_password'] ?? '');
 
-    if (empty($vars->settings['mailer_type']) || $vars->settings['mailer_type'] == 'default') {
-        $type = 'default';
-    } elseif ($vars->settings['mailer_type'] == 'symfony' || $vars->settings['mailer_type'] == 'socket_SMTP') {
-        $type = 'symfony';
-    } else {
-        $type = 'default';
-    }
-
+    $type = $email->getSettings()['type'];
     $template->mailerDefaultSel = $type == 'default' ? $vars::cheHTML : '';
     $template->mailerSymfonySel = $type == 'symfony' ? $vars::cheHTML : '';
 

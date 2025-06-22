@@ -29,6 +29,7 @@ require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
 $db = \XMB\Services\db();
+$email = \XMB\Services\email();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
 $validate = \XMB\Services\validate();
@@ -59,11 +60,11 @@ if (noSubmit('newslettersubmit')) {
     $body = $template->process('admin_newsletter.php');
 } else {
     $core->request_secure('Control Panel/Newsletter', 'send');
-    @set_time_limit(0);
+    set_time_limit(0);
     $newssubject = $validate->postedVar('newssubject');
     $newsmessage = $validate->postedVar('newsmessage');
-    $sendvia = $validate->postedVar('sendvia', '', false, false);
-    $to = $validate->postedVar('to', '', false, false);
+    $sendvia = getPhpInput('sendvia');
+    $to = getPhpInput('to');
     $newscopy = formYesNo('newscopy');
     $wait = formInt('wait');
 
@@ -75,36 +76,36 @@ if (noSubmit('newslettersubmit')) {
 
     if ($to == "all") {
         $query = $db->query("SELECT username, email FROM " . $vars->tablepre . "members WHERE newsletter='yes' $tome ORDER BY uid");
-    } else if ($to == "staff") {
+    } elseif ($to == "staff") {
         $query = $db->query("SELECT username, email FROM " . $vars->tablepre . "members WHERE (status='Super Administrator' OR status='Administrator' OR status='Super Moderator' OR status='Moderator') $tome ORDER BY uid");
-    } else if ($to == "admin") {
+    } elseif ($to == "admin") {
         $query = $db->query("SELECT username, email FROM " . $vars->tablepre . "members WHERE (status='Administrator' OR status = 'Super Administrator') $tome ORDER BY uid");
-    } else if ($to == "supermod") {
+    } elseif ($to == "supermod") {
         $query = $db->query("SELECT username, email FROM " . $vars->tablepre . "members WHERE status='Super moderator' $tome ORDER by uid");
-    } else if ($to == "mod") {
+    } elseif ($to == "mod") {
         $query = $db->query("SELECT username, email FROM " . $vars->tablepre . "members WHERE status='Moderator' $tome ORDER BY uid");
     }
 
     if ($sendvia == "u2u") {
-        while($memnews = $db->fetch_array($query)) {
+        while ($memnews = $db->fetch_array($query)) {
             $db->escape_fast($memnews['username']);
             $db->query("INSERT INTO " . $vars->tablepre . "u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('{$memnews['username']}', '" . $vars->xmbuser . "', 'incoming', '{$memnews['username']}', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
         }
         $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='tablerow'><td align='center'>{$lang['newslettersubmit']}</td></tr>";
     } else {
-        $rawnewssubject = $validate->postedVar('newssubject', '', FALSE, FALSE);
-        $rawnewsmessage = $validate->postedVar('newsmessage', '', FALSE, FALSE);
-        $rawuser = rawHTML($self['username']);
+        $rawnewssubject = getPhpInput('newssubject');
+        $rawnewsmessage = getPhpInput('newsmessage');
+        $rawuser = rawHTML($vars->self['username']);
         $rawbbname = rawHTML($vars->settings['bbname']);
         $subject = "[$rawbbname] $rawnewssubject";
 
         $i = 0;
         $total = 0;
-        @ignore_user_abort(1);
-        @set_time_limit(0);
-        @ob_implicit_flush(1);
+        ignore_user_abort(true);
+        set_time_limit(0);
+        ob_implicit_flush(true);
 
-        while($memnews = $db->fetch_array($query)) {
+        while ($memnews = $db->fetch_array($query)) {
             if ($i > 0 && $i == $wait) {
                 sleep(3);
                 $i = 0;
@@ -116,7 +117,7 @@ if (noSubmit('newslettersubmit')) {
             }
 
             $rawemail = rawHTML($memnews['email']);
-            $core->xmb_mail($rawemail, $subject, $rawnewsmessage, $charset);
+            $email->send($rawemail, $subject, $rawnewsmessage, $vars->charset);
             $total++;
         }
         error_log("XMB Notice: $total newsletter e-mails transmitted by $rawuser");

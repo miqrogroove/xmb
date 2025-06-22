@@ -59,6 +59,7 @@ require ROOT . 'include/buddy.inc.php';
 require ROOT . 'include/captcha.inc.php';
 require ROOT . 'include/CartesianSize.php';
 require ROOT . 'include/debug.inc.php';
+require ROOT . 'include/Email.php';
 require ROOT . 'include/format.php';
 require ROOT . 'include/Forums.php';
 require ROOT . 'include/functions.inc.php';
@@ -94,6 +95,7 @@ require ROOT . 'vendor/autoload.php';
 
 vars(new \XMB\Variables());
 
+email(new \XMB\Email(vars()));
 observer(new \XMB\Observer(vars()));
 template(new \XMB\Template(vars()));
 translation(new \XMB\Translation(vars()));
@@ -162,7 +164,7 @@ bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql(), vars()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), debug(), forums(), smile(), sql(), template(), token(), translation(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), debug(), email(), forums(), smile(), sql(), template(), token(), translation(), vars()));
 
 
 /* Start 2nd Phase of Bootup */

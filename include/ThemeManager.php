@@ -68,7 +68,7 @@ class ThemeManager
             $theme = $themeuser;
             $row = sql()->getThemeByID($theme);
             if (! ($validtheme = (! empty($row)))) {
-                $this->sql->resetUserTheme((int) $self['uid']);
+                $this->sql->resetUserTheme((int) $this->vars->self['uid']);
             }
         }
         if (! $validtheme && $forumtheme > 0) {

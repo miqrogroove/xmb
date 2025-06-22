@@ -33,13 +33,12 @@ use InvalidArgumentException;
  */
 class Core
 {
-    private array $mailConnections = [];
-
     public function __construct(
         private Attach $attach,
         private BBCode $bbcode,
         private DBStuff $db,
         private Debug $debug,
+        private Email $email,
         private Forums $forums,
         private SmileAndCensor $smile,
         private SQL $sql,
@@ -115,7 +114,7 @@ class Core
                     $adminemail = rawHTML($admin['email']);
                     $name = rawHTML($member['username']);
                     $body = "{$translate['login_audit_mail']}\n\n$name";
-                    $this->xmb_mail($adminemail, $translate['security_subject'], $body, $translate['charset']);
+                    $this->email->send($adminemail, $translate['security_subject'], $body, $translate['charset']);
                 }
             }
         }
@@ -1107,81 +1106,6 @@ class Core
     }
 
     /**
-     * Send a mail message.
-     *
-     * Works just like php's mail() function, but allows sending trough alternative mailers as well.
-     *
-     * @since 1.9.2
-     * @return bool Success
-     */
-    private function altMail(string $to, string $subject, string $message, string $additional_headers = '', string $additional_parameters = ''): bool
-    {
-        $mailer = &$this->vars->mailer;
-
-        $message = str_replace(["\r\n", "\r", "\n"], ["\n", "\n", "\r\n"], $message);
-        $subject = str_replace(["\r", "\n"], ['', ''], $subject);
-
-        if ($mailer['type'] == 'socket_SMTP') {
-            require_once(ROOT . 'include/smtp.inc.php');
-
-            if (! isset($this->mailConnections['socket_SMTP'])) {
-                if ($this->vars->debug) {
-                    $mail = new socket_SMTP(true, ROOT . 'smtp-log.txt');
-                } else {
-                    $mail = new socket_SMTP;
-                }
-                $this->mailConnections['socket_SMTP'] = $mail;
-                if (! $mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password'])) {
-                    return false;
-                }
-                register_shutdown_function(array($mail, 'disconnect'));
-            } else {
-                $mail = $this->mailConnections['socket_SMTP'];
-                if (false === $mail->connection) {
-                    return false;
-                }
-            }
-
-            $subjectInHeader = false;
-            $toInHeader = false;
-            $additional_headers = explode("\r\n", $additional_headers);
-            foreach ($additional_headers as $k => $h) {
-                if (strpos(trim($h), 'ubject:') === 1) {
-                    $additional_headers[$k] = "Subject: $subject\r\n";
-                    $subjectInHeader = true;
-                    continue;
-                }
-
-                if (strpos(trim(strtolower($h)), 'to:') === 0) {
-                    $toInHeader = true;
-                }
-            }
-
-            if (! $subjectInHeader) {
-                $additional_headers[] = "Subject: $subject";
-            }
-
-            if (! $toInHeader) {
-                $additional_headers[] = "To: $to";
-            }
-
-            $additional_headers = implode("\r\n", $additional_headers);
-
-            return $mail->sendMessage($this->vars->settings['adminemail'], $to, $message, $additional_headers);
-        } else {
-            if (ini_get('safe_mode') == "1") {
-                $return = mail($to, $subject, $message, $additional_headers);
-            } else {
-                $return = mail($to, $subject, $message, $additional_headers, $additional_parameters);
-            }
-            if (! $return) {
-                trigger_error($this->vars->lang['emailErrorPhp'], E_USER_WARNING);
-            }
-            return $return;
-        }
-    }
-
-    /**
      * Takes a system timestamp and uses the weird XMB logic to convert it to a 'local' timestamp.
      *
      * Although this was somewhat standardized in older versions, the code had been duplicated for every display in the system.
@@ -1778,20 +1702,6 @@ class Core
     }
 
     /**
-     * Simple SMTP message From header formation.
-     *
-     * @since 1.9.11.08
-     * @param string $fromname Will be converted to an SMTP quoted string.
-     * @param string $fromaddress Must be a fully validated e-mail address.
-     * @return string
-     */
-    private function smtpHeaderFrom(string $fromname, string $fromaddress): string
-    {
-        $fromname = preg_replace('@([^\\t !\\x23-\\x5b\\x5d-\\x7e])@', '\\\\$1', $fromname);
-        return 'From: "'.$fromname.'" <'.$fromaddress.'>';
-    }
-
-    /**
      * Generate a nonce.
      *
      * The XMB schema is currently limited to a 12-byte key length, and as such
@@ -1870,47 +1780,6 @@ class Core
         $db->query("DELETE FROM " . $this->vars->tablepre . "captchaimages WHERE imagehash = '$nonce' AND imagestring = '$key'");
 
         return ($db->affected_rows() === 1);
-    }
-
-    /**
-     * Send email with default headers.
-     *
-     * @since 1.9.11.15
-     * @param string $to      Pass through to altMail()
-     * @param string $subject Pass through to altMail()
-     * @param string $message Pass through to altMail()
-     * @param string $charset The character set used in $message param.
-     * @param bool   $html    Optional. Set to true if the $message param is HTML formatted.
-     * @return bool
-     */
-    public function xmb_mail(string $to, string $subject, string $message, string $charset, bool $html = false): bool
-    {
-        if (PHP_OS_FAMILY == 'Windows') {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
-            ini_set('sendmail_from', $this->vars->settings['adminemail']);
-        }
-
-        $rawbbname = rawHTML($this->vars->settings['bbname']);
-        $rawusername = rawHTML($this->vars->self['username'] ?? '');
-
-        if ($html) {
-            $content_type = 'text/html';
-        } else {
-            $content_type = 'text/plain';
-        }
-
-        $headers = [];
-        $headers[] = $this->smtpHeaderFrom($rawbbname, $this->vars->settings['adminemail']);
-        $headers[] = 'X-Mailer: PHP';
-        $headers[] = 'X-AntiAbuse: Board servername - ' . $this->vars->cookiedomain;
-        if ($rawusername != '') {
-            $headers[] = "X-AntiAbuse: Username - $rawusername";
-        }
-        $headers[] = "Content-Type: $content_type; charset=$charset";
-        $headers = implode("\r\n", $headers);
-
-        $params = '-f ' . $this->vars->settings['adminemail'];
-
-        return $this->altMail($to, $subject, $message, $headers, $params);
     }
 
     /**

@@ -30,6 +30,7 @@ use XMB\{
     Core,
     Debug,
     DBStuff,
+    Email,
     Forums,
     Login,
     Observer,
@@ -120,6 +121,22 @@ function debug(?Debug $debug = null): Debug
     static $cache;
     
     if ($debug !== null) $cache = $debug;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared email service.
+ *
+ * @since 1.10.00
+ * @param Email $email Required on first call, otherwise optional. Acts as the setter.
+ * @return Email
+ */
+function email(?Email $email = null): Email
+{
+    static $cache;
+    
+    if ($email !== null) $cache = $email;
     
     return $cache;
 }
