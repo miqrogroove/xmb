@@ -183,9 +183,9 @@ class Email
                 $email->to($to);
                 $email->subject($subject);
                 if ($messageIsHTML) {
-                    $email->html($message);
+                    $email->html($message, $charset);
                 } else {
-                    $email->text($message);
+                    $email->text($message, $charset);
                 }
 
                 try {
