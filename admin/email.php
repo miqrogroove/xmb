@@ -74,6 +74,7 @@ if (noSubmit('settingsubmit')) {
     $set = $email->getSettings();
     $type = $set['type'];
     $template->mailerDefaultSel = $type == 'default' ? $vars::cheHTML : '';
+    $template->mailerNativeSel = $type == 'native' ? $vars::cheHTML : '';
     $template->mailerSendmailSel = $type == 'sendmail' ? $vars::cheHTML : '';
     $template->mailerSymfonySel = $type == 'symfony' ? $vars::cheHTML : '';
 
