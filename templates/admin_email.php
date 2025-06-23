@@ -29,6 +29,7 @@ $admin->printsetting2($lang['adminemail'], 'adminemailnew', $SETTINGS['adminemai
 if ($mailerInConfig) {
     $admin->printsetting5($lang['status'], $lang['mailerInConfig']);
 } else {
+    $admin->printsetting5($lang['mailerType'], $lang['mailerIntro']);
 ?>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><label><input type="radio" name="mailerType" value="default" <?= $mailerDefaultSel ?> /><?= $lang['mailerTypeDefault'] ?></label></td>

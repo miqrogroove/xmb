@@ -159,7 +159,7 @@ class Email
                     } else {
                         $login = '';
                     }
-                    $host = urlencode($mailer['host']);
+                    $host = urlencode($mailer['host']) . ':' . (string) $mailer['port'];
                     switch ($mailer['tls']) {
                         case 'off':
                             $options = '?auto_tls=false';

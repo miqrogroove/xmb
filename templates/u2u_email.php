@@ -7,5 +7,5 @@
 <br />
 <?= $u2umessage ?><br />
 <br />
-<?= $full_url ?>
+<a href="<?= $full_url ?>"><?= $full_url ?></a>
 <?= $mailFooter ?>

@@ -44,7 +44,7 @@ $action = getPhpInput('action', 'g');
 $sendmode = ($action == 'send') ? "true" : "false";
 
 if (X_GUEST) {
-    redirect($vars->full_url . "misc.php?action=login", timeout: 0);
+    $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
     exit;
 }
 
@@ -73,26 +73,26 @@ switch ($action) {
     case 'modif':
         $mod = $validate->postedVar('mod', '', FALSE, FALSE);
         switch($mod) {
-            // TODO: What is the purpose of any of these redirects?
+            // TODO: What is the purpose of any of these redirects?  At best, they are converting a POST request to a GET.
             case 'send':
                 if ($u2uid > 0) {
-                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid", 0);
+                    $core->redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid", 0);
                 } else {
-                    redirect($vars->full_url . 'u2u.php?action=send', 0);
+                    $core->redirect($vars->full_url . 'u2u.php?action=send', 0);
                 }
                 break;
             case 'reply':
                 if ($u2uid > 0) {
-                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&reply=yes", 0);
+                    $core->redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&reply=yes", 0);
                 } else {
-                    redirect($vars->full_url . "u2u.php?action=send&reply=yes", 0);
+                    $core->redirect($vars->full_url . "u2u.php?action=send&reply=yes", 0);
                 }
                 break;
             case 'forward':
                 if ($u2uid > 0) {
-                    redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&forward=yes", 0);
+                    $core->redirect($vars->full_url . "u2u.php?action=send&u2uid=$u2uid&forward=yes", 0);
                 } else {
-                    redirect($vars->full_url . "u2u.php?action=send&forward=yes", 0);
+                    $core->redirect($vars->full_url . "u2u.php?action=send&forward=yes", 0);
                 }
                 break;
             case 'sendtoemail':
