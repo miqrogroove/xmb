@@ -36,6 +36,10 @@ if ($mailerInConfig) {
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $lang['mailerTypeDefaultDetail'] ?></td>
 </tr>
 <tr class="tablerow">
+<td bgcolor="<?= $THEME['altbg1'] ?>"><label><input type="radio" name="mailerType" value="native" <?= $mailerSendmailSel ?> /><?= $lang['mailerTypeNative'] ?></label></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $lang['mailerTypeNativeDetail'] ?></td>
+</tr>
+<tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><label><input type="radio" name="mailerType" value="sendmail" <?= $mailerSendmailSel ?> /><?= $lang['mailerTypeSendmail'] ?></label></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><?= $lang['mailerTypeSendmailDetail'] ?></td>
 </tr>

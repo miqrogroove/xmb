@@ -83,8 +83,9 @@ class Email
             case 'symfony':
                 $settings['type'] = 'symfony';
                 break;
+            case 'native':
             case 'sendmail':
-                // This will be available as another option.
+                // These will be available as new options.
                 break;
             default:
                 $settings['type'] = 'default';
@@ -162,8 +163,12 @@ class Email
                         $transport = Transport::fromDsn("smtp://$login$host$options");
                         break;
 
+                    case 'native':
+                        $transport = Transport::fromDsn("native://default");
+                        break;
+
                     default:
-                        $transport = new SendmailTransport();
+                        $transport = Transport::fromDsn("sendmail://default");
                 }
                 $this->mailer = new Mailer($transport);
             }
