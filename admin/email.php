@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use Throwable;
+
 const ROOT = '../';
 require ROOT . 'header.php';
 
@@ -41,11 +43,11 @@ $lang = &$vars->lang;
 header('X-Robots-Tag: noindex');
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
-$core->nav($lang['admin_email_settings']);
+$core->nav($lang['config_form_email']);
 $core->setCanonicalLink('admin/email.php');
 
 if ($vars->settings['subject_in_title'] == 'on') {
-    $template->threadSubject = $vars->lang['admin_email_settings'] . ' - ';
+    $template->threadSubject = $vars->lang['config_form_email'] . ' - ';
 }
 
 if (! X_SADMIN) {
@@ -99,9 +101,33 @@ if (noSubmit('settingsubmit')) {
         $admin->input_string_setting('mailer_username', 'usernamenew');
         $admin->input_custom_setting('mailer_password', getRawString('passwordnew'));
         $admin->input_string_setting('mailer_tls', 'tlsnew');
+        $admin->input_string_setting('mailer_dkim_key_path', 'dkimkeynew');
+        $admin->input_string_setting('mailer_dkim_domain', 'dkimdomainnew');
+        $admin->input_string_setting('mailer_dkim_selector', 'dkimselectornew');
     }
 
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textsettingsupdate'] . '</td></tr>';
+    // Make an HTML-formatted test message.
+    $eTemplate = new Template($vars);
+    $eTemplate->addRefs();
+    $css = $eTemplate->process('css.php');
+    if (file_exists(ROOT . $vars->theme['imgdir'] . '/theme.css')) {
+        $extra = file_get_contents(ROOT . $vars->theme['imgdir'] . '/theme.css');
+        if (false !== $extra) {
+            $css .= $extra;
+        }
+    }
+    $eTemplate->css = "<style type='text/css'>\n$css\n</style>";
+    $eTemplate->mailHeader = $eTemplate->process('email_html_header.php');
+    $eTemplate->mailFooter = $eTemplate->process('email_html_footer.php');
+    $title = $lang['mailerTestSubject'];
+    $body = $eTemplate->process('email_test_body.php');
+    $rawemail = rawHTML($vars->self['email']);
+    try {
+        $email->send($rawemail, $title, $body, $vars->lang['charset'], html: true, debug: true);
+    } catch (Throwable $e) {
+        $core->error($lang['mailerTestFail'] . $e->getMessage());
+    }
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['mailerTestSuccess'] . '</td></tr>';
 }
 
 $endTable = $template->process('admin_table_end.php');

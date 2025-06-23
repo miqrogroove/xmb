@@ -25,10 +25,14 @@ declare(strict_types=1);
 namespace XMB;
 
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\Mailer; 
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Transport\SendmailTransport;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Crypto\DkimSigner;
 use Symfony\Component\Mime\Email as Message;
+use Symfony\Component\Mime\Header\Headers;
 
 /**
  * E-mail Provider Abstraction
@@ -37,7 +41,7 @@ use Symfony\Component\Mime\Email as Message;
  */
 class Email
 {
-    private array $mailConnections = [];
+    private MailerInterface $mailer;
 
     public function __construct(
         private Variables $vars,
@@ -56,29 +60,26 @@ class Email
         if (empty($this->vars->mailer)) {
             $settings['type'] = $this->vars->settings['mailer_type'] ?? '';
             $settings['host'] = $this->vars->settings['mailer_host'] ?? '';
-            $settings['port'] = $this->vars->settings['mailer_port'] ?? '';
+            $settings['port'] = intval($this->vars->settings['mailer_port'] ?? '');
             $settings['username'] = $this->vars->settings['mailer_username'] ?? '';
             $settings['password'] = $this->vars->settings['mailer_password'] ?? '';
             $settings['tls'] = $this->vars->settings['mailer_tls'] ?? '';
+            $settings['dkim_key_path'] = $this->vars->settings['mailer_dkim_key_path'] ?? '';
+            $settings['dkim_domain'] = $this->vars->settings['mailer_dkim_domain'] ?? '';
+            $settings['dkim_selector'] = $this->vars->settings['mailer_dkim_selector'] ?? '';
         } else {
-            $settings['type'] = $this->vars->mailer['type'] ?? '';
-            $settings['host'] = $this->vars->mailer['host'] ?? '';
-            $settings['port'] = $this->vars->mailer['port'] ?? '';
-            $settings['username'] = $this->vars->mailer['username'] ?? '';
-            $settings['password'] = $this->vars->mailer['password'] ?? '';
-            $settings['tls'] = $this->vars->mailer['tls'] ?? '';
-
-            $settings['type'] = (string) $settings['type'];
-            $settings['host'] = (string) $settings['host'];
-            $settings['username'] = (string) $settings['username'];
-            $settings['password'] = (string) $settings['password'];
-            $settings['tls'] = (string) $settings['tls'];
+            $settings['type'] = strval($this->vars->mailer['type'] ?? '');
+            $settings['host'] = strval($this->vars->mailer['host'] ?? '');
+            $settings['port'] = intval($this->vars->mailer['port'] ?? '');
+            $settings['username'] = strval($this->vars->mailer['username'] ?? '');
+            $settings['password'] = strval($this->vars->mailer['password'] ?? '');
+            $settings['tls'] = strval($this->vars->mailer['tls'] ?? '');
+            $settings['dkim_key_path'] = strval($this->vars->mailer['dkim_key_path'] ?? '');
+            $settings['dkim_domain'] = strval($this->vars->mailer['dkim_domain'] ?? '');
+            $settings['dkim_selector'] = strval($this->vars->mailer['dkim_selector'] ?? '');
         }
-        $settings['port'] = (int) $settings['port'];
         switch ($settings['type']) {
             case 'socket_SMTP':
-                // TODO: Force this to symfony after removal.
-                break;
             case 'symfony':
                 $settings['type'] = 'symfony';
                 break;
@@ -104,63 +105,27 @@ class Email
      * @since 1.9.2
      * @return bool Success
      */
-    private function altMail(Address $to, string $subject, string $message, string $additional_headers, Address $from, bool $messageIsHTML, string $charset): bool
+    private function altMail(Address $to, string $subject, string $message, Headers $additional_headers, Address $from, bool $messageIsHTML, string $charset, bool $debug): bool
     {
-        $mailer = $this->getSettings();
+        $set = $this->getSettings();
 
         $message = str_replace(["\r\n", "\r", "\n"], ["\n", "\n", "\r\n"], $message);
         $subject = str_replace(["\r", "\n"], ['', ''], $subject);
 
-        if ($messageIsHTML) {
-            $content_type = 'text/html';
-        } else {
-            $content_type = 'text/plain';
-        }
-
-        switch ($mailer['type']) {
-            case 'socket_SMTP':
-                require_once(ROOT . 'include/smtp.inc.php');
-
-                if (! isset($this->mailConnections['socket_SMTP'])) {
-                    if ($this->vars->debug) {
-                        $mail = new socket_SMTP(true, ROOT . 'smtp-log.txt');
-                    } else {
-                        $mail = new socket_SMTP();
-                    }
-                    $this->mailConnections['socket_SMTP'] = $mail;
-                    if (! $mail->connect($mailer['host'], $mailer['port'], $mailer['username'], $mailer['password'])) {
-                        return false;
-                    }
-                    register_shutdown_function(array($mail, 'disconnect'));
-                } else {
-                    $mail = $this->mailConnections['socket_SMTP'];
-                    if (false === $mail->connection) {
-                        return false;
-                    }
-                }
-
-                $additional_headers = explode("\r\n", $additional_headers);
-                $additional_headers[] = "Content-Type: $content_type; charset=$charset";
-                $additional_headers[] = "Subject: $subject";
-                $additional_headers[] = 'To: ' . $to->toString();
-                $additional_headers[] = $this->smtpHeaderFrom($from->getName(), $from->getAddress());
-                $additional_headers = implode("\r\n", $additional_headers);
-
-                return $mail->sendMessage($from->getAddress(), $to, $message, $additional_headers);
-
-            case 'symfony':
-                if (! isset($this->mailConnections['symfony'])) {
-                    if ($mailer['username'] !== '') {
-                        $password = $mailer['password'];
+        if (! isset($this->mailer)) {
+            switch ($set['type']) {
+                case 'symfony':
+                    if ($set['username'] !== '') {
+                        $password = $set['password'];
                         if ($password !== '') {
                             $password = ':' . urlencode($password);
                         }
-                        $login = urlencode($mailer['username']) . $password . '@';
+                        $login = urlencode($set['username']) . $password . '@';
                     } else {
                         $login = '';
                     }
-                    $host = urlencode($mailer['host']) . ':' . (string) $mailer['port'];
-                    switch ($mailer['tls']) {
+                    $host = urlencode($set['host']) . ':' . (string) $set['port'];
+                    switch ($set['tls']) {
                         case 'off':
                             $options = '?auto_tls=false';
                             break;
@@ -171,46 +136,45 @@ class Email
                             $options = '';
                     }
                     $transport = Transport::fromDsn("smtp://$login$host$options");
-                    $mail = new Mailer($transport);
+                    break;
 
-                    $this->mailConnections['symfony'] = $mail;
-                } else {
-                    $mail = $this->mailConnections['symfony'];
-                }
-
-                $email = new Message();
-                $email->from($from);
-                $email->to($to);
-                $email->subject($subject);
-                if ($messageIsHTML) {
-                    $email->html($message, $charset);
-                } else {
-                    $email->text($message, $charset);
-                }
-
-                try {
-                    $mail->send($email);
-                } catch (TransportExceptionInterface $e) {
-                    trigger_error($e->getMessage(), E_USER_WARNING);
-                    return false;
-                }
-                return true;
-
-            default:
-                $additional_headers .= 
-                    "\r\n" . $this->smtpHeaderFrom($from->getName(), $from->getAddress()) .
-                    "\r\nContent-Type: $content_type; charset=$charset";
-                if (ini_get('safe_mode') == "1") {
-                    $return = mail($to->toString(), $subject, $message, $additional_headers);
-                } else {
-                    $params = '-f ' . $from->getAddress();
-                    $return = mail($to->toString(), $subject, $message, $additional_headers, $params);
-                }
-                if (! $return) {
-                    trigger_error($this->vars->lang['emailErrorPhp'], E_USER_WARNING);
-                }
-                return $return;
+                default:
+                    $transport = new SendmailTransport();
+            }
+            $this->mailer = new Mailer($transport);
         }
+
+        $email = new Message();
+        $email->from($from);
+        $email->to($to);
+        $email->subject($subject);
+        if ($messageIsHTML) {
+            $email->html($message, $charset);
+        } else {
+            $email->text($message, $charset);
+        }
+        $headers = $email->getHeaders();
+        foreach ($additional_headers->all() as $header) {
+            $headers->add($header);
+        }
+
+        if (! empty($set['dkim_key_path']) && ! empty($set['dkim_domain']) && ! empty($set['dkim_selector'])) {
+            $key = 'file://' . $set['dkim_key_path'];
+            $signer = new DkimSigner($key, $set['dkim_domain'], $set['dkim_selector']);
+            $email = $signer->sign($email);
+        }
+
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+            if ($debug) {
+                throw $e;
+            } else {
+                trigger_error($e->getMessage(), E_USER_WARNING);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -225,7 +189,7 @@ class Email
      * @param bool   $html    Optional. Set to true if the $message param is HTML formatted.
      * @return bool
      */
-    public function send(string $to, string $subject, string $message, string $charset, bool $html = false): bool
+    public function send(string $to, string $subject, string $message, string $charset, bool $html = false, bool $debug = false): bool
     {
         $rawbbname = rawHTML($this->vars->settings['bbname']);
         $rawusername = rawHTML($this->vars->self['username'] ?? '');
@@ -238,29 +202,10 @@ class Email
         $from = new Address($rawfrom, $rawbbname);
         $toAddress = new Address($to);
 
-        $headers = [
-            'X-Mailer: PHP',
-            'X-AntiAbuse: Board servername - ' . $this->vars->cookiedomain,
-        ];
-        if ($rawusername != '') {
-            $headers[] = "X-AntiAbuse: Username - $rawusername";
-        }
-        $headers = implode("\r\n", $headers);
+        $headers = new Headers();
+        $headers->addTextHeader('X-Mailer', 'PHP');
+        $headers->addTextHeader('X-AntiAbuse', 'Board servername - ' . $this->vars->cookiedomain . ", Username - $rawusername");
 
-        return $this->altMail($toAddress, $subject, $message, $headers, $from, $html, $charset);
-    }
-
-    /**
-     * Simple SMTP message From header formation.
-     *
-     * @since 1.9.11.08
-     * @param string $fromname Will be converted to an SMTP quoted string.
-     * @param string $fromaddress Must be a fully validated e-mail address.
-     * @return string
-     */
-    private function smtpHeaderFrom(string $fromname, string $fromaddress): string
-    {
-        $fromname = preg_replace('@([^\\t !\\x23-\\x5b\\x5d-\\x7e])@', '\\\\$1', $fromname);
-        return 'From: "'.$fromname.'" <'.$fromaddress.'>';
+        return $this->altMail($toAddress, $subject, $message, $headers, $from, $html, $charset, $debug);
     }
 }

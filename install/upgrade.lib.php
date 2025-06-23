@@ -2211,7 +2211,7 @@ class Upgrade
 
 // TODO: Schema 12
 //  Reset any members.tpp and members.ppp values that don't conform to $this->vars::PAGING_MIN and $this->vars::PAGING_MAX.
-//  Add settings mailer_host, mailer_password, mailer_port, mailer_type, mailer_username, mailer_tls.
+//  Add settings mailer_host, mailer_password, mailer_port, mailer_type, mailer_username, mailer_tls, mailer_dkim_key_path, mailer_dkim_domain, mailer_dkim_selector.
 //  Bump theme versions here instead of schema 11.
 
     /**

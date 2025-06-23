@@ -57,6 +57,18 @@ if ($mailerInConfig) {
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+<tr class="category">
+<td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="1" />&raquo;&nbsp;<?= $lang['admin_email_dkim'] ?></font></strong></td>
+</tr>
+<?php
+    $admin->printsetting5($lang['textdesc'], $lang['mailerDkimIntro']);
+    $admin->printsetting2($lang['mailerDkimKey'], 'dkimkeynew', $SETTINGS['mailer_dkim_key_path'], 50);
+    $admin->printsetting2($lang['mailerDkimDomain'], 'dkimdomainnew', $SETTINGS['mailer_dkim_domain'], 50);
+    $admin->printsetting2($lang['mailerDkimSelector'], 'dkimselectornew', $SETTINGS['mailer_dkim_selector'], 50);
+?>
+<tr class="ctrtablerow">
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
+</tr>
 </table>
 </td>
 </tr>
