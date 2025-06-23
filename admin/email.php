@@ -74,6 +74,7 @@ if (noSubmit('settingsubmit')) {
     $set = $email->getSettings();
     $type = $set['type'];
     $template->mailerDefaultSel = $type == 'default' ? $vars::cheHTML : '';
+    $template->mailerSendmailSel = $type == 'sendmail' ? $vars::cheHTML : '';
     $template->mailerSymfonySel = $type == 'symfony' ? $vars::cheHTML : '';
 
     $template->tlsSel = [
@@ -93,6 +94,9 @@ if (noSubmit('settingsubmit')) {
     }
 
     $admin->input_string_setting('adminemail', 'adminemailnew');
+    $admin->input_string_setting('mailer_dkim_key_path', 'dkimkeynew');
+    $admin->input_string_setting('mailer_dkim_domain', 'dkimdomainnew');
+    $admin->input_string_setting('mailer_dkim_selector', 'dkimselectornew');
 
     if (empty($vars->mailer)) {
         $admin->input_string_setting('mailer_type', 'mailerType');
@@ -101,9 +105,6 @@ if (noSubmit('settingsubmit')) {
         $admin->input_string_setting('mailer_username', 'usernamenew');
         $admin->input_custom_setting('mailer_password', getRawString('passwordnew'));
         $admin->input_string_setting('mailer_tls', 'tlsnew');
-        $admin->input_string_setting('mailer_dkim_key_path', 'dkimkeynew');
-        $admin->input_string_setting('mailer_dkim_domain', 'dkimdomainnew');
-        $admin->input_string_setting('mailer_dkim_selector', 'dkimselectornew');
     }
 
     // Make an HTML-formatted test message.
@@ -123,11 +124,12 @@ if (noSubmit('settingsubmit')) {
     $body = $eTemplate->process('email_test_body.php');
     $rawemail = rawHTML($vars->self['email']);
     try {
-        $email->send($rawemail, $title, $body, $vars->lang['charset'], html: true, debug: true);
+        $result = $email->send($rawemail, $title, $body, $vars->lang['charset'], html: true, debug: true);
     } catch (Throwable $e) {
         $core->error($lang['mailerTestFail'] . $e->getMessage());
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['mailerTestSuccess'] . '</td></tr>';
+    $status = $result ? $lang['mailerTestSuccess'] : $lang['emailErrorPhp'];
+    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $status . '</td></tr>';
 }
 
 $endTable = $template->process('admin_table_end.php');

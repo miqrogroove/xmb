@@ -340,6 +340,7 @@ class admin
         } elseif ($this->vars->settings[$dbname] !== $value) {
             $this->sql->updateSetting($dbname, $value);
         }
+        $this->vars->settings[$dbname] = $value;
     }
 
     /**
