@@ -42,12 +42,17 @@ if ($mailerInConfig) {
     $admin->printsetting2($lang['mailerHost'], 'hostnew', $SETTINGS['mailer_host'], 50);
     $admin->printsetting2($lang['mailerPort'], 'portnew', $SETTINGS['mailer_port'], 6);
     $admin->printsetting2($lang['mailerUsername'], 'usernamenew', $SETTINGS['mailer_username'], 50);
-}
 ?>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['mailerPassword'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="passwordnew" size="50" value="<?= $passwordAttr ?>" /></td>
 </tr>
+<?php
+    $labels = [$lang['textoff'], $lang['automatic'], $lang['texton']];
+    $values = ['off', 'auto', 'on'];
+    $admin->printsetting3($lang['mailerTLS'], 'tlsnew', $labels, $values, $tlsSel, multi: false);
+}
+?>
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>

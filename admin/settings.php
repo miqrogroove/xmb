@@ -62,7 +62,7 @@ $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');
 
-$admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
+$admin = new admin($core, $db, $session, $sql, $validate, $vars);
 
 if (noSubmit('settingsubmit')) {
     $template->admin = $admin;
@@ -140,7 +140,11 @@ if (noSubmit('settingsubmit')) {
     }
     $template->avchecked = $avchecked;
     
-    $template->tickercodechecked = [ $SETTINGS['tickercode'] == 'plain', $SETTINGS['tickercode'] == 'bbcode', $SETTINGS['tickercode'] == 'html' ];
+    $template->tickercodechecked = [
+        $SETTINGS['tickercode'] == 'plain',
+        $SETTINGS['tickercode'] == 'bbcode',
+        $SETTINGS['tickercode'] == 'html',
+    ];
 
     $footer_options = explode('-', $SETTINGS['footer_options']);
     $sel_serverload = in_array('serverload', $footer_options);
@@ -153,7 +157,7 @@ if (noSubmit('settingsubmit')) {
 
     $template->max_avatar_sizes = explode('x', $SETTINGS['max_avatar_size']);
 
-    $captcha = new \XMB\Captcha($core, $vars);
+    $captcha = new Captcha($core, $vars);
     $template->goodCaptcha = $captcha->bCompatible;
 
     $body = $template->process('admin_settings.php');
@@ -209,7 +213,6 @@ if (noSubmit('settingsubmit')) {
     $tpp = (string) $tpp;
 
     $admin->input_int_setting('addtime', 'addtimenew');
-    $admin->input_string_setting('adminemail', 'adminemailnew');
     $admin->input_onoff_setting('allowrankedit', 'allowrankeditnew');
     $admin->input_onoff_setting('attachimgpost', 'attachimgpostnew');
     $admin->input_onoff_setting('attach_remote_images', 'remoteimages');

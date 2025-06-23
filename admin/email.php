@@ -69,9 +69,16 @@ if (noSubmit('settingsubmit')) {
     $template->mailerInConfig = ! empty($vars->mailer);
     $template->passwordAttr = attrOut($vars->settings['mailer_password'] ?? '');
 
-    $type = $email->getSettings()['type'];
+    $set = $email->getSettings();
+    $type = $set['type'];
     $template->mailerDefaultSel = $type == 'default' ? $vars::cheHTML : '';
     $template->mailerSymfonySel = $type == 'symfony' ? $vars::cheHTML : '';
+
+    $template->tlsSel = [
+        $set['tls'] === 'off',
+        $set['tls'] === 'auto',
+        $set['tls'] === 'on',
+    ];
 
     $body = $template->process('admin_email.php');
 } else {
@@ -90,8 +97,8 @@ if (noSubmit('settingsubmit')) {
         $admin->input_string_setting('mailer_host', 'hostnew');
         $admin->input_int_setting('mailer_port', 'portnew');
         $admin->input_string_setting('mailer_username', 'usernamenew');
-        // TODO: Password should be saved in raw format.
         $admin->input_custom_setting('mailer_password', getRawString('passwordnew'));
+        $admin->input_string_setting('mailer_tls', 'tlsnew');
     }
 
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textsettingsupdate'] . '</td></tr>';

@@ -197,7 +197,7 @@ class admin
      *
      * @since 1.9.1
      */
-    public function printsetting3($setname, $boxname, $varnames, $values, $checked, $multi = true)
+    public function printsetting3(string $setname, string $boxname, array $varnames, array $values, array $checked, bool $multi = true)
     {
         $template = new Template($this->vars);
         $template->addRefs();
