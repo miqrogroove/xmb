@@ -52,6 +52,11 @@ td.code {
 }
 
 code {
+    border: 1px solid <?= $THEME['bordercolor'] ?>;
+    padding: 1px 4px;
+}
+
+.codemessage code {
     background-color: <?= $THEME['altbg2'] ?>;
     color: <?= $THEME['tabletext'] ?>;
     font-size: <?= $THEME['fontsize'] ?>;
@@ -61,6 +66,7 @@ code {
     width: 600px;
     max-height: 400px;
     overflow: auto;
+    border: none;
 }
 
 table.quote {
@@ -302,17 +308,17 @@ textarea, select, input, object {
     width: 600px;
 }
 @media screen and (min-width: 1200px) {
-    code {
+    .codemessage code {
         width: 800px;
     }
 }
 @media screen and (min-width: 1500px) {
-    code {
+    .codemessage code {
         width: 1100px;
     }
 }
 @media screen and (min-width: 1850px) {
-    code {
+    .codemessage code {
         width: 1400px;
     }
 }
@@ -321,7 +327,7 @@ textarea, select, input, object {
         height: 300px;
         width: 425px;
     }
-    code {
+    .codemessage code {
         width: 425px;
     }
 }
@@ -330,7 +336,7 @@ textarea, select, input, object {
         height: 300px;
         width: 350px;
     }
-    code {
+    .codemessage code {
         width: 350px;
     }
 }
