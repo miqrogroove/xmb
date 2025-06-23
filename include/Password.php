@@ -69,6 +69,8 @@ class Password
         #[\SensitiveParameter]
         string $rawPass,
         string $storedHash,
+        string $username,
+        bool $changeCapable,
     ): bool {
         if (strlen($rawPass) == 0) throw new InvalidArgumentException('The XMB Password class does not accept empty inputs.');
 
@@ -80,9 +82,9 @@ class Password
                 // Use the modern system.
                 $result = password_verify($rawPass, $storedHash);
             }
-            if ($result && strlen($rawPass) <= $this::MAX_LENGTH) {
-                // Automatically regenerate the hash.
-                $this->changePassword($rawPass);
+            if ($result && strlen($rawPass) <= $this::MAX_LENGTH && $changeCapable) {
+                // Automatically regenerate the hash when the hash is obsolete and the schema is not obsolete.
+                $this->changePassword($username, $rawPass);
             }
         } else {
             $result = password_verify($rawPass, $storedHash);

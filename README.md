@@ -16,11 +16,13 @@ You will need a MySQL database and connection details to get started.
 
 ## Getting Started (master branch)
 
-Composer is now required.  Install it according to the [instructions](https://getcomposer.org/doc/00-intro.md).
+Composer is required.  Install it according to the [instructions](https://getcomposer.org/doc/00-intro.md).
 
-Clone or download the master branch files to the website directory.
+Create a directory for the new site.  Make sure it's not owned by the root user.
 
-Install the XMB dependencies using `composer install` in the same directory as the composer.lock file.
+Clone XMB into the current directory using `git clone https://github.com/miqrogroove/xmb.git ./`
+
+Install the XMB dependencies using `composer install` in the same directory.
 
 Visit the /install/ path on the website to create the config file and the database tables.
 

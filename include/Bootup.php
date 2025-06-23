@@ -52,17 +52,17 @@ class Bootup
         $this->vars->pconnect = (bool) $pconnect;
         $this->vars->tablepre = $tablepre;
         $this->vars->full_url = $full_url;
-        $this->vars->comment_output = $comment_output;
+        $this->vars->comment_output = (bool) $comment_output;
         if (isset($mailer)) $this->vars->mailer = $mailer;
         $this->vars->plugname = $plugname;
         $this->vars->plugurl = $plugurl;
         $this->vars->plugadmin = $plugadmin;
         $this->vars->plugimg = $plugimg;
-        $this->vars->ipcheck = $ipcheck;
-        $this->vars->allow_spec_q = $allow_spec_q;
-        $this->vars->show_full_info = $show_full_info;
-        $this->vars->debug = $debug;
-        $this->vars->log_mysql_errors = $log_mysql_errors;
+        $this->vars->ipcheck = (bool) $ipcheck;
+        $this->vars->allow_spec_q = (bool) $allow_spec_q;
+        $this->vars->show_full_info = (bool) $show_full_info;
+        $this->vars->debug = (bool) $debug;
+        $this->vars->log_mysql_errors = (bool) $log_mysql_errors;
 
         $config_array = [
             'dbname' => 'DB/NAME',

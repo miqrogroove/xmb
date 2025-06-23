@@ -100,7 +100,7 @@ if ($action == 'profile') {
     $header .= $template->process('memcp_nav.php');
 
     if (noSubmit('editsubmit')) {
-        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
+        $form = new UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
         $form->setOptions();
         $form->setCallables();
         $form->setBirthday();
@@ -133,12 +133,12 @@ if ($action == 'profile') {
 
         if (getRawString('newpassword') != '') {
             $storedPass = $vars->self['password'] !== '' ? $vars->self['password'] : $vars->self['password2'];
-            $passMan = new \XMB\Password($sql);
+            $passMan = new Password($sql);
             $oldPass = getRawString('oldpassword');
             if ($oldPass == '') {
                 $core->error($lang['textnopassword']);
             }
-            if (! $passMan->checkInput($oldPass, $storedPass)) {
+            if (! $passMan->checkInput($oldPass, $storedPass, $vars->self['username'], $core->schemaHasPasswordV2())) {
                 $core->auditBadLogin($vars->self);
                 $core->error($lang['textpwincorrect']);
             }
@@ -151,7 +151,7 @@ if ($action == 'profile') {
             $session->logoutAll();
         }
 
-        $form = new \XMB\UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
+        $form = new UserEditForm($vars->self, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
         $form->readBirthday();
         $form->readCallables();
         $form->readOptionalFields();
@@ -401,7 +401,7 @@ if ($action == 'profile') {
         }
         if (! empty($ids)) {
             // This page only handles the default session mechanism for now.
-            $lists = [\XMB\Session\FormsAndCookies::class => $ids];
+            $lists = [Session\FormsAndCookies::class => $ids];
             $session->logoutByLists($lists);
         }
     }
@@ -413,7 +413,7 @@ if ($action == 'profile') {
 
     $lists = $session->getSessionLists();
     foreach ($lists as $name => $list) {
-        if ($name != \XMB\Session\FormsAndCookies::class) {
+        if ($name != Session\FormsAndCookies::class) {
             // This page only handles the default session mechanism for now.
             continue;
         }
@@ -438,7 +438,7 @@ if ($action == 'profile') {
     
     $mempage = $template->process('memcp_devices.php');
 } else {
-    $buddy = new \XMB\BuddyManager($core, $db, $sql, $template, $vars);
+    $buddy = new BuddyManager($core, $db, $sql, $template, $vars);
 
     $header = $template->process('header.php');
     $template->usercpwelcome = str_replace('$xmbuser', $vars->self['username'], $lang['evalusercpwelcome']);

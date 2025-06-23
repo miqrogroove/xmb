@@ -173,15 +173,19 @@ $loader = new \XMB\BootupLoader(core(), db(), template(), vars());
 
 $loader->setHeaders();
 
-if (defined('XMB\UPGRADE') && (int) vars()->settings['schema_version'] < 5) {
-    $xmbuser = validate()->postedVar(
-        varname: 'xmbuser',
-        dbescape: false,
-        sourcearray: 'c',
-    );
-    $xmbpw = getPhpInput('xmbpw', 'c');
-    define('XMB\X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
-    unset($loader, $xmbuser, $xmbpw);
+if (! core()->schemaHasSessions()) {
+    if (defined('XMB\UPGRADE')) {
+        $xmbuser = validate()->postedVar(
+            varname: 'xmbuser',
+            dbescape: false,
+            sourcearray: 'c',
+        );
+        $xmbpw = getPhpInput('xmbpw', 'c');
+        define('XMB\X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
+        unset($loader, $xmbuser, $xmbpw);
+    } else {
+        // TODO: Need a generic upgrade mode response.
+    }
     return;
 }
 
@@ -195,8 +199,12 @@ unset($params);
 
 if (defined('XMB\UPGRADE')) {
     return;
-} elseif (X_SADMIN && (int) vars()->settings['schema_version'] < \XMB\Schema::VER) {
-    core()->redirect(vars()->full_url . 'install/', timeout: 0);
+} elseif ((int) vars()->settings['schema_version'] < \XMB\Schema::VER) {
+    if (X_SADMIN) {
+        core()->redirect(vars()->full_url . 'install/', timeout: 0);
+    } else {
+        // TODO: Need a generic upgrade mode response (translated).
+    }
 }
 
 

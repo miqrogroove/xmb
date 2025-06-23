@@ -2124,4 +2124,20 @@ class Core
         $uid = $member['uid'];
         $this->db->query("DELETE FROM " . $this->vars->tablepre . "hold_attachments WHERE uid = $uid AND pid = 0");
     }
+
+    /**
+     * @since 1.10.00
+     */
+    public function schemaHasSessions(): bool
+    {
+        return (int) $this->vars->settings['schema_version'] >= 5;
+    }
+
+    /**
+     * @since 1.10.00
+     */
+    public function schemaHasPasswordV2(): bool
+    {
+        return (int) $this->vars->settings['schema_version'] >= 10;
+    }
 }

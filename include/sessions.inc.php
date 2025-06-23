@@ -547,7 +547,7 @@ class FormsAndCookies implements Mechanism
         $passMan = new Password($this->sql);
         $storedPass = $data->member['password'] !== '' ? $data->member['password'] : $data->member['password2'];
 
-        if (! $passMan->checkInput($pinput, $storedPass)) {
+        if (! $passMan->checkInput($pinput, $storedPass, $data->member['username'], $this->core->schemaHasPasswordV2())) {
             $this->core->auditBadLogin($data->member);
             $data = new Data();
             $data->status = 'bad';

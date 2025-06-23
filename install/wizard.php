@@ -138,7 +138,7 @@ if ($status == 'installed') {
 
     if (! defined('XMB\X_SADMIN') || ! X_SADMIN) {
         header('HTTP/1.0 403 Forbidden');
-        echo "<br /><br />\n" . $vars->lang['upgrade_admin'] . "<br />\n" . str_replace('$url', $vars->full_url . 'install/login.php', $vars->lang['upgrade_admin_login']) . "<br />\n";
+        echo "<br /><br />\n<p>" . $vars->lang['upgrade_admin'] . "</p>\n<p>" . str_replace('$url', $vars->full_url . 'install/login.php', $vars->lang['upgrade_admin_login']) . "</p>\n";
         throw new Exception(str_replace('$ipAddress', $_SERVER['REMOTE_ADDR'], $vars->lang['upgrade_admin_error']));
     }
 
