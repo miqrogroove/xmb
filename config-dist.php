@@ -72,9 +72,6 @@ if (! defined('XMB\ROOT')) {
 
 // Registration settings
     /***************
-     * The ipcheck requires your server to read a valid IPv4 address from the client. If not, it will kill the script.
-     * This is a legacy "feature" of XMB that should be turned off by changing the $ipcheck variable to false.
-     ****************
      * The allow_spec_q variable specifies if Special queries (eg. USE database and SHOW DATABASES) are allowed.
      * By default, they are not, meaning $allow_spec_q = false;
      * To allow them, change $allow_spec_q to true ($allow_spec_q = true;)
@@ -84,12 +81,10 @@ if (! defined('XMB\ROOT')) {
      * Default = true;
      ****************/
 
-    $ipcheck        = false;
     $allow_spec_q   = false;
     $show_full_info = true;
 
 // Debug-mode
-
     /**
      * To turn on Debug mode, set to true.  To turn off Debug mode, set to false.
      * This mode helps with troubleshooting during install, and allows the new Super Administrator to see

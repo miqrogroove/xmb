@@ -42,8 +42,6 @@ class Bootup
     {
         require ROOT . 'config.php';
         
-        if ($ipcheck === 'on') $ipcheck = true;
-        
         $this->vars->dbname = $dbname;
         $this->vars->dbuser = $dbuser;
         $this->vars->dbpw = $dbpw;
@@ -58,7 +56,6 @@ class Bootup
         $this->vars->plugurl = $plugurl;
         $this->vars->plugadmin = $plugadmin;
         $this->vars->plugimg = $plugimg;
-        $this->vars->ipcheck = (bool) $ipcheck;
         $this->vars->allow_spec_q = (bool) $allow_spec_q;
         $this->vars->show_full_info = (bool) $show_full_info;
         $this->vars->debug = (bool) $debug;
@@ -72,7 +69,6 @@ class Bootup
             'database' => 'DB_TYPE',
             'tablepre' => 'TABLE/PRE',
             'full_url' => 'FULLURL',
-            'ipcheck' => 'IPCHECK',
             'allow_spec_q' => 'SPECQ',
             'show_full_info' => 'SHOWFULLINFO',
             'comment_output' => 'COMMENTOUTPUT',
@@ -254,14 +250,6 @@ class Bootup
     public function setIP()
     {
         $this->vars->onlineip = $_SERVER['REMOTE_ADDR'];
-
-        //Checks the IP-format, if it's not a IPv4 type, it will be blocked, safe to remove....
-        if ($this->vars->ipcheck) {
-            if (1 != preg_match('@^(\\d{1,3}\\.){3}\\d{1,3}$@', $this->vars->onlineip)) {
-                header('HTTP/1.0 403 Forbidden');
-                exit('Access to this website is currently not possible as your IP address has been blocked.');
-            }
-        }
     }
 
     public function connectDB(): DBStuff

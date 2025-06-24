@@ -113,7 +113,6 @@ class Variables
     public bool $comment_output = false;
     public bool $cookiesecure = false;
     public bool $debug = false;
-    public bool $ipcheck = false;
     public bool $log_mysql_errors = false;
     public bool $pconnect = false;
     public bool $show_full_info = true;

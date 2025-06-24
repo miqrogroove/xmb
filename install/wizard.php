@@ -268,7 +268,6 @@ switch ($vStep) {
                             . "\$plugadmin[\$i] = false;\n"
                             . "\$plugimg[\$i]   = '';\n"
                             . "\$i++;\n"
-                            . "\$ipcheck          = false;\n"
                             . "\$allow_spec_q     = false;\n"
                             . "\$show_full_info   = true;\n\n"
                             . "\$debug            = true;\n"
@@ -348,7 +347,6 @@ switch ($vStep) {
             'database' => 'DB_TYPE',
             'tablepre' => 'TABLE/PRE',
             'full_url' => 'FULLURL',
-            'ipcheck' => 'IPCHECK',
             'allow_spec_q' => 'SPECQ',
             'show_full_info' => 'SHOWFULLINFO',
             'comment_output' => 'COMMENTOUTPUT'
