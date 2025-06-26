@@ -188,6 +188,8 @@ class BootupLoader
         }
 
         // login/logout links
+        $loginout = $this->core->getLoginLink();
+
         if (X_MEMBER) {
             if (X_ADMIN) {
                 $url = $this->vars->full_url . 'admin/';
@@ -195,8 +197,6 @@ class BootupLoader
             } else {
                 $cplink = '';
             }
-            $url = $this->vars->full_url . 'misc.php?action=logout';
-            $loginout = "<a href='$url'>" . $this->vars->lang['textlogout'] . '</a>';
 
             $url = $this->vars->full_url . 'memcp.php';
             $memcp = "<a href='$url'>" . $this->vars->lang['textusercp'] . '</a>';
@@ -220,16 +220,9 @@ class BootupLoader
             $lasttime = gmdate($this->vars->timecode, $lastlocal);
             $this->template->lastvisittext = $this->vars->lang['lastactive'] . ' ' . $lastdate . ' ' . $this->vars->lang['textat'] . ' ' . $lasttime;
         } else {
-            // Checks for the possibility to register
-            if ($this->vars->settings['regstatus'] == 'on') {
-                $url = $this->vars->full_url . 'member.php?action=reg';
-                $this->template->reglink = "- <a href='$url'>" . $this->vars->lang['textregister'] . '</a>';
-            } else {
-                $this->template->reglink = '';
-            }
-            $url = $this->vars->full_url . 'misc.php?action=login';
-            $loginout = "<a href='$url'>" . $this->vars->lang['textlogin'] . '</a>';
-            $this->template->notify = $this->vars->lang['notloggedin'] . ' [' . $loginout . ' ' . $this->template->reglink . ']';
+            $reglink = $this->core->getRegistrationLink();
+            $space = empty($reglink) ? ' ' : ' - ';
+            $this->template->notify = $this->vars->lang['notloggedin'] . ' [' . $loginout . $space . $reglink . ']';
             $this->template->lastvisittext = '';
         }
 

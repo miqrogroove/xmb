@@ -202,7 +202,7 @@ class Core
      * @param string $ismood
      * @param string $wrap
      */
-    function postify(
+    public function postify(
         string $message,
         string $smileyoff = 'no',
         string $bbcodeoff = 'no',
@@ -316,7 +316,7 @@ class Core
         $count = 0;
         $separator = '';
         $htmlencode = true;
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
         foreach ($files as $attach) {
             $post = [];
@@ -382,7 +382,7 @@ class Core
      * @since 1.9.11
      * @param string $message Read/Write Variable.  Returns the post text with converted tags.
      */
-    function postLinkBBcode(string &$message) {
+    public function postLinkBBcode(string &$message) {
         $items = [];
         $pattern = "@\\[pid](\\d+)\\[/pid]@si";
         preg_match_all($pattern, $message, $results, PREG_SET_ORDER);
@@ -504,7 +504,7 @@ class Core
     {
         $lang = &$this->vars->lang;
         
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
 
         $forum['name'] = fnameOut($forum['name']);
@@ -645,7 +645,7 @@ class Core
      * @param bool $isself FALSE indicates the page bar will be displayed on a page that is not part of the collection.
      * @return string HTML links. Empty string if the $lastpage parameter was <= 1 or $page was invalid.
      */
-    function multi(int $page, int $lastpage, string &$mpurl, bool $isself = true): string
+    public function multi(int $page, int $lastpage, string &$mpurl, bool $isself = true): string
     {
         $multipage = $this->vars->lang['textpages'];
 
@@ -768,7 +768,7 @@ class Core
 
         if (! $enabled) return '';
         
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
 
         foreach ($this->smile->smilieCache() as $smilie['code'] => $smilie['url']) {
@@ -858,9 +858,9 @@ class Core
      *
      * @since 1.8.0
      */
-    function end_time(): array
+    public function end_time(): array
     {
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
         
         $footerstuff = [];
@@ -917,14 +917,14 @@ class Core
     /**
      * @since 1.9.1
      */
-    function redirect(string $path, int $timeout = 2)
+    public function redirect(string $path, int $timeout = 2)
     {
         if (strpos(urldecode($path), "\n") !== false || strpos(urldecode($path), "\r") !== false) {
             throw new InvalidArgumentException('Tried to redirect to potentially insecure url.');
         }
 
         if (headers_sent()) {
-            $template = new \XMB\Template($this->vars);
+            $template = new Template($this->vars);
             $template->path = addslashes($path);
             $template->timeout = $timeout * 1000;
             $template->process('functions_redirect.php', echo: true);
@@ -942,7 +942,7 @@ class Core
     /**
      * @since 1.9.1
      */
-    function ServerLoad()
+    public function ServerLoad(): array
     {
         if ($stats = @exec('uptime')) {
             $parts = explode(',', $stats);
@@ -950,9 +950,9 @@ class Core
             $first = explode(' ', $parts[$count-3]);
             $c = count($first);
             $first = $first[$c-1];
-            return array($first, $parts[$count-2], $parts[$count-1]);
+            return [$first, $parts[$count - 2], $parts[$count - 1]];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -961,7 +961,7 @@ class Core
      *
      * @since 1.9.1
      */
-    function error(
+    public function error(
         string $msg,
         bool $showheader = true,
         string $prepend = '',
@@ -1026,7 +1026,7 @@ class Core
      *
      * @since 1.9.8
      */
-    function message(
+    public function message(
         string $msg,
         bool $showheader = true,
         string $prepend = '',
@@ -1044,7 +1044,8 @@ class Core
      *
      * @since 1.9.10
      */
-    function softerror($msg): string {
+    public function softerror($msg): string
+    {
         return $this->error(
             $msg,
             showheader: false,
@@ -1056,11 +1057,44 @@ class Core
     }
 
     /**
+     * Displays a global status or maintenance mode message.
+     *
+     * @since 1.10.00
+     */
+    public function unavailable(string $mode): never
+    {
+        header('HTTP/1.0 503 Service Unavailable');
+        header('Retry-After: 3600');
+        switch ($mode) {
+            case 'bstatus':
+                // The board status setting is 'off' during a normal startup.
+                if ($this->vars->settings['bboffreason'] != '') {
+                    $this->message(nl2br($this->vars->settings['bboffreason']));
+                } else {
+                    $this->message($this->vars->lang['textbstatusdefault']);
+                }
+                // message() should kill the script.
+            case 'upgrade':
+                // An upgrade is pending.
+                if (empty($this->vars->lang)) {
+                    $success = false;
+                    if (! empty($vars->settings['langfile'])) {
+                        $success = $this->tran->loadLang($vars->settings['langfile']);
+                    }
+                    if (! $success) {
+                        $this->tran->langPanic();
+                    }
+                }
+                exit($this->vars->lang['upgrade_maintenance']);
+        }
+    }
+
+    /**
      * XMB's Cookie helper.
      *
      * @since 1.9.1
      */
-    function put_cookie(string $name, string $value = '', int $expire = 0, ?string $path = null, ?string $domain = null, bool $secure = false)
+    public function put_cookie(string $name, string $value = '', int $expire = 0, ?string $path = null, ?string $domain = null, bool $secure = false)
     {
         // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.
         if (headers_sent()) {
@@ -1096,7 +1130,7 @@ class Core
      * @param int $tid The thread ID used.
      * @param int $timestamp The time of the log entry.
      */
-    function audit(string $user, string $action, int $fid = 0, int $tid = 0)
+    public function audit(string $user, string $action, int $fid = 0, int $tid = 0)
     {
         $action = cdataOut($action);
 
@@ -1650,7 +1684,7 @@ class Core
             $message = $this->vars->lang['forumpwinfo'];
         }
 
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
 
         $template->label = str_replace('$forum', $forum['name'], $this->vars->lang['textpasswordForum']);
@@ -1668,7 +1702,7 @@ class Core
     public function makeSearchLink(int $fid = 0): string
     {
         if ($this->vars->settings['searchstatus'] == 'on') {
-            $template = new \XMB\Template($this->vars);
+            $template = new Template($this->vars);
             $template->addRefs();
             if ($fid == 0) {
                 $query = '';
@@ -1681,6 +1715,39 @@ class Core
         } else {
             return '';
         }
+    }
+
+    /**
+     * Creates a link to the registration page.
+     *
+     * @since 1.10.00
+     */
+    public function getRegistrationLink(): string
+    {
+        if ($this->vars->settings['regstatus'] == 'on' && ! X_MEMBER) {
+            $url = $this->vars->full_url . 'member.php?action=reg';
+            $link = "<a href='$url'>" . $this->vars->lang['textregister'] . '</a>';
+        } else {
+            $link = '';
+        }
+        return $link;
+    }
+
+    /**
+     * Creates a link to the login or logout page.
+     *
+     * @since 1.10.00
+     */
+    public function getLoginLink(): string
+    {
+        if (X_MEMBER) {
+            $url = $this->vars->full_url . 'misc.php?action=logout';
+            $link = "<a href='$url'>" . $this->vars->lang['textlogout'] . '</a>';
+        } else {
+            $url = $this->vars->full_url . 'misc.php?action=login';
+            $link = "<a href='$url'>" . $this->vars->lang['textlogin'] . '</a>';
+        }
+        return $link;
     }
 
     /**
@@ -1793,7 +1860,7 @@ class Core
      */
     function timezone_control(string $offset): string
     {
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
 
         $total = 37;
@@ -1934,7 +2001,7 @@ class Core
      */
     public function userStatusControl(string $statusField, string $currentStatus): string
     {
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
 
         $template->statusField = $statusField;
@@ -2037,7 +2104,7 @@ class Core
      */
     public function makeAttachmentBox(int $currentAttachCount): string
     {
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
 
         $maxuploads = (int) $this->vars->settings['filesperpost'] - $currentAttachCount;

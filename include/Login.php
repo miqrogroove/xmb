@@ -223,33 +223,25 @@ class Login
     public function sendErrors()
     {
         switch ($this->session->getSError()) {
-        case 'ip':
-            if (! X_ADMIN) {
-                header('HTTP/1.0 403 Forbidden');
-                $this->core->error($this->vars->lang['bannedmessage']);
-            }
-            break;
-        case 'bstatus':
-            if (! X_ADMIN) {
-                header('HTTP/1.0 503 Service Unavailable');
-                header('Retry-After: 3600');
-                if ($this->vars->settings['bboffreason'] != '') {
-                    $this->core->message(nl2br($this->vars->settings['bboffreason']));
-                } else {
-                    $this->core->message($this->vars->lang['textbstatusdefault']);
+            case 'ip':
+                if (! X_ADMIN) {
+                    header('HTTP/1.0 403 Forbidden');
+                    $this->core->error($this->vars->lang['bannedmessage']);
                 }
-            }
-            break;
-        case 'guest':
-            if (X_GUEST) {
-                if ($this->vars->settings['regstatus'] == 'on') {
-                    $message = $this->vars->lang['reggedonly'].' '.$this->template->reglink.' '.$this->vars->lang['textor'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';
-                } else {
-                    $message = $this->vars->lang['reggedonly'].' <a href="misc.php?action=login">'.$this->vars->lang['textlogin'].'</a>';
+                break;
+            case 'bstatus':
+                $this->core->unavailable('bstatus');
+                // unavailable() should kill the script.
+            case 'guest':
+                if (X_GUEST) {
+                    $loginout = $this->core->getLoginLink();
+                    $reglink = $this->core->getRegistrationLink();
+                    if ($reglink !== '') {
+                        $reglink = ' ' . $reglink . ' ' . $this->vars->lang['textor'];
+                    }
+                    $message = $this->vars->lang['reggedonly'] . $reglink . ' ' . $loginout;
+                    $this->core->message($message);
                 }
-                $this->core->message($message);
-            }
-            break;
         }
     }
 }

@@ -1405,6 +1405,7 @@ $lang['upgrade_display_errors'] = "Your PHP server has <code>display_errors=On</
 $lang['upgrade_header'] = "Upgrade Script";
 $lang['upgrade_init'] = "Initializing Upgrade Engine...";
 $lang['upgrade_intro'] = "This procedure can upgrade the database from XMB versions 1.8 and greater, including \$ver Betas.";
+$lang['upgrade_maintenance'] = "A website upgrade is in progress. Please come back later.";
 $lang['upgrade_ready'] = "When you are ready,";
 $lang['upgrade_status'] = "Status Information";
 $lang['upgrade_step_1'] = "Disable your forums using the Board Status setting.";

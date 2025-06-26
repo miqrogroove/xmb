@@ -94,7 +94,6 @@ class Template
             'newu2umsg',
             'notify',
             'pluglink',
-            'reglink',
             'quickjump',
             'searchlink',
             'threadSubject',

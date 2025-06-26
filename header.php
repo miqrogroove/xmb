@@ -105,7 +105,7 @@ template()->init();
 $boot = new \XMB\Bootup(template(), vars());
 
 observer()->testSuperGlobals();
-observer()->assertEmptyOutputStream('the db/* and include/* files', use_debug: false);
+observer()->assertEmptyOutputStream('the include/* files', use_debug: false);
 
 ob_end_clean();
 
@@ -184,7 +184,7 @@ if (! core()->schemaHasSessions()) {
         define('XMB\X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
         unset($loader, $xmbuser, $xmbpw);
     } else {
-        // TODO: Need a generic upgrade mode response.
+        core()->unavailable('upgrade');
     }
     return;
 }
@@ -203,7 +203,7 @@ if (defined('XMB\UPGRADE')) {
     if (X_SADMIN) {
         core()->redirect(vars()->full_url . 'install/', timeout: 0);
     } else {
-        // TODO: Need a generic upgrade mode response (translated).
+        core()->unavailable('upgrade');
     }
 }
 
