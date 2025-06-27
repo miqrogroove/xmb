@@ -66,7 +66,7 @@ class ThemeManager
         $themeuser = (int) ($this->vars->self['theme'] ?? 0);
         if (! $validtheme && $themeuser > 0) {
             $theme = $themeuser;
-            $row = sql()->getThemeByID($theme);
+            $row = $this->sql->getThemeByID($theme);
             if (! ($validtheme = (! empty($row)))) {
                 $this->sql->resetUserTheme((int) $this->vars->self['uid']);
             }
@@ -87,7 +87,7 @@ class ThemeManager
             $row = $this->sql->getFirstTheme();
             if ($validtheme = (count($row) > 0)) {
                 $this->vars->settings['theme'] = $row['themeid'];
-                sql()->updateSetting('theme', $row['themeid']);
+                $this->sql->updateSetting('theme', $row['themeid']);
             }
         }
         if (! $validtheme) {

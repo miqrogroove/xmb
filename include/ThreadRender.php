@@ -286,7 +286,7 @@ class ThreadRender
             allowimgcode: $forum['allowimgcode'],
         );
 
-        if ($post['usesig'] == 'yes') {
+        if ($post['usesig'] == 'yes' && ! empty($post['sig'])) {
             $template->sig = $this->core->postify(
                 message: $post['sig'],
                 allowsmilies: $forum['allowsmilies'],
