@@ -230,8 +230,10 @@ class Login
                 }
                 break;
             case 'bstatus':
-                $this->core->unavailable('bstatus');
-                // unavailable() should kill the script.
+                if (! X_ADMIN) {
+                    $this->core->unavailable('bstatus');
+                }
+                break;
             case 'guest':
                 if (X_GUEST) {
                     $loginout = $this->core->getLoginLink();
