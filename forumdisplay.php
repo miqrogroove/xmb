@@ -75,14 +75,14 @@ if ($forum['type'] == 'sub') {
         $core->handlePasswordDialog((int) $fup['fid']);
     } else if ((int) $fup['fup'] > 0) {
         $fupup = $forums->getForum((int) $fup['fup']);
-        $core->nav('<a href="index.php?gid=' . $fup['fup'] . '">' . fnameOut($fupup['name']) . '</a>');
+        $core->nav('<a href="' . $vars->full_url . 'index.php?gid=' . $fup['fup'] . '">' . fnameOut($fupup['name']) . '</a>');
         unset($fupup);
     }
-    $core->nav('<a href="forumdisplay.php?fid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
+    $core->nav('<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
     unset($fup);
 } else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
     $fup = $forums->getForum((int) $forum['fup']);
-    $core->nav('<a href="index.php?gid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
+    $core->nav('<a href="' . $vars->full_url . 'index.php?gid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
     unset($fup);
 }
 $core->nav(fnameOut($forum['name']));
@@ -102,7 +102,7 @@ if ($forum['type'] == 'sub' && (int) $forum['threads'] != $threadcount) {
     $core->updateforumcount($fid, oldThreadCount: (int) $forum['threads']);
 }
 
-$mpage = $core->multipage($threadcount, $vars->tpp, "forumdisplay.php?fid=$fid");
+$mpage = $core->multipage($threadcount, $vars->tpp, $vars->full_url . "forumdisplay.php?fid=$fid");
 
 $header = $template->process('header.php');
 
@@ -264,16 +264,16 @@ if ($db->num_rows($querytop) == 0) {
 
 while ($thread = $db->fetch_array($querytop)) {
     null_string($thread['icon']);
-    if ($thread['icon'] !== '' && file_exists($smdir.'/'.$thread['icon'])) {
-        $thread['icon'] = '<img src="'.$smdir.'/'.$thread['icon'].'" alt="'.$thread['icon'].'" border="0" />';
+    if ($thread['icon'] !== '' && file_exists($vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'])) {
+        $thread['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'] . '" alt="' . $thread['icon'] . '" border="0" />';
     } else {
         $thread['icon'] = '';
     }
 
     if ('1' === $thread['topped']) {
-        $template->topimage = '<img src="' . $vars->theme['admdir'] . '/untop.gif" alt="' . $lang['textuntopthread'] . '" border="0" />';
+        $template->topimage = '<img src="' . $vars->full_url . $vars->theme['admdir'] . '/untop.gif" alt="' . $lang['textuntopthread'] . '" border="0" />';
     } else {
-        $template->topimage = '<img src="' . $vars->theme['admdir'] . '/top.gif" alt="' . $lang['alttopthread'] . '" border="0" />';
+        $template->topimage = '<img src="' . $vars->full_url . $vars->theme['admdir'] . '/top.gif" alt="' . $lang['alttopthread'] . '" border="0" />';
     }
 
     $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
@@ -283,7 +283,7 @@ while ($thread = $db->fetch_array($querytop)) {
     } elseif (is_null($thread['uid'])) {
         $template->authorlink = $thread['author'];
     } else {
-        $template->authorlink = '<a href="member.php?action=viewpro&amp;member='.recodeOut($thread['author']).'">'.$thread['author'].'</a>';
+        $template->authorlink = '<a href="' . $vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($thread['author']) . '">' . $thread['author'] . '</a>';
     }
 
     $prefix = '';
@@ -300,7 +300,7 @@ while ($thread = $db->fetch_array($querytop)) {
     $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
     if ($thread['closed'] == 'yes') {
-        $folder = '<img src="' . $vars->theme['imgdir'] . '/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
+        $folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
     } else {
         if ((int) $thread['replies'] >= (int) $SETTINGS['hottopic']) {
             $folder = 'hot_folder.gif';
@@ -321,7 +321,7 @@ while ($thread = $db->fetch_array($querytop)) {
             $folder = 'dot_'.$folder;
         }
 
-        $folder = '<img src="' . $vars->theme['imgdir'] . '/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
+        $folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
     }
 
     $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
@@ -336,7 +336,7 @@ while ($thread = $db->fetch_array($querytop)) {
         $thread['tid'] = $moved[1];
         $thread['replies'] = "-";
         $thread['views'] = "-";
-        $folder = '<img src="' . $vars->theme['imgdir'] . '/lock_folder.gif" alt="'.$lang['altclosedtopic'].'" border="0" />';
+        $folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/lock_folder.gif" alt="' . $lang['altclosedtopic'] . '" border="0" />';
         $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE tid='$thread[tid]'");
         $postnum = 0;
         if ($query !== false) {
@@ -416,7 +416,7 @@ if (strlen($template->mpage) != 0) {
 
 if ($status1 == 'Moderator') {
     if (X_ADMIN) {
-        $template->fadminlink = '<a href="cp.php?action=forum&amp;fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
+        $template->fadminlink = '<a href="' . $vars->full_url . 'cp.php?action=forum&amp;fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->full_url . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
     } else {
         $template->fadminlink = '';
     }
