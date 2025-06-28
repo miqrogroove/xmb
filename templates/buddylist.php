@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
 <title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
-<script language="JavaScript" type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
+<script type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <title><?= $lang['banu2u'] ?> - <?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
-<script language="JavaScript" type="text/javascript" src="<?= $full_url ?>js/u2uheader.js"></script>
+<script type="text/javascript" src="<?= $full_url ?>js/u2uheader.js"></script>
 <?= $css ?>
 </head>
 <body text="<?= $THEME['text'] ?>">

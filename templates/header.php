@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=500, initial-scale=1" />
 <title><?= $threadSubject ?><?= $SETTINGS['bbname'] ?> - <?= $versionlong ?></title>
 <?= $css ?>
-<script language="JavaScript" type="text/javascript" src="<?= $full_url ?>js/header.js?v=2"></script>
+<script type="text/javascript" src="<?= $full_url ?>js/header.js?v=2"></script>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <?= $bbcodescript ?>

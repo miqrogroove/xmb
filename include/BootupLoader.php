@@ -241,7 +241,7 @@ class BootupLoader
             $newu2umsg = "<a href='u2u.php' onclick=\"Popup(this.href, 'Window', 700, 450); return false;\">" . $this->vars->lang['newu2u1'] . ' ' . $newu2unum . ' ' . $this->vars->lang['newu2u2'] . '</a>';
             // Popup Alert
             if ('2' === $this->vars->self['u2ualert'] || ('1' === $this->vars->self['u2ualert'] && 'index.php' === basename($_SERVER['SCRIPT_NAME']))) {
-                $newu2umsg .= '<script language="JavaScript" type="text/javascript">function u2uAlert() { ';
+                $newu2umsg .= '<script type="text/javascript">function u2uAlert() { ';
                 if ($newu2unum == 1) {
                     $newu2umsg .= 'u2uAlertMsg = "' . $this->vars->lang['newu2u1'] . ' ' . $newu2unum . $this->vars->lang['u2ualert5'] . '"; ';
                 } else {

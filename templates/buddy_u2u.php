@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
-<script type="text/javascript" language="JavaScript" src="<?= $full_url ?>js/buddy.js"></script>
+<script type="text/javascript" src="<?= $full_url ?>js/buddy.js"></script>
 <title><?= $SETTINGS['bbname'] ?> - <?= $lang['textbuddylist'] ?> - <?= $lang['textpowered'] ?></title>
 </head>
 <body text="<?= $THEME['text'] ?>">

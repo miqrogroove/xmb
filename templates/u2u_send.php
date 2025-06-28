@@ -1,4 +1,4 @@
-<script type="text/javascript" language="JavaScript">
+<script type="text/javascript">
 var sendMode = true;
 </script>
 <form method="post" action="<?= $full_url ?>u2u.php?action=send">

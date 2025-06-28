@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
 <title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
-<script type="text/javascript" language="JavaScript" src="<?= $full_url?>js/buddylistedit.js"></script>
+<script type="text/javascript" src="<?= $full_url?>js/buddylistedit.js"></script>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">

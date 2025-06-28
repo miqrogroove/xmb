@@ -1,5 +1,5 @@
-<script type="text/javascript" language="JavaScript" src="./js/ticker.js"></script>
-<script type="text/javascript" language="JavaScript">
+<script type="text/javascript" src="<?= $full_url ?>js/ticker.js"></script>
+<script type="text/javascript">
 <!--//--><![CDATA[//><!--
 var stopticker = "<?= $lang['stopticker'] ?>";
 var startticker = "<?= $lang['startticker'] ?>";

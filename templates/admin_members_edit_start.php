@@ -1,4 +1,4 @@
-<script language="javascript" type="text/javascript">var delmem = Array();</script>
+<script type="text/javascript">var delmem = Array();</script>
 <tr bgcolor="<?= $THEME['altbg2'] ?>">
 <td align="center">
 <form method="post" action="<?= $full_url ?>admin/members.php">

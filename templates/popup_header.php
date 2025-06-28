@@ -4,10 +4,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <?= $css ?>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 var messageElement = opener.document.getElementById("message");
 </script>
-<script language="JavaScript" type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
+<script type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
 <?= $bbcodescript ?>
 <title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
 </head>
