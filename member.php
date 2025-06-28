@@ -102,6 +102,14 @@ switch ($action) {
                     // First hit should be a GET with no token expected.
                     break;
                 case 1:
+                    // Check if Javascript is working.
+                    if ('on' == $SETTINGS['google_captcha']) {
+                        $jsToken = getPhpInput('jscheck', sourcearray: 'c');
+                        if (! $token->consume($jsToken, 'Registration', 'jscheck')) {
+                            $core->error($lang['bad_token']);
+                        }
+                    }
+                    // no-break
                 case 2:
                 case 3:
                 case 4:
@@ -383,6 +391,13 @@ switch ($action) {
                 // Every step except 'done' will require new tokens.
                 $template->token = $token->create('Registration', (string) $stepout, $vars::NONCE_FORM_EXP, anonymous: true);
                 $core->put_cookie('register', $template->token, time() + $vars::NONCE_FORM_EXP);
+
+                // For step 1, also check if Javascript is working.
+                if ('on' == $SETTINGS['google_captcha']) {
+                    $jsToken = $token->create('Registration', 'jscheck', $vars::NONCE_FORM_EXP, anonymous: true);
+                    $js = $core->jsCookie('jscheck', $jsToken);
+                    $template->css .= "<script type='text/javascript'>$js</script>\n";
+                }
 
                 $memberpage = $template->process('member_reg_intro.php');
             }

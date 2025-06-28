@@ -1121,6 +1121,21 @@ class Core
     }
 
     /**
+     * Creates a Javascript cookie statement.
+     *
+     * @since 1.10.00
+     */
+    public function jsCookie(string $name, string $value = ''): string
+    {
+        $value = urlencode($value); // PHP expects all cookie input to be encoded by urlencode() or setcookie().
+        $path = $this->vars->cookiepath;
+        $secure = $this->vars->cookiesecure ? '; secure' : '';
+        $samesite = 'Lax';
+        
+        return "document.cookie = '$name=$value; path=$path; SameSite=$samesite$secure';";
+    }
+
+    /**
      * Record a moderator or admin action for auditing.
      *
      * @since 1.9.1

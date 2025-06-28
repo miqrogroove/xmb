@@ -107,14 +107,14 @@ class ThemeManager
                 . $this->vars->full_url . "css.php"
                 . "?id=" . $this->vars->theme['themeid']
                 . "&amp;v=" . $this->vars->theme['version']
-                . "' />";
+                . "' />\n";
         }
 
         // additional CSS to load?
         if (file_exists(ROOT . $this->vars->theme['imgdir'] . '/theme.css')) {
-            $this->template->css .= "\n<link rel='stylesheet' type='text/css' href='"
+            $this->template->css .= "<link rel='stylesheet' type='text/css' href='"
                 . $this->vars->full_url . $this->vars->theme['imgdir']
-                . "/theme.css' />";
+                . "/theme.css' />\n";
         }
     }
 
