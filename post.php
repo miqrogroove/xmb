@@ -555,7 +555,7 @@ switch ($action) {
                     }
 
                     $translate = $lang2[$subs['langfile']];
-                    $topicpages = $core->quickpage($posts, $subs['ppp']);
+                    $topicpages = $core->quickpage($posts, (int) $subs['ppp']);
                     $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                     $threadurl = $vars->full_url . 'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
                     $rawsubject = rawHTML($threadname);

@@ -64,14 +64,14 @@ if (noSubmit('pruneSubmit')) {
     $core->request_secure('Control Panel/Prune', '');
     $pruneByDate = $validate->postedArray('pruneByDate');
     $pruneByPosts = $validate->postedArray('pruneByPosts');
-    $pruneFrom = $validate->postedVar('pruneFrom', '', false, false);
+    $pruneFrom = getPhpInput('pruneFrom');
     $pruneFromList = $validate->postedArray('pruneFromList', 'int');
-    $pruneFromFid = $validate->postedVar('pruneFromFid', '', false, false);
+    $pruneFromFid = getPhpInput('pruneFromFid');
     $pruneType = $validate->postedArray('pruneType', 'int');
 
     $queryWhere = [];
     // let's check what to prune first
-    switch($pruneFrom) {
+    switch ($pruneFrom) {
         case 'all':
             break;
         case 'list':
@@ -124,7 +124,7 @@ if (noSubmit('pruneSubmit')) {
     }
 
     if (isset($pruneByDate['check']) && '1' === $pruneByDate['check']) {
-        switch($pruneByDate['type']) {
+        switch ($pruneByDate['type']) {
             case 'less':
                 $queryWhere[] = 'lastpost > "' . (time()-(24*3600*$pruneByDate['date'])) . '"';
                 break;
@@ -136,19 +136,19 @@ if (noSubmit('pruneSubmit')) {
                 $queryWhere[] = 'lastpost < "' . (time()-(24*3600*$pruneByDate['date'])) . '"';
                 break;
         }
-    } else if ($sign == '') {
+    } elseif ($sign == '') {
         $queryWhere[] = '1=0'; //Neither 'prune by' option was set, prune should abort.
     }
 
-    if (!isset($pruneType['closed']) || $pruneType['closed'] != 1) {
+    if (! isset($pruneType['closed']) || $pruneType['closed'] != 1) {
         $queryWhere[] = "closed != 'yes'";
     }
 
-    if (!isset($pruneType['topped']) || $pruneType['topped'] != 1) {
+    if (! isset($pruneType['topped']) || $pruneType['topped'] != 1) {
         $queryWhere[] = 'topped != 1';
     }
 
-    if (!isset($pruneType['normal']) || $pruneType['normal'] != 1) {
+    if (! isset($pruneType['normal']) || $pruneType['normal'] != 1) {
         $queryWhere[] = "(topped == 1 OR closed == 'yes')";
     }
 
@@ -158,7 +158,7 @@ if (noSubmit('pruneSubmit')) {
         $queryWhere = implode(' AND ', $queryWhere);
         $q = $db->query("SELECT tid, fid FROM " . $vars->tablepre . "threads WHERE ".$queryWhere);
         if ($db->num_rows($q) > 0) {
-            while($t = $db->fetch_array($q)) {
+            while ($t = $db->fetch_array($q)) {
                 $tids[] = $t['tid'];
                 $fids[] = $t['fid'];
             }
