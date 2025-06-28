@@ -18,13 +18,15 @@ You will need a MySQL database and connection details to get started.
 
 Composer is required.  Install it according to the [instructions](https://getcomposer.org/doc/00-intro.md).
 
-Create a directory for the new site.  Make sure it's not owned by the root user.
+Create a directory for the site.  Make sure it's not owned by the root user.
 
 Clone XMB into the current directory using `git clone https://github.com/miqrogroove/xmb.git ./`
 
 Install the XMB dependencies using `composer install` in the same directory.
 
-Visit the /install/ path on the website to create the config file and the database tables.
+If attempting to upgrade an existing site, remember to copy any customizations of config and images (themes and smilies).
+
+Visit the /install/ path on the website to complete the setup.
 
 ## Getting Involved
 
