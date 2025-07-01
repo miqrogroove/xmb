@@ -92,7 +92,7 @@ if ($action == 'edit') {
 } elseif ($action == 'newthread') {
     $fid = getRequestInt('fid');
     $forum = $forums->getForum($fid);
-    if ($forum === FALSE) {
+    if ($forum === null) {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnoforum']);
     }

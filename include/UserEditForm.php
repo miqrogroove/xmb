@@ -52,7 +52,7 @@ class UserEditForm
         private Validation $validate,
         private Variables $vars,
     ) {
-        $this->template = new \XMB\Template($vars);
+        $this->template = new Template($vars);
         $this->template->addRefs();
         
         if (! isset($targetUser['username'])) {
@@ -88,7 +88,6 @@ class UserEditForm
 
         if ($this->formMode == 'new') {
             // From template member_reg
-            $template->checked = '';
             $template->subschecked = '';
             $template->newschecked = $vars::cheHTML;
             $template->ogu2uchecked = $vars::cheHTML;
@@ -505,7 +504,7 @@ class UserEditForm
         $dateformattest = attrOut($dateformat, 'javascript');
         // Never allow attribute-special data in the date format because it can be unescaped using the date() parser.
         if (empty($dateformat) || $dateformat !== $dateformattest) {
-            $dateformat = $this->vars->settings['dateformat'];
+            $this->edits['dateformat'] = $this->vars->settings['dateformat'];
         } elseif ($this->formMode == 'new' || $this->targetUser['dateformat'] != $dateformat) {
             $this->edits['dateformat'] = $dateformat;
         }

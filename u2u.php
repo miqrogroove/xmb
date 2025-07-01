@@ -181,17 +181,17 @@ switch ($action) {
 }
 
 if (! X_STAFF) {
-    $percentage = (0 == (int) $SETTINGS['u2uquota']) ? 0 : (float)(($u2ucount / (int) $SETTINGS['u2uquota']) * 100);
+    $percentage = (0 == (int) $vars->settings['u2uquota']) ? 0 : (float)(($u2ucount / (int) $vars->settings['u2uquota']) * 100);
     if ($percentage > 100) {
         $template->barwidth = 100;
-        $search  = [ '$u2ucount', '$u2uquota'            ];
-        $replace = [  $u2ucount,   $SETTINGS['u2uquota'] ];
+        $search  = ['$u2ucount', '$u2uquota'];
+        $replace = [$u2ucount, $vars->settings['u2uquota']];
         $template->uqinfo = str_replace($search, $replace, $lang['evaluqinfo_over']);
     } else {
         $percent = number_format($percentage, 2);
         $template->barwidth = number_format($percentage, 0);
-        $search  = [ '$u2ucount', '$percent', '$u2uquota'            ];
-        $replace = [  $u2ucount,   $percent,   $SETTINGS['u2uquota'] ];
+        $search  = ['$u2ucount', '$percent', '$u2uquota'];
+        $replace = [$u2ucount, $percent, $vars->settings['u2uquota']];
         $template->uqinfo = str_replace($search, $replace, $lang['evaluqinfo']);
     }
 } else {

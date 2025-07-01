@@ -44,7 +44,7 @@ if (onSubmit('gid')) {
     $SETTINGS['index_stats'] = 'off';
     $cat = $forumcache->getForum($gid);
 
-    if ($cat === false) {
+    if ($cat === null) {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnocat']);
     } elseif ($cat['type'] != 'group') {

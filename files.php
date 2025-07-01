@@ -125,7 +125,7 @@ if (empty($file)) {
 if ($pid > 0 || $file['fid'] != '') {
     $forum = $forums->getForum((int) $file['fid']);
 
-    if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
+    if (null === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on' || ($forum['attachstatus'] != 'on' && !X_ADMIN)) {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnothread']);
     }
@@ -134,7 +134,7 @@ if ($pid > 0 || $file['fid'] != '') {
     $perms = $core->checkForumPermissions($forum);
     if (! $perms[$vars::PERMS_VIEW]) {
         if (X_GUEST) {
-            $core->redirect("{$full_url}misc.php?action=login", timeout: 0);
+            $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
             exit;
         } else {
             $core->error($lang['privforummsg']);
@@ -150,7 +150,7 @@ if ($pid > 0 || $file['fid'] != '') {
         $fupPerms = $core->checkForumPermissions($fup);
         if (! $fupPerms[$vars::PERMS_VIEW]) {
             if (X_GUEST) {
-                $core->redirect("{$full_url}misc.php?action=login", timeout: 0);
+                $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
                 exit;
             } else {
                 $core->error($lang['privforummsg']);

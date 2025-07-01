@@ -45,6 +45,8 @@ $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
 $action = getPhpInput('action', sourcearray: 'g');
+$softErrors = '';
+
 switch ($action) {
     case 'reg':
         $core->nav($lang['textregister']);
@@ -208,8 +210,7 @@ switch ($action) {
                         // Check coppa results
                         $age = formInt('age');
                         if ($age <= 0) {
-                            // Input was invalid, try again.
-                            $stepout = $stepin;
+                            $softErrors .= $core->softerror($lang['input_missing']);
                         } elseif ($age < 13) {
                             $core->put_cookie('privacy', 'xmb');
                             $core->message($lang['coppa_fail']);
@@ -226,7 +227,8 @@ switch ($action) {
                     break;
                 case 5:
                     // Check profile results
-                    $form = new \XMB\UserEditForm([], [], $core, $db, $sql, $theme, $tran, $validate, $vars);
+                    $self = [];
+                    $form = new UserEditForm($self, $self, $core, $db, $sql, $theme, $tran, $validate, $vars);
                     $form->readBirthday();
                     $form->readCallables();
                     $form->readOptions();
@@ -287,7 +289,7 @@ switch ($action) {
                     } else {
                         $newPass = $core->assertPasswordPolicy('password', 'password2');
                     }
-                    $passMan = new \XMB\Password($sql);
+                    $passMan = new Password($sql);
                     $self['password2'] = $passMan->hashPassword($newPass);
 
                     $efail = false;
@@ -385,6 +387,8 @@ switch ($action) {
             }
 
             // Generate form outputs
+            if ($softErrors !== '') $stepout--;
+
             $template->stepout = $stepout;
             
             if (1 == $stepout) {
@@ -405,7 +409,7 @@ switch ($action) {
             if (2 == $stepout) {
                 if ('on' == $SETTINGS['google_captcha']) {
                     // Display reCAPTCHA
-                    $template->css .= "\n<script src='https://www.google.com/recaptcha/api.js' async defer></script>";
+                    $template->css .= "<script src='https://www.google.com/recaptcha/api.js' async defer></script>\n";
 
                     // Every step except 'done' will require new tokens.
                     $template->token = $token->create('Registration', (string) $stepout, $vars::NONCE_FORM_EXP, anonymous: true);
@@ -488,7 +492,8 @@ switch ($action) {
 
             if (5 == $stepout) {
                 // Display new user form
-                $form = new \XMB\UserEditForm([], [], $core, $db, $sql, $theme, $tran, $validate, $vars);
+                $self = [];
+                $form = new UserEditForm($self, $self, $core, $db, $sql, $theme, $tran, $validate, $vars);
                 $form->setOptions();
                 $form->setCallables();
                 $form->setBirthday();
@@ -775,4 +780,4 @@ switch ($action) {
 
 $template->footerstuff = $core->end_time();
 $footer = $template->process('footer.php');
-echo $header, $memberpage, $footer;
+echo $header, $softErrors, $memberpage, $footer;

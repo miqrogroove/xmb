@@ -158,7 +158,7 @@ class U2U
                 }
 
                 if ($rcpt['emailonu2u'] == 'yes' && $rcpt['status'] != 'Banned') {
-                    $lang2 = $tran->loadPhrases(['charset', 'textnewu2uemail', 'textnewu2ubody']);
+                    $lang2 = $this->tran->loadPhrases(['charset', 'textnewu2uemail', 'textnewu2ubody']);
                     $translate = $lang2[$rcpt['langfile']];
                     $u2uurl = $this->vars->full_url . 'u2u.php';
                     $rawusername = rawHTML($this->vars->self['username']);

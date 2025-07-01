@@ -54,7 +54,7 @@ class ThemeManager
             }
         } elseif ($fid > 0) {
             $forum = $this->forums->getForum($fid);
-            if (false === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
+            if (null === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
                 $forumtheme = 0;
             } else {
                 $forumtheme = (int) $forum['theme'];

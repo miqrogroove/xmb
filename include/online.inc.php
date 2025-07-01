@@ -98,7 +98,7 @@ class URL2Text
                     $location = "{$lang['onlineforumdisplay']} " . $this->fname[$fid];
                 } else {
                     $locate = $this->forums->getForum($fid);
-                    if (false !== $locate) {
+                    if (null !== $locate) {
                         $perms = $this->core->checkForumPermissions($locate);
                         if ($this->vars->settings['hideprivate'] == 'off' || $locate['type'] == 'group' || $perms[$this->vars::PERMS_VIEW]) {
                             $this->fname[$fid] = fnameOut($locate['name']);
@@ -136,7 +136,7 @@ class URL2Text
                 $temp = explode('?', $url);
                 $gid = (int) str_replace('gid=', '', $temp[1]);
                 $cat = $this->forums->getForum($gid);
-                if ($cat === FALSE) {
+                if ($cat === null) {
                     $location = $lang['onlinecatunknown'];
                 } elseif ($cat['type'] != 'group') {
                     $location = $lang['onlinecatunknown'];

@@ -461,6 +461,7 @@ $lang['indexShowBarDesc'] = "Where should, in the forumlist, the tableheader be 
 $lang['indexShowBarNone'] = "Nowhere";
 $lang['indexShowBarTop'] = "Top of the page only";
 $lang['index_stats'] = "Index Stats Bar Status:<br /><span class=\"smalltxt\">This option will enable/disable the stats bar on index.</span>";
+$lang['input_missing'] = "You did not provide the required information. Please try again.";
 $lang['insertdata'] = "Insert your Data";
 $lang['installing'] = "Installing XMB";
 $lang['install_db_connect'] = "Database Connection";
@@ -1419,7 +1420,7 @@ $lang['uploadinstead'] = "&nbsp;Upload this file instead:";
 $lang['usercpeditpromsg'] = "You have successfully edited your profile. Taking you back to the user control panel.";
 $lang['userip'] = "Search for user with the following IP address";
 $lang['usernamechars'] = "Usernames may contain printable characters except []'&lt;&gt;\\|&quot;,@";
-$lang['username_length_invalid'] = "The length of the username you supplied is invalid. Please ensure it is a minimum of 3 characters and a maximum of 32 characters.";
+$lang['username_length_invalid'] = "The username you supplied is invalid. Please ensure it is a minimum of 3 characters and a maximum of 32 characters.";
 $lang['userprofilemood'] = "Current Mood:";
 $lang['verificationnote'] = "Please enter the text contained within the image into the textbox below it. This process is used to prevent automated bots.";
 $lang['version_check'] = "Version Check";

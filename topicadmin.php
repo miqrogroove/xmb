@@ -66,7 +66,7 @@ if (count($tids) == 1) {
 
 $forums = $forumCache->getForum($fid);
 
-if (false === $forums || ($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
+if (null === $forums || ($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
     $core->error($lang['textnoforum']);
 }
@@ -304,7 +304,7 @@ switch ($action) {
             $type = $validate->postedVar('type');
 
             $movetorow = $forumCache->getForum($moveto);
-            if ($movetorow === false) {
+            if ($movetorow === null) {
                 $core->error($lang['textnoforum']);
             }
             if ($movetorow['type'] == 'group' || $moveto == $fid) {
@@ -778,7 +778,7 @@ switch ($action) {
             $newfid = getRequestInt('newfid');
 
             $otherforum = $forumCache->getForum($newfid);
-            if ($otherforum === false) {
+            if ($otherforum === null) {
                 $core->error($lang['textnoforum']);
             }
 

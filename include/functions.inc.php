@@ -485,7 +485,7 @@ class Core
     public function modcheckForum(int $fid): bool
     {
         $forum = $this->forums->getForum($fid);
-        if ($forum === false) {
+        if ($forum === null) {
             return false;
         }
 

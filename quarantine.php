@@ -73,7 +73,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     } else {
         $fid = getInt('fid');
         $forum = $forums->getForum($fid);
-        if (false === $forum) {
+        if (null === $forum) {
             $core->error($lang['textnoforum'], showheader: false, append: '</td></tr></table></td></tr></table>');
         }
 

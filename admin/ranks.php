@@ -89,12 +89,12 @@ if (noSubmit('rankssubmit')) {
     $core->request_secure('Control Panel/User Ranks', 'mass-edit');
     $id = $validate->postedArray('id', 'int');
     $delete = $validate->postedArray('delete', 'int');
-    $title = $validate->postedArray('title', htmlencode: false);
+    $title = $validate->postedArray('title', htmlencode: false, dbescape: false);
     $posts = $validate->postedArray('posts', 'int');
     $stars = $validate->postedArray('stars', 'int');
     $allowavatars = $validate->postedArray('allowavatars', 'yesno');
     $avaurl = $validate->postedArray('avaurl', word: 'javascript', quoteencode: true);
-    $newtitle = $validate->postedVar('newtitle', '', false);
+    $newtitle = $validate->postedVar('newtitle', htmlencode: false, dbescape: false);
     $newposts = formInt('newposts');
     $newstars = formInt('newstars');
     $newallowavatars = formYesNo('newallowavatars');
