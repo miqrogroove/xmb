@@ -33,7 +33,7 @@ use InvalidArgumentException;
  */
 class Schema
 {
-    public const VER = 11;
+    public const VER = 12;
     
     public function __construct(private DBStuff $db, private Variables $vars)
     {
@@ -306,8 +306,8 @@ class Schema
                   `theme` smallint NOT NULL DEFAULT 0,
                   `bday` varchar(10) NOT NULL DEFAULT '0000-00-00',
                   `langfile` varchar(40) NOT NULL DEFAULT '',
-                  `tpp` smallint NOT NULL DEFAULT 0,
-                  `ppp` smallint NOT NULL DEFAULT 0,
+                  `tpp` smallint NOT NULL DEFAULT 30,
+                  `ppp` smallint NOT NULL DEFAULT 30,
                   `newsletter` char(3) NOT NULL DEFAULT '',
                   `regip` varchar(39) NOT NULL DEFAULT '',
                   `timeformat` int NOT NULL DEFAULT 0,

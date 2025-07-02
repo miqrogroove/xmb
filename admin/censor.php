@@ -65,30 +65,27 @@ if (noSubmit('censorsubmit')) {
     }
     $body .= $template->process('admin_censor_end.php');
 } else {
-    $newfind = $validate->postedVar('newfind', 'javascript');
-    $newreplace = $validate->postedVar('newreplace', 'javascript');
-    $querycensor = $db->query("SELECT id FROM " . $vars->tablepre . "words");
-    while($censor = $db->fetch_array($querycensor)) {
-        $find = $validate->postedVar('find'.$censor['id']);
-        $replace = $validate->postedVar('replace'.$censor['id']);
-        $delete = formInt('delete'.$censor['id']);
+    $newfind = $validate->postedVar('newfind', 'javascript', quoteencode: true);
+    $newreplace = $validate->postedVar('newreplace', 'javascript', quoteencode: true);
+    $censors = $sql->getCensors();
+    foreach ($censors as $censor) {
+        $id = (int) $censor['id'];
+        $find = $validate->postedVar('find' . $id, quoteencode: true);
+        $replace = $validate->postedVar('replace' . $id, quoteencode: true);
+        $delete = formInt('delete' . $id);
 
-        if ($delete) {
-            $db->query("DELETE FROM " . $vars->tablepre . "words WHERE id=$delete");
-        }
-
-        if ($find) {
-            $db->query("UPDATE " . $vars->tablepre . "words SET find='$find', replace1='$replace' WHERE id='$censor[id]'");
+        if ($delete === $id) {
+            $db->query("DELETE FROM " . $vars->tablepre . "words WHERE id = $id");
+        } elseif ($find !== $censor['find'] || $replace !== $censor['replace1']) {
+            $db->query("UPDATE " . $vars->tablepre . "words SET find = '$find', replace1 = '$replace' WHERE id = $id");
         }
     }
-    $db->free_result($querycensor);
 
     if ($newfind) {
         $db->query("INSERT INTO " . $vars->tablepre . "words (find, replace1) VALUES ('$newfind', '$newreplace')");
     }
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['censorupdate'] . '</td></tr>';
 }
-
 
 $endTable = $template->process('admin_table_end.php');
 

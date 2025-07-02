@@ -95,7 +95,9 @@ class Upgrade
                 $this->upgrade_schema_to_v11();
                 // No break
             case 11:
-                // Future use. Break only before case default.
+                $this->upgrade_schema_to_v12();
+
+                // Break only before case default.
                 break;
             default:
                 $this->show->error('Unrecognized Database!  This upgrade utility is not compatible with your version of XMB.  Upgrade halted to prevent damage.');
@@ -1795,11 +1797,12 @@ class Upgrade
         if (! $this->schema->indexExists($table, 'username', 'userunique')) {
             $this->show->progress('Removing duplicate username records');
             $query = $this->upgrade_query('SELECT username, MIN(uid) AS firstuser FROM ' . $this->vars->tablepre . $table.' GROUP BY username HAVING COUNT(*) > 1');
-            while($dupe = $this->db->fetch_array($query)) {
+            while ($dupe = $this->db->fetch_array($query)) {
                 $name = $this->db->escape($dupe['username']);
                 $id = $dupe['firstuser'];
                 $this->upgrade_query('DELETE FROM ' . $this->vars->tablepre . $table." WHERE username = '$name' AND uid != $id");
             }
+            $this->db->free_result($query);
             $sql[] = "ADD UNIQUE INDEX `userunique` (`username`)";
         }
 
@@ -1825,6 +1828,7 @@ class Upgrade
         $this->show->progress('Reading the settings table data');
         $query = $this->upgrade_query('SELECT * FROM ' . $this->vars->tablepre . $table);
         $settings = $this->db->fetch_array($query);
+        $this->db->free_result($query);
         $settings['google_captcha'] = 'off';
         $settings['google_captcha_sitekey'] = '';
         $settings['google_captcha_secret'] = '';
@@ -1978,6 +1982,7 @@ class Upgrade
             $this->show->progress('Adding data to the settings table');
             $this->upgrade_query('INSERT INTO ' . $this->vars->tablepre . $table.' SET value = "off", name = "images_https_only"');
         }
+        $this->db->free_result($query);
 
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '8' WHERE name = 'schema_version'");
@@ -2202,17 +2207,110 @@ class Upgrade
         $this->show->progress('Deleting obsolete settings');
         $this->upgrade_query("DELETE FROM " . $this->vars->tablepre . "settings WHERE name = 'spellcheck'");
 
-        $this->show->progress('Resetting the theme version numbers');
-        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "themes SET version = version + 1");
-
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '11' WHERE name = 'schema_version'");
     }
 
-// TODO: Schema 12
-//  Reset any members.tpp and members.ppp values that don't conform to $this->vars::PAGING_MIN and $this->vars::PAGING_MAX.
-//  Add settings mailer_host, mailer_password, mailer_port, mailer_type, mailer_username, mailer_tls, mailer_dkim_key_path, mailer_dkim_domain, mailer_dkim_selector.
-//  Bump theme versions here instead of schema 11.
+    /**
+     * Performs all tasks needed to raise the database schema_version number to 12.
+     *
+     * @since 1.10.00
+     */
+    function upgrade_schema_to_v12()
+    {
+        $table = 'members';
+        $sql = [];
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Gathering schema information from the $table table");
+        $columns = [
+            'ppp' => 'smallint NOT NULL DEFAULT 30',
+            'tpp' => 'smallint NOT NULL DEFAULT 30',
+        ];
+        foreach ($columns as $colname => $coltype) {
+            $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table . ' ' . $colname);
+            $row = $this->db->fetch_array($query);
+            if ($row['Default'] === '0') {
+                $sql[] = 'MODIFY COLUMN ' . $colname . ' ' . $coltype;
+            }
+            $this->db->free_result($query);
+        }
+
+        if (count($sql) > 0) {
+            $this->show->progress("Adjusting columns in the $table table");
+            $sql = 'ALTER TABLE ' . $this->vars->tablepre . $table . ' ' . implode(', ', $sql);
+            $this->upgrade_query($sql);
+        }
+
+        $this->show->progress("Adjusting any out-of-limit values in the $table table");
+        $sql = 'UPDATE ' . $this->vars->tablepre . $table . ' SET ppp = ' . $this->vars::PAGING_MIN . ' WHERE ppp < ' . $this->vars::PAGING_MIN;
+        $this->upgrade_query($sql);
+        $sql = 'UPDATE ' . $this->vars->tablepre . $table . ' SET ppp = ' . $this->vars::PAGING_MAX . ' WHERE ppp > ' . $this->vars::PAGING_MAX;
+        $this->upgrade_query($sql);
+        $sql = 'UPDATE ' . $this->vars->tablepre . $table . ' SET tpp = ' . $this->vars::PAGING_MIN . ' WHERE tpp < ' . $this->vars::PAGING_MIN;
+        $this->upgrade_query($sql);
+        $sql = 'UPDATE ' . $this->vars->tablepre . $table . ' SET tpp = ' . $this->vars::PAGING_MAX . ' WHERE tpp > ' . $this->vars::PAGING_MAX;
+        $this->upgrade_query($sql);
+
+        $table = 'settings';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+        $this->show->progress("Gathering schema information from the $table table");
+
+        $fields = [
+            'mailer_host',
+            'mailer_password',
+            'mailer_port',
+            'mailer_type',
+            'mailer_username',
+            'mailer_tls',
+            'mailer_dkim_key_path',
+            'mailer_dkim_domain',
+            'mailer_dkim_selector',
+        ];
+        $sqlFields = "'" . implode("','", $fields) . "'";
+        $result = $this->upgrade_query('SELECT name FROM ' . $this->vars->tablepre . $table . " WHERE name IN ($sqlFields)");
+        if ($this->db->num_rows($result) < count($fields)) {
+            $this->show->progress("Adding data to the $table table");
+            $exists = $this->db->fetch_all($result);
+            foreach ($fields as $field) {
+                if (! in_array($field, $exists)) {
+                    $this->upgrade_query('INSERT INTO ' . $this->vars->tablepre . $table . " SET value = '', name = '$field'");
+                }
+            }
+        }
+        $this->db->free_result($result);
+
+        $table = 'restricted';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Revising any HTML in the $table table");
+        $result = $this->upgrade_query('SELECT name, id FROM ' . $this->vars->tablepre . $table);
+        $restrictions = $this->db->fetch_all($result);
+        foreach ($restrictions as $restrict) {
+            $newname = attrOut($restrict['name']);
+            if ($newname !== $restrict['name']) {
+                $id = $restrict['id'];
+                $this->db->escape_fast($newname);
+                $this->upgrade_query('UPDATE ' . $this->vars->tablepre . $table . " SET name = '$newname' WHERE id = $id");
+            }
+        }
+        $this->db->free_result($result);
+
+        $this->show->progress("Releasing the lock on the $table table");
+        $this->upgrade_query('UNLOCK TABLES');
+
+        $this->show->progress('Resetting the theme version numbers');
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "themes SET version = version + 1");
+
+        $this->show->progress('Resetting the schema version number');
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '12' WHERE name = 'schema_version'");
+    }
 
     /**
      * Recalculates the value of every field in the forums.postperm column.

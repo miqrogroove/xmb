@@ -59,20 +59,17 @@ if (noSubmit('smiliesubmit')) {
     $template->token = $token->create('Control Panel/Smilies', 'mass-edit', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_smilies_start.php');
 
-    $query = $db->query("SELECT code, id, url FROM " . $vars->tablepre . "smilies WHERE type='smiley'");
     $rows = $sql->getSmilies();
     foreach ($rows as $template->smilie) {
         $body .= $template->process('admin_smilies_srow.php');
     }
-    $db->free_result($query);
 
     $body .= $template->process('admin_smilies_middle.php');
 
-    $query = $db->query("SELECT * FROM " . $vars->tablepre . "smilies WHERE type='picon' ORDER BY id");
-    while($template->smilie = $db->fetch_array($query)) {
+    $rows = $sql->getPostIcons();
+    foreach ($rows as $template->smilie) {
         $body .= $template->process('admin_smilies_prow.php');
     }
-    $db->free_result($query);
 
     $body .= $template->process('admin_smilies_end.php');
 } else {
@@ -82,54 +79,54 @@ if (noSubmit('smiliesubmit')) {
     $smcode = $validate->postedArray('smcode', word: 'javascript', quoteencode: true);
     $smurl = $validate->postedArray('smurl', word: 'javascript', quoteencode: true);
 
-    $newcode = $validate->postedVar('newcode');
-    $newurl1 = $validate->postedVar('newurl1');
+    $newcode = $validate->postedVar('newcode', quoteencode: true);
+    $newurl1 = $validate->postedVar('newurl1', quoteencode: true);
     $autoinsertsmilies = formInt('autoinsertsmilies');
 
     $pidelete = $validate->postedArray('pidelete', 'int');
     $piurl = $validate->postedArray('piurl', word: 'javascript', quoteencode: true);
 
-    $newurl2 = $validate->postedVar('newurl2');
+    $newurl2 = $validate->postedVar('newurl2', quoteencode: true);
     $autoinsertposticons = formInt('autoinsertposticons');
 
     if ($smcode) {
-        foreach($smcode as $val) {
+        foreach ($smcode as $val) {
             if (count(array_keys($smcode, $val)) > 1) {
                 $core->error($lang['smilieexists']);
             }
         }
     }
 
-    $querysmilie = $db->query("SELECT id FROM " . $vars->tablepre . "smilies WHERE type='smiley'");
-    while($smilie = $db->fetch_array($querysmilie)) {
+    $allsmilies = $sql->getSmilies();
+    foreach ($allsmilies as $smilie) {
         $id = (int) $smilie['id'];
         if (isset($smdelete[$id]) && $smdelete[$id] == 1) {
-            $query = $db->query("DELETE FROM " . $vars->tablepre . "smilies WHERE id='$id'");
-            continue;
+            $query = $db->query("DELETE FROM " . $vars->tablepre . "smilies WHERE id = $id");
+        } elseif ($smcode[$id] !== $smilie['code'] || $smurl[$id] !== $smilie['url']) {
+            $query = $db->query("UPDATE " . $vars->tablepre . "smilies SET code = '$smcode[$id]', url = '$smurl[$id]' WHERE id = $id AND type = 'smiley'");
         }
-        $query = $db->query("UPDATE " . $vars->tablepre . "smilies SET code = '$smcode[$id]', url = '$smurl[$id]' WHERE id = $id AND type = 'smiley'");
     }
 
     if ($piurl) {
-        foreach($piurl as $val) {
+        foreach ($piurl as $val) {
             if (count(array_keys($piurl, $val)) > 1) {
                 $core->error($lang['piconexists']);
             }
         }
     }
 
-    $querysmilie = $db->query("SELECT id FROM " . $vars->tablepre . "smilies WHERE type='picon'");
-    while($picon = $db->fetch_array($querysmilie)) {
+    $allicons = $sql->getPostIcons();
+    foreach ($allicons as $picon) {
         $id = (int) $picon['id'];
         if (isset($pidelete[$id]) && $pidelete[$id] == 1) {
             $query = $db->query("DELETE FROM " . $vars->tablepre . "smilies WHERE id='$picon[id]'");
-            continue;
+        } elseif ($piurl[$id] !== $picon['url']) {
+            $query = $db->query("UPDATE " . $vars->tablepre . "smilies SET url = '$piurl[$id]' WHERE id = $id AND type = 'picon'");
         }
-        $query = $db->query("UPDATE " . $vars->tablepre . "smilies SET url='$piurl[$id]' WHERE id='$picon[id]' AND type='picon'");
     }
 
     if ($newcode) {
-        if ((int) $db->result($db->query("SELECT count(id) FROM " . $vars->tablepre . "smilies WHERE code='$newcode'"), 0) > 0) {
+        if ((int) $db->result($db->query("SELECT count(id) FROM " . $vars->tablepre . "smilies WHERE code = '$newcode'"), 0) > 0) {
             $core->error($lang['smilieexists']);
         }
         $query = $db->query("INSERT INTO " . $vars->tablepre . "smilies (type, code, url) VALUES ('smiley', '$newcode', '$newurl1')");
@@ -141,15 +138,13 @@ if (noSubmit('smiliesubmit')) {
         $smilies_count = $newsmilies_count = 0;
         $smiley_url = [];
         $smiley_code = [];
-        $query = $db->query("SELECT * FROM " . $vars->tablepre . "smilies WHERE type = 'smiley'");
-        while($smiley = $db->fetch_array($query)) {
+        foreach ($allsmilies as $smiley) {
             $smiley_url[] = $smiley['url'];
             $smiley_code[] = $smiley['code'];
         }
-        $db->free_result($query);
 
         $dir = opendir($smdir);
-        while($smiley = readdir($dir)) {
+        while ($smiley = readdir($dir)) {
             if ($smiley != '.' && $smiley != '..' && (strpos($smiley, '.gif') || strpos($smiley, '.jpg') || strpos($smiley, '.jpeg') || strpos($smiley, '.bmp') || strpos($smiley, '.png'))) {
                 $newsmiley_url = $smiley;
                 $newsmiley_code = $smiley;
@@ -176,14 +171,12 @@ if (noSubmit('smiliesubmit')) {
     if ($autoinsertposticons) {
         $posticons_count = $newposticons_count = 0;
         $posticon_url = [];
-        $query = $db->query("SELECT * FROM " . $vars->tablepre . "smilies WHERE type='picon'");
-        while($picon = $db->fetch_array($query)) {
+        foreach ($allicons as $picon) {
             $posticon_url[] = $picon['url'];
         }
-        $db->free_result($query);
 
         $dir = opendir($smdir);
-        while($picon = readdir($dir)) {
+        while ($picon = readdir($dir)) {
             if ($picon != '.' && $picon != '..' && (strpos($picon, '.gif') || strpos($picon, '.jpg') || strpos($picon, '.jpeg') || strpos($picon, '.bmp') || strpos($picon, '.png'))) {
                 $newposticon_url = $picon;
                 $newposticon_url = str_replace(' ', '%20', $newposticon_url);

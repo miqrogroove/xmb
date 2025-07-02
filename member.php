@@ -292,29 +292,7 @@ switch ($action) {
                     $passMan = new Password($sql);
                     $self['password2'] = $passMan->hashPassword($newPass);
 
-                    $efail = false;
-                    $restrictions = $sql->getRestrictions();
-                    foreach ($restrictions as $restriction) {
-                        if ('0' === $restriction['case_sensitivity']) {
-                            $t_email = strtolower($self['email']);
-                            $restriction['name'] = strtolower($restriction['name']);
-                        } else {
-                            $t_email = $self['email'];
-                        }
-
-                        if ('1' === $restriction['partial']) {
-                            if (strpos($t_email, $restriction['name']) !== false) {
-                                $efail = true;
-                            }
-                        } else {
-                            if ($t_email === $restriction['name']) {
-                                $efail = true;
-                            }
-                        }
-                    }
-                    unset($restrictions);
-
-                    if ($efail) {
+                    if (! $core->checkNameRestrictions(rawHTML($self['email']))) {
                         $core->error($lang['emailrestricted']);
                     }
 

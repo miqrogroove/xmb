@@ -2143,7 +2143,7 @@ class Core
      *
      * @since 1.9.1 Formerly known as admin::check_restricted()
      * @since 1.10.00
-     * @param string $input Username to check
+     * @param string $input Username to check, raw input.
      * @return bool Validity of the username.
      */
     public function usernameValidation(string $input): bool
@@ -2168,21 +2168,38 @@ class Core
         }
 
         // Check admin-specified phrases
+        return checkNameRestrictions($input);
+    }
+
+    /**
+     * Validate a username or email address against the list from the Restriction Manager.
+     *
+     * @since 1.10.00
+     * @param string $input Name to check, raw input.
+     * @return bool Validity of the name.
+     */
+    public function checkNameRestrictions(string $input): bool
+    {
+        // Check admin-specified phrases
         $restrictions = $this->sql->getRestrictions();
         foreach ($restrictions as $restriction) {
+            $rText = rawHTML($restriction['name']);
+
+            // Apply case-sensitivity.
             if ('0' === $restriction['case_sensitivity']) {
                 $t_username = strtolower($input);
-                $restriction['name'] = strtolower($restriction['name']);
+                $rText = strtolower($rText);
             } else {
                 $t_username = $input;
             }
 
+            // Compare strings.
             if ('1' === $restriction['partial']) {
-                if (strpos($t_username, $restriction['name']) !== false) {
+                if (strpos($t_username, $rText) !== false) {
                     return false;
                 }
             } else {
-                if ($t_username === $restriction['name']) {
+                if ($t_username === $rText) {
                     return false;
                 }
             }

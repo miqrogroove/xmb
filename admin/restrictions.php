@@ -28,7 +28,7 @@ const ROOT = '../';
 require ROOT . 'header.php';
 
 $core = \XMB\Services\core();
-$db = \XMB\Services\db();
+$sql = \XMB\Services\sql();
 $template = \XMB\Services\template();
 $token = \XMB\Services\token();
 $validate = \XMB\Services\validate();
@@ -58,8 +58,8 @@ if (noSubmit('restrictedsubmit')) {
     $template->token = $token->create('Control Panel/Restrictions', 'mass-edit', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_restrictions_start.php');
 
-    $query = $db->query("SELECT * FROM " . $vars->tablepre . "restricted ORDER BY id");
-    while($restricted = $db->fetch_array($query)) {
+    $restrictions = $sql->getRestrictions();
+    foreach ($restrictions as $restricted) {
         if ('1' === $restricted['case_sensitivity']) {
             $template->case_check = 'checked="checked"';
         } else {
@@ -74,40 +74,30 @@ if (noSubmit('restrictedsubmit')) {
         $template->restricted = $restricted;
         $body .= $template->process('admin_restrictions_row.php');
     }
+    unset($restrictions);
     $body .= $template->process('admin_restrictions_end.php');
 } else {
     $core->request_secure('Control Panel/Restrictions', 'mass-edit');
 
-    $queryrestricted = $db->query("SELECT id FROM " . $vars->tablepre . "restricted");
-    while($restricted = $db->fetch_array($queryrestricted)) {
-        $name = $validate->postedVar('name'.$restricted['id'], '', FALSE, TRUE);
-        $delete = getInt('delete'.$restricted['id'], 'p');
-        $case = getInt('case'.$restricted['id'], 'p');
-        $partial = getInt('partial'.$restricted['id'], 'p');
-        if ($partial) {
-            $partial = 1;
-        }
-        if ($case) {
-            $case = 1;
-        }
+    $restrictions = $sql->getRestrictions();
+    foreach ($restrictions as $restricted) {
+        $name = $validate->postedVar('name' . $restricted['id'], dbescape:false, quoteencode: true);
+        $delete = formInt('delete' . $restricted['id']);
+        $case = (bool) formInt('case' . $restricted['id']);
+        $partial = (bool) formInt('partial' . $restricted['id']);
         if ($delete) {
-            $db->query("DELETE FROM " . $vars->tablepre . "restricted WHERE id=$delete");
-        } else {
-            $db->query("UPDATE " . $vars->tablepre . "restricted SET name='$name', case_sensitivity='$case', partial='$partial' WHERE id=" . $restricted['id']);
+            $sql->deleteRestriction($delete);
+        } elseif ($name !== $restricted['name'] || $case !== (bool) $restricted['case_sensitivity'] || $partial !== (bool) $restricted['partial']) {
+            $sql->updateRestriction((int) $restricted['id'], $name, $case, $partial);
         }
     }
+    unset($restrictions);
 
-    $newname = $validate->postedVar('newname', '', FALSE, TRUE);
-    $newcase = getInt('newcase', 'p');
-    $newpartial = getInt('newpartial', 'p');
-    if (!empty($newname)) {
-        if ($newpartial) {
-            $newpartial = 1;
-        }
-        if ($newcase) {
-            $newcase = 1;
-        }
-        $db->query("INSERT INTO " . $vars->tablepre . "restricted (`name`, `case_sensitivity`, `partial`) VALUES ('$newname', '$newcase', '$newpartial')");
+    $newname = $validate->postedVar('newname', dbescape:false, quoteencode: true);
+    $newcase = (bool) formInt('newcase');
+    $newpartial = (bool) formInt('newpartial');
+    if (! empty($newname)) {
+        $sql->addRestriction($newname, $newcase, $newpartial);
     }
 
     $link = '</p><p><a href="' . $vars->full_url . 'admin/restrictions.php">' . $lang['cprestrictedlink'] . '</a>';

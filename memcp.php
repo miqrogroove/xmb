@@ -174,28 +174,7 @@ if ($action == 'profile') {
                 }
             }
 
-            $efail = false;
-            $query = $db->query("SELECT * FROM " . $vars->tablepre . "restricted");
-            while ($restriction = $db->fetch_array($query)) {
-                $t_email = $email;
-                if ('0' === $restriction['case_sensitivity']) {
-                    $t_email = strtolower($t_email);
-                    $restriction['name'] = strtolower($restriction['name']);
-                }
-
-                if ('1' === $restriction['partial']) {
-                    if (strpos($t_email, $restriction['name']) !== false) {
-                        $efail = true;
-                    }
-                } else {
-                    if ($t_email === $restriction['name']) {
-                        $efail = true;
-                    }
-                }
-            }
-            $db->free_result($query);
-
-            if ($efail) {
+            if (! $core->checkNameRestrictions(rawHTML($email))) {
                 $core->error($lang['emailrestricted']);
             }
 

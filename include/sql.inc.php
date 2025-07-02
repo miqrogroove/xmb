@@ -2179,7 +2179,7 @@ class SQL
      *
      * @since 1.10.00
      * @return array of associative table rows.
-    */
+     */
     public function getSmilies(): array
     {
         $result = $this->db->query("SELECT * FROM " . $this->tablepre . "smilies WHERE type = 'smiley'");
@@ -2191,11 +2191,27 @@ class SQL
     }
 
     /**
+     * Retrieve the list of post icons.
+     *
+     * @since 1.10.00
+     * @return array of associative table rows.
+     */
+    public function getPostIcons(): array
+    {
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "smilies WHERE type = 'picon' ORDER BY id");
+
+        $icons = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $icons;
+    }
+
+    /**
      * Retrieve the list of censors.
      *
      * @since 1.10.00
      * @return array of associative table rows.
-    */
+     */
     public function getCensors(): array
     {
         $result = $this->db->query("SELECT * FROM " . $this->tablepre . "words ORDER BY id");
@@ -2211,15 +2227,53 @@ class SQL
      *
      * @since 1.10.00
      * @return array of associative table rows.
-    */
+     */
     public function getRestrictions(): array
     {
-        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "restricted");
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "restricted ORDER BY id");
 
         $restrictions = $this->db->fetch_all($result);
         $this->db->free_result($result);
 
         return $restrictions;
+    }
+
+    /**
+     * Delete a username restriction.
+     *
+     * @since 1.10.00
+     */
+    public function deleteRestriction(int $id)
+    {
+        $this->db->query("DELETE FROM " . $this->tablepre . "restricted WHERE id = $id");
+    }
+
+    /**
+     * Add a username restriction.
+     *
+     * @since 1.10.00
+     */
+    public function addRestriction(string $name, bool $caseSensitive, bool $partial)
+    {
+        $this->db->escape_fast($name);
+        $caseEnum = $caseSensitive ? '1' : '0';
+        $partialEnum = $partial ? '1' : '0';
+
+        $this->db->query("INSERT INTO " . $this->tablepre . "restricted (`name`, `case_sensitivity`, `partial`) VALUES ('$name', '$caseEnum', '$partialEnum')");
+    }
+
+    /**
+     * Update a username restriction.
+     *
+     * @since 1.10.00
+     */
+    public function updateRestriction(int $id, string $name, bool $caseSensitive, bool $partial)
+    {
+        $this->db->escape_fast($name);
+        $caseEnum = $caseSensitive ? '1' : '0';
+        $partialEnum = $partial ? '1' : '0';
+
+        $this->db->query("UPDATE " . $this->tablepre . "restricted SET name = '$name', case_sensitivity = '$caseEnum', partial = '$partialEnum' WHERE id = $id");
     }
 
     /**
@@ -2229,7 +2283,7 @@ class SQL
      *
      * @since 1.10.00
      * @return array of associative table rows.  The top level is keyed by fid values.
-    */
+     */
     public function getForums(bool $activeOnly = true): array
     {
         if ($activeOnly) {
