@@ -174,12 +174,12 @@ if (noSubmit('settingsubmit')) {
         default:
             $notifyonregnew = 'email';
     }
-    $avastatusnew = $validate->postedVar('avastatusnew');
+    $avastatusnew = getPhpInput('avastatusnew');
     if ($avastatusnew != 'on' && $avastatusnew != 'list') {
         $avastatusnew = 'off';
     }
-    $recaptchanew = $validate->postedVar('recaptchanew');
-    if ($recaptchanew != 'on' || trim($validate->postedVar('recaptchasecretnew')) == '' || trim($validate->postedVar('recaptchakeynew')) == '') {
+    $recaptchanew = getPhpInput('recaptchanew');
+    if ($recaptchanew != 'on' || trim(getPhpInput('recaptchasecretnew')) == '' || trim(getPhpInput('recaptchakeynew')) == '') {
         $recaptchanew = 'off';
     }
 

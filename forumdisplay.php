@@ -181,7 +181,7 @@ if ($cusdate) {
     $cusdatesql = '';
 }
 
-$ascdesc = $validate->postedVar('ascdesc', htmlencode: false, dbescape: false);
+$ascdesc = getPhpInput('ascdesc');
 if (strtolower($ascdesc) != 'asc') {
     $ascdesc = "desc";
 }

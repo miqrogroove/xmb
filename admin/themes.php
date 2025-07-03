@@ -150,7 +150,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
 } elseif (onSubmit('themesubmit')) {
     $core->request_secure('Control Panel/Themes', 'mass-edit');
     $theme_delete = $validate->postedArray('theme_delete', 'int');
-    $theme_name = $validate->postedArray('theme_name', word: 'javascript', quoteencode: true);
+    $theme_name = $validate->postedArray('theme_name');
 
     $number_of_themes = (int) $db->result($db->query("SELECT COUNT(themeid) FROM " . $vars->tablepre . "themes"), 0);
 
@@ -190,28 +190,28 @@ if ($single_int > 0) {
     $orig = formInt('orig');
     $core->request_secure('Control Panel/Themes', (string) $orig);
 
-    $namenew = $validate->postedVar('namenew', quoteencode: true);
-    $bgcolornew = $validate->postedVar('bgcolornew', quoteencode: true);
-    $altbg1new = $validate->postedVar('altbg1new', quoteencode: true);
-    $altbg2new = $validate->postedVar('altbg2new', quoteencode: true);
-    $linknew = $validate->postedVar('linknew', quoteencode: true);
-    $bordercolornew = $validate->postedVar('bordercolornew', quoteencode: true);
-    $headernew = $validate->postedVar('headernew', quoteencode: true);
-    $headertextnew = $validate->postedVar('headertextnew', quoteencode: true);
-    $topnew = $validate->postedVar('topnew', quoteencode: true);
-    $catcolornew = $validate->postedVar('catcolornew', quoteencode: true);
-    $cattextnew = $validate->postedVar('cattextnew', quoteencode: true);
-    $tabletextnew = $validate->postedVar('tabletextnew', quoteencode: true);
-    $textnew = $validate->postedVar('textnew', quoteencode: true);
-    $borderwidthnew = $validate->postedVar('borderwidthnew', quoteencode: true);
-    $tablewidthnew = $validate->postedVar('tablewidthnew', quoteencode: true);
-    $tablespacenew = $validate->postedVar('tablespacenew', quoteencode: true);
-    $fnew = $validate->postedVar('fnew', quoteencode: true);
-    $fsizenew = $validate->postedVar('fsizenew', quoteencode: true);
-    $boardlogonew = $validate->postedVar('boardlogonew', quoteencode: true);
-    $imgdirnew = $validate->postedVar('imgdirnew', quoteencode: true);
-    $admdirnew = $validate->postedVar('admdirnew', quoteencode: true);
-    $smdirnew = $validate->postedVar('smdirnew', quoteencode: true);
+    $namenew = $validate->postedVar('namenew');
+    $bgcolornew = $validate->postedVar('bgcolornew');
+    $altbg1new = $validate->postedVar('altbg1new');
+    $altbg2new = $validate->postedVar('altbg2new');
+    $linknew = $validate->postedVar('linknew');
+    $bordercolornew = $validate->postedVar('bordercolornew');
+    $headernew = $validate->postedVar('headernew');
+    $headertextnew = $validate->postedVar('headertextnew');
+    $topnew = $validate->postedVar('topnew');
+    $catcolornew = $validate->postedVar('catcolornew');
+    $cattextnew = $validate->postedVar('cattextnew');
+    $tabletextnew = $validate->postedVar('tabletextnew');
+    $textnew = $validate->postedVar('textnew');
+    $borderwidthnew = $validate->postedVar('borderwidthnew');
+    $tablewidthnew = $validate->postedVar('tablewidthnew');
+    $tablespacenew = $validate->postedVar('tablespacenew');
+    $fnew = $validate->postedVar('fnew');
+    $fsizenew = $validate->postedVar('fsizenew');
+    $boardlogonew = $validate->postedVar('boardlogonew');
+    $imgdirnew = $validate->postedVar('imgdirnew');
+    $admdirnew = $validate->postedVar('admdirnew');
+    $smdirnew = $validate->postedVar('smdirnew');
 
     $db->query("UPDATE " . $vars->tablepre . "themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew', version = version + 1 WHERE themeid='$orig'");
 
@@ -219,28 +219,28 @@ if ($single_int > 0) {
 } elseif ($single_str == "submit" && $newtheme) {
     $core->request_secure('Control Panel/Themes', 'New Theme');
 
-    $namenew = $validate->postedVar('namenew', quoteencode: true);
-    $bgcolornew = $validate->postedVar('bgcolornew', quoteencode: true);
-    $altbg1new = $validate->postedVar('altbg1new', quoteencode: true);
-    $altbg2new = $validate->postedVar('altbg2new', quoteencode: true);
-    $linknew = $validate->postedVar('linknew', quoteencode: true);
-    $bordercolornew = $validate->postedVar('bordercolornew', quoteencode: true);
-    $headernew = $validate->postedVar('headernew', quoteencode: true);
-    $headertextnew = $validate->postedVar('headertextnew', quoteencode: true);
-    $topnew = $validate->postedVar('topnew', quoteencode: true);
-    $catcolornew = $validate->postedVar('catcolornew', quoteencode: true);
-    $cattextnew = $validate->postedVar('cattextnew', quoteencode: true);
-    $tabletextnew = $validate->postedVar('tabletextnew', quoteencode: true);
-    $textnew = $validate->postedVar('textnew', quoteencode: true);
-    $borderwidthnew = $validate->postedVar('borderwidthnew', quoteencode: true);
-    $tablewidthnew = $validate->postedVar('tablewidthnew', quoteencode: true);
-    $tablespacenew = $validate->postedVar('tablespacenew', quoteencode: true);
-    $fnew = $validate->postedVar('fnew', quoteencode: true);
-    $fsizenew = $validate->postedVar('fsizenew', quoteencode: true);
-    $boardlogonew = $validate->postedVar('boardlogonew', quoteencode: true);
-    $imgdirnew = $validate->postedVar('imgdirnew', quoteencode: true);
-    $admdirnew = $validate->postedVar('admdirnew', quoteencode: true);
-    $smdirnew = $validate->postedVar('smdirnew', quoteencode: true);
+    $namenew = $validate->postedVar('namenew');
+    $bgcolornew = $validate->postedVar('bgcolornew');
+    $altbg1new = $validate->postedVar('altbg1new');
+    $altbg2new = $validate->postedVar('altbg2new');
+    $linknew = $validate->postedVar('linknew');
+    $bordercolornew = $validate->postedVar('bordercolornew');
+    $headernew = $validate->postedVar('headernew');
+    $headertextnew = $validate->postedVar('headertextnew');
+    $topnew = $validate->postedVar('topnew');
+    $catcolornew = $validate->postedVar('catcolornew');
+    $cattextnew = $validate->postedVar('cattextnew');
+    $tabletextnew = $validate->postedVar('tabletextnew');
+    $textnew = $validate->postedVar('textnew');
+    $borderwidthnew = $validate->postedVar('borderwidthnew');
+    $tablewidthnew = $validate->postedVar('tablewidthnew');
+    $tablespacenew = $validate->postedVar('tablespacenew');
+    $fnew = $validate->postedVar('fnew');
+    $fsizenew = $validate->postedVar('fsizenew');
+    $boardlogonew = $validate->postedVar('boardlogonew');
+    $imgdirnew = $validate->postedVar('imgdirnew');
+    $admdirnew = $validate->postedVar('admdirnew');
+    $smdirnew = $validate->postedVar('smdirnew');
 
     $db->query("INSERT INTO " . $vars->tablepre . "themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext, admdir) VALUES ('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew', '$admdirnew')");
 

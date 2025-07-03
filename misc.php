@@ -321,8 +321,8 @@ switch ($action) {
         $page = getInt('page');
         $dblikemem = $db->like_escape($validate->postedVar('srchmem', dbescape: false, sourcearray: 'g'));
         if (X_ADMIN) {
-            $dblikeemail = $db->like_escape($validate->postedVar('srchemail', dbescape: false, quoteencode: true, sourcearray: 'g'));
-            $dblikeip = $db->like_escape($validate->postedVar('srchip', dbescape: false, quoteencode: true, sourcearray: 'g'));
+            $dblikeemail = $db->like_escape($validate->postedVar('srchemail', dbescape: false, sourcearray: 'g'));
+            $dblikeip = $db->like_escape($validate->postedVar('srchip', dbescape: false, sourcearray: 'g'));
         } else {
             $dblikeemail = '';
             $dblikeip = '';
@@ -359,9 +359,7 @@ switch ($action) {
             $ext[] = 'srchemail=' . rawurlencode(getPhpInput('srchemail', 'g'));
             $template->srchemail = $validate->postedVar(
                 varname: 'srchemail',
-                word: 'javascript',
                 dbescape: false,
-                quoteencode: true,
                 sourcearray: 'g'
             );
         } else {
@@ -373,9 +371,7 @@ switch ($action) {
             $ext[] = 'srchip=' . rawurlencode(getPhpInput('srchip', 'g'));
             $template->srchip = $validate->postedVar(
                 varname: 'srchip',
-                word: 'javascript',
                 dbescape: false,
-                quoteencode: true,
                 sourcearray: 'g'
             );
         } else {
@@ -387,9 +383,7 @@ switch ($action) {
             $ext[] = 'srchmem=' . rawurlencode(getPhpInput('srchmem', 'g'));
             $template->srchmem = $validate->postedVar(
                 varname: 'srchmem',
-                word: 'javascript',
                 dbescape: false,
-                quoteencode: true,
                 sourcearray: 'g'
             );
         } else {

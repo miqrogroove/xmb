@@ -69,9 +69,9 @@ if ($action == '' && noSubmit('attachsubmit') && noSubmit('searchsubmit')) {
 
 if ($action == '' && onSubmit('searchsubmit')) {
     $template->token = $token->create('Control Panel/Attachments', 'mass-edit', $vars::NONCE_FORM_EXP);
-    $dblikefilename = $db->like_escape($validate->postedVar('filename', '', FALSE, FALSE));
+    $dblikefilename = $db->like_escape(getPhpInput('filename'));
     $author = $validate->postedVar('author');
-    $forumprune = $validate->postedVar('forumprune');
+    $forumprune = getPhpInput('forumprune');
     $forumprune = $forumprune == 'all' ? '' : intval($forumprune);
     $sizeless = formInt('sizeless');
     $sizemore = formInt('sizemore', setZero: false);
@@ -217,7 +217,7 @@ if ($action == '' && onSubmit('attachsubmit')) {
     $query = $db->query("SELECT aid, pid, filename FROM " . $vars->tablepre . "attachments WHERE aid IN ($filelist)");
     while($attachment = $db->fetch_array($query)) {
         $afilename = "filename" . $attachment['aid'];
-        $postedvalue = trim($validate->postedVar($afilename, '', FALSE, FALSE));
+        $postedvalue = trim(getPhpInput($afilename));
         if ($attachment['filename'] !== $postedvalue) {
             $attach->changeName((int) $attachment['aid'], (int) $attachment['pid'], $postedvalue);
         }

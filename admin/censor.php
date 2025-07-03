@@ -65,13 +65,13 @@ if (noSubmit('censorsubmit')) {
     }
     $body .= $template->process('admin_censor_end.php');
 } else {
-    $newfind = $validate->postedVar('newfind', 'javascript', quoteencode: true);
-    $newreplace = $validate->postedVar('newreplace', 'javascript', quoteencode: true);
+    $newfind = $validate->postedVar('newfind');
+    $newreplace = $validate->postedVar('newreplace');
     $censors = $sql->getCensors();
     foreach ($censors as $censor) {
         $id = (int) $censor['id'];
-        $find = $validate->postedVar('find' . $id, quoteencode: true);
-        $replace = $validate->postedVar('replace' . $id, quoteencode: true);
+        $find = $validate->postedVar('find' . $id);
+        $replace = $validate->postedVar('replace' . $id);
         $delete = formInt('delete' . $id);
 
         if ($delete === $id) {

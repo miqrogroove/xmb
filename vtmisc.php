@@ -143,7 +143,7 @@ if ($action == 'report') {
         $modquery = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE status IN ('Super Administrator', 'Administrator', 'Super Moderator')");
         while ($modusr = $db->fetch_array($modquery)) {
             $posturl = $vars->full_url . "viewthread.php?tid=$tid&amp;goto=search&amp;pid=$pid";
-            $reason = $validate->postedVar('reason', dbescape: false);
+            $reason = $validate->postedVar('reason', dbescape: false, quoteencode: false);
             $message = "{$lang['reportmessage']} $posturl\n\n{$lang['reason']} $reason";
             
             $u2u->send_single($modusr['username'], $lang['reportsubject'], $message);

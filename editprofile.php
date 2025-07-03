@@ -152,7 +152,7 @@ if (noSubmit('editsubmit')) {
 
     $edits = $form->getEdits();
 
-    $email = $validate->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
+    $email = $validate->postedVar('newemail', dbescape: false);
     if ($member['email'] != $email) {
         $edits['email'] = $email;
     }

@@ -93,12 +93,12 @@ if (noSubmit('rankssubmit')) {
     $posts = $validate->postedArray('posts', 'int');
     $stars = $validate->postedArray('stars', 'int');
     $allowavatars = $validate->postedArray('allowavatars', 'yesno');
-    $avaurl = $validate->postedArray('avaurl', word: 'javascript', quoteencode: true);
+    $avaurl = $validate->postedArray('avaurl', word: 'javascript');
     $newtitle = $validate->postedVar('newtitle', htmlencode: false, dbescape: false);
     $newposts = formInt('newposts');
     $newstars = formInt('newstars');
     $newallowavatars = formYesNo('newallowavatars');
-    $newavaurl = $validate->postedVar('newavaurl', word: 'javascript', quoteencode: true);
+    $newavaurl = $validate->postedVar('newavaurl', word: 'javascript');
 
     // Disabled fields are not submitted with form data, so staff rank IDs have to be retrieved again from the database.
     $ranks = $sql->getRanks();

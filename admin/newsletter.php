@@ -62,7 +62,7 @@ if (noSubmit('newslettersubmit')) {
     $core->request_secure('Control Panel/Newsletter', 'send');
     set_time_limit(0);
     $newssubject = $validate->postedVar('newssubject');
-    $newsmessage = $validate->postedVar('newsmessage');
+    $newsmessage = $validate->postedVar('newsmessage', quoteencode: false);
     $sendvia = getPhpInput('sendvia');
     $to = getPhpInput('to');
     $newscopy = formYesNo('newscopy');

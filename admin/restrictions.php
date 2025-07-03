@@ -81,7 +81,7 @@ if (noSubmit('restrictedsubmit')) {
 
     $restrictions = $sql->getRestrictions();
     foreach ($restrictions as $restricted) {
-        $name = $validate->postedVar('name' . $restricted['id'], dbescape:false, quoteencode: true);
+        $name = $validate->postedVar('name' . $restricted['id'], dbescape:false);
         $delete = formInt('delete' . $restricted['id']);
         $case = (bool) formInt('case' . $restricted['id']);
         $partial = (bool) formInt('partial' . $restricted['id']);
@@ -93,7 +93,7 @@ if (noSubmit('restrictedsubmit')) {
     }
     unset($restrictions);
 
-    $newname = $validate->postedVar('newname', dbescape:false, quoteencode: true);
+    $newname = $validate->postedVar('newname', dbescape:false);
     $newcase = (bool) formInt('newcase');
     $newpartial = (bool) formInt('newpartial');
     if (! empty($newname)) {

@@ -47,7 +47,7 @@ class Install
         $vUsername = trim($this->validate->postedVar('frmUsername', dbescape: false));
         $iUsername = strtolower($vUsername);
         $frmPassword = getRawString('frmPassword');
-        $vEmail = trim($this->validate->postedVar('frmEmail', word: 'javascript', dbescape: false, quoteencode: true));
+        $vEmail = trim($this->validate->postedVar('frmEmail', dbescape: false));
 
         if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
             $this->show->error('The username, password or e-mail address cannot be blank or malformed. Please press back and try again.');

@@ -60,10 +60,10 @@ $table = $template->process('admin_table.php');
 
 $members = getPhpInput('members', 'g');
 
-$srchmem = $validate->postedVar('srchmem', 'javascript', TRUE, FALSE, TRUE);
-$srchemail = $validate->postedVar('srchemail', 'javascript', TRUE, FALSE, TRUE);
-$srchip = $validate->postedVar('srchip', 'javascript', TRUE, FALSE, TRUE);
-$srchstatus = $validate->postedVar('srchstatus', 'javascript', TRUE, TRUE, TRUE);
+$srchmem = $validate->postedVar('srchmem', dbescape: false);
+$srchemail = $validate->postedVar('srchemail', dbescape: false);
+$srchip = $validate->postedVar('srchip', dbescape: false);
+$srchstatus = $validate->postedVar('srchstatus');
 $dblikemem = $db->like_escape($srchmem);
 $dblikeemail = $db->like_escape($srchemail);
 $dblikeip = $db->like_escape($srchip);
@@ -161,7 +161,7 @@ if (noSubmit('membersubmit')) {
         $sa_count = $sql->countSuperAdmins();
 
         while ($mem = $db->fetch_array($query)) {
-            if ($mem['status'] == 'Super Administrator' && $validate->postedVar('status'.$mem['uid']) != 'Super Administrator') {
+            if ($mem['status'] == 'Super Administrator' && getPhpInput('status' . $mem['uid']) != 'Super Administrator') {
                 $sa_count--;
             }
         }
@@ -174,7 +174,7 @@ if (noSubmit('membersubmit')) {
     // Now execute this request
     while ($mem = $db->fetch_array($query)) {
         $origstatus = $mem['status'];
-        $status = $validate->postedVar('status'.$mem['uid']);
+        $status = $validate->postedVar('status' . $mem['uid']);
         if ($status == '') {
             $status = 'Member';
         }
@@ -183,8 +183,8 @@ if (noSubmit('membersubmit')) {
             continue;
         }
 
-        $banstatus = $validate->postedVar('banstatus'.$mem['uid']);
-        $cusstatus = $validate->postedVar('cusstatus'.$mem['uid'], '', false);
+        $banstatus = $validate->postedVar('banstatus' . $mem['uid']);
+        $cusstatus = $validate->postedVar('cusstatus' . $mem['uid'], htmlencode: false);
         $delete = getInt('delete'.$mem['uid'], 'p');
 
         if ($delete == (int) $mem['uid'] && $delete != (int) $vars->self['uid'] && $origstatus != "Super Administrator") {

@@ -552,7 +552,7 @@ switch ($action) {
             $page = $template->process('topicadmin_split.php');
         } else {
             $core->request_secure('Thread Admin Options/Split', (string) min($tids));
-            $subject = addslashes($validate->postedVar('subject', 'javascript', quoteencode: true));  // Subjects are historically double-quoted
+            $subject = addslashes($validate->postedVar('subject'));  // Subjects are historically double-quoted
             if ($subject == '') {
                 $core->error($lang['textnosubject']);
             }

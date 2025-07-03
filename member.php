@@ -258,7 +258,7 @@ switch ($action) {
                         }
                     }
 
-                    $self['email'] = $validate->postedVar('email', word: 'javascript', dbescape: false, quoteencode: true);
+                    $self['email'] = $validate->postedVar('email', dbescape: false);
                     $sql_email = $db->escape($self['email']);
                     if ($SETTINGS['doublee'] == 'off' && false !== strpos($self['email'], "@")) {
                         $email2 = "OR email = '$sql_email'";

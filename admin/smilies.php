@@ -76,17 +76,17 @@ if (noSubmit('smiliesubmit')) {
     $core->request_secure('Control Panel/Smilies', 'mass-edit');
 
     $smdelete = $validate->postedArray('smdelete', 'int');
-    $smcode = $validate->postedArray('smcode', word: 'javascript', quoteencode: true);
-    $smurl = $validate->postedArray('smurl', word: 'javascript', quoteencode: true);
+    $smcode = $validate->postedArray('smcode');
+    $smurl = $validate->postedArray('smurl', word: 'javascript');
 
-    $newcode = $validate->postedVar('newcode', quoteencode: true);
-    $newurl1 = $validate->postedVar('newurl1', quoteencode: true);
+    $newcode = $validate->postedVar('newcode');
+    $newurl1 = $validate->postedVar('newurl1');
     $autoinsertsmilies = formInt('autoinsertsmilies');
 
     $pidelete = $validate->postedArray('pidelete', 'int');
-    $piurl = $validate->postedArray('piurl', word: 'javascript', quoteencode: true);
+    $piurl = $validate->postedArray('piurl', word: 'javascript');
 
-    $newurl2 = $validate->postedVar('newurl2', quoteencode: true);
+    $newurl2 = $validate->postedVar('newurl2');
     $autoinsertposticons = formInt('autoinsertposticons');
 
     if ($smcode) {

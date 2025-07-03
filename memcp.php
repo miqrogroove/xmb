@@ -161,7 +161,7 @@ if ($action == 'profile') {
 
         $edits = $form->getEdits();
 
-        $email = $validate->postedVar('newemail', 'javascript', dbescape: false, quoteencode: true);
+        $email = $validate->postedVar('newemail', dbescape: false);
 
         if ($email !== $vars->self['email']) {
             if ($SETTINGS['doublee'] == 'off' && false !== strpos($email, "@")) {
