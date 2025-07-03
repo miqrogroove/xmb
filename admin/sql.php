@@ -88,7 +88,7 @@ if (onSubmit('upgradesubmit')) {
         if (trim($command) == '') continue;
 
         $query = $db->query($command . ' -- Injected by ' . $vars->xmbuser . ' using admin/sql.php', panic: false);
-        $template->command = cdataOut($command);
+        $template->command = htmlEsc($command);
         if (is_bool($query)) {
             $template->numfields = 1;
         } else {

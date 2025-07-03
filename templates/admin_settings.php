@@ -33,7 +33,7 @@ $admin->printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'
 $admin->printsetting2($lang['bbname'], 'bbnamenew', $SETTINGS['bbname'], 50);
 $admin->printsetting2($lang['textsiteurl'], 'siteurlnew', $SETTINGS['siteurl'], 50);
 $admin->printsetting6($lang['textbbrules'], 'bbrulesnew', 'bbrules');
-$admin->printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', cdataOut($SETTINGS['bbrulestxt']), 5, 50);
+$admin->printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', htmlEsc($SETTINGS['bbrulestxt']), 5, 50);
 $admin->printsetting6($lang['textbstatus'], 'bbstatusnew', 'bbstatus');
 $admin->printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
 $admin->printsetting6($lang['gzipcompression'], 'gzipcompressnew', 'gzipcompress');

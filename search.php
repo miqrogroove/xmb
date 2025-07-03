@@ -151,8 +151,8 @@ if (empty($searchsubmit) && empty($page)) {
     if (! empty($srchtxt)) {
         $srchtxtsq = explode(' ', $srchtxt);
         foreach ($srchtxtsq as $stxt) {
-            $dblikebody = $db->like_escape(addslashes(cdataOut($stxt)));  //Messages are historically double-slashed.
-            $dblikesub = $db->like_escape(addslashes(attrOut($stxt)));
+            $dblikebody = $db->like_escape(addslashes(lessThanEsc($stxt)));  //Messages are historically double-slashed.
+            $dblikesub = $db->like_escape(addslashes(htmlEsc($stxt)));
             if ($srchfield == 'body') {
                 $where[] = "(p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%')";
                 $ext[] = 'srchfield=body';
@@ -218,7 +218,7 @@ if (empty($searchsubmit) && empty($page)) {
             if (empty($srchtxt)) {
                 $position = 0;
             } else {
-                $position = stripos($message, cdataOut($srchtxtsq[0]), 0);
+                $position = stripos($message, lessThanEsc($srchtxtsq[0]), 0);
             }
 
             $show_num = 100;
@@ -248,8 +248,8 @@ if (empty($searchsubmit) && empty($page)) {
             $post['subject'] = stripslashes($post['subject']);
             if (! empty($srchtxt)) {
                 foreach ($srchtxtsq as $stxt) {
-                    $show = str_ireplace(cdataOut($stxt), '<b><i>'.cdataOut($stxt).'</i></b>', $show);
-                    $post['subject'] = str_ireplace(attrOut($stxt), '<i>'.attrOut($stxt).'</i>', $post['subject']);
+                    $show = str_ireplace(lessThanEsc($stxt), '<b><i>'.lessThanEsc($stxt).'</i></b>', $show);
+                    $post['subject'] = str_ireplace(htmlEsc($stxt), '<i>'.htmlEsc($stxt).'</i>', $post['subject']);
                 }
             }
 

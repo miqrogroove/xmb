@@ -25,12 +25,13 @@ declare(strict_types=1);
 namespace XMB;
 
 /**
-* Has the named submit button been invoked?
-*
-* Looks in the form post data for a named submit
-*
-* @return   boolean   true if the submit is present, false otherwise
-*/
+ * Has the named submit button been invoked?
+ *
+ * Looks in the form post data for a named submit
+ *
+ * @since 1.9.8
+ * @return   boolean   true if the submit is present, false otherwise
+ */
 function onSubmit(string $submitname): bool
 {
     $retval = (isset($_POST[$submitname]) && !empty($_POST[$submitname]));
@@ -42,12 +43,13 @@ function onSubmit(string $submitname): bool
 }
 
 /**
-* Is the forum being viewed?
-*
-* Looks for pre-form post data for a named submit
-*
-* @return   boolean   true if the no submit is present, false otherwise
-*/
+ * Is the forum being viewed?
+ *
+ * Looks for pre-form post data for a named submit
+ *
+ * @since 1.9.8
+ * @return   boolean   true if the no submit is present, false otherwise
+ */
 function noSubmit(string $submitname): bool
 {
     return ! onSubmit($submitname);
@@ -123,6 +125,9 @@ function getRawInput(string $varname, string $sourcearray = 'p'): string|array|n
     return $retval;
 }
 
+/**
+ * @since 1.9.8 SP3
+ */
 function recodeOut(string $rawstring): string
 {
     return rawurlencode(rawHTML($rawstring));
@@ -133,19 +138,39 @@ function recodeJavaOut(string $rawstring): string
     return rawurlencode(rawurlencode(rawHTML($rawstring)));
 }
 
-function cdataOut(string $rawstring): string
+/**
+ * Performs incomplete escaping of text for HTML usage, outside of elements only.
+ *
+ * @since 1.9.8 SP3 formerly cdataOut()
+ * @since 1.10.00
+ */
+function lessThanEsc(string $rawstring): string
 {
     return htmlspecialchars($rawstring, ENT_NOQUOTES);
 }
 
-//Never safe for STYLE attributes.
+/**
+ * Escapes plain text for reasonable HTML usage.
+ *
+ * Never safe for STYLE attributes, CODE elements, etc.
+ *
+ * @since 1.10.00
+ */
+function htmlEsc(string $text): string
+{
+    return htmlspecialchars($text, ENT_QUOTES | ENT_XHTML);
+}
+
+/**
+ * @since 1.9.8 SP3
+ */
 function attrOut(string $rawstring, string $word = ''): string
 {
     $retval = $rawstring;
     if ($word != '') {
         $retval = str_ireplace($word, "_".$word, $retval);
     }
-    return htmlspecialchars($retval, ENT_QUOTES | ENT_XHTML);
+    return htmlEsc($retval);
 }
 
 /**
@@ -189,6 +214,7 @@ function fnameOut(string $rawstring): string
 /**
  * Retrieve a gpc integer and sanitize it
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable in a superglobal array such as $_GET
  * @param   string   $sourcearray   abbreviation of the superglobal name, g for $_GET by default
  * @return   integer   the "safe" integer if the variable is available, zero otherwise
@@ -207,6 +233,7 @@ function getInt(string $varname, string $sourcearray = 'g'): int
 /**
  * Retrieve a REQUEST integer and sanitize it
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable in $_REQUEST
  * @return   integer   the "safe" integer if the variable is available, zero otherwise
  */
@@ -218,6 +245,7 @@ function getRequestInt(string $varname): int
 /**
  * Retrieve a POST integer and sanitize it
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable in $_POST
  * @param   boolean   $setZero   should the return be set to zero if the variable doesnt exist?
  * @return   int|null   the "safe" integer or zero, null otherwise
@@ -244,6 +272,7 @@ function formInt(string $varname, bool $setZero = true): ?int
  * and returns false if no elements or not existent, and an array of
  * one or more integers if it does exist.
  *
+ * @since 1.9.8
  * @param   string   $varname   the form field to find and sanitize
  * @return   mixed   false if not set or no elements, an array() of integers otherwise
  */
@@ -272,9 +301,10 @@ function getFormArrayInt(string $varname, bool $doCount = true): array|false
 /**
  * Retrieve a POST variable and check it for on value
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable in $_POST
  * @return   string   on if set to on, off otherwise
-  */
+ */
 function formOnOff(string $varname): string
 {
     $retval = getRawInput($varname);
@@ -288,6 +318,7 @@ function formOnOff(string $varname): string
 /**
  * Retrieve a POST variable and check it for yes value
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable in $_POST
  * @return   string   yes if set to yes, no otherwise
  */
@@ -304,6 +335,7 @@ function formYesNo(string $varname): string
 /**
  * Sanitizes a POST integer and checks it for 1 value
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable in $_POST
  * @return   integer   1 if set to 1, 0 otherwise
  */
@@ -315,6 +347,7 @@ function form10(string $varname): int
 /**
  * Retrieve a POST boolean variable and check it for true value
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable in $_POST
  * @return   boolean   true if set to true, false otherwise
  */
@@ -326,6 +359,7 @@ function formBool(string $varname): bool
 /**
  * Check if a variable is checked
  *
+ * @since 1.9.8
  * @param   string   $varname   name of the variable
  * @param   string   $compare   is $compare equal to $varname?
  * @return   string   checked html if $compare is equal to $varname, empty otherwise
@@ -335,6 +369,9 @@ function isChecked(string $varname, string $compare = 'yes'): string
     return(($varname == $compare) ? 'checked="checked"' : '');
 }
 
+/**
+ * @since 1.9.8
+ */
 function isValidFilename(string $filename): bool
 {
     return (bool) preg_match("#^[\\w\\^\\-\\#\\] `~!@$&()_+=[{};',.]+$#", trim($filename));

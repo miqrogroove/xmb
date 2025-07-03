@@ -39,9 +39,11 @@ class Validation
     /**
      * All-purpose function for retrieving and sanitizing user input.
      *
+     * @since 1.8 formerly checkInput()
+     * @since 1.9.8 formerly formVar()
      * @since 1.9.8 SP3
      */
-    public function postedVar(string $varname, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false, string $sourcearray = 'p'): string
+    public function postedVar(string $varname, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = true, string $sourcearray = 'p'): string
     {
         $retval = getPhpInput($varname, $sourcearray);
 
@@ -55,7 +57,7 @@ class Validation
         string $word = '',
         bool $htmlencode = true,
         bool $dbescape = true,
-        bool $quoteencode = false,
+        bool $quoteencode = true,
         string $source = 'p',
     ): array {
         $input = getRawInput($varname, $source);
@@ -126,9 +128,9 @@ class Validation
 
         if ($htmlencode) {
             if ($quoteencode) {
-                $retval = htmlspecialchars($retval, ENT_QUOTES | ENT_XHTML);
+                $retval = htmlEsc($retval);
             } else {
-                $retval = htmlspecialchars($retval, ENT_NOQUOTES);
+                $retval = lessThanEsc($retval);
             }
         }
 

@@ -1147,7 +1147,7 @@ class Core
      */
     public function audit(string $user, string $action, int $fid = 0, int $tid = 0)
     {
-        $action = cdataOut($action);
+        $action = htmlEsc($action);
 
         $this->sql->addLog($user, $action, $fid, $tid, $this->vars->onlinetime);
 

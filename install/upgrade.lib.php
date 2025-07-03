@@ -2589,9 +2589,9 @@ class Upgrade
         $result = $this->db->query($sql, false);
         
         if (false === $result) {
-            $error = '<pre>MySQL encountered the following error: ' . cdataOut($this->db->error()) . "\n\n";
+            $error = '<pre>MySQL encountered the following error: ' . htmlEsc($this->db->error()) . "\n\n";
             if ('' != $sql) {
-                $error .= 'In the following query: <em>' . cdataOut($sql) . '</em>';
+                $error .= 'In the following query: <em>' . htmlEsc($sql) . '</em>';
             }
             $error .= '</pre>';
             

@@ -104,7 +104,7 @@ class admin
         $db->query("UPDATE " . $this->vars->tablepre . "whosonline SET username='$dbuserto' WHERE username='$dbuserfrom'");
 
         $query = $db->query("SELECT ignoreu2u, uid FROM " . $this->vars->tablepre . "members WHERE (ignoreu2u REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
-        while($usr = $db->fetch_array($query)) {
+        while ($usr = $db->fetch_array($query)) {
             $db->escape_fast($usr['ignoreu2u']);
             $parts = explode(',', $usr['ignoreu2u']);
             $index = array_search($dbuserfrom, $parts);
@@ -115,7 +115,7 @@ class admin
         $db->free_result($query);
 
         $query = $db->query("SELECT moderator, fid FROM " . $this->vars->tablepre . "forums WHERE (moderator REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
-        while($list = $db->fetch_array($query)) {
+        while ($list = $db->fetch_array($query)) {
             $db->escape_fast($list['moderator']);
             $parts = explode(',', $list['moderator']);
             $index = array_search($dbuserfrom, $parts);
@@ -126,7 +126,7 @@ class admin
         $db->free_result($query);
 
         $query = $db->query("SELECT userlist, fid FROM " . $this->vars->tablepre . "forums WHERE (userlist REGEXP '(^|(,))()*$dbregexuserfrom()*((,)|$)')");
-        while($list = $db->fetch_array($query)) {
+        while ($list = $db->fetch_array($query)) {
             $db->escape_fast($list['userlist']);
             $parts = array_unique(array_map('trim', explode(',', $list['userlist'])));
             $index = array_search($dbuserfrom, $parts);
@@ -137,7 +137,7 @@ class admin
         $db->free_result($query);
 
         $query = $db->query("SELECT fid, lastpost FROM " . $this->vars->tablepre . "forums WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
-        while($result = $db->fetch_array($query)) {
+        while ($result = $db->fetch_array($query)) {
             $db->escape_fast($result['lastpost']);
             $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $result['lastpost']);
             $db->query("UPDATE " . $this->vars->tablepre . "forums SET lastpost='$newlastpost' WHERE fid={$result['fid']}");
@@ -145,7 +145,7 @@ class admin
         $db->free_result($query);
 
         $query = $db->query("SELECT tid, lastpost FROM " . $this->vars->tablepre . "threads WHERE lastpost LIKE '%|$dblikeuserfrom|%'");
-        while($result = $db->fetch_array($query)) {
+        while ($result = $db->fetch_array($query)) {
             $db->escape_fast($result['lastpost']);
             $newlastpost = str_replace("|$dbuserfrom|", "|$dbuserto|", $result['lastpost']);
             $db->query("UPDATE " . $this->vars->tablepre . "threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
@@ -393,7 +393,7 @@ class admin
                 ?>
                 <tr class="category" bgcolor="<?= $THEME['altbg2'] ?>" align="center">
                 <?php
-                for($i=0;$i<$count;$i++) {
+                for ($i = 0; $i < $count; $i++) {
                     echo '<td align="left">';
                     echo '<strong><font color=' . $THEME['cattext'] . '>' . $this->db->field_name($resource, $i) . '</font></strong>';
                     echo '</td>';
@@ -401,11 +401,11 @@ class admin
                 echo '</tr>';
             }
 
-            while($a = $this->db->fetch_array($resource, $this->db::SQL_NUM)) {
+            while ($a = $this->db->fetch_array($resource, $this->db::SQL_NUM)) {
                 ?>
                 <tr bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow">
                 <?php
-                for($i=0;$i<$count;$i++) {
+                for ($i = 0; $i < $count; $i++) {
                     echo '<td align="left">';
 
                     if (null === $a[$i]) {
@@ -413,7 +413,7 @@ class admin
                     } elseif (trim($a[$i]) == '') {
                         echo '&nbsp;';
                     } else {
-                        echo nl2br(cdataOut($a[$i]));
+                        echo nl2br(htmlEsc($a[$i]));
                     }
                     echo '</td>';
                 }

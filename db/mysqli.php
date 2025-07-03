@@ -379,15 +379,15 @@ class MySQLiDatabase implements DBStuff
 
             // MySQL error text may contain sensitive file path info.
             if (defined('XMB\X_SADMIN')) {
-                echo 'MySQL encountered the following error: ' . cdataOut($error) . "<br />\n(errno = $errno)<br /><br />\n";
+                echo 'MySQL encountered the following error: ' . htmlEsc($error) . "<br />\n(errno = $errno)<br /><br />\n";
                 if ($sql != '') {
-                    echo "In the following query:<br />\n<pre>" . cdataOut($sql) . "</pre>\n";
+                    echo "In the following query:<br />\n<pre>" . htmlEsc($sql) . "</pre>\n";
                 }
                 echo "<strong>Stack trace:</strong>\n<pre>";
                 debug_print_backtrace();
                 echo '</pre>';
             } elseif ($sql != '') {
-                echo "MySQL encountered an error in the following query:<br />\n<pre>" . cdataOut($sql) . "</pre>\n", $log_advice;
+                echo "MySQL encountered an error in the following query:<br />\n<pre>" . htmlEsc($sql) . "</pre>\n", $log_advice;
             } elseif ($msg != '') {
                 echo $log_advice;
             } else {
