@@ -48,16 +48,16 @@ if (X_GUEST) {
     exit;
 }
 
-$folder = $validate->postedVar('folder', dbescape: false, quoteencode: true);
+$folder = $validate->postedVar('folder', dbescape: false);
 if ($folder == '') {
-    $folder = $validate->postedVar('folder', dbescape: false, quoteencode: true, sourcearray: 'g');
+    $folder = $validate->postedVar('folder', dbescape: false, sourcearray: 'g');
     if ($folder == '') {
         $folder = 'Inbox';
     }
 }
 $u2u->setFolder($folder);
 
-$tofolder = $validate->postedVar('tofolder', dbescape: false, quoteencode: true);
+$tofolder = $validate->postedVar('tofolder', dbescape: false);
 
 $u2ucount = $u2u->folderList();
 $u2uid = formInt('u2uid');
@@ -71,8 +71,8 @@ $template->leftpane = '';
 
 switch ($action) {
     case 'modif':
-        $mod = $validate->postedVar('mod', '', FALSE, FALSE);
-        switch($mod) {
+        $mod = getPhpInput('mod');
+        switch ($mod) {
             // TODO: What is the purpose of any of these redirects?  At best, they are converting a POST request to a GET.
             case 'send':
                 if ($u2uid > 0) {
@@ -115,9 +115,8 @@ switch ($action) {
         }
         break;
     case 'mod':
-        $modaction = $validate->postedVar('modaction', '', FALSE, FALSE);
+        $modaction = getPhpInput('modaction');
         $u2u_select = getFormArrayInt('u2u_select');
-        $tofolder = $validate->postedVar('tofolder', '', TRUE, FALSE);
         $folder_url = recodeOut($folder);
         switch ($modaction) {
             case 'delete':
@@ -148,9 +147,9 @@ switch ($action) {
         }
         break;
     case 'send':
-        $msgto = $validate->postedVar('msgto', 'javascript', dbescape: false, quoteencode: true);
-        $subject = $validate->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
-        $message = $validate->postedVar('message', '', TRUE, FALSE);
+        $msgto = $validate->postedVar('msgto', dbescape: false);
+        $subject = $validate->postedVar('subject', dbescape: false);
+        $message = $validate->postedVar('message', dbescape: false, quoteencode: false);
         $template->leftpane = $u2u->send($u2uid, $msgto, $subject, $message);
         break;
     case 'view':
@@ -161,7 +160,7 @@ switch ($action) {
         break;
     case 'folders':
         if (onSubmit('folderssubmit')) {
-            $u2ufolders = $validate->postedVar('u2ufolders', 'javascript', dbescape: false, quoteencode: true);
+            $u2ufolders = $validate->postedVar('u2ufolders', dbescape: false);
             $u2u->folderSubmit($u2ufolders);
         } else {
             $template->hU2ufolders = $vars->self->u2ufolders;

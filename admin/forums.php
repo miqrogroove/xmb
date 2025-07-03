@@ -246,7 +246,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     while ($forum = $db->fetch_array($queryforum)) {
         $displayorder = formInt('displayorder'.$forum['fid']);
         $forum['status'] = formOnOff('status'.$forum['fid']);
-        $name = addslashes(htmlspecialchars($validate->postedVar('name'.$forum['fid'], 'javascript', htmlencode: false), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $name = addslashes(htmlspecialchars($validate->postedVar('name' . $forum['fid'], htmlencode: false), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $delete = formInt('delete'.$forum['fid']);
         $moveto = formInt('moveto'.$forum['fid']);
 
@@ -307,7 +307,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
     $querygroup = $db->query("SELECT fid FROM " . $vars->tablepre . "forums WHERE type = 'group'");
     while ($group = $db->fetch_array($querygroup)) {
-        $name = addslashes(htmlspecialchars($validate->postedVar('name' . $group['fid'], 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $name = addslashes(htmlspecialchars($validate->postedVar('name' . $group['fid'], htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $displayorder = formInt('displayorder'.$group['fid']);
         $group['status'] = formOnOff('status'.$group['fid']);
         $delete = formInt('delete'.$group['fid']);
@@ -332,9 +332,9 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         }
     }
 
-    $newgname = addslashes(htmlspecialchars($validate->postedVar('newgname', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
-    $newfname = addslashes(htmlspecialchars($validate->postedVar('newfname', 'javascript', htmlencode: false), ENT_COMPAT));
-    $newsubname = addslashes(htmlspecialchars($validate->postedVar('newsubname', 'javascript', htmlencode: false), ENT_COMPAT));
+    $newgname = addslashes(htmlspecialchars($validate->postedVar('newgname', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+    $newfname = addslashes(htmlspecialchars($validate->postedVar('newfname', htmlencode: false), ENT_COMPAT));
+    $newsubname = addslashes(htmlspecialchars($validate->postedVar('newsubname', htmlencode: false), ENT_COMPAT));
     $newgorder = formInt('newgorder');
     $newforder = formInt('newforder');
     $newsuborder = formInt('newsuborder');
@@ -375,14 +375,14 @@ if (noSubmit('forumsubmit') && !$fdetails) {
             }
         }
     } else {
-        $namenew = addslashes(htmlspecialchars($validate->postedVar('namenew', 'javascript', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $namenew = addslashes(htmlspecialchars($validate->postedVar('namenew', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
         $descnew = $validate->postedVar('descnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
         $allowbbcodenew = formYesNo('allowbbcodenew');
         $allowimgcodenew = formYesNo('allowimgcodenew');
         $attachstatusnew = formOnOff('attachstatusnew');
         $themeforumnew = formInt('themeforumnew');
-        $userlistnew = $validate->postedVar('userlistnew', 'javascript');
+        $userlistnew = $validate->postedVar('userlistnew');
         $passwordnew = $validate->postedVar('passwordnew', htmlencode: false);
         $delete = formInt('delete');
 

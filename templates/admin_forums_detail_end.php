@@ -17,7 +17,7 @@ echo $forum['userlist'];
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['forumpw'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="passwordnew" value="<?= attrOut($forum['password'], 'javascript') ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="passwordnew" value="<?= htmlEsc($forum['password']) ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textdeleteques'] ?></td>

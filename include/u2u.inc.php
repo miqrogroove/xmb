@@ -195,9 +195,7 @@ class U2U
 
         $username = $this->validate->postedVar(
             varname: 'username',
-            word: 'javascript',
             dbescape: false,
-            quoteencode: true,
             sourcearray: 'g',
         ); //username is the param from u2u links on profiles.
 

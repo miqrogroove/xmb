@@ -237,7 +237,7 @@ if (! ini_get('file_uploads')) {
 }
 
 // TODO: Does this need to be set to $thread['posticon'] when $action == 'edit' and no edit submitted yet?
-$posticon = $validate->postedVar('posticon', 'javascript', dbescape: false, quoteencode: true);
+$posticon = $validate->postedVar('posticon', 'javascript', dbescape: false);
 if ($posticon != '') {
     if (! isValidFilename($posticon)) {
         $posticon = '';
@@ -315,8 +315,8 @@ if (X_STAFF) {
     }
 }
 
-$messageinput = $validate->postedVar('message', dbescape: false);  //postify() was responsible for decoding this if html was allowed in the past.
-$subjectinput = $validate->postedVar('subject', 'javascript', dbescape: false, quoteencode: true);
+$messageinput = $validate->postedVar('message', dbescape: false, quoteencode: false);  //postify() was responsible for decoding this if html was allowed in the past.
+$subjectinput = $validate->postedVar('subject', dbescape: false);
 $subjectinput = trim($subjectinput);
 $subjectinput = str_replace(["\r", "\n"], ['', ''], $subjectinput);
 
@@ -413,7 +413,7 @@ switch ($action) {
                     $Captcha = new Captcha($core, $vars);
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = getPhpInput('imgcode');
-                        $imghash = $validate->postedVar('imghash');
+                        $imghash = getPhpInput('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
                             $errors .= $core->softerror($lang['captchaimageinvalid']);
                             $replyvalid = false;
@@ -800,7 +800,7 @@ switch ($action) {
                     $Captcha = new Captcha($core, $vars);
                     if ($Captcha->bCompatible !== false) {
                         $imgcode = getPhpInput('imgcode');
-                        $imghash = $validate->postedVar('imghash');
+                        $imghash = getPhpInput('imghash');
                         if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
                             $errors .= $core->softerror($lang['captchaimageinvalid']);
                             $topicvalid = false;
