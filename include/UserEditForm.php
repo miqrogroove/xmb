@@ -100,12 +100,15 @@ class UserEditForm
             }
 
         } else {
+            // These first two indicies are not included during registration.
+            $subEachPost = $member['sub_each_post'] ?? '';
+            $invisible = $member['invisible'] ?? '';
             // From memcp.php
-            $template->subschecked = $member['sub_each_post'] == 'yes' ? $vars::cheHTML : '';
+            $template->subschecked = $subEachPost == 'yes' ? $vars::cheHTML : '';
             $template->newschecked = $member['newsletter'] == 'yes' ? $vars::cheHTML : '';
             $template->ogu2uchecked = $member['saveogu2u'] == 'yes' ? $vars::cheHTML : '';
             $template->eouchecked = $member['emailonu2u'] == 'yes' ? $vars::cheHTML : '';
-            $template->invchecked = $member['invisible'] === '1' ? $vars::cheHTML : '';
+            $template->invchecked = $invisible === '1' ? $vars::cheHTML : '';
 
             switch ($member['u2ualert']) {
                 case '2':
@@ -217,7 +220,7 @@ class UserEditForm
             $this->edits['theme'] = $thememem;
         }
 
-        $langfilenew = $this->validate->postedVar('langfilenew');
+        $langfilenew = getPhpInput('langfilenew');
         if (! $this->tran->langfileExists($langfilenew)) {
             $langfilenew = $this->vars->settings['langfile'];
         }
@@ -292,7 +295,7 @@ class UserEditForm
         $httpsOnly = 'on' == $this->vars->settings['images_https_only'];
 
         if ($this->vars->settings['avastatus'] == 'on') {
-            $avatar = $this->validate->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true);
+            $avatar = $this->validate->postedVar('newavatar', 'javascript', dbescape: false);
             $rawavatar = getPhpInput('newavatar');
             $newavatarcheck = getPhpInput('newavatarcheck');
 
@@ -325,7 +328,7 @@ class UserEditForm
                 }
             }
             closedir($dirHandle);
-            $avatar = $filefound ? $this->validate->postedVar('newavatar', 'javascript', dbescape: false, quoteencode: true) : '';
+            $avatar = $filefound ? $this->validate->postedVar('newavatar', 'javascript', dbescape: false) : '';
         } else {
             $avatar = '';
         }
@@ -421,11 +424,11 @@ class UserEditForm
         $adminEdit = $this->formMode == 'admin';
         
         if ($anyEdit || $selfEdit || $adminEdit) {
-            $location = $this->validate->postedVar('newlocation', 'javascript', dbescape: false, quoteencode: true);
-            $site = $this->validate->postedVar('newsite', 'javascript', dbescape: false, quoteencode: true);
-            $bio = $this->validate->postedVar('newbio', 'javascript', dbescape: false, quoteencode: true);
-            $mood = $this->validate->postedVar('newmood', 'javascript', dbescape: false, quoteencode: true);
-            $sig = $this->validate->postedVar('newsig', 'javascript', dbescape: false, quoteencode: true);
+            $location = $this->validate->postedVar('newlocation', dbescape: false);
+            $site = $this->validate->postedVar('newsite', 'javascript', dbescape: false);
+            $bio = $this->validate->postedVar('newbio', dbescape: false);
+            $mood = $this->validate->postedVar('newmood', dbescape: false);
+            $sig = $this->validate->postedVar('newsig', dbescape: false);
             $avatar = $this->readAvatar();
         } else {
             $location = '';
@@ -439,7 +442,7 @@ class UserEditForm
             $this->edits['location'] = $location;
         }
         if ($this->formMode == 'new' || $this->targetUser['site'] != $site) {
-            $this->edits['site'] = $site;
+            $this->edits['site'] = format_member_site($site);
         }
         if ($this->formMode == 'new' || $this->targetUser['bio'] != $bio) {
             $this->edits['bio'] = $bio;

@@ -2094,20 +2094,36 @@ class Core
         $password1 = getRawString($passInputName);
         $password2 = getRawString($passConfirmName);
 
-        if ('' == $password1) {
-            $this->error($this->vars->lang['textnopassword']);
-        }
-        if (strlen($password1) < $this->vars::PASS_MIN_LENGTH) {
-            $this->error($this->vars->lang['pwtooshort']);
-        }
-        if (strlen($password1) > $this->vars::PASS_MAX_LENGTH) {
-            $this->error($this->vars->lang['pwtoolong']);
-        }
-        if ($password1 !== $password2) {
-            $this->error($this->vars->lang['pwnomatch']);
+        $error = $this->checkPasswordPolicy($password1, $password2);
+        if ($error !== '') {
+            $this->error($error);
         }
 
         return $password1;
+    }
+
+    /**
+     * Checks a new password against requirements and always returns an error or an empty string.
+     *
+     * @since 1.10.00
+     * @param string $password1
+     * @param string $password2
+     * @return string Error message, or empty string on success.
+     */
+    public function checkPasswordPolicy(string $password1, string $password2): string
+    {
+        $error = '';
+        if ('' == $password1) {
+            $error = $this->vars->lang['textnopassword'];
+        } elseif (strlen($password1) < $this->vars::PASS_MIN_LENGTH) {
+            $error = $this->vars->lang['pwtooshort'];
+        } elseif (strlen($password1) > $this->vars::PASS_MAX_LENGTH) {
+            $error = $this->vars->lang['pwtoolong'];
+        } elseif ($password1 !== $password2) {
+            $error = $this->vars->lang['pwnomatch'];
+        }
+
+        return $error;
     }
 
     /**
@@ -2168,7 +2184,7 @@ class Core
         }
 
         // Check admin-specified phrases
-        return checkNameRestrictions($input);
+        return $this->checkNameRestrictions($input);
     }
 
     /**

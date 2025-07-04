@@ -10,12 +10,12 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textusername'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="username" size="25" maxlength="25" /> <?= $lang['usernamechars'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="username" size="25" maxlength="25" value="<?= $username ?>" /> <?= $lang['usernamechars'] ?></td>
 </tr>
 <?= $pwtd ?>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textemail'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="email" size="25" value="" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="email" size="25" value="<?= $email ?>" /></td>
 </tr>
 <?= $regoptional ?>
 <tr>
@@ -33,22 +33,22 @@
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textbday'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>">
 <select name="month">
-<option value="0">&nbsp;</option>
-<option value="1"><?= $lang['textjan'] ?></option>
-<option value="2"><?= $lang['textfeb'] ?></option>
-<option value="3"><?= $lang['textmar'] ?></option>
-<option value="4"><?= $lang['textapr'] ?></option>
-<option value="5"><?= $lang['textmay'] ?></option>
-<option value="6"><?= $lang['textjun'] ?></option>
-<option value="7"><?= $lang['textjul'] ?></option>
-<option value="8"><?= $lang['textaug'] ?></option>
-<option value="9"><?= $lang['textsep'] ?></option>
-<option value="10"><?= $lang['textoct'] ?></option>
-<option value="11"><?= $lang['textnov'] ?></option>
-<option value="12"><?= $lang['textdec'] ?></option>
+<option value="" <?= $sel[0] ?>>&nbsp;</option>
+<option value="1" <?= $sel[1] ?>><?= $lang['textjan'] ?></option>
+<option value="2" <?= $sel[2] ?>><?= $lang['textfeb'] ?></option>
+<option value="3" <?= $sel[3] ?>><?= $lang['textmar'] ?></option>
+<option value="4" <?= $sel[4] ?>><?= $lang['textapr'] ?></option>
+<option value="5" <?= $sel[5] ?>><?= $lang['textmay'] ?></option>
+<option value="6" <?= $sel[6] ?>><?= $lang['textjun'] ?></option>
+<option value="7" <?= $sel[7] ?>><?= $lang['textjul'] ?></option>
+<option value="8" <?= $sel[8] ?>><?= $lang['textaug'] ?></option>
+<option value="9" <?= $sel[9] ?>><?= $lang['textsep'] ?></option>
+<option value="10" <?= $sel[10] ?>><?= $lang['textoct'] ?></option>
+<option value="11" <?= $sel[11] ?>><?= $lang['textnov'] ?></option>
+<option value="12" <?= $sel[12] ?>><?= $lang['textdec'] ?></option>
 </select>
 <?= $dayselect ?>
-<input type="text" name="year" size="4" />
+<input type="text" name="year" size="4" value="<?= $year ?>" />
 </td>
 </tr>
 <tr class="tablerow">
@@ -61,26 +61,26 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textgetnews'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="newsletter" value="yes" checked="checked" /> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="newsletter" value="yes" <?= $newschecked ?> /> </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['u2ualert1'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>">
 <select name="u2ualert">
-<option value="2"><?= $lang['u2ualert2'] ?></option>
-<option value="1"><?= $lang['u2ualert3'] ?></option>
-<option value="0"><?= $lang['u2ualert4'] ?></option>
+<option value="2" <?= $u2uasel2 ?>><?= $lang['u2ualert2'] ?></option>
+<option value="1" <?= $u2uasel1 ?>><?= $lang['u2ualert3'] ?></option>
+<option value="0" <?= $u2uasel0 ?>><?= $lang['u2ualert4'] ?></option>
 </select>
 </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsaveog'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="saveogu2u" value="yes" checked="checked" />
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="saveogu2u" value="yes" <?= $ogu2uchecked ?> />
 </td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textemailonu2u'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="emailonu2u" value="yes" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="emailonu2u" value="yes" <?= $eouchecked ?> /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttimeformat'] ?></td>
@@ -88,7 +88,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['dateformat'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="dateformatnew" size="25" value="<?= $dformatorig ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="dateformatnew" size="25" value="<?= $dateformat ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $textoffset ?></td>

@@ -244,11 +244,10 @@ switch ($action) {
                     $self['username'] = trim($validate->postedVar('username', dbescape: false));
 
                     if (strlen($self['username']) < $vars::USERNAME_MIN_LENGTH || strlen($self['username']) > $vars::USERNAME_MAX_LENGTH) {
-                        $core->error($lang['username_length_invalid']);
-                    }
-
-                    if (! $core->usernameValidation(getRawString('username'))) {
-                        $core->error($lang['restricted']);
+                        $softErrors .= $core->softerror($lang['username_length_invalid']);
+                        $self['username'] = substr($self['username'], 0, $vars::USERNAME_MAX_LENGTH);
+                    } elseif (! $core->usernameValidation(getRawString('username'))) {
+                        $softErrors .= $core->softerror($lang['restricted']);
                     }
 
                     if ($SETTINGS['ipreg'] != 'off') {
@@ -269,14 +268,13 @@ switch ($action) {
                     $sql_user = $db->escape($self['username']);
                     $query = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE username = '$sql_user' $email2");
                     if ($member = $db->fetch_array($query)) {
-                        $db->free_result($query);
-                        $core->error($lang['alreadyreg']);
+                        $softErrors .= $core->softerror($lang['alreadyreg']);
                     }
                     $db->free_result($query);
 
                     $postcount = $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE author = '$sql_user'"));
                     if (intval($postcount) > 0) {
-                        $core->error($lang['alreadyreg']);
+                        $softErrors .= $core->softerror($lang['alreadyreg']);
                     }
 
                     if ($SETTINGS['emailcheck'] == 'on') {
@@ -287,80 +285,90 @@ switch ($action) {
                             $newPass .= $chars[random_int(0, $get)];
                         }
                     } else {
-                        $newPass = $core->assertPasswordPolicy('password', 'password2');
+                        $newPass = getRawString('password');
+                        $password2 = getRawString('password2');
+                        $error = $core->checkPasswordPolicy($newPass, $password2);
+                        if ($error !== '' ) {
+                            $softErrors .= $core->softerror($error);
+                            $newPass = '';
+                        }
                     }
-                    $passMan = new Password($sql);
-                    $self['password2'] = $passMan->hashPassword($newPass);
+                    if ($newPass !== '') {
+                        $passMan = new Password($sql);
+                        $self['password2'] = $passMan->hashPassword($newPass);
+                        unset($passMan);
+                    }
 
                     if (! $core->checkNameRestrictions(rawHTML($self['email']))) {
-                        $core->error($lang['emailrestricted']);
+                        $softErrors .= $core->softerror($lang['emailrestricted']);
                     }
 
                     $test = new EmailAddressValidator();
                     $rawemail = getPhpInput('email');
                     if (! $test->isValid($rawemail)) {
-                        $core->error($lang['bademail']);
+                        $softErrors .= $core->softerror($lang['bademail']);
                     }
 
-                    $count1 = $sql->countMembers();
-                    $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
+                    if ($softErrors === '') {
+                        $count1 = $sql->countMembers();
+                        $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
-                    $self['regdate'] = $vars->onlinetime;
-                    if (strlen($vars->onlineip) > 39) {
-                        $self['regip'] = '';
-                    } else {
-                        $self['regip'] = $vars->onlineip;
-                    }
+                        $self['regdate'] = $vars->onlinetime;
+                        if (strlen($vars->onlineip) > 39) {
+                            $self['regip'] = '';
+                        } else {
+                            $self['regip'] = $vars->onlineip;
+                        }
 
-                    $sql->addMember($self);
+                        $sql->addMember($self);
 
-                    $lang2 = $tran->loadPhrases([
-                        'charset',
-                        'textnewmember',
-                        'textnewmember2',
-                        'textyourpw',
-                        'textyourpwis',
-                        'textusername',
-                        'textpassword',
-                    ]);
+                        $lang2 = $tran->loadPhrases([
+                            'charset',
+                            'textnewmember',
+                            'textnewmember2',
+                            'textyourpw',
+                            'textyourpwis',
+                            'textusername',
+                            'textpassword',
+                        ]);
 
-                    if ($SETTINGS['notifyonreg'] != 'off') {
-                        $mailquery = $sql->getSuperEmails();
-                        foreach ($mailquery as $admin) {
-                            $translate = $lang2[$admin['langfile']];
-                            if ($SETTINGS['notifyonreg'] == 'u2u') {
-                                $sql->addU2U(
-                                    to: $admin['username'],
-                                    from: $SETTINGS['bbname'],
-                                    type: 'incoming',
-                                    owner: $admin['username'],
-                                    folder: 'Inbox',
-                                    subject: $translate['textnewmember'],
-                                    message: $translate['textnewmember2'],
-                                    isRead: 'no',
-                                    isSent: 'yes',
-                                    timestamp: $vars->onlinetime,
-                                );
-                            } else {
-                                $adminemail = rawHTML($admin['email']);
-                                $body = $translate['textnewmember2'] . "\n\n" . $vars->full_url;
-                                $email->send($adminemail, $translate['textnewmember'], $body, $translate['charset']);
+                        if ($SETTINGS['notifyonreg'] != 'off') {
+                            $mailquery = $sql->getSuperEmails();
+                            foreach ($mailquery as $admin) {
+                                $translate = $lang2[$admin['langfile']];
+                                if ($SETTINGS['notifyonreg'] == 'u2u') {
+                                    $sql->addU2U(
+                                        to: $admin['username'],
+                                        from: $SETTINGS['bbname'],
+                                        type: 'incoming',
+                                        owner: $admin['username'],
+                                        folder: 'Inbox',
+                                        subject: $translate['textnewmember'],
+                                        message: $translate['textnewmember2'],
+                                        isRead: 'no',
+                                        isSent: 'yes',
+                                        timestamp: $vars->onlinetime,
+                                    );
+                                } else {
+                                    $adminemail = rawHTML($admin['email']);
+                                    $body = $translate['textnewmember2'] . "\n\n" . $vars->full_url;
+                                    $email->send($adminemail, $translate['textnewmember'], $body, $translate['charset']);
+                                }
                             }
                         }
-                    }
 
-                    if ($SETTINGS['emailcheck'] == 'on') {
-                        $translate = $lang2[$langfilenew];
-                        $username = trim(getPhpInput('username'));
-                        $rawbbname = rawHTML($SETTINGS['bbname']);
-                        $subject = "[$rawbbname] {$translate['textyourpw']}";
-                        $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $newPass\n\n" . $vars->full_url;
-                        $email->send($rawemail, $subject, $body, $translate['charset']);
-                    } else {
-                        $session->newUser($self);
+                        if ($SETTINGS['emailcheck'] == 'on') {
+                            $translate = $lang2[$langfilenew];
+                            $username = trim(getPhpInput('username'));
+                            $rawbbname = rawHTML($SETTINGS['bbname']);
+                            $subject = "[$rawbbname] {$translate['textyourpw']}";
+                            $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $newPass\n\n" . $vars->full_url;
+                            $email->send($rawemail, $subject, $body, $translate['charset']);
+                        } else {
+                            $session->newUser($self);
+                        }
                     }
-
-                    unset($newPass, $passMan);
+                    unset($newPass);
                     break;
             }
 
@@ -470,7 +478,9 @@ switch ($action) {
 
             if (5 == $stepout) {
                 // Display new user form
-                $self = [];
+                if ($softErrors === '') {
+                    $self = [];
+                }
                 $form = new UserEditForm($self, $self, $core, $db, $sql, $theme, $tran, $validate, $vars);
                 $form->setOptions();
                 $form->setCallables();
@@ -482,6 +492,14 @@ switch ($action) {
                 }
 
                 $subTemplate = $form->getTemplate();
+
+                if ($softErrors === '') {
+                    $subTemplate->email = '';
+                    $subTemplate->username = '';
+                } else {
+                    $subTemplate->email = $self['email'];
+                    $subTemplate->username = $self['username'];
+                }
 
                 if ($SETTINGS['emailcheck'] == 'off') {
                     $subTemplate->pwtd = $subTemplate->process('member_reg_password.php');
@@ -506,7 +524,6 @@ switch ($action) {
                 $currdate = gmdate($vars->timecode, $core->standardTime($vars->onlinetime));
                 $subTemplate->textoffset = str_replace('$currdate', $currdate, $lang['evaloffset']);
 
-                $subTemplate->dformatorig = $SETTINGS['dateformat'];
                 $subTemplate->stepout = $stepout;
 
                 // Every step except 'done' will require new tokens.
