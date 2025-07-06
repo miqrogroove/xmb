@@ -156,25 +156,6 @@ class admin
     }
 
     /**
-     * Provides HTML attributes for use with printsetting1().
-     *
-     * @since 1.9.8
-     */
-    public function settingHTML(string $setting, string &$on, string &$off)
-    {
-        $on = '';
-        $off = '';
-        switch ($this->vars->settings[$setting]) {
-            case 'on':
-                $on = $this->vars::selHTML;
-                break;
-            default:
-                $off = $this->vars::selHTML;
-                break;
-        }
-    }
-
-    /**
      * Single line text control.
      *
      * @since 1.5.0

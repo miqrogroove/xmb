@@ -259,6 +259,7 @@ $recaptcha_link = '<br /><span class="smalltext">[ <a href="https://www.google.c
 $admin->printsetting6($lang['google_captcha_onoff'], 'recaptchanew', 'google_captcha');
 $admin->printsetting2($lang['google_captcha_sitekey'].$recaptcha_link, 'recaptchakeynew', $SETTINGS['google_captcha_sitekey'], 50);
 $admin->printsetting2($lang['google_captcha_secretkey'], 'recaptchasecretnew', $SETTINGS['google_captcha_secret'], 50);
+$admin->printsetting3($lang['google_captcha_type'], 'recaptchatypenew', $gcaptchaNames, $gcaptchaValues, $gcaptchaChecked, multi: false);
 ?>
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>

@@ -397,3 +397,15 @@ function input_to_literal(string $value, string $style = 'single'): string
         return '"' . $value . '"';
     }
 }
+
+/**
+ * Retrieve an array element whose existence is unknown.
+ *
+ * Though this looks trivial, it is helpful for overcoming order-of-operation problems related to the ?? operator.
+ *
+ * @since 1.10.00
+ */
+function arrayCoalesce(array $array, string $index): mixed
+{
+    return $array[$index] ?? null;
+}

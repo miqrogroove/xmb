@@ -157,6 +157,20 @@ if (noSubmit('settingsubmit')) {
     $template->names = array($lang['Enable_Server_Load'], $lang['Enable_Queries'], $lang['Enable_PHP_SQL'], $lang['Enable_Page_load']);
     $template->checked = array($sel_serverload, $sel_queries, $sel_phpsql, $sel_loadtimes);
 
+    $template->gcaptchaValues = [
+        'checkbox',
+        'invisible',
+    ];
+    $template->gcaptchaNames = [
+        $lang['google_captcha_checkbox'],
+        $lang['google_captcha_invisible'],
+    ];
+    $type = $SETTINGS['google_captcha_type'] ?? 'checkbox';
+    $template->gcaptchaChecked = [
+        $type === 'checkbox',
+        $type !== 'checkbox',
+    ];
+
     $template->max_avatar_sizes = explode('x', $SETTINGS['max_avatar_size']);
 
     $captcha = new Captcha($core, $vars);
@@ -263,6 +277,7 @@ if (noSubmit('settingsubmit')) {
     $admin->input_custom_setting('google_captcha', $recaptchanew);
     $admin->input_string_setting('google_captcha_secret', 'recaptchasecretnew');
     $admin->input_string_setting('google_captcha_sitekey', 'recaptchakeynew');
+    $admin->input_string_setting('google_captcha_type', 'recaptchatypenew');
     $admin->input_onoff_setting('gzipcompress', 'gzipcompressnew');
     $admin->input_onoff_setting('hideprivate', 'hidepriv');
     $admin->input_onoff_setting('hide_banned', 'hidebannednew');

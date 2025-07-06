@@ -183,8 +183,14 @@ switch ($action) {
                         $success = false;
                         if (false !== $raw_result) {
                             $decoded = json_decode($raw_result, associative: true);
-                            if (! empty($decoded['success'])) {
-                                if (true === $decoded['success']) {
+                            if (arrayCoalesce($decoded, 'success') === true && arrayCoalesce($decoded, 'action') === 'register') {
+                                if (isset($decoded['score'])) {
+                                    // This is API v3.
+                                    if ($decoded['score'] >= 0.5) {
+                                        $success = true;
+                                    }
+                                } else {
+                                    // This is API v2.
                                     $success = true;
                                 }
                             }
@@ -394,12 +400,12 @@ switch ($action) {
 
             if (2 == $stepout) {
                 if ('on' == $SETTINGS['google_captcha']) {
-                    // Display reCAPTCHA
-                    $template->css .= "<script src='https://www.google.com/recaptcha/api.js' async defer></script>\n";
-
                     // Every step except 'done' will require new tokens.
                     $template->token = $token->create('Registration', (string) $stepout, $vars::NONCE_FORM_EXP, anonymous: true);
                     $core->put_cookie('register', $template->token, time() + $vars::NONCE_FORM_EXP);
+
+                    $keyType = $SETTINGS['google_captcha_type'] ?? 'checkbox';
+                    $template->invisible = $keyType !== 'checkbox';
 
                     $memberpage = $template->process('member_reg_gcaptcha.php');
                 } elseif ('on' == $SETTINGS['captcha_status'] && 'on' == $SETTINGS['captcha_reg_status']) {
