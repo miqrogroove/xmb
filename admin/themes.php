@@ -182,6 +182,9 @@ if ($single_int > 0) {
     $db->free_result($query);
 
     $body = $template->process('admin_themes_single.php');
+} elseif ($single_str == "bump") {
+    $sql->raiseThemeVersions();
+    $core->message($lang['themes_bump_done']);
 } elseif ($single_str == "anewtheme1") {
     $template->token = $token->create('Control Panel/Themes', 'New Theme', $vars::NONCE_FORM_EXP);
 

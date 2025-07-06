@@ -55,6 +55,8 @@ if ($vars->settings['subject_in_title'] == 'on') {
 
 $core->assertAdminOnly();
 
+$template->css .= "<script src='" . $vars->full_url . "js/settings.js?v=2'></script>\n";
+
 $header = $template->process('header.php');
 
 $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];

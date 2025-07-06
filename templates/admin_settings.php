@@ -7,33 +7,35 @@ namespace XMB;
 ?>
 <tr bgcolor="<?= $THEME['altbg2'] ?>">
 <td align="center">
-<span class="smalltxt">
-<a href="#1"><?= $lang['admin_main_settings1']; ?></a><br />
-<a href="#2"><?= $lang['admin_main_settings2']; ?></a><br />
-<a href="#3"><?= $lang['admin_main_settings3']; ?></a><br />
-<a href="#4"><?= $lang['admin_main_settings4']; ?></a><br />
-<a href="#9"><?= $lang['admin_main_settings9']; ?></a><br />
-<a href="#5"><?= $lang['admin_main_settings5']; ?></a><br />
-<a href="#8"><?= $lang['admin_main_settings8']; ?></a><br />
-<a href="#6"><?= $lang['admin_main_settings6']; ?></a><br />
-<a href="#7"><?= $lang['admin_main_settings7']; ?></a><br />
-<a href="#10"><?= $lang['admin_main_settings10']; ?></a><br />
-</span>
+<div id="tabs">
+ <button onclick="switchTab(this, 'boardDetail')" class="active"><?= $lang['admin_main_settings1']; ?></button>
+ <button onclick="switchTab(this, 'defaults')"><?= $lang['admin_main_settings2']; ?></button>
+ <button onclick="switchTab(this, 'modules')"><?= $lang['admin_main_settings3']; ?></button>
+ <button onclick="switchTab(this, 'cosmetic')"><?= $lang['admin_main_settings4']; ?></button>
+ <button onclick="switchTab(this, 'front')"><?= $lang['admin_main_settings9']; ?></button>
+ <button onclick="switchTab(this, 'users')"><?= $lang['admin_main_settings5']; ?></button>
+ <button onclick="switchTab(this, 'attachments')"><?= $lang['admin_main_settings8']; ?></button>
+ <button onclick="switchTab(this, 'other')"><?= $lang['admin_main_settings6']; ?></button>
+ <button onclick="switchTab(this, 'captcha')"><?= $lang['admin_main_settings7']; ?></button>
+ <button onclick="switchTab(this, 'thirdParty')"><?= $lang['admin_main_settings10']; ?></button>
+</div>
 <form method="post" action="<?= $full_url ?>admin/settings.php">
 <input type="hidden" name="token" value="<?= $token ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
+<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%" id="settings">
+<tbody id="boardDetail">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="1" />&raquo;&nbsp;<?= $lang['admin_main_settings1'] ?></font></strong></td>
 </tr>
 <?php
+$rulesDesc = $lang['textbbrulestxt'] . '<br /><br />' . $lang['texthtmlis'] . ' ' . $lang['texton'];
 $admin->printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'], 50);
 $admin->printsetting2($lang['bbname'], 'bbnamenew', $SETTINGS['bbname'], 50);
 $admin->printsetting2($lang['textsiteurl'], 'siteurlnew', $SETTINGS['siteurl'], 50);
 $admin->printsetting6($lang['textbbrules'], 'bbrulesnew', 'bbrules');
-$admin->printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', htmlEsc($SETTINGS['bbrulestxt']), 5, 50);
+$admin->printsetting4($rulesDesc, 'bbrulestxtnew', htmlEsc($SETTINGS['bbrulestxt']), 5, 50);
 $admin->printsetting6($lang['textbstatus'], 'bbstatusnew', 'bbstatus');
 $admin->printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
 $admin->printsetting6($lang['gzipcompression'], 'gzipcompressnew', 'gzipcompress');
@@ -41,6 +43,8 @@ $admin->printsetting6($lang['gzipcompression'], 'gzipcompressnew', 'gzipcompress
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="defaults">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="2" />&raquo;&nbsp;<?= $lang['admin_main_settings2'] ?></font></strong></td>
 </tr>
@@ -67,6 +71,8 @@ $admin->printsetting2($lang['dateformat'], 'dateformatnew', $SETTINGS['dateforma
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="modules">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="3" />&raquo;&nbsp;<?= $lang['admin_main_settings3'] ?></font></strong></td>
 </tr>
@@ -82,6 +88,8 @@ $admin->printsetting6($lang['reportpoststatus'], 'reportpostnew', 'reportpost');
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="cosmetic">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="4" />&raquo;&nbsp;<?= $lang['admin_main_settings4'] ?></font></strong></td>
 </tr>
@@ -102,6 +110,8 @@ $admin->printsetting6($lang['show_logs_in_threads'], 'showlogsnew', 'show_logs_i
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="front">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="9" />&raquo;&nbsp;<?= $lang['admin_main_settings9'] ?></font></strong></td>
 </tr>
@@ -119,6 +129,8 @@ $admin->printsetting3($lang['tickercode'], 'tickercodenew', array($lang['plainte
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="users">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="5" />&raquo;&nbsp;<?= $lang['admin_main_settings5'] ?></font></strong></td>
 </tr>
@@ -144,6 +156,8 @@ $admin->printsetting6($lang['hide_banned_users'], 'hidebannednew', 'hide_banned'
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="attachments">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="8" />&raquo;&nbsp;<?= $lang['admin_main_settings8'] ?></font></strong></td>
 </tr>
@@ -180,6 +194,8 @@ $admin->printsetting2($lang['textfilesbase'], 'filesbasenew', $SETTINGS['files_v
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="other">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="6" />&raquo;&nbsp;<?= $lang['admin_main_settings6'] ?></font></strong></td>
 </tr>
@@ -201,6 +217,8 @@ if (! ini_get('allow_url_fopen')) {
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="captcha">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="7" />&raquo;&nbsp;<?= $lang['admin_main_settings7'] ?></font></strong></td>
 </tr>
@@ -231,6 +249,8 @@ if (! $goodCaptcha) {
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
 </tr>
+</tbody>
+<tbody id="thirdParty">
 <tr class="category">
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="10" />&raquo;&nbsp;<?= $lang['admin_main_settings10'] ?></font></strong></td>
 </tr>

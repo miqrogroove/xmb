@@ -3,10 +3,7 @@
 </tr>
 <tr bgcolor="<?= $THEME['altbg1'] ?>" class="tablerow">
 <td colspan="3">
-<a href="<?= $full_url ?>admin/themes.php?single=anewtheme1">
-    <strong><?= $lang['textnewtheme'] ?></strong>
-</a>
- -
+<p>
 <a href="#" onclick="setCheckboxes('theme_main', 'theme_delete[]', true); return false;">
     <?= $lang['checkall'] ?>
 </a>
@@ -18,6 +15,15 @@
 <a href="#" onclick="invertSelection('theme_main', 'theme_delete[]'); return false;">
     <?= $lang['invertselection'] ?>
 </a>
+</p><p>
+<a href="<?= $full_url ?>admin/themes.php?single=anewtheme1">
+    <strong><?= $lang['textnewtheme'] ?></strong>
+</a>
+ -
+<a href="<?= $full_url ?>admin/themes.php?single=bump">
+    <strong><?= $lang['themes_bump'] ?></strong>
+</a>
+</p>
 </td>
 </tr>
 <tr>

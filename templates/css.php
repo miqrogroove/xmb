@@ -377,3 +377,37 @@ textarea, select, input, object {
         transform: translateX(-100%);
     }
 }
+
+#settings tbody {
+    display: none;
+}
+
+#settings tbody#boardDetail {
+    display: table-row-group;
+}
+
+#tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    background-color: <?= $THEME['altbg2'] ?>;
+}
+
+#tabs button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+}
+
+#tabs button:hover {
+    background-color: <?= $THEME['altbg1'] ?>;
+}
+
+#tabs button.active {
+    background-color: <?= $THEME['header'] ?>;
+}
