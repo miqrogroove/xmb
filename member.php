@@ -28,19 +28,19 @@ use RuntimeException;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$email = \XMB\Services\email();
-$forums = \XMB\Services\forums();
-$session = \XMB\Services\session();
-$smile = \XMB\Services\smile();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$theme = \XMB\Services\theme();
-$token = \XMB\Services\token();
-$tran = \XMB\Services\translation();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$email = Services\email();
+$forums = Services\forums();
+$session = Services\session();
+$smile = Services\smile();
+$sql = Services\sql();
+$template = Services\template();
+$theme = Services\theme();
+$token = Services\token();
+$tran = Services\translation();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 

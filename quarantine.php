@@ -26,17 +26,17 @@ namespace XMB;
 
 require './header.php';
 
-$attachSvc = \XMB\Services\attach();
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$email = \XMB\Services\email();
-$forums = \XMB\Services\forums();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$tokenSvc = \XMB\Services\token();
-$tran = \XMB\Services\translation();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$attachSvc = Services\attach();
+$core = Services\core();
+$db = Services\db();
+$email = Services\email();
+$forums = Services\forums();
+$sql = Services\sql();
+$template = Services\template();
+$tokenSvc = Services\token();
+$tran = Services\translation();
+$validate = Services\validate();
+$vars = Services\vars();
 
 $lang = &$vars->lang;
 $onlinetime = $vars->onlinetime;
@@ -58,8 +58,8 @@ $template->process('quarantine_wrap.php', echo: true);
 $action = getPhpInput('action', sourcearray: 'g');
 
 if ($action == 'viewforum' || $action == 'viewuser') {
-    $ranks = new \XMB\Ranks($sql, $vars);
-    $render = new \XMB\ThreadRender($core, $ranks, $sql, $vars);
+    $ranks = new Ranks($sql, $vars);
+    $render = new ThreadRender($core, $ranks, $sql, $vars);
 
     if ('viewuser' == $action) {
         $user = $validate->postedVar('u', dbescape: false, sourcearray: 'g');

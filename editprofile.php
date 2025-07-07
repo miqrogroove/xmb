@@ -26,16 +26,16 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$session = \XMB\Services\session();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$theme = \XMB\Services\theme();
-$token = \XMB\Services\token();
-$tran = \XMB\Services\translation();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$session = Services\session();
+$sql = Services\sql();
+$template = Services\template();
+$theme = Services\theme();
+$token = Services\token();
+$tran = Services\translation();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 $core->nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
@@ -66,7 +66,7 @@ $https_only = 'on' == $vars->settings['images_https_only'];
 $js_https_only = $https_only ? 'true' : 'false';
 
 if (noSubmit('editsubmit')) {
-    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
+    $form = new UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
     $form->setOptions();
     $form->setCallables();
     $form->setOptionalFields();
@@ -142,7 +142,7 @@ if (noSubmit('editsubmit')) {
 } else {
     $core->request_secure('Edit User Account', $member['uid']);
 
-    $form = new \XMB\UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
+    $form = new UserEditForm($member, $vars->self, $core, $db, $sql, $theme, $tran, $validate, $vars);
     $form->readBirthday();
     $form->readOptionalFields();
     $form->readCallables();
@@ -185,7 +185,7 @@ if (noSubmit('editsubmit')) {
 
     if (getRawString('newpassword') != '') {
         $newPass = $core->assertPasswordPolicy('newpassword', 'newpassword');
-        $passMan = new \XMB\Password($sql);
+        $passMan = new Password($sql);
         $passMan->changePassword($rawuser, $newPass);
         unset($newPass, $passMan);
 

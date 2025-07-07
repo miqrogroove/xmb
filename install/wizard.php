@@ -95,8 +95,8 @@ if (! is_readable(ROOT . 'header.php')) {
 
 require ROOT . 'header.php';
 
-$template = \XMB\Services\template();
-$vars = \XMB\Services\vars();
+$template = Services\template();
+$vars = Services\vars();
 
 $template->versiongeneral = $vars->versiongeneral;
 $template->versionshort = $vars->versionshort;
@@ -129,7 +129,7 @@ $class[$vStep] = 'current';
 $template->class = $class;
 
 if ($status == 'installed') {
-    $db = \XMB\Services\db();
+    $db = Services\db();
 
     if ((int) $vars->settings['schema_version'] >= Schema::VER) {
         header('HTTP/1.0 403 Forbidden');
@@ -207,7 +207,7 @@ if (! empty($full_url) && $full_url != 'FULLURL') {
     $template->full_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') - strlen('install'));
 }
 
-$show = new \XMB\HttpOutput($template, $vars);
+$show = new HttpOutput($template, $vars);
 
 switch ($vStep) {
     case 1: // welcome
@@ -358,7 +358,7 @@ switch ($vStep) {
         }
         $vars->debug = $debug;
 
-        $boot = new \XMB\Bootup($template, $vars);
+        $boot = new Bootup($template, $vars);
         $boot->parseURL($full_url);
         $boot->debugURLsettings($vars->cookiesecure, $vars->cookiedomain, $vars->cookiepath);
 
@@ -381,7 +381,7 @@ switch ($vStep) {
 
         require_once ROOT . "db/{$database}.php";
 
-        $db = new \XMB\MySQLiDatabase($debug, $log_mysql_errors);
+        $db = new MySQLiDatabase($debug, $log_mysql_errors);
         
         // let's check if the actual functionality exists...
 
@@ -421,10 +421,10 @@ switch ($vStep) {
 
         require './cinst.php';
 
-        $schema = new \XMB\Schema($db, $vars);
-        $sql = new \XMB\SQL($db, $vars->tablepre);
-        $validate = new \XMB\Validation($db);
-        $lib = new \XMB\Install($db, $schema, $sql, $show, $validate, $vars);
+        $schema = new Schema($db, $vars);
+        $sql = new SQL($db, $vars->tablepre);
+        $validate = new Validation($db);
+        $lib = new Install($db, $schema, $sql, $show, $validate, $vars);
 
         $lib->go();
 

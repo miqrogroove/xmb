@@ -27,15 +27,15 @@ namespace XMB;
 const ROOT = '../';
 require ROOT . 'header.php';
 
-$attach = \XMB\Services\attach();
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$session = \XMB\Services\session();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$token = \XMB\Services\token();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$attach = Services\attach();
+$core = Services\core();
+$db = Services\db();
+$session = Services\session();
+$sql = Services\sql();
+$template = Services\template();
+$token = Services\token();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
@@ -63,7 +63,7 @@ $table = $template->process('admin_table.php');
 if (onSubmit('upgradesubmit')) {
     $core->request_secure('Control Panel/Insert Raw SQL', id: '');
 
-    $admin = new \XMB\admin($core, $db, $session, $sql, $validate, $vars);
+    $admin = new admin($core, $db, $session, $sql, $validate, $vars);
 
     $upgrade = getPhpInput('upgrade');
     if (isset($_FILES['sql_file'])) {

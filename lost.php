@@ -26,13 +26,13 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$session = \XMB\Services\session();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$token = \XMB\Services\token();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$session = Services\session();
+$sql = Services\sql();
+$template = Services\template();
+$token = Services\token();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 $token1 = getPhpInput('a', sourcearray: 'g');
@@ -64,7 +64,7 @@ if (X_MEMBER) {
         $core->error($lang['lostpw_bad_token']);
     }
 
-    $passMan = new \XMB\Password($sql);
+    $passMan = new Password($sql);
     $passMan->changePassword($username, $newPass);
     unset($newPass, $passMan);
 

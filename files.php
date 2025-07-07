@@ -26,11 +26,11 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$forums = \XMB\Services\forums();
-$observer = \XMB\Services\observer();
-$sql = \XMB\Services\sql();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$forums = Services\forums();
+$observer = Services\observer();
+$sql = Services\sql();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 $aid = 0;

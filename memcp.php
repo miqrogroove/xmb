@@ -26,17 +26,17 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$forums = \XMB\Services\forums();
-$session = \XMB\Services\session();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$theme = \XMB\Services\theme();
-$token = \XMB\Services\token();
-$tran = \XMB\Services\translation();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$forums = Services\forums();
+$session = Services\session();
+$sql = Services\sql();
+$template = Services\template();
+$theme = Services\theme();
+$token = Services\token();
+$tran = Services\translation();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 

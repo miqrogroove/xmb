@@ -26,12 +26,12 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$smile = \XMB\Services\smile();
-$template = \XMB\Services\template();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$smile = Services\smile();
+$template = Services\template();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 $core->nav($lang['textsearch']);

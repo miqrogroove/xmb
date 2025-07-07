@@ -26,10 +26,10 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$sql = Services\sql();
+$template = Services\template();
+$vars = Services\vars();
 
 $page = getPhpInput('page', 'g');
 

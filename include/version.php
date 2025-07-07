@@ -39,7 +39,7 @@ class XMBVersion
         $data = array(
             'version' => '1.10.00',
             'versionStage' => 'alpha',
-            'versionDate' => '20250316',
+            'versionDate' => '20250707',
             'mysqlMinVer' => '5.5.8',
             'phpMinVer' => '8.2.0',
             'copyright' => '2001-2025',

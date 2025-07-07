@@ -263,7 +263,7 @@ class Bootup
 
         switch ($this->vars->database) {
             default:
-                $db = new \XMB\MySQLiDatabase($this->vars->debug, $this->vars->log_mysql_errors);
+                $db = new MySQLiDatabase($this->vars->debug, $this->vars->log_mysql_errors);
         }
         $db->connect(
             $this->vars->dbhost,

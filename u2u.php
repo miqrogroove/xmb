@@ -28,14 +28,14 @@ require './header.php';
 
 header('X-Robots-Tag: noindex');
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$email = \XMB\Services\email();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$tran = \XMB\Services\translation();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$email = Services\email();
+$sql = Services\sql();
+$template = Services\template();
+$tran = Services\translation();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 $u2u = new U2U($core, $db, $email, $sql, $template, $tran, $validate, $vars);

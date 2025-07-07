@@ -29,15 +29,15 @@ use Throwable;
 const ROOT = '../';
 require ROOT . 'header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$email = \XMB\Services\email();
-$session = \XMB\Services\session();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$token = \XMB\Services\token();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$email = Services\email();
+$session = Services\session();
+$sql = Services\sql();
+$template = Services\template();
+$token = Services\token();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');

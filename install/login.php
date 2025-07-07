@@ -29,9 +29,9 @@ const UPGRADE = true;
 
 require ROOT . 'header.php';
 
-$core = \XMB\Services\core();
-$sql = \XMB\Services\sql();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$sql = Services\sql();
+$vars = Services\vars();
 
 $username = $validate->postedVar('username', dbescape: false);
 
@@ -46,7 +46,7 @@ if (strlen($username) == 0) {
     <?php
 } else {
     if ((int) $vars->settings['schema_version'] >= 5) {
-        // Already logged in by \XMB\Session\Manager
+        // Already logged in by Session\Manager
         if (! X_SADMIN) {
             echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "upgrade/login.php'>Try Again</a>.<br />";
             throw new Exception('Upgrade login failure by '.$_SERVER['REMOTE_ADDR']);

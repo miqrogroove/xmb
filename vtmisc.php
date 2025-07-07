@@ -26,14 +26,14 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$forums = \XMB\Services\forums();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$tran = \XMB\Services\translation();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$forums = Services\forums();
+$sql = Services\sql();
+$template = Services\template();
+$tran = Services\translation();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 if (X_GUEST) {
@@ -139,7 +139,7 @@ if ($action == 'report') {
         $template->fid = $fid;
         $body = $template->process('vtmisc_report.php');
     } else {
-        $u2u = new \XMB\U2U($db, $sql, $tran, $validate, $vars);
+        $u2u = new U2U($db, $sql, $tran, $validate, $vars);
         $modquery = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE status IN ('Super Administrator', 'Administrator', 'Super Moderator')");
         while ($modusr = $db->fetch_array($modquery)) {
             $posturl = $vars->full_url . "viewthread.php?tid=$tid&amp;goto=search&amp;pid=$pid";

@@ -26,15 +26,15 @@ namespace XMB;
 
 require './header.php';
 
-$attachSvc = \XMB\Services\attach();
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$forums = \XMB\Services\forums();
-$sqlSvc = \XMB\Services\sql();
-$smile = \XMB\Services\smile();
-$template = \XMB\Services\template();
-$token = \XMB\Services\token();
-$vars = \XMB\Services\vars();
+$attachSvc = Services\attach();
+$core = Services\core();
+$db = Services\db();
+$forums = Services\forums();
+$sqlSvc = Services\sql();
+$smile = Services\smile();
+$template = Services\template();
+$token = Services\token();
+$vars = Services\vars();
 $full_url = $vars->full_url;
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
@@ -233,7 +233,7 @@ $template->searchlink = $core->makeSearchLink((int) $forum['fid']);
 $template->replylink = '';
 $template->quickreply = '';
 
-$subTemplate = new \XMB\Template($vars);
+$subTemplate = new Template($vars);
 $subTemplate->addRefs();
 $subTemplate->fid = $fid;
 $subTemplate->tid = $tid;
@@ -241,8 +241,8 @@ $subTemplate->tid = $tid;
 $status1 = $core->modcheck($vars->self['username'], $forum['moderator']);
 
 if ($action == '') {
-    $ranks = new \XMB\Ranks($sqlSvc, $vars);
-    $render = new \XMB\ThreadRender($core, $ranks, $sqlSvc, $vars);
+    $ranks = new Ranks($sqlSvc, $vars);
+    $render = new ThreadRender($core, $ranks, $sqlSvc, $vars);
 
     $mpage = $core->multipage((int) $thread['postcount'], $vars->ppp, "{$full_url}viewthread.php?tid=$tid");
     $template->multipage = '';
@@ -259,7 +259,7 @@ if ($action == '') {
     if ($perms[$vars::PERMS_REPLY] && ($thread['closed'] == '' || X_SADMIN)) {
         $template->replylink = $subTemplate->process('viewthread_reply.php');
         if ($SETTINGS['quickreply_status'] == 'on') {
-            $quickTemplate = new \XMB\Template($vars);
+            $quickTemplate = new Template($vars);
             $quickTemplate->addRefs();
             $quickTemplate->tid = $tid;
             $quickTemplate->allowimgcode = ($forum['allowimgcode'] == 'yes') ? $lang['texton']:$lang['textoff'];

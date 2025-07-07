@@ -378,6 +378,10 @@ textarea, select, input, object {
     }
 }
 
+.settings-wrap {
+    max-width: 800px;
+}
+
 #settings tbody {
     display: none;
 }

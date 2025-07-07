@@ -193,7 +193,7 @@ class BuddyManager
      */
     public function list(): array
     {
-        $template = new \XMB\Template($this->vars);
+        $template = new Template($this->vars);
         $template->addRefs();
 
         $buddys = [

@@ -1789,7 +1789,7 @@ class Core
      * The XMB schema is currently limited to a 12-byte key length, and as such
      * does not offer user uniqueness beyond simple randomization.
      *
-     * \XMB\Token\create() replaces this function for all purposes other than anonymous captcha.
+     * Token::create() replaces this function for all purposes other than anonymous captcha.
      *
      * @since 1.9.11.11
      * @param string $key The known value, such as what the nonce may be used for.

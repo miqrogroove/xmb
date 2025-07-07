@@ -34,9 +34,9 @@ namespace XMB;
  */
 function onSubmit(string $submitname): bool
 {
-    $retval = (isset($_POST[$submitname]) && !empty($_POST[$submitname]));
-    if (!$retval) {
-        $retval = (isset($_GET[$submitname]) && !empty($_GET[$submitname]));
+    $retval = ! empty($_POST[$submitname]);
+    if (! $retval) {
+        $retval = ! empty($_GET[$submitname]);
     }
 
     return($retval);

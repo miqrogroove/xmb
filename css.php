@@ -26,10 +26,10 @@ namespace XMB;
 
 require './header.php';
 
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$themeMgr = \XMB\Services\theme();
-$vars = \XMB\Services\vars();
+$sql = Services\sql();
+$template = Services\template();
+$themeMgr = Services\theme();
+$vars = Services\vars();
 
 $vars->comment_output = false; // If true, CSS would be invalid.
 $vars->theme = $sql->getThemeByID(getInt('id'));

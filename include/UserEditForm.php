@@ -100,15 +100,12 @@ class UserEditForm
             }
 
         } else {
-            // These first two indicies are not included during registration.
-            $subEachPost = $member['sub_each_post'] ?? '';
-            $invisible = $member['invisible'] ?? '';
-            // From memcp.php
-            $template->subschecked = $subEachPost == 'yes' ? $vars::cheHTML : '';
+            // From memcp.php. Some indicies are not included during registration
+            $template->subschecked = arrayCoalesce($member, 'sub_each_post') == 'yes' ? $vars::cheHTML : '';
             $template->newschecked = $member['newsletter'] == 'yes' ? $vars::cheHTML : '';
             $template->ogu2uchecked = $member['saveogu2u'] == 'yes' ? $vars::cheHTML : '';
             $template->eouchecked = $member['emailonu2u'] == 'yes' ? $vars::cheHTML : '';
-            $template->invchecked = $invisible === '1' ? $vars::cheHTML : '';
+            $template->invchecked = arrayCoalesce($member, 'invisible') === '1' ? $vars::cheHTML : '';
 
             switch ($member['u2ualert']) {
                 case '2':

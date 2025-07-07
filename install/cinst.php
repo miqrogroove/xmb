@@ -82,7 +82,7 @@ class Install
         }
 
         // these two are used waaaaay down below.
-        $passMan = new \XMB\Password($this->sql);
+        $passMan = new Password($this->sql);
         $vPassword = $passMan->hashPassword($frmPassword);
         $myDate = time();
         $this->show->okay();

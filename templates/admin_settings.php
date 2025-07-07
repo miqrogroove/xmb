@@ -21,7 +21,7 @@ namespace XMB;
 </div>
 <form method="post" action="<?= $full_url ?>admin/settings.php">
 <input type="hidden" name="token" value="<?= $token ?>" />
-<table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center" class="settings-wrap">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%" id="settings">

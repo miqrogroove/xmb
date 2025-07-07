@@ -26,12 +26,12 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$forumcache = \XMB\Services\forums();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$forumcache = Services\forums();
+$sql = Services\sql();
+$template = Services\template();
+$vars = Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
@@ -77,7 +77,7 @@ if (onSubmit('gid')) {
 
 $header = $template->process('header.php');
 
-$body = new \XMB\Template($vars);
+$body = new Template($vars);
 $body->addRefs();
 
 $body->ticker = '';

@@ -27,14 +27,14 @@ namespace XMB;
 const ROOT = '../';
 require ROOT . 'header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$session = \XMB\Services\session();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$token = \XMB\Services\token();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$session = Services\session();
+$sql = Services\sql();
+$template = Services\template();
+$token = Services\token();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
@@ -199,7 +199,7 @@ if (noSubmit('membersubmit')) {
 
             if (getRawString('pw' . $mem['uid']) != '') {
                 $newPass = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);
-                $passMan = new \XMB\Password($sql);
+                $passMan = new Password($sql);
                 $passMan->changePassword($mem['username'], $newPass);
                 unset($newPass, $passMan);
 

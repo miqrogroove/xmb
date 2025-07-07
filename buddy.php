@@ -26,12 +26,12 @@ namespace XMB;
 
 require './header.php';
 
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$core = Services\core();
+$db = Services\db();
+$sql = Services\sql();
+$template = Services\template();
+$validate = Services\validate();
+$vars = Services\vars();
 
 header('X-Robots-Tag: noindex');
 
@@ -40,7 +40,7 @@ if (X_GUEST) {
     exit;
 }
 
-$buddy = new \XMB\BuddyManager($core, $db, $sql, $template, $vars);
+$buddy = new BuddyManager($core, $db, $sql, $template, $vars);
 
 $action = getPhpInput('action', 'g');
 switch ($action) {

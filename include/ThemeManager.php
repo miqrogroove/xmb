@@ -63,7 +63,7 @@ class ThemeManager
 
         // Check which theme to use
         $validtheme = false;
-        $themeuser = (int) ($this->vars->self['theme'] ?? 0);
+        $themeuser = (int) arrayCoalesce($this->vars->self, 'theme');
         if (! $validtheme && $themeuser > 0) {
             $theme = $themeuser;
             $row = $this->sql->getThemeByID($theme);

@@ -28,22 +28,22 @@ use XMB\UploadStatus;
 
 require './header.php';
 
-$attachSvc = \XMB\Services\attach();
-$core = \XMB\Services\core();
-$db = \XMB\Services\db();
-$email = \XMB\Services\email();
-$forums = \XMB\Services\forums();
-$sql = \XMB\Services\sql();
-$template = \XMB\Services\template();
-$tran = \XMB\Services\translation();
-$validate = \XMB\Services\validate();
-$vars = \XMB\Services\vars();
+$attachSvc = Services\attach();
+$core = Services\core();
+$db = Services\db();
+$email = Services\email();
+$forums = Services\forums();
+$sql = Services\sql();
+$template = Services\template();
+$tran = Services\translation();
+$validate = Services\validate();
+$vars = Services\vars();
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
 header('X-Robots-Tag: noindex');
 
-$subTemplate = new \XMB\Template($vars);
+$subTemplate = new Template($vars);
 $subTemplate->addRefs();
 
 if (X_GUEST) {

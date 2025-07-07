@@ -47,11 +47,11 @@ require './UpgradeOutput.php';
 require './LoggedOutput.php';
 require './upgrade.lib.php';
 
-$db = \XMB\Services\db();
-$vars = \XMB\Services\vars();
-$schema = new \XMB\Schema($db, $vars);
-$show = new \XMB\LoggedOutput();
-$lib = new \XMB\Upgrade($db, $show, $schema, $vars);
+$db = Services\db();
+$vars = Services\vars();
+$schema = new Schema($db, $vars);
+$show = new LoggedOutput();
+$lib = new Upgrade($db, $show, $schema, $vars);
 
 if (! defined('XMB\X_SADMIN') || ! X_SADMIN) {
     header('HTTP/1.0 403 Forbidden');
