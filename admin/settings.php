@@ -207,16 +207,20 @@ if (noSubmit('settingsubmit')) {
     }
 
     $maxAttachSize = (string) min(phpShorthandValue('upload_max_filesize'), formInt('maxAttachSize'));
-    $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
-    $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
-    $max_avatar_size = $max_avatar_size_w_new.'x'.$max_avatar_size_h_new;
+    if (ini_get('allow_url_fopen')) {
+        $max_avatar_size_w_new = formInt('max_avatar_size_w_new');
+        $max_avatar_size_h_new = formInt('max_avatar_size_h_new');
+        $max_avatar_size = $max_avatar_size_w_new . 'x' . $max_avatar_size_h_new;
+    } else {
+        $max_avatar_size = $SETTINGS['max_avatar_size'];
+    }
 
     $max_image_size_w_new = formInt('max_image_size_w_new');
     $max_image_size_h_new = formInt('max_image_size_h_new');
     $max_thumb_size_w_new = formInt('max_thumb_size_w_new');
     $max_thumb_size_h_new = formInt('max_thumb_size_h_new');
-    $max_image_size = $max_image_size_w_new.'x'.$max_image_size_h_new;
-    $max_thumb_size = $max_thumb_size_w_new.'x'.$max_thumb_size_h_new;
+    $max_image_size = $max_image_size_w_new . 'x' . $max_image_size_h_new;
+    $max_thumb_size = $max_thumb_size_w_new . 'x' . $max_thumb_size_h_new;
 
     $mpp = formInt('memberperpagenew');
     $ppp = formInt('postperpagenew');
@@ -227,6 +231,8 @@ if (noSubmit('settingsubmit')) {
     $mpp = (string) $mpp;
     $ppp = (string) $ppp;
     $tpp = (string) $tpp;
+
+    $captcha = new Captcha($core, $vars);
 
     $admin->input_int_setting('addtime', 'addtimenew');
     $admin->input_onoff_setting('allowrankedit', 'allowrankeditnew');
@@ -239,24 +245,28 @@ if (noSubmit('settingsubmit')) {
     $admin->input_onoff_setting('bbrules', 'bbrulesnew');
     $admin->input_string_setting('bbrulestxt', 'bbrulestxtnew', false);
     $admin->input_onoff_setting('bbstatus', 'bbstatusnew');
-    $admin->input_onoff_setting('captcha_code_casesensitive', 'captchacodecasenew');
-    $admin->input_string_setting('captcha_code_charset', 'captchacharsetnew');
-    $admin->input_int_setting('captcha_code_length', 'captchacodenew');
-    $admin->input_onoff_setting('captcha_code_shadow', 'captchacodeshadownew');
-    $admin->input_string_setting('captcha_image_bg', 'captchaimagebgnew');
-    $admin->input_onoff_setting('captcha_image_color', 'captchaimagecolornew');
-    $admin->input_int_setting('captcha_image_dots', 'captchaimagedotsnew');
-    $admin->input_string_setting('captcha_image_fonts', 'captchaimagefontsnew');
-    $admin->input_int_setting('captcha_image_height', 'captchaimageheightnew');
-    $admin->input_int_setting('captcha_image_lines', 'captchaimagelinesnew');
-    $admin->input_int_setting('captcha_image_maxfont', 'captchaimagemaxfontnew');
-    $admin->input_int_setting('captcha_image_minfont', 'captchaimageminfontnew');
-    $admin->input_string_setting('captcha_image_type', 'captchaimagetypenew');
-    $admin->input_int_setting('captcha_image_width', 'captchaimagewidthnew');
-    $admin->input_onoff_setting('captcha_post_status', 'captchapostnew');
-    $admin->input_onoff_setting('captcha_reg_status', 'captcharegnew');
-    $admin->input_onoff_setting('captcha_search_status', 'captchasearchnew');
-    $admin->input_onoff_setting('captcha_status', 'captchanew');
+    if ($captcha->bCompatible) {
+        $admin->input_onoff_setting('captcha_code_casesensitive', 'captchacodecasenew');
+        $admin->input_string_setting('captcha_code_charset', 'captchacharsetnew');
+        $admin->input_int_setting('captcha_code_length', 'captchacodenew');
+        $admin->input_onoff_setting('captcha_code_shadow', 'captchacodeshadownew');
+        $admin->input_string_setting('captcha_image_bg', 'captchaimagebgnew');
+        $admin->input_onoff_setting('captcha_image_color', 'captchaimagecolornew');
+        $admin->input_int_setting('captcha_image_dots', 'captchaimagedotsnew');
+        $admin->input_string_setting('captcha_image_fonts', 'captchaimagefontsnew');
+        $admin->input_int_setting('captcha_image_height', 'captchaimageheightnew');
+        $admin->input_int_setting('captcha_image_lines', 'captchaimagelinesnew');
+        $admin->input_int_setting('captcha_image_maxfont', 'captchaimagemaxfontnew');
+        $admin->input_int_setting('captcha_image_minfont', 'captchaimageminfontnew');
+        $admin->input_string_setting('captcha_image_type', 'captchaimagetypenew');
+        $admin->input_int_setting('captcha_image_width', 'captchaimagewidthnew');
+        $admin->input_onoff_setting('captcha_post_status', 'captchapostnew');
+        $admin->input_onoff_setting('captcha_reg_status', 'captcharegnew');
+        $admin->input_onoff_setting('captcha_search_status', 'captchasearchnew');
+        $admin->input_onoff_setting('captcha_status', 'captchanew');
+    } elseif ($SETTINGS['captcha_status'] == 'on') {
+        $admin->input_onoff_setting('captcha_status', 'captchanew');
+    }
     $admin->input_onoff_setting('catsonly', 'catsonlynew');
     $admin->input_onoff_setting('coppa', 'coppanew');
     $admin->input_string_setting('dateformat', 'dateformatnew');

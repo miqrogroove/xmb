@@ -225,6 +225,9 @@ if (! ini_get('allow_url_fopen')) {
 <?php
 if (! $goodCaptcha) {
     $admin->printsetting5($lang['captchastatus'], $lang['captcha_not_working']);
+    if ($SETTINGS['captcha_status'] == 'on') {
+        $admin->printsetting6($lang['captchastatus'], 'captchanew', 'captcha_status');
+    }
 } else {
     $admin->printsetting6($lang['captchastatus'], 'captchanew', 'captcha_status');
     $admin->printsetting6($lang['captcharegstatus'], 'captcharegnew', 'captcha_reg_status');
