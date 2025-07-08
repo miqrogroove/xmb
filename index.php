@@ -56,7 +56,6 @@ if (onSubmit('gid')) {
         if (isset($allforums['forum'][$gid])) {
             if (X_GUEST) {
                 $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
-                exit;
             } else {
                 $core->error($lang['privforummsg']);
             }
@@ -102,8 +101,7 @@ if ($SETTINGS['tickerstatus'] == 'on' && $gid == 0) {
 }
 
 if (X_SMOD && $gid == 0) {
-    $quarantine = true;
-    $result = $sql->countPosts($quarantine);
+    $result = $sql->countPosts(quarantine: true);
     if ($result > 0) {
         if (1 == $result) {
             $msg = str_replace(
@@ -173,7 +171,7 @@ if ($gid == 0) {
             $where = "WHERE m.status != 'Banned'";
         }
         $query = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM " . $vars->tablepre . "members AS m INNER JOIN " . $vars->tablepre . "whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
-        while($online = $db->fetch_array($query)) {
+        while ($online = $db->fetch_array($query)) {
             if ('1' === $online['invisible'] && X_ADMIN) {
                 $member[] = $online;
                 $hiddencount++;
@@ -216,7 +214,7 @@ if ($gid == 0) {
         $show_total = (X_ADMIN) ? ($membercount+$hiddencount) : ($membercount);
 
         $show_inv_key = false;
-        for($mnum=0; $mnum<$show_total; $mnum++) {
+        for ($mnum=0; $mnum<$show_total; $mnum++) {
             $pre = $suff = '';
 
             $online = $member[$mnum];
@@ -297,7 +295,7 @@ if ($gid == 0) {
 
 $fquery = $core->getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
-if ($SETTINGS['catsonly'] == 'on' && count($fquery) == 0) {
+if ($SETTINGS['catsonly'] == 'on' && $gid == 0 && count($fquery) == 0) {
     // The admin has chosen to show categories only, but no existing categories are turned on.  Let's avoid this.
     $sql->updateSetting('catsonly', 'off');
     $SETTINGS['catsonly'] = 'off';
@@ -322,7 +320,7 @@ if ($SETTINGS['catsonly'] != 'on') {
     if ($SETTINGS['indexshowbar'] == 2) {
         $body->indexBarTop = $template->process('index_category_hr.php');
     }
-} else if ($gid > 0) {
+} elseif ($gid > 0) {
     $indexBar = $template->process('index_category_hr.php');
 }
 
@@ -364,7 +362,7 @@ foreach ($fquery as $thing) {
         }
     }
 
-    if (!empty($cforum)) {
+    if (! empty($cforum)) {
         $forumlist .= $cforum;
     }
 }
@@ -373,6 +371,11 @@ $forumarray[] = $forumlist;
 $body->forumlist = implode($spacer, $forumarray);
 
 if ($body->forumlist == '') {
+    if (X_GUEST && $gid == 0) {
+        $template->message = $lang['reggedonly'];
+    } else {
+        $template->message = $lang['textnoforumsexist'];
+    }
     $body->forumlist = $template->process('index_noforum.php');
 }
 unset($fquery);

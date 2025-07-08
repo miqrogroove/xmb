@@ -151,7 +151,7 @@ class ThemeManager
         if (! isset($l['scheme'])) {
             $this->vars->theme['boardimg'] = $this->vars->full_url . $this->vars->theme['imgdir'].'/'.$this->vars->theme['boardimg'];
         }
-        $this->vars->theme['logo'] = "<a href='./'><img src='" . $this->vars->theme['boardimg'] . "' alt='" . $this->vars->settings['bbname'] . "' border='0' /></a>";
+        $this->vars->theme['logo'] = "<a href='" . $this->vars->full_url . "'><img src='" . $this->vars->theme['boardimg'] . "' alt='" . $this->vars->settings['bbname'] . "' border='0' /></a>";
 
         // Font stuff...
         $this->vars->theme['font1'] = $this->fontSize(-1);
