@@ -182,45 +182,9 @@ if (null === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') ||
     $core->error($lang['textnoforum']);
 }
 
-$perms = $core->checkForumPermissions($forum);
-if (! $perms[$vars::PERMS_VIEW]) {
-    if (X_GUEST) {
-        $core->redirect("{$full_url}misc.php?action=login", timeout: 0);
-        exit;
-    } else {
-        $core->error($lang['privforummsg']);
-    }
-} elseif (! $perms[$vars::PERMS_PASSWORD]) {
-    $core->handlePasswordDialog($fid);
-}
+$perms = $core->assertForumPermissions($forum);
 
-$fup = [];
-if ($forum['type'] == 'sub') {
-    $fup = $forums->getForum((int) $forum['fup']);
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = $core->checkForumPermissions($fup);
-    if (! $fupPerms[$vars::PERMS_VIEW]) {
-        if (X_GUEST) {
-            redirect("{$full_url}misc.php?action=login", timeout: 0);
-            exit;
-        } else {
-            $core->error($lang['privforummsg']);
-        }
-    } elseif (! $fupPerms[$vars::PERMS_PASSWORD]) {
-        $core->handlePasswordDialog((int) $fup['fid']);
-    } elseif ((int) $fup['fup'] > 0) {
-        $fupup = $forums->getForum((int) $fup['fup']);
-        $core->nav("<a href='{$full_url}index.php?gid={$fup['fup']}'>" . fnameOut($fupup['name']) . '</a>');
-        unset($fupup);
-    }
-    $core->nav("<a href='{$full_url}forumdisplay.php?fid={$fup['fid']}'>" . fnameOut($fup['name']) . '</a>');
-    unset($fup);
-} elseif ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = $forums->getForum((int) $forum['fup']);
-    $core->nav("<a href='{$full_url}index.php?gid={$fup['fid']}'>" . fnameOut($fup['name']) . '</a>');
-    unset($fup);
-}
-$core->nav("<a href='{$full_url}forumdisplay.php?fid=$fid'>" . fnameOut($forum['name']) . '</a>');
+$core->forumBreadcrumbs($forum);
 $core->nav($thread['subject']);
 
 if ($SETTINGS['subject_in_title'] == 'on') {

@@ -1646,6 +1646,71 @@ class Core
     }
 
     /**
+     * Handles permissions checks when viewing a forum or thread-related page.
+     *
+     * @since 1.10.00
+     * @return array The permissions array from checkForumPermissions.
+     */
+    public function assertForumPermissions(array $forum): array
+    {
+        $fup = [];
+        $fupPerms = [];
+        $isSub = $forum['type'] == 'sub';
+        $perms = $this->checkForumPermissions($forum);
+
+        if ($isSub) {
+            $fup = $this->forums->getForum((int) $forum['fup']);
+            // prevent access to subforum when upper forum can't be viewed.
+            $fupPerms = $this->checkForumPermissions($fup);
+            $perms[$this->vars::PERMS_VIEW] = $perms[$this->vars::PERMS_VIEW] && $fupPerms[$this->vars::PERMS_VIEW];
+        }
+
+        if (! $perms[$this->vars::PERMS_VIEW]) {
+            if (X_GUEST) {
+                $this->redirect($this->vars->full_url . 'misc.php?action=login', timeout: 0);
+            } else {
+                $this->error($this->lang['privforummsg']);
+            }
+        }
+
+        if (! $perms[$this->vars::PERMS_PASSWORD]) {
+            $this->handlePasswordDialog((int) $forum['fid']);
+        }
+
+        if ($isSub) {
+            if (! $fupPerms[$this->vars::PERMS_PASSWORD]) {
+                $this->handlePasswordDialog((int) $fup['fid']);
+            }
+        }
+        
+        return $perms;
+    }
+
+    /**
+     * @since 1.10.00
+     */
+    public function forumBreadcrumbs(array $forum, bool $linkSelf = true)
+    {
+        if ($forum['type'] == 'sub') {
+            $fup = $this->forums->getForum((int) $forum['fup']);
+            if ((int) $fup['fup'] > 0) {
+                $group = $this->forums->getForum((int) $fup['fup']);
+                $this->nav('<a href="' . $this->vars->full_url . 'index.php?gid=' . $group['fid'] . '">' . fnameOut($group['name']) . '</a>');
+            }
+            $this->nav('<a href="' . $this->vars->full_url . 'forumdisplay.php?fid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
+        } elseif ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
+            $group = $this->forums->getForum((int) $forum['fup']);
+            $this->nav('<a href="' . $this->vars->full_url . 'index.php?gid=' . $group['fid'] . '">' . fnameOut($group['name']) . '</a>');
+        }
+
+        if ($linkSelf) {
+            $this->nav('<a href="' . $this->vars->full_url . 'forumdisplay.php?fid=' . $forum['fid'] . '">' . fnameOut($forum['name']) . '</a>');
+        } else {
+            $this->nav(fnameOut($forum['name']));
+        }
+    }
+
+    /**
      * Takes a full path like /forum/faq.php and coverts it to a full URL like https://example.com/forum/faq.php
      *
      * @since 1.10.00

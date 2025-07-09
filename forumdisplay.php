@@ -39,7 +39,6 @@ $SETTINGS = &$vars->settings;
 $template->hottopic = str_replace('$hottopic', $SETTINGS['hottopic'], $lang['hottopiceval']);
 
 $fid = getInt('fid');
-
 $forum = $forums->getForum($fid);
 
 if (null === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
@@ -47,45 +46,9 @@ if (null === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') ||
     $core->error($lang['textnoforum']);
 }
 
-$perms = $core->checkForumPermissions($forum);
-if (! $perms[$vars::PERMS_VIEW]) {
-    if (X_GUEST) {
-        $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
-        exit;
-    } else {
-        $core->error($lang['privforummsg']);
-    }
-} else if (! $perms[$vars::PERMS_PASSWORD]) {
-    $core->handlePasswordDialog($fid);
-}
+$perms = $core->assertForumPermissions($forum);
 
-$fup = array();
-if ($forum['type'] == 'sub') {
-    $fup = $forums->getForum((int) $forum['fup']);
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = $core->checkForumPermissions($fup);
-    if (! $fupPerms[$vars::PERMS_VIEW]) {
-        if (X_GUEST) {
-            $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
-            exit;
-        } else {
-            $core->error($lang['privforummsg']);
-        }
-    } else if (! $fupPerms[$vars::PERMS_PASSWORD]) {
-        $core->handlePasswordDialog((int) $fup['fid']);
-    } else if ((int) $fup['fup'] > 0) {
-        $fupup = $forums->getForum((int) $fup['fup']);
-        $core->nav('<a href="' . $vars->full_url . 'index.php?gid=' . $fup['fup'] . '">' . fnameOut($fupup['name']) . '</a>');
-        unset($fupup);
-    }
-    $core->nav('<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
-    unset($fup);
-} else if ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = $forums->getForum((int) $forum['fup']);
-    $core->nav('<a href="' . $vars->full_url . 'index.php?gid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
-    unset($fup);
-}
-$core->nav(fnameOut($forum['name']));
+$core->forumBreadcrumbs($forum, linkSelf: false);
 
 if ($SETTINGS['subject_in_title'] == 'on') {
     $template->threadSubject = fnameOut($forum['name']) . ' - ';
@@ -154,7 +117,7 @@ if (X_MEMBER && 'yes' == $vars->self['waiting_for_mod']) {
 }
 
 $t_extension = get_extension($lang['toppedprefix']);
-switch($t_extension) {
+switch ($t_extension) {
     case 'gif':
     case 'jpg':
     case 'jpeg':
@@ -164,7 +127,7 @@ switch($t_extension) {
 }
 
 $p_extension = get_extension($lang['pollprefix']);
-switch($p_extension) {
+switch ($p_extension) {
     case 'gif':
     case 'jpg':
     case 'jpeg':
@@ -247,7 +210,7 @@ if ($db->num_rows($querytop) == 0) {
         $threadlist = $template->process('forumdisplay_nothreads.php');
     }
 } elseif ($SETTINGS['dotfolders'] == 'on' && X_MEMBER && (int) $vars->self['postnum'] > 0) {
-    while($thread = $db->fetch_array($querytop)) {
+    while ($thread = $db->fetch_array($querytop)) {
         $threadsInFid[] = $thread['tid'];
     }
     $db->data_seek($querytop, 0);
@@ -256,7 +219,7 @@ if ($db->num_rows($querytop) == 0) {
     $query = $db->query("SELECT tid FROM " . $vars->tablepre . "posts WHERE tid IN ($threadsInFid) AND author='" . $vars->xmbuser . "' GROUP BY tid");
 
     $threadsInFid = [];
-    while($row = $db->fetch_array($query)) {
+    while ($row = $db->fetch_array($query)) {
         $threadsInFid[] = $row['tid'];
     }
     $db->free_result($query);

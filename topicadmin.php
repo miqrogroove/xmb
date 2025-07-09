@@ -29,7 +29,7 @@ require './header.php';
 $attach = Services\attach();
 $core = Services\core();
 $db = Services\db();
-$forumCache = Services\forums();
+$forums = Services\forums();
 $sql = Services\sql();
 $template = Services\template();
 $token = Services\token();
@@ -40,7 +40,6 @@ $full_url = $vars->full_url;
 
 if (X_GUEST) {
     $core->redirect("{$full_url}misc.php?action=login", timeout: 0);
-    exit;
 }
 
 $onlinetime = $vars->onlinetime;
@@ -64,43 +63,19 @@ if (count($tids) == 1) {
     $threadname = '';
 }
 
-$forums = $forumCache->getForum($fid);
+$forum = $forums->getForum($fid);
 
-if (null === $forums || ($forums['type'] != 'forum' && $forums['type'] != 'sub') || $forums['status'] != 'on') {
+if (null === $forum || ($forum['type'] != 'forum' && $forum['type'] != 'sub') || $forum['status'] != 'on') {
     header('HTTP/1.0 404 Not Found');
     $core->error($lang['textnoforum']);
 }
 
 // Check for authorization to be here in the first place
-$perms = $core->checkForumPermissions($forums);
-if (! $perms[$vars::PERMS_VIEW]) {
-    $core->error($lang['privforummsg']);
-} elseif (! $perms[$vars::PERMS_PASSWORD]) {
-    $core->handlePasswordDialog($fid);
-}
+$core->assertForumPermissions($forum);
 
-$fup = [];
-if ($forums['type'] == 'sub') {
-    $fup = $forumCache->getForum((int) $forums['fup']);
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = $core->checkForumPermissions($fup);
-    if (! $fupPerms[$vars::PERMS_VIEW]) {
-        $core->error($lang['privforummsg']);
-    } elseif (! $fupPerms[$vars::PERMS_PASSWORD]) {
-        $core->handlePasswordDialog((int) $fup['fid']);
-    } elseif ((int) $fup['fup'] > 0) {
-        $fupup = $forumCache->getForum((int) $fup['fup']);
-        $core->nav('<a href="index.php?gid='.$fup['fup'].'">'.fnameOut($fupup['name']).'</a>');
-        unset($fupup);
-    }
-    $core->nav('<a href="forumdisplay.php?fid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-} elseif ((int) $forums['fup'] > 0) { // 'forum' in a 'group'
-    $fup = $forumCache->getForum((int) $forums['fup']);
-    $core->nav('<a href="index.php?gid='.$fup['fid'].'">'.fnameOut($fup['name']).'</a>');
-}
-$core->nav('<a href="forumdisplay.php?fid='.$fid.'">'.fnameOut($forums['name']).'</a>');
+$core->forumBreadcrumbs($forum);
 if (count($tids) == 1) {
-    $core->nav('<a href="viewthread.php?tid='.$tids[0].'">'.$threadname.'</a>');
+    $core->nav('<a href="' . $vars->full_url . 'viewthread.php?tid=' . $tids[0] . '">' . $threadname . '</a>');
 }
 
 $kill = false;
@@ -128,7 +103,7 @@ switch ($action) {
         $core->nav($lang['textmovemethod1']);
         break;
     case 'getip':
-        $kill |= ! X_ADMIN;
+        $kill = ! X_ADMIN;
         $core->nav($lang['textgetip']);
         break;
     case 'bump':
@@ -150,7 +125,7 @@ switch ($action) {
         $kill = true;
 }
 
-$kill |= ! X_STAFF || ! $core->modcheckForum($fid);
+$kill = $kill || ! X_STAFF || ! $core->modcheckForum($fid);
 
 if ($kill) {
     $core->error($lang['notpermitted']);
@@ -161,7 +136,7 @@ if ($vars->settings['subject_in_title'] == 'on') {
 }
 
 // Search-link
-$template->searchlink = $core->makeSearchLink((int) $forums['fid']);
+$template->searchlink = $core->makeSearchLink((int) $forum['fid']);
 
 if (0 === $pid && 'getip' === $action) {
     header('HTTP/1.0 404 Not Found');
@@ -209,8 +184,8 @@ switch ($action) {
 
                 $db->query("DELETE FROM " . $vars->tablepre . "threads WHERE tid = $tid OR closed = 'moved|$tid'");
 
-                if ($forums['type'] == 'sub') {
-                    $core->updateforumcount((int) $fup['fid']);
+                if ($forum['type'] == 'sub') {
+                    $core->updateforumcount((int) $forum['fup']);
                 }
                 $core->updateforumcount($fid);
 
@@ -303,7 +278,7 @@ switch ($action) {
             $moveto = formInt('moveto');
             $type = $validate->postedVar('type');
 
-            $movetorow = $forumCache->getForum($moveto);
+            $movetorow = $forums->getForum($moveto);
             if ($movetorow === null) {
                 $core->error($lang['textnoforum']);
             }
@@ -345,13 +320,14 @@ switch ($action) {
                 }
 
                 // Update all summary columns.
-                if ($forums['type'] == 'sub') {
-                    $core->updateforumcount((int) $fup['fid']);
+                if ($forum['type'] == 'sub') {
+                    $core->updateforumcount((int) $forum['fup']);
                 }
                 if ($movetorow['type'] == 'sub') {
-                    $doupdate = true;
-                    if (isset($fup['fid'])) {
-                        $doupdate = ($movetorow['fup'] != $fup['fid']);
+                    if ($forum['type'] == 'sub') {
+                        $doupdate = $movetorow['fup'] !== $forum['fup'];
+                    } else {
+                        $doupdate = $movetorow['fup'] !== $forum['fid'];
                     }
                     if ($doupdate) {
                         $core->updateforumcount((int) $movetorow['fup']);
@@ -472,7 +448,7 @@ switch ($action) {
                 if ($db->num_rows($query) == 1) {
                     $pid = $db->result($query);
 
-                    $fupID = ($forums['type'] == 'sub') ? (int) $forums['fup'] : null;
+                    $fupID = ($forum['type'] == 'sub') ? (int) $forum['fup'] : null;
                     $lastpost = $db->escape($vars->onlinetime . '|' . $vars->self['username'] . '|' . $pid);
 
                     $sql->setThreadLastpost($tid, $lastpost);
@@ -513,8 +489,8 @@ switch ($action) {
                 }
                 $db->free_result($query);
             }
-            if ($forums['type'] == 'sub') {
-                $core->updateforumcount((int) $fup['fid']);
+            if ($forum['type'] == 'sub') {
+                $core->updateforumcount((int) $forum['fup']);
             }
             $core->updateforumcount($fid);
 
@@ -590,8 +566,8 @@ switch ($action) {
 
             $core->audit($vars->self['username'], $action, $fid, $tid);
 
-            if ($forums['type'] == 'sub') {
-                $core->updateforumcount((int) $fup['fid']);
+            if ($forum['type'] == 'sub') {
+                $core->updateforumcount((int) $forum['fup']);
             }
             $core->updateforumcount($fid);
 
@@ -657,13 +633,14 @@ switch ($action) {
 
             $core->audit($vars->self['username'], $action, $fid, $tid);
 
-            if ($forums['type'] == 'sub') {
-                $core->updateforumcount((int) $fup['fid']);
+            if ($forum['type'] == 'sub') {
+                $core->updateforumcount((int) $forum['fup']);
             }
             if ($otherthread['type'] == 'sub') {
-                $doupdate = true;
-                if (isset($fup['fid'])) {
-                    $doupdate = ($otherthread['fup'] != $fup['fid']);
+                if ($forum['type'] == 'sub') {
+                    $doupdate = ($otherthread['fup'] != $forum['fup']);
+                } else {
+                    $doupdate = ($otherthread['fup'] != $forum['fid']);
                 }
                 if ($doupdate) {
                     $core->updateforumcount((int) $otherthread['fup']);
@@ -752,8 +729,8 @@ switch ($action) {
             $db->escape_fast($lastpost['author']);
             $db->query("UPDATE " . $vars->tablepre . "threads SET author='$firstauthor', lastpost='{$lastpost['dateline']}|{$lastpost['author']}|{$lastpost['pid']}' WHERE tid=$tid");
 
-            if ($forums['type'] == 'sub') {
-                $core->updateforumcount((int) $fup['fid']);
+            if ($forum['type'] == 'sub') {
+                $core->updateforumcount((int) $forum['fup']);
             }
             $core->updateforumcount($fid);
 
@@ -777,7 +754,7 @@ switch ($action) {
 
             $newfid = getRequestInt('newfid');
 
-            $otherforum = $forumCache->getForum($newfid);
+            $otherforum = $forums->getForum($newfid);
             if ($otherforum === null) {
                 $core->error($lang['textnoforum']);
             }

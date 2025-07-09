@@ -144,25 +144,13 @@ if ($poll != 'yes') {
     $poll = '';
 }
 
-// check permissions on this forum (and top forum if it's a sub?)
-$perms = $core->checkForumPermissions($forum);
-if (! $perms[$vars::PERMS_VIEW]) {
-    if (X_GUEST) {
-        $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
-        exit;
-    } else {
-        $core->error($lang['privforummsg']);
-    }
-} elseif (! $perms[$vars::PERMS_PASSWORD]) {
-    $core->handlePasswordDialog($fid);
-}
+$perms = $core->assertForumPermissions($forum);
 
 // check posting permissions specifically
 if ($action == 'newthread') {
     if (($poll == '' && ! $perms[$vars::PERMS_THREAD]) || ($poll == 'yes' && ! $perms[$vars::PERMS_POLL])) {
         if (X_GUEST) {
             $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
-            exit;
         } else {
             $core->error($lang['textnoaction']);
         }
@@ -171,7 +159,6 @@ if ($action == 'newthread') {
     if (! $perms[$vars::PERMS_REPLY]) {
         if (X_GUEST) {
             $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
-            exit;
         } else {
             $core->error($lang['textnoaction']);
         }
@@ -181,32 +168,9 @@ if ($action == 'newthread') {
 } else {
     $core->error($lang['textnoaction']);
 }
+unset($perms);
 
-$fup = [];
-if ($forum['type'] == 'sub') {
-    $fup = $forums->getForum((int) $forum['fup']);
-    // prevent access to subforum when upper forum can't be viewed.
-    $fupPerms = $core->checkForumPermissions($fup);
-    if (! $fupPerms[$vars::PERMS_VIEW]) {
-        if (X_GUEST) {
-            $core->redirect($vars->full_url . "misc.php?action=login", 0);
-            exit;
-        } else {
-            $core->error($lang['privforummsg']);
-        }
-    } elseif (! $fupPerms[$vars::PERMS_PASSWORD]) {
-        $core->error($lang['privforummsg']);     // do not show password-dialog here; it makes the situation too complicated
-    } elseif ((int) $fup['fup'] > 0) {
-        $fupup = $forums->getForum((int) $fup['fup']);
-        $core->nav('<a href="' . $vars->full_url . 'index.php?gid=' . $fup['fup'] . '">' . fnameOut($fupup['name']) . '</a>');
-        unset($fupup);
-    }
-    $core->nav('<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
-} elseif ((int) $forum['fup'] > 0) { // 'forum' in a 'group'
-    $fup = $forums->getForum((int) $forum['fup']);
-    $core->nav('<a href="' . $vars->full_url . 'index.php?gid=' . $fup['fid'] . '">' . fnameOut($fup['name']) . '</a>');
-}
-$core->nav('<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . $fid . '">' . fnameOut($forum['name']) . '</a>');
+$core->forumBreadcrumbs($forum);
 
 // Search-link
 $template->searchlink = $core->makeSearchLink((int) $forum['fid']);
@@ -509,7 +473,7 @@ switch ($action) {
 
             if (! $quarantine) {
                 // Update stats
-                $fupArg = $forum['type'] == 'sub' ? (int) $fup['fid'] : null;
+                $fupArg = $forum['type'] == 'sub' ? (int) $forum['fup'] : null;
                 $sql->setThreadLastpost($tid, "$thatime|$sql_username|$pid", newReply: true);
                 $sql->setForumCounts($fid, "$thatime|$sql_username|$pid", fup: $fupArg, newReply: true);
 
@@ -1266,7 +1230,7 @@ switch ($action) {
                     $core->updatethreadcount($tid);
                 }
                 if ($forum['type'] == 'sub') {
-                    $core->updateforumcount((int) $fup['fid']);
+                    $core->updateforumcount((int) $forum['fup']);
                 }
                 $core->updateforumcount($fid);
             }

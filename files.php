@@ -131,35 +131,8 @@ if ($pid > 0 || $file['fid'] != '') {
     }
 
     // Check attachment permissions
-    $perms = $core->checkForumPermissions($forum);
-    if (! $perms[$vars::PERMS_VIEW]) {
-        if (X_GUEST) {
-            $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
-            exit;
-        } else {
-            $core->error($lang['privforummsg']);
-        }
-    } else if (! $perms[$vars::PERMS_PASSWORD]) {
-        $core->handlePasswordDialog((int) $forum['fid']);
-    }
-
-    $fup = array();
-    if ($forum['type'] == 'sub') {
-        $fup = $forums->getForum((int) $forum['fup']);
-        // prevent access to subforum when upper forum can't be viewed.
-        $fupPerms = $core->checkForumPermissions($fup);
-        if (! $fupPerms[$vars::PERMS_VIEW]) {
-            if (X_GUEST) {
-                $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
-                exit;
-            } else {
-                $core->error($lang['privforummsg']);
-            }
-        } else if (! $fupPerms[$vars::PERMS_PASSWORD]) {
-            $core->handlePasswordDialog((int) $fup['fid']);
-        }
-        unset($fup);
-    }
+    $core->assertForumPermissions($forum);
+    unset($forum);
 }
 
 // Verify file is available
