@@ -135,20 +135,24 @@ class BootupLoader
             header('Content-type: text/html;charset=' . $this->vars->lang['charset']);
         }
         if (function_exists('mb_list_encodings')) {
-            // The list of charsets common to mb_string and htmlspecialchars is extremely restrictive.
+            // The list of encodings common to mbstring and htmlspecialchars is extremely restrictive.
             switch (strtoupper($this->vars->lang['charset'])) {
-            case 'UTF-8':
-                $newcharset = 'UTF-8';
-                break;
-            case 'WINDOWS-1251':
-                $newcharset = 'Windows-1251';
-                break;
-            default:
-                $newcharset = 'ISO-8859-1';
-                break;
-            }
-            if (! in_array($newcharset, mb_list_encodings())) {
-                $newcharset = 'ISO-8859-1';
+                case 'BIG-5':
+                    // Though 'BIG5' is not found in mbstring docs or lists, the simple test mb_encoding_aliases('BIG5') does work.
+                    $newcharset = 'BIG5';
+                    break;
+                case 'GB2312':
+                    // Also listed under mb_encoding_aliases('EUC-CN')
+                    $newcharset = 'GB2312';
+                    break;
+                case 'UTF-8':
+                    $newcharset = 'UTF-8';
+                    break;
+                case 'WINDOWS-1251':
+                    $newcharset = 'Windows-1251';
+                    break;
+                default:
+                    $newcharset = 'ISO-8859-1';
             }
         } else {
             $newcharset = 'ISO-8859-1';
