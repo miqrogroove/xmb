@@ -456,13 +456,13 @@ if ($action == '') {
         if ($perms[$vars::PERMS_REPLY] && ($thread['closed'] != 'yes' || X_SADMIN)) {
             // Already set
         } else {
-            $template->repquote = '';
+            $subTemplate->repquote = '';
         }
 
         if ($core->modcheckPost($vars->self['username'], $forum['moderator'], $post['status']) == 'Moderator' || ($thread['closed'] != 'yes' && $post['author'] == $vars->xmbuser)) {
             // Already set
         } else {
-            $template->edit = '';
+            $subTemplate->edit = '';
         }
 
         $render->preparePostBody($post, $forum, $attachments, $quarantine, $subTemplate);

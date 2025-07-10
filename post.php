@@ -1099,7 +1099,7 @@ switch ($action) {
 
         $editvalid = true; // This new flag will indicate a message was submitted and successful.
 
-        //Check all editing permissions for this $pid.  Based on viewthread design, forum Moderators can always edit, $orig['author'] can edit open threads only.
+        // Check all editing permissions for this $pid.  Based on viewthread design, forum Moderators can always edit, $orig['author'] can edit open threads only.
         $query = $db->query("SELECT p.*, m.status FROM " . $vars->tablepre . "posts p LEFT JOIN " . $vars->tablepre . "members m ON p.author=m.username WHERE p.pid=$pid");
         $orig = $db->fetch_array($query);
         $db->free_result($query);
@@ -1107,8 +1107,7 @@ switch ($action) {
         $status1 = $core->modcheckPost($vars->self['username'], $forum['moderator'], $orig['status']);
 
         if ($status1 != 'Moderator' && ($vars->self['username'] !== $orig['author'] || $thread['closed'] != '')) {
-            $errors .= $core->softerror($lang['noedit']);
-            $editvalid = false;
+            $core->error($lang['noedit']);
         }
 
         if ($editvalid) {
