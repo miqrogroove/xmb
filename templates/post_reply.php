@@ -31,10 +31,14 @@
 <tr><td class="ctrtablerow smalltxt"><?= $moresmilies ?></td></tr>
 </table>
 <br />
-<input type="checkbox" name="smileyoff" value="yes" <?= $smileoffcheck ?> /> <?= $lang['textdissmileys'] ?><br />
-<input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?><br />
-<input type="checkbox" name="bbcodeoff" value="yes" <?= $codeoffcheck ?> /> <?= $lang['bbcodeoff'] ?><br />
-<input type="checkbox" name="emailnotify" value="yes" <?= $emailnotifycheck ?>/> <?= $lang['textemailnotify'] ?> <?= $closeoption ?></td>
+<div class="postOptions">
+ <label><input type="checkbox" name="smileyoff" value="yes" <?= $smileoffcheck ?> /> <?= $lang['textdissmileys'] ?></label>
+ <label <?= $disableguest ?>><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?></label>
+ <label><input type="checkbox" name="bbcodeoff" value="yes" <?= $codeoffcheck ?> /> <?= $lang['bbcodeoff'] ?></label>
+ <label <?= $disableguest ?>><input type="checkbox" name="emailnotify" value="yes" <?= $emailnotifycheck ?>/> <?= $lang['textemailnotify'] ?></label>
+ <?= $closeoption ?>
+</div>
+</td>
 </tr>
 <?= $attachfile ?>
 <?= $captchapostcheck ?>

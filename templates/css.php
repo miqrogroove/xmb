@@ -415,3 +415,7 @@ textarea, select, input, object {
 #tabs button.active {
     background-color: <?= $THEME['header'] ?>;
 }
+
+.postOptions label {
+    display: block;
+}

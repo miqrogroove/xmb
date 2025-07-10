@@ -33,10 +33,13 @@
 <tr><td class="ctrtablerow smalltxt"><?= $moresmilies ?></td></tr>
 </table>
 <br />
-<input type="checkbox" name="smileyoff" value="yes" <?= $offcheck2 ?> /> <?= $lang['textdissmileys'] ?><br />
-<input type="checkbox" name="usesig" value="yes" <?= $offcheck3 ?> /> <?= $lang['textusesig'] ?><br />
-<input type="checkbox" name="bbcodeoff" value="yes" <?= $offcheck1 ?> /> <?= $lang['bbcodeoff'] ?><br />
-<input type="checkbox" name="delete" value="yes" /> <strong><?= $lang['textdelete'] ?></strong></td>
+<div class="postOptions">
+ <label><input type="checkbox" name="smileyoff" value="yes" <?= $offcheck2 ?> /> <?= $lang['textdissmileys'] ?></label>
+ <label><input type="checkbox" name="usesig" value="yes" <?= $offcheck3 ?> /> <?= $lang['textusesig'] ?></label>
+ <label><input type="checkbox" name="bbcodeoff" value="yes" <?= $offcheck1 ?> /> <?= $lang['bbcodeoff'] ?></label>
+ <label><input type="checkbox" name="delete" value="yes" /> <strong><?= $lang['textdelete'] ?></strong></label>
+</div>
+</td>
 </tr>
 <?= $attachment ?>
 <tr>

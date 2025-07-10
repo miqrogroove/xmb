@@ -235,20 +235,27 @@ $template->allowsmilies = ($forum['allowsmilies'] == 'yes') ? $lang['texton'] : 
 $template->allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 
 $bbcodeoff = formYesNo('bbcodeoff');
+$smileyoff = formYesNo('smileyoff');
 if (X_MEMBER) {
     $emailnotify = formYesNo('emailnotify');
     if ($emailnotify != 'yes') {
         $emailnotify = $vars->self['sub_each_post'];
     }
+    $usesig = formYesNo('usesig');
 } else {
     $emailnotify = 'no';
+    $usesig = 'no';
 }
-$smileyoff = formYesNo('smileyoff');
-$usesig = formYesNo('usesig');
 
 $template->codeoffcheck = ($bbcodeoff == 'yes') ? $vars::cheHTML : '';
 $template->emailnotifycheck = ($emailnotify == 'yes') ? $vars::cheHTML : '';
 $template->smileoffcheck = ($smileyoff == 'yes') ? $vars::cheHTML : '';
+if (onSubmit('previewpost')) {
+    $template->usesigcheck = $usesig == 'yes' ? $vars::cheHTML : '';
+} else {
+    $template->usesigcheck = $vars->self['sig'] != '' ? $vars::cheHTML : '';
+}
+$template->disableguest = X_GUEST ? 'style="display:none;"' : '';
 
 // New bool vars to clear up the confusion about effective settings.
 $bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' && $forum['allowbbcode'] == 'yes');
@@ -256,12 +263,6 @@ $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no');
 $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
 $bSmilieInserterEnabled = ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes');
 $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $smileyoff == 'no');
-
-if (onSubmit('previewpost')) {
-    $template->usesigcheck = $usesig == 'yes' ? $vars::cheHTML : '';
-} else {
-    $template->usesigcheck = $vars->self['sig'] != '' ? $vars::cheHTML : '';
-}
 
 $topcheck = '';
 $closecheck = '';
@@ -666,7 +667,7 @@ switch ($action) {
             $template->posts = '';
 
             if ($core->modcheck($username, $forum['moderator']) == 'Moderator') {
-                $template->closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
+                $template->closeoption = '<label><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'</label>';
             } else {
                 $template->closeoption = '';
             }
@@ -1068,8 +1069,8 @@ switch ($action) {
             }
 
             if ($core->modcheck($username, $forum['moderator']) == 'Moderator') {
-                $template->topoption = '<br /><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'];
-                $template->closeoption = '<br /><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'<br />';
+                $template->topoption = '<label><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'] . '</label>';
+                $template->closeoption = '<label><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'</label>';
             } else {
                 $template->topoption = '';
                 $template->closeoption = '';
