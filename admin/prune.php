@@ -31,6 +31,7 @@ $attach = Services\attach();
 $core = Services\core();
 $db = Services\db();
 $forums = Services\forums();
+$sql = Services\sql();
 $template = Services\template();
 $token = Services\token();
 $validate = Services\validate();
@@ -62,12 +63,16 @@ if (noSubmit('pruneSubmit')) {
     $body = $template->process('admin_prune.php');
 } else {
     $core->request_secure('Control Panel/Prune', '');
-    $pruneByDate = $validate->postedArray('pruneByDate');
-    $pruneByPosts = $validate->postedArray('pruneByPosts');
+    $pruneByDate = $validate->postedArray('pruneByDate', keyType: 'string');
+    $pruneByPosts = $validate->postedArray('pruneByPosts', keyType: 'string');
     $pruneFrom = getPhpInput('pruneFrom');
     $pruneFromList = $validate->postedArray('pruneFromList', 'int');
     $pruneFromFid = getPhpInput('pruneFromFid');
-    $pruneType = $validate->postedArray('pruneType', 'int');
+    $pruneType = $validate->postedArray(
+        varname: 'pruneType',
+        valueType: 'int',
+        keyType: 'string',
+    );
 
     $queryWhere = [];
     // let's check what to prune first
@@ -108,7 +113,7 @@ if (noSubmit('pruneSubmit')) {
 
     $sign = '';
     if (isset($pruneByPosts['check']) && '1' === $pruneByPosts['check']) {
-        switch($pruneByPosts['type']) {
+        switch ($pruneByPosts['type']) {
             case 'less':
                 $sign = '<';
                 break;
@@ -137,19 +142,28 @@ if (noSubmit('pruneSubmit')) {
                 break;
         }
     } elseif ($sign == '') {
-        $queryWhere[] = '1=0'; //Neither 'prune by' option was set, prune should abort.
+        $core->error($lang['noprunelimit']);
     }
 
-    if (! isset($pruneType['closed']) || $pruneType['closed'] != 1) {
+    $pruneClosed = (int) arrayCoalesce($pruneType, 'closed') === 1;
+    $pruneNormal = (int) arrayCoalesce($pruneType, 'normal') === 1;
+    $pruneTopped = (int) arrayCoalesce($pruneType, 'topped') === 1;
+    $pruneGo = $pruneClosed || $pruneNormal || $pruneTopped;
+
+    if (! $pruneGo) {
+        $core->error($lang['noprunetype']);
+    }
+
+    if (! $pruneClosed) {
         $queryWhere[] = "closed != 'yes'";
     }
 
-    if (! isset($pruneType['topped']) || $pruneType['topped'] != 1) {
+    if (! $pruneTopped) {
         $queryWhere[] = 'topped != 1';
     }
 
-    if (! isset($pruneType['normal']) || $pruneType['normal'] != 1) {
-        $queryWhere[] = "(topped == 1 OR closed == 'yes')";
+    if (! $pruneNormal) {
+        $queryWhere[] = "(topped = 1 OR closed = 'yes')";
     }
 
     if (count($queryWhere) > 0) {
@@ -159,8 +173,8 @@ if (noSubmit('pruneSubmit')) {
         $q = $db->query("SELECT tid, fid FROM " . $vars->tablepre . "threads WHERE ".$queryWhere);
         if ($db->num_rows($q) > 0) {
             while ($t = $db->fetch_array($q)) {
-                $tids[] = $t['tid'];
-                $fids[] = $t['fid'];
+                $tids[] = (int) $t['tid'];
+                $fids[] = (int) $t['fid'];
             }
             set_time_limit(30); // Potentially expensive operations coming up.
             $attach->deleteByThreads($tids); // Must delete attachments before posts!
@@ -178,7 +192,7 @@ if (noSubmit('pruneSubmit')) {
             foreach ($fids as $fid) {
                 $forum = $forums->getForum($fid);
                 if ('sub' == $forum['type']) {
-                    $fups[] = $forum['fup'];
+                    $fups[] = (int) $forum['fup'];
                 }
             }
             $fids = array_unique(array_merge($fids, $fups));
@@ -186,16 +200,6 @@ if (noSubmit('pruneSubmit')) {
                 $core->updateforumcount($fid);
             }
         }
-    } else {
-        $db->query("TRUNCATE TABLE " . $vars->tablepre . "attachments");
-        $db->query("TRUNCATE TABLE " . $vars->tablepre . "posts");
-        $db->query("TRUNCATE TABLE " . $vars->tablepre . "favorites");
-        $db->query("TRUNCATE TABLE " . $vars->tablepre . "vote_results");
-        $db->query("TRUNCATE TABLE " . $vars->tablepre . "vote_voters");
-        $db->query("TRUNCATE TABLE " . $vars->tablepre . "vote_desc");
-        $db->query("TRUNCATE TABLE " . $vars->tablepre . "threads");
-        $db->query("UPDATE " . $vars->tablepre . "members SET postnum = 0");
-        $db->query("UPDATE " . $vars->tablepre . "forums SET posts = 0, threads = 0, lastpost = ''");
     }
     $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='tablerow'><td align='center'>{$lang['forumpruned']}</td></tr>";
 }

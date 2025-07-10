@@ -87,10 +87,12 @@
 <td class="tablerow" style="background-color: <?= $THEME['altbg1'] ?>;">
 <?= $lang['pruneposttypes'] ?>
 </td>
-<td class="tablerow" style="background-color: <?= $THEME['altbg2'] ?>;">
-<input type="checkbox" name="pruneType[normal]" value="1" checked="checked" /> <?= $lang['prunenormal'] ?><br />
-<input type="checkbox" name="pruneType[closed]" value="1" checked="checked" /> <?= $lang['pruneclosed'] ?><br />
-<input type="checkbox" name="pruneType[topped]" value="1" /> <?= $lang['prunetopped'] ?><br />
+<td class="tablerow postOptions" style="background-color: <?= $THEME['altbg2'] ?>;">
+ <label><input type="checkbox" name="pruneType[normal]" value="1" checked="checked" /> <?= $lang['prunenormal'] ?></label>
+ <?= $lang['textor'] ?>
+ <label><input type="checkbox" name="pruneType[closed]" value="1" checked="checked" /> <?= $lang['pruneclosed'] ?></label>
+ <?= $lang['textor'] ?>
+ <label><input type="checkbox" name="pruneType[topped]" value="1" /> <?= $lang['prunetopped'] ?></label>
 </td>
 </tr>
 <tr>
