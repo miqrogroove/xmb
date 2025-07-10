@@ -59,59 +59,63 @@ if (onSubmit('searchsubmit')) {
     $dblikeprofile = $db->like_escape($validate->postedVar('profileword', dbescape: false));
     $dblikepost = $db->like_escape($validate->postedVar('postword', dbescape: false));
 
-    $found = 0;
-    $list = [];
+    $msgFound = 0;
+    $msgList = [];
+    $userFound = 0;
+    $userList = [];
     if ($userip) {
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE regip = '$userip'");
-        while($users = $db->fetch_array($query)) {
+        while ($users = $db->fetch_array($query)) {
             $link = $vars->full_url . "member.php?action=viewpro&amp;member=" . recodeOut($users['username']);
-            $list[] = "<a href = \"$link\">{$users['username']}<br />";
-            $found++;
+            $userList[] = "<a href = '$link'>{$users['username']}<br />";
+            $userFound++;
         }
     }
 
     if ($postip) {
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "posts WHERE useip = '$postip'");
-        while($users = $db->fetch_array($query)) {
-            $link = $vars->full_url . "viewthread.php?tid=$users[tid]#pid$users[pid]";
-            if (!empty($users['subject'])) {
-                $list[] = "<a href='$link'>" . $core->rawHTMLsubject(stripslashes($users['subject'])) . '<br />';
+        while ($post = $db->fetch_array($query)) {
+            $link = $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}";
+            if (! empty($post['subject'])) {
+                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject(stripslashes($post['subject'])) . '<br />';
             } else {
-                $list[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
+                $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
             }
-            $found++;
+            $msgFound++;
         }
     }
 
     if ($dblikeprofile != '') {
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE bio LIKE '%$dblikeprofile%'");
-        while($users = $db->fetch_array($query)) {
+        while ($users = $db->fetch_array($query)) {
             $link = $vars->full_url . "member.php?action=viewpro&amp;member=" . recodeOut($users['username']);
-            $list[] = "<a href='$link'>{$users['username']}<br />";
-            $found++;
+            $userList[] = "<a href='$link'>{$users['username']}<br />";
+            $userFound++;
         }
     }
 
     if ($dblikepost != '') {
-        $query = $db->query("SELECT * FROM " . $vars->tablepre . "posts WHERE subject LIKE '%$dblikepost%' OR message LIKE '%$dblikepost%'");
-        while($users = $db->fetch_array($query)) {
-            $link = $vars->full_url . "viewthread.php?tid=$users[tid]#pid$users[pid]";
-            if (!empty($users['subject'])) {
-                $list[] = "<a href='$link'>" . $core->rawHTMLsubject(stripslashes($users['subject'])) . '<br />';
+        $query = $db->query("SELECT tid, pid, subject FROM " . $vars->tablepre . "posts WHERE subject LIKE '%$dblikepost%' OR message LIKE '%$dblikepost%'");
+        while ($post = $db->fetch_array($query)) {
+            $link = $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}";
+            if (! empty($post['subject'])) {
+                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject(stripslashes($post['subject'])) . '<br />';
             } else {
-                $list[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
+                $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
             }
-            $found++;
+            $msgFound++;
         }
     }
     
-    $template->found = $found;
-    $template->list = $list;
+    $template->msgFound = $msgFound;
+    $template->msgList = $msgList;
+    $template->userFound = $userFound;
+    $template->userList = $userList;
     $body = $template->process('admin_search_result.php');
 } else {
     $query = $db->query("SELECT find FROM " . $vars->tablepre . "words");
     $select = '<select name="postword"><option value=""></option>';
-    while($temp = $db->fetch_array($query)) {
+    while ($temp = $db->fetch_array($query)) {
         $select .= "<option value='{$temp['find']}'>{$temp['find']}</option>";
     }
     $select .= '</select>';
