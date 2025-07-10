@@ -21,19 +21,21 @@
        </div>
        <?= $smilies ?>
       </td>
-      <td bgcolor="<?= $THEME['altbg2'] ?>" width="56%" class="tablerow">
-       <div align="center"><textarea rows="10" cols="80" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" style="width: 100%;"></textarea></div>
-       <?= $quickbbcode ?>
-      </td>
-      <td width="20%" height="101" bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
-       <div class="postOptions">
-        <label><input type="checkbox" name="smileyoff" value="yes" /> <?= $lang['textdissmileys'] ?></label>
-        <label <?= $disableguest ?>><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?></label>
-        <label><input type="checkbox" name="bbcodeoff" value="yes" /> <?= $lang['bbcodeoff'] ?></label>
-        <label <?= $disableguest ?>><input type="checkbox" name="emailnotify" value="yes" <?= $subcheck ?> /> <?= $lang['textemailnotify'] ?></label>
+      <td bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
+       <div class="inputWrap">
+        <textarea rows="10" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);"></textarea>
+        <?= $quickbbcode ?>
+        <div class="controls">
+         <div class="postOptions">
+          <label><input type="checkbox" name="smileyoff" value="yes" /> <?= $lang['textdissmileys'] ?></label>
+          <label <?= $disableguest ?>><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?></label>
+          <label><input type="checkbox" name="bbcodeoff" value="yes" /> <?= $lang['bbcodeoff'] ?></label>
+          <label <?= $disableguest ?>><input type="checkbox" name="emailnotify" value="yes" <?= $subcheck ?> /> <?= $lang['textemailnotify'] ?></label>
+         </div>
+         <br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="<?= $lang['textpostreply'] ?>" class="submit" />
+         <br /><br />&nbsp;&nbsp;<input type="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" class="submit" />
+        </div>
        </div>
-       <br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="<?= $lang['textpostreply'] ?>" class="submit" />
-       <br /><br />&nbsp;&nbsp;<input type="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" class="submit" />
       </td>
      </tr>
     </table>

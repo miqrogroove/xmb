@@ -307,6 +307,23 @@ textarea, select, input, object {
     height: 344px;
     width: 600px;
 }
+
+.postOptions label {
+    display: block;
+}
+
+.quickreply .inputWrap {
+    display: flex;
+}
+
+.quickreply textarea {
+    width: 80%;
+}
+
+.quickreply .controls {
+    margin-left: 8px;
+}
+
 @media screen and (min-width: 1200px) {
     .codemessage code {
         width: 800px;
@@ -338,6 +355,12 @@ textarea, select, input, object {
     }
     .codemessage code {
         width: 350px;
+    }
+    .quickreply .inputWrap {
+        display: block;
+    }
+    .quickreply textarea {
+        width: 99%;
     }
 }
 
@@ -414,8 +437,4 @@ textarea, select, input, object {
 
 #tabs button.active {
     background-color: <?= $THEME['header'] ?>;
-}
-
-.postOptions label {
-    display: block;
 }
