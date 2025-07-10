@@ -230,7 +230,7 @@ class URL2Text
             }
 
             if (! X_SADMIN) {
-                $url = './u2u.php';
+                $url = '/u2u.php';
             }
         } elseif (false !== strpos($url, '/vtmisc.php')) {
             if (false !== strpos($url, 'action=report')) {

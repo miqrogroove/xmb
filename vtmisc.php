@@ -37,7 +37,7 @@ $vars = Services\vars();
 $lang = &$vars->lang;
 
 if (X_GUEST) {
-    redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
+    $core->redirect($vars->full_url . 'misc.php?action=login', timeout: 0);
 }
 
 //Validate $action, $pid, $tid, and $fid
