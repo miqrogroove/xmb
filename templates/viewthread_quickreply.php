@@ -26,30 +26,14 @@
        <?= $quickbbcode ?>
       </td>
       <td width="20%" height="101" bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
-       <div align="center">
-        <table width="100%" border="0" class="tablerow" cellspacing="0" cellpadding="0">
-         <tr>
-          <td width="15%"> <div align="left"><input type="checkbox" name="smileyoff" value="yes" /></div></td>
-          <td width="85%"> <div align="left"><?= $lang['textdissmileys'] ?></div></td>
-         </tr>
-         <tr <?= $disableguest ?>>
-          <td width="15%"> <div align="left"><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /></div></td>
-          <td width="85%"> <div align="left"><?= $lang['textusesig'] ?></div></td>
-         </tr>
-         <tr>
-          <td width="15%"> <div align="left"><input type="checkbox" name="bbcodeoff" value="yes" /></div></td>
-          <td width="85%"> <div align="left"><?= $lang['bbcodeoff'] ?> </div></td>
-         </tr>
-         <tr <?= $disableguest ?>>
-          <td width="15%"> <div align="left"><input type="checkbox" name="emailnotify" value="yes" <?= $subcheck ?> /></div></td>
-          <td width="85%"> <div align="left"><?= $lang['textemailnotify'] ?> </div></td>
-         </tr>
-        </table>
+       <div class="postOptions">
+        <label><input type="checkbox" name="smileyoff" value="yes" /> <?= $lang['textdissmileys'] ?></label>
+        <label <?= $disableguest ?>><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?></label>
+        <label><input type="checkbox" name="bbcodeoff" value="yes" /> <?= $lang['bbcodeoff'] ?></label>
+        <label <?= $disableguest ?>><input type="checkbox" name="emailnotify" value="yes" <?= $subcheck ?> /> <?= $lang['textemailnotify'] ?></label>
        </div>
-       <div align="left">
-        <br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="<?= $lang['textpostreply'] ?>" class="submit" />
-        <br /><br />&nbsp;&nbsp;<input type="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" class="submit" />
-       </div>
+       <br />&nbsp;&nbsp;<input type="submit" name="replysubmit" value="<?= $lang['textpostreply'] ?>" class="submit" />
+       <br /><br />&nbsp;&nbsp;<input type="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" class="submit" />
       </td>
      </tr>
     </table>
