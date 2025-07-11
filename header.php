@@ -48,6 +48,7 @@ ob_start();
 
 // Interfaces
 require_once ROOT . 'db/DBStuff.php';
+require ROOT . 'include/Session/Mechanism.php';
 
 // Classes
 require ROOT . 'include/admin.inc.php';
@@ -70,10 +71,12 @@ require ROOT . 'include/Password.php';
 require ROOT . 'include/Ranks.php';
 require ROOT . 'include/schema.inc.php';
 require ROOT . 'include/services.php';
-require ROOT . 'include/sessions.inc.php';
+require ROOT . 'include/Session/Data.php';
+require ROOT . 'include/Session/FormsAndCookies.php';
+require ROOT . 'include/Session/Manager.php';
+require ROOT . 'include/SettingsLoader.php';
 require ROOT . 'include/SmileAndCensor.php';
 require ROOT . 'include/sql.inc.php';
-require ROOT . 'include/SettingsLoader.php';
 require ROOT . 'include/Template.php';
 require ROOT . 'include/ThreadRender.php';
 require ROOT . 'include/ThemeManager.php';
