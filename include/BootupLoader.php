@@ -312,7 +312,7 @@ class BootupLoader
             }
         }
         
-        $this->template->pluglink = implode('&nbsp;', $pluglinks);
+        $this->template->pluglink = implode('', $pluglinks);
     }
 
     public function makeQuickJump()
