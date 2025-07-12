@@ -251,13 +251,11 @@ class SQL
      * SQL command
      *
      * @since 1.10.00
-     * @param string $username The user being updated, must be HTML encoded.
+     * @param int $uid
      * @param array $values Field name & value list.
      */
-    public function updateMember(string $username, array $values)
+    public function updateMember(int $uid, array $values)
     {
-        $this->db->escape_fast($username);
-
         // Types:
         $ints = ['regdate', 'postnum', 'theme', 'tpp', 'ppp', 'timeformat', 'lastvisit', 'pwdate', 'u2ualert', 'bad_login_date',
         'bad_login_count', 'bad_session_date', 'bad_session_count'];
@@ -290,7 +288,7 @@ class SQL
             }
         }
 
-        $this->db->query("UPDATE " . $this->tablepre . "members SET " . implode(', ', $sql) . " WHERE username = '$username'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET " . implode(', ', $sql) . " WHERE uid = $uid");
     }
 
     /**
@@ -332,18 +330,17 @@ class SQL
      * SQL command
      *
      * @since 1.9.12.06
-     * @param string $username Must be HTML encoded.
+     * @param int $uid
      * @param string $invisible Should be '0' for no or '1' for yes.
      */
-    public function changeMemberVisibility(string $username, string $invisible)
+    public function changeMemberVisibility(int $uid, string $invisible)
     {
-        $this->db->escape_fast($username);
         $this->db->escape_fast($invisible);
 
         // The members.invisible field is a SET type and must be sent as a string.
         // Otherwise, MySQL would coerce integer literals to a bit set value rather than a string value.
 
-        $this->db->query("UPDATE " . $this->tablepre . "members SET invisible='$invisible' WHERE username='$username'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET invisible = '$invisible' WHERE uid = $uid");
     }
 
     /**
@@ -399,14 +396,12 @@ class SQL
      * SQL command
      *
      * @since 1.9.12
-     * @param string $username
+     * @param int $uid
      * @return int The new value of bad_login_count for this member.
      */
-    public function raiseLoginCounter(string $username): int
+    public function raiseLoginCounter(int $uid): int
     {
-        $sqluser = $this->db->escape($username);
-
-        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_login_count = LAST_INSERT_ID(bad_login_count + 1) WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_login_count = LAST_INSERT_ID(bad_login_count + 1) WHERE uid = $uid");
 
         return $this->db->insert_id();
     }
@@ -416,25 +411,21 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function resetLoginCounter(string $username, int $date)
+    public function resetLoginCounter(int $uid, int $date)
     {
-        $sqluser = $this->db->escape($username);
-
-        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_login_count = 1, bad_login_date = $date WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_login_count = 1, bad_login_date = $date WHERE uid = $uid");
     }
 
     /**
      * SQL command
      *
      * @since 1.9.12
-     * @param string $username
+     * @param int $uid
      * @return int The new value of bad_session_count for this member.
      */
-    public function raiseSessionCounter(string $username): int
+    public function raiseSessionCounter(int $uid): int
     {
-        $sqluser = $this->db->escape($username);
-
-        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_session_count = LAST_INSERT_ID(bad_session_count + 1) WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_session_count = LAST_INSERT_ID(bad_session_count + 1) WHERE uid = $uid");
 
         return $this->db->insert_id();
     }
@@ -444,11 +435,9 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function resetSessionCounter(string $username, int $date)
+    public function resetSessionCounter(int $uid, int $date)
     {
-        $sqluser = $this->db->escape($username);
-
-        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_session_count = 1, bad_session_date = $date WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_session_count = 1, bad_session_date = $date WHERE uid = $uid");
     }
 
     /**
@@ -537,11 +526,9 @@ class SQL
      *
      * @since 1.10.00
      */
-    public function getMemberPassword(string $username): string
+    public function getMemberPassword(int $uid): string
     {
-        $this->db->escape_fast($username);
-
-        $result = $this->db->query("SELECT password, password2 FROM " . $this->tablepre . "members WHERE username = '$username'");
+        $result = $this->db->query("SELECT password, password2 FROM " . $this->tablepre . "members WHERE uid = $uid");
 
         if ($this->db->num_rows($result) != 1) throw new LogicException('Attempted to read password for a non-existent member');
 
@@ -571,11 +558,9 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function setLastvisit(string $username, int $timestamp)
+    public function setLastvisit(int $uid, int $timestamp)
     {
-        $sqluser = $this->db->escape($username);
-
-        $this->db->query("UPDATE " . $this->tablepre . "members SET lastvisit = $timestamp WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET lastvisit = $timestamp WHERE uid = $uid");
     }
 
     /**
@@ -585,11 +570,9 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function raisePostCount(string $username, int $timestamp)
+    public function raisePostCount(int $uid, int $timestamp)
     {
-        $sqluser = $this->db->escape($username);
-
-        $this->db->query("UPDATE " . $this->tablepre . "members SET postnum = postnum + 1, lastvisit = $timestamp WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET postnum = postnum + 1, lastvisit = $timestamp WHERE uid = $uid");
     }
 
     /**
@@ -609,11 +592,9 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function unlockMember(string $username)
+    public function unlockMember(int $uid)
     {
-        $sqluser = $this->db->escape($username);
-
-        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_login_count = 0 WHERE username = '$sqluser'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET bad_login_count = 0 WHERE uid = $uid");
     }
 
     /**

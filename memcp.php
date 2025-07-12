@@ -133,7 +133,7 @@ if ($action == 'profile') {
 
         if (getRawString('newpassword') != '') {
             // Current password is not available in session data, so it needs to be fetched again.
-            $storedPass = $sql->getMemberPassword($vars->self['username']);
+            $storedPass = $sql->getMemberPassword((int) $vars->self['uid']);
             $passMan = new Password($sql);
             $oldPass = getRawString('oldpassword');
             if ($oldPass == '') {
@@ -191,7 +191,7 @@ if ($action == 'profile') {
         }
         
         if (count($edits) > 0) {
-            $sql->updateMember($vars->self['username'], $edits);
+            $sql->updateMember((int) $vars->self['uid'], $edits);
         }
 
         $core->message($lang['usercpeditpromsg'], redirect: $vars->full_url . 'memcp.php');

@@ -98,12 +98,12 @@ class Core
 
         if (time() >= (int) $member['bad_login_date'] + $reset_timer) {
             // After 24 hours, reset.
-            $this->sql->resetLoginCounter($member['username'], time());
+            $this->sql->resetLoginCounter((int) $member['uid'], time());
         } elseif ((int) $member['bad_login_count'] >= $guess_limit && time() >= (int) $member['bad_login_date'] + $lockout_timer) {
             // User had more than 10 failures and was locked out.  After 2 hours, reset.
-            $this->sql->resetLoginCounter($member['username'], time());
+            $this->sql->resetLoginCounter((int) $member['uid'], time());
         } else {
-            $count = $this->sql->raiseLoginCounter($member['username']);
+            $count = $this->sql->raiseLoginCounter((int) $member['uid']);
             if ($count == $guess_limit) {
                 // Email the Super Administrators about this.
                 $lang2 = $this->tran->loadPhrases(['charset', 'security_subject', 'login_audit_mail']);
@@ -131,9 +131,9 @@ class Core
         $reset_timer = 86400;
         
         if (time() > (int) $member['bad_login_date'] + $reset_timer) {
-            $this->sql->resetSessionCounter($member['username'], time());
+            $this->sql->resetSessionCounter((int) $member['uid'], time());
         } else {
-            $count = $this->sql->raiseSessionCounter($member['username']);
+            $count = $this->sql->raiseSessionCounter((int) $member['uid']);
         }
     }
 

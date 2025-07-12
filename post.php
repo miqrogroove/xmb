@@ -479,7 +479,7 @@ switch ($action) {
                 $sql->setForumCounts($fid, "$thatime|$sql_username|$pid", fup: $fupArg, newReply: true);
 
                 if (X_MEMBER) {
-                    $sql->raisePostCount($username, $vars->onlinetime);
+                    $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
                     $expire = $vars->onlinetime + $vars::ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";
@@ -946,7 +946,7 @@ switch ($action) {
                 }
 
                 if (! $quarantine) {
-                    $sql->raisePostCount($username, $vars->onlinetime);
+                    $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
                     $expire = $vars->onlinetime + $vars::ONLINE_TIMER;
                     if (empty($oldtopics)) {
                         $oldtopics = "|$pid|";

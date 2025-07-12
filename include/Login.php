@@ -55,25 +55,21 @@ class Login
      */
     function loginUser(?bool $invisible = null)
     {
-        $vars = $this->vars;
-
         if ($this->session->getStatus() !== 'good') return;
 
-        if (!is_null($invisible)) {
-            $old = $vars->self['invisible'];
-            if ($invisible) {
-                $vars->self['invisible'] = '1';
-            } else {
-                $vars->self['invisible'] = '0';
-            }
-            if ($old !== $vars->self['invisible']) {
-                $this->sql->changeMemberVisibility($vars->self['username'], $vars->self['invisible']);            
+        if (! is_null($invisible)) {
+            $old = $this->vars->self['invisible'];
+            $new = $invisible ? '1' : '0';
+            if ($old !== $new) {
+                $uid = (int) $this->vars->self['uid'];
+                $this->sql->changeMemberVisibility($uid, $new);            
+                $this->vars->self['invisible'] = $new;
             }
         }
 
         // These cookies were already set in header.php, but PHP is smart enough to overwrite them.
-        $this->core->put_cookie('xmblvb', $vars->self['lastvisit'], (time() + $vars::ONLINE_TIMER)); // lvb == last visit
-        $vars->lastvisit = (int) $vars->self['lastvisit']; // Used in forumdisplay and a few other spots.
+        $this->core->put_cookie('xmblvb', $this->vars->self['lastvisit'], (time() + $this->vars::ONLINE_TIMER)); // lvb == last visit
+        $this->vars->lastvisit = (int) $this->vars->self['lastvisit']; // Used in forumdisplay and a few other spots.
     }
 
     /**
@@ -133,7 +129,7 @@ class Login
             }
             // Save some write locks by updating in 60-second intervals.
             if (abs(time() - (int) $vars->self['lastvisit']) > 60) {
-                $this->sql->setLastvisit($vars->self['username'], $vars->onlinetime);
+                $this->sql->setLastvisit((int) $vars->self['uid'], $vars->onlinetime);
                 // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
             }
         } else {

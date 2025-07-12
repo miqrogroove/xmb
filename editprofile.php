@@ -177,7 +177,7 @@ if (noSubmit('editsubmit')) {
     }
 
     if (count($edits) > 0) {
-        $sql->updateMember($member['username'], $edits);
+        $sql->updateMember((int) $member['uid'], $edits);
     }
 
     if (getRawString('newpassword') != '') {
@@ -193,7 +193,7 @@ if (noSubmit('editsubmit')) {
 
     $unlock = formYesNo('unlock');
     if ('yes' == $unlock) {
-        $sql->unlockMember($rawuser);
+        $sql->unlockMember((int) $member['uid']);
     }
 
     $core->message($lang['adminprofilechange'], redirect: $vars->full_url . 'admin/');
