@@ -307,7 +307,7 @@ class BootupLoader
                 }
 
                 if ($this->vars->plugadmin[$plugnum] != true || X_ADMIN) {
-                    $pluglinks[] = ' &nbsp;<a href="' . $this->vars->plugurl[$plugnum] . '">' . $img . ' ' . $this->vars->plugname[$plugnum] . '</a>';
+                    $pluglinks[] = " &nbsp;\n<a href='" . $this->vars->plugurl[$plugnum] . "'>" . $img . ' ' . $this->vars->plugname[$plugnum] . '</a>';
                 }
             }
         }
