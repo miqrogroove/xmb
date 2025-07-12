@@ -107,12 +107,12 @@ class BootupLoader
         $force_inv = false;
         if ((int) $this->vars->settings['schema_version'] < 5) {
             $mode = 'disabled';
-        } else if (defined('XMB\UPGRADE') && isset($_POST['xmbpw'])) {
+        } elseif (defined('XMB\UPGRADE') && isset($_POST['xmbpw'])) {
             $mode = 'login';
-        } else if ($action == 'login' && onSubmit('loginsubmit') && $script == 'misc.php') {
+        } elseif ($action == 'login' && onSubmit('loginsubmit') && $script == 'misc.php') {
             $mode = 'login';
             $force_inv = (formInt('hide') == 1);
-        } else if ($action == 'logout' && $script == 'misc.php') {
+        } elseif ($action == 'logout' && $script == 'misc.php') {
             $mode = 'logout';
         } else {
             $mode = 'resume';
@@ -185,7 +185,7 @@ class BootupLoader
 
         if ($xmblvb > 0) {
             $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're still in a session and persisting the value from the last visit.
-        } else if ($xmblva > 0) {
+        } elseif ($xmblva > 0) {
             $thetime = $xmblva;     // Not currently logged in, so let's get the time from the last visit and save it
         } else {
             $thetime = $onlinetime; // no cookie at all, so this is your first visit
@@ -268,27 +268,27 @@ class BootupLoader
 
         // Faq-link
         if ($this->vars->settings['faqstatus'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_faq.gif" alt="" border="0" /> <a href="' . $full_url . 'faq.php"><font class="navtd">' . $this->vars->lang['textfaq'] . '</font></a>';
+            $links[] = '<a href="' . $full_url . 'faq.php"><img src="' . $imgdir . '/top_faq.gif" alt="" border="0" /> ' . $this->vars->lang['textfaq'] . '</a>';
         }
 
         // Memberlist-link
         if ($this->vars->settings['memliststatus'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_memberslist.gif" alt="" border="0" /> <a href="' . $full_url . 'misc.php?action=list"><font class="navtd">' . $this->vars->lang['textmemberlist'] . '</font></a>';
+            $links[] = '<a href="' . $full_url . 'misc.php?action=list"><img src="' . $imgdir . '/top_memberslist.gif" alt="" border="0" /> ' . $this->vars->lang['textmemberlist'] . '</a>';
         }
 
         // Today's posts-link
         if ($this->vars->settings['todaysposts'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_todaysposts.gif" alt="" border="0" /> <a href="' . $full_url . 'today.php"><font class="navtd">' . $this->vars->lang['navtodaysposts'] . '</font></a>';
+            $links[] = '<a href="' . $full_url . 'today.php"><img src="' . $imgdir . '/top_todaysposts.gif" alt="" border="0" /> ' . $this->vars->lang['navtodaysposts'] . '</a>';
         }
 
         // Stats-link
         if ($this->vars->settings['stats'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_stats.gif" alt="" border="0" /> <a href="' . $full_url . 'stats.php"><font class="navtd">' . $this->vars->lang['navstats'] . '</font></a>';
+            $links[] = '<a href="' . $full_url . 'stats.php"><img src="' . $imgdir . '/top_stats.gif" alt="" border="0" /> ' . $this->vars->lang['navstats'] . '</a>';
         }
 
         // 'Forum Rules'-link
         if ($this->vars->settings['bbrules'] == 'on') {
-            $links[] = '<img src="' . $imgdir . '/top_bbrules.gif" alt="" border="0" /> <a href="' . $full_url . 'faq.php?page=forumrules"><font class="navtd">' . $this->vars->lang['textbbrules'] . '</font></a>';
+            $links[] = '<a href="' . $full_url . 'faq.php?page=forumrules"><img src="' . $imgdir . '/top_bbrules.gif" alt="" border="0" /> ' . $this->vars->lang['textbbrules'] . '</a>';
         }
 
         $this->template->links = implode(" &nbsp;\n", $links);
@@ -298,16 +298,16 @@ class BootupLoader
     {
         // Show all plugins
         $pluglinks = [];
-        foreach($this->vars->plugname as $plugnum => $item) {
-            if (!empty($this->vars->plugurl[$plugnum]) && !empty($item)) {
+        foreach ($this->vars->plugname as $plugnum => $item) {
+            if (! empty($this->vars->plugurl[$plugnum]) && !empty($item)) {
                 if (trim($this->vars->plugimg[$plugnum]) != '') {
-                    $img = '&nbsp;<img src="'.$this->vars->plugimg[$plugnum].'" border="0" alt="'.$this->vars->plugname[$plugnum].'" />&nbsp;';
+                    $img = '<img src="'.$this->vars->plugimg[$plugnum].'" border="0" alt="'.$this->vars->plugname[$plugnum].'" />';
                 } else {
                     $img = '';
                 }
 
                 if ($this->vars->plugadmin[$plugnum] != true || X_ADMIN) {
-                    $pluglinks[] = $img.'<a href="'.$this->vars->plugurl[$plugnum].'"><font class="navtd">'.$this->vars->plugname[$plugnum].'</font></a>&nbsp;';
+                    $pluglinks[] = ' &nbsp;<a href="' . $this->vars->plugurl[$plugnum] . '">' . $img . ' ' . $this->vars->plugname[$plugnum] . '</a>';
                 }
             }
         }
@@ -334,7 +334,7 @@ class BootupLoader
         ) {
             if (($res = @ini_get('zlib.output_compression')) > 0) {
                 // leave it
-            } else if ($res === false) {
+            } elseif ($res === false) {
                 // ini_get not supported. So let's just leave it
             } else {
                 if (function_exists('gzopen')) {

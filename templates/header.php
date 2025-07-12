@@ -35,8 +35,8 @@
 <td class="navtd">
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr>
-<td class="navtd"><font class="navtd"><?= $searchlink ?> <?= $links ?> <?= $pluglink ?></font></td>
-<td align="right"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><font class="navtd"><?= $lang['backto'] ?> <img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/top_home.gif" border="0" alt="<?= $SETTINGS['sitename'] ?>" /></font></a></td>
+<td class="navtd"><?= $searchlink ?> <?= $links ?> <?= $pluglink ?></td>
+<td align="right"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><?= $lang['backto'] ?> <img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/top_home.gif" border="0" alt="<?= $SETTINGS['sitename'] ?>" /></a></td>
 </tr>
 </table>
 </td>

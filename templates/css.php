@@ -175,6 +175,10 @@ textarea, select, input, object {
     text-decoration: none;
 }
 
+.navtd a {
+    white-space: nowrap;
+}
+
 .navtd2 {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
