@@ -247,7 +247,7 @@ if ($action == 'profile') {
                 $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
 
                 if ($fav['icon'] != '') {
-                    $fav['icon'] = '<img src="' . $vars->full_url . $smdir . '/' . $fav['icon'] . '" alt="" border="0" />';
+                    $fav['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $fav['icon'] . '" alt="" border="0" />';
                 } else {
                     $fav['icon'] = '';
                 }
@@ -318,7 +318,7 @@ if ($action == 'profile') {
             $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
 
             if ($fav['icon'] != '') {
-                $fav['icon'] = '<img src="' . $vars->full_url . $smdir . '/' . $fav['icon'] . '" alt="" border="0" />';
+                $fav['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $fav['icon'] . '" alt="" border="0" />';
             } else {
                 $fav['icon'] = '';
             }
@@ -496,7 +496,7 @@ if ($action == 'profile') {
             $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
 
             if ($fav['icon'] != '') {
-                $fav['icon'] = '<img src="' . $vars->full_url . $smdir . '/' . $fav['icon'] . '" alt="" border="0" />';
+                $fav['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $fav['icon'] . '" alt="" border="0" />';
             } else {
                 $fav['icon'] = '';
             }

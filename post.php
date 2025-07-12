@@ -215,7 +215,7 @@ $listed_icons = 0;
 $icons = '<input type="radio" name="posticon" value="" /> <img src="' . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
 $querysmilie = $db->query("SELECT url, code FROM " . $vars->tablepre . "smilies WHERE type = 'picon'");
 while ($smilie = $db->fetch_array($querysmilie)) {
-    $icons .= ' <input type="radio" name="posticon" value="'.$smilie['url'].'" /><img src="'.$vars->theme['smdir'].'/'.$smilie['url'].'" alt="'.$smilie['code'].'" border="0" />';
+    $icons .= ' <input type="radio" name="posticon" value="' . $smilie['url'] . '" /><img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $smilie['url'] . '" alt="' . $smilie['code'] . '" border="0" />';
     $listed_icons++;
     if ($listed_icons == 9) {
         $icons .= '<br />';
@@ -620,7 +620,7 @@ switch ($action) {
                     $threadSubject = $template->subject . ' - ';
                 }
                 if ($posticon != '') {
-                    $thread['icon'] = "<img src='" . $vars->theme['smdir'] . "/$posticon' />";
+                    $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/$posticon' />";
                 } else {
                     $thread['icon'] = '';
                 }
@@ -687,9 +687,9 @@ switch ($action) {
                     $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
                     if ($post['icon'] != '') {
-                        $post['icon'] = '<img src="'.$vars->theme['smdir'].'/'.$post['icon'].'" alt="'.$lang['altpostmood'].'" border="0" />';
+                        $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $post['icon'] . '" alt="' . $lang['altpostmood'] . '" border="0" />';
                     } else {
-                        $post['icon'] = '<img src="'.$vars->theme['imgdir'].'/default_icon.gif" alt="[*]" border="0" />';
+                        $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
                     }
 
                     $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
@@ -1024,7 +1024,7 @@ switch ($action) {
                     $threadSubject = $template->subject . ' - ';
                 }
                 if ($posticon != '') {
-                    $thread['icon'] = "<img src='" . $vars->theme['smdir'] . "/$posticon' />";
+                    $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/$posticon' />";
                 } else {
                     $thread['icon'] = '';
                 }
@@ -1309,7 +1309,7 @@ switch ($action) {
             if (onSubmit('previewpost')) {
                 null_string($postinfo['icon']);
                 if ($postinfo['icon'] !== '') {
-                    $thread['icon'] = "<img src='" . $vars->theme['smdir'] . "/{$postinfo['icon']}' />";
+                    $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/{$postinfo['icon']}' />";
                 }
                 $subTemplate->thread = $thread;
                 $currtime = $core->timeKludge((int) $postinfo['dateline']);

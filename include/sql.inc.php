@@ -2235,6 +2235,25 @@ class SQL
     }
 
     /**
+     * Add multiple smilies records.
+     *
+     * @since 1.10.00
+     */
+    public function addSmilies(array $rows)
+    {
+        if (count($rows) == 0) return;
+
+        $values = [];
+        foreach ($rows as $row) {
+            if (empty($row['code']) || empty($row['url'])) throw new InvalidArgumentException('A required value is missing');
+
+            $values[] = "('smiley', '" . $this->db->escape($row['code']) . "', '" . $this->db->escape($row['url']) . "')";
+        }
+        
+        $this->db->query("INSERT INTO " . $this->tablepre . "smilies (type, code, url) VALUES " . implode(',', $values));
+    }
+
+    /**
      * Retrieve the list of post icons.
      *
      * @since 1.10.00

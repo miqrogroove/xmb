@@ -125,41 +125,57 @@ if (noSubmit('smiliesubmit')) {
         }
     }
 
+    $newsmilies = [];
+    $smiley_urls = array_column($allsmilies, 'url');
+    $smiley_codes = array_column($allsmilies, 'code');
+
     if ($newcode) {
-        if ((int) $db->result($db->query("SELECT count(id) FROM " . $vars->tablepre . "smilies WHERE code = '$newcode'"), 0) > 0) {
-            $core->error($lang['smilieexists']);
-        }
-        $query = $db->query("INSERT INTO " . $vars->tablepre . "smilies (type, code, url) VALUES ('smiley', '$newcode', '$newurl1')");
+        if (in_array($newcode, $smiley_codes)) $core->error($lang['smilieexists']);
+
+        $newsmilies[] = [
+            'code' => $newcode,
+            'url' => $newurl1,
+        ];
     }
 
     $body = '';
 
     if ($autoinsertsmilies) {
-        $smilies_count = $newsmilies_count = 0;
-        $smiley_url = [];
-        $smiley_code = [];
-        foreach ($allsmilies as $smiley) {
-            $smiley_url[] = $smiley['url'];
-            $smiley_code[] = $smiley['code'];
-        }
+        $smilies_count = 0;
+        $newsmilies_count = 0;
 
-        $dir = opendir($smdir);
+        $allowedExts = [
+            'bmp',
+            'gif',
+            'jpg',
+            'jpeg',
+            'png',
+            'svg',
+            'webp',
+        ];
+
+        $dir = opendir(ROOT . $vars->theme['smdir']);
         while ($smiley = readdir($dir)) {
-            if ($smiley != '.' && $smiley != '..' && (strpos($smiley, '.gif') || strpos($smiley, '.jpg') || strpos($smiley, '.jpeg') || strpos($smiley, '.bmp') || strpos($smiley, '.png'))) {
-                $newsmiley_url = $smiley;
-                $newsmiley_code = $smiley;
-                $newsmiley_code = str_replace(array('.gif','.jpg','.jpeg','.bmp','.png','_'), array('','','','','',' '), $newsmiley_code);
-                $newsmiley_code = ':' . $newsmiley_code . ':';
-                if (!in_array($newsmiley_url, $smiley_url) && !in_array($newsmiley_code, $smiley_code)) {
-                    $query = $db->query("INSERT INTO " . $vars->tablepre . "smilies (type, code, url) VALUES ('smiley', '$newsmiley_code', '$newsmiley_url')");
+            $ext = pathinfo($smiley, PATHINFO_EXTENSION);
+            if ($smiley != '.' && $smiley != '..' && in_array($ext, $allowedExts)) {
+                $newsmiley_code = ':' . str_replace('_', ' ', pathinfo($smiley, PATHINFO_FILENAME)) . ':';
+                if (! in_array($smiley, $smiley_urls) && ! in_array($newsmiley_code, $smiley_codes)) {
+                    $newsmilies[] = [
+                        'code' => $newsmiley_code,
+                        'url' => $smiley,
+                    ];
+                    $smiley_codes[] = $newsmiley_code; // Avoid loading duplicates like a.gif and a.jpg.
                     $newsmilies_count++;
                 }
                 $smilies_count++;
             }
         }
         closedir($dir);
-        $body .= '<tr bgcolor="'.$vars->theme['altbg2'].'" class="ctrtablerow"><td>'.$newsmilies_count.' / '.$smilies_count.' '.$lang['smiliesadded'].'</td></tr>';
+
+        $body .= '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $newsmilies_count . ' / ' . $smilies_count . ' ' . $lang['smiliesadded'] . '</td></tr>';
     }
+
+    $sql->addSmilies($newsmilies);
 
     if ($newurl2) {
         if ((int) $db->result($db->query("SELECT count(id) FROM " . $vars->tablepre . "smilies WHERE url='$newurl2' AND type='picon'"), 0) > 0) {
@@ -175,7 +191,7 @@ if (noSubmit('smiliesubmit')) {
             $posticon_url[] = $picon['url'];
         }
 
-        $dir = opendir($smdir);
+        $dir = opendir(ROOT . $vars->theme['smdir']);
         while ($picon = readdir($dir)) {
             if ($picon != '.' && $picon != '..' && (strpos($picon, '.gif') || strpos($picon, '.jpg') || strpos($picon, '.jpeg') || strpos($picon, '.bmp') || strpos($picon, '.png'))) {
                 $newposticon_url = $picon;
