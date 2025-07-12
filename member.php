@@ -571,8 +571,6 @@ switch ($action) {
         $header = $template->process('header.php');
 
         $memberinfo['email'] = '';
-        $memberinfo['password'] = '';
-        $memberinfo['password2'] = '';
         
         $template->username = $memberinfo['username'];
         $template->postnum = $memberinfo['postnum'];

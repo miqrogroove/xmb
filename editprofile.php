@@ -59,9 +59,6 @@ if (empty($member)) {
     $core->error($lang['nomember']);
 }
 
-$member['password'] = '';
-$member['password2'] = '';
-
 $https_only = 'on' == $vars->settings['images_https_only'];
 $js_https_only = $https_only ? 'true' : 'false';
 

@@ -31,7 +31,8 @@ namespace XMB\Session;
  */
 class Data
 {
-    public array $member = [];      // Must be the member record array from the database, or an empty array.
+    public array $member = [];      // Must be the member record array from the database, or an empty array, but without any password.
+    public string $password = '';   // The member password hash from the database, or an empty string. Used during a new login only.
     public bool $permanent = false; // True if the session should be saved by the client, otherwise false.
     public string $status = 'none'; // Session input level.  Must be 'good', 'bad', or 'none'.
 }

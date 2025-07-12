@@ -132,7 +132,8 @@ if ($action == 'profile') {
         $core->request_secure('User Control Panel/Edit Profile', $vars->self['uid']);
 
         if (getRawString('newpassword') != '') {
-            $storedPass = $vars->self['password'] !== '' ? $vars->self['password'] : $vars->self['password2'];
+            // Current password is not available in session data, so it needs to be fetched again.
+            $storedPass = $sql->getMemberPassword($vars->self['username']);
             $passMan = new Password($sql);
             $oldPass = getRawString('oldpassword');
             if ($oldPass == '') {

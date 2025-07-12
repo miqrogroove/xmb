@@ -151,21 +151,38 @@ class SQL
     /**
      * SQL command
      *
-     * @since 1.9.12
+     * @since 1.9.12 Formerly getSessionReplacement()
+     * @since 1.10.00
+     * @return array Records of all available replacement tokens.
      */
-    public function getSessionReplacement(string $token, string $username): array
+    public function getSessionReplacements(string $token, string $username): array
     {
-        $sqltoken = $this->db->escape($token);
-        $sqluser = $this->db->escape($username);
+        $this->db->escape_fast($token);
+        $this->db->escape_fast($username);
 
-        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "sessions WHERE replaces = '$sqltoken' AND username = '$sqluser'");
-        if ($this->db->num_rows($query) == 1) {
-            $session = $this->db->fetch_array($query);
-        } else {
-            $session = [];
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "sessions WHERE replaces = '$token' AND username = '$username'");
+        $rows = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $rows;
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function deleteSessionReplacements(string $token, ?string $except = null)
+    {
+        $this->db->escape_fast($token);
+
+        $extra = '';
+        if (! is_null($except)) {
+            $this->db->escape_fast($except);
+            $extra = "AND token != '$except'";
         }
-        $this->db->free_result($query);
-        return $session;
+
+        $this->db->query("DELETE FROM " . $this->tablepre . "sessions WHERE replaces = '$token' $extra");
     }
 
     /**
@@ -282,9 +299,10 @@ class SQL
      * @since 1.9.12
      * @param string $username Must be HTML encoded.
      * @param string $email Optional.
+     * @param bool $includePassword Optional. Passwords are not returned unless set to true.
      * @return array Member record or empty array.
      */
-    public function getMemberByName(string $username, ?string $email = null): array
+    public function getMemberByName(string $username, ?string $email = null, bool $includePassword = false): array
     {
         $this->db->escape_fast($username);
 
@@ -302,6 +320,11 @@ class SQL
             $member = [];
         }
         $this->db->free_result($query);
+
+        if (! $includePassword) {
+            unset($member['password'], $member['password2']);
+        }
+
         return $member;
     }
 
@@ -507,6 +530,27 @@ class SQL
         $sqluser = $this->db->escape($username);
 
         $this->db->query("UPDATE " . $this->tablepre . "members SET waiting_for_mod = 'no' WHERE username = '$sqluser'");
+    }
+
+    /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function getMemberPassword(string $username): string
+    {
+        $this->db->escape_fast($username);
+
+        $result = $this->db->query("SELECT password, password2 FROM " . $this->tablepre . "members WHERE username = '$username'");
+
+        if ($this->db->num_rows($result) != 1) throw new LogicException('Attempted to read password for a non-existent member');
+
+        $record = $this->db->fetch_array($result);
+        $this->db->free_result($result);
+        
+        $password = $record['password'] !== '' ? $record['password'] : $record['password2'];
+        
+        return $password;
     }
 
     /**

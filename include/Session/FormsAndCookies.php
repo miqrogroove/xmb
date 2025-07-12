@@ -73,13 +73,15 @@ class FormsAndCookies implements Mechanism
             return $data;
         }
 
-        $member = $this->sql->getMemberByName($uinput);
+        $member = $this->sql->getMemberByName($uinput, includePassword: true);
 
         if (empty($member)) {
             $data->status = 'bad';
             return $data;
         }
 
+        $data->password = $member['password'] !== '' ? $member['password'] : $member['password2'];
+        unset($member['password'], $member['password2']);
         $data->member = &$member;
         $data->status = 'good';
         $data->permanent = formYesNo('trust') == 'yes';
@@ -95,9 +97,8 @@ class FormsAndCookies implements Mechanism
         }
 
         $passMan = new Password($this->sql);
-        $storedPass = $data->member['password'] !== '' ? $data->member['password'] : $data->member['password2'];
 
-        if (! $passMan->checkInput($pinput, $storedPass, $data->member['username'], $this->core->schemaHasPasswordV2())) {
+        if (! $passMan->checkInput($pinput, $data->password, $data->member['username'], $this->core->schemaHasPasswordV2())) {
             $this->core->auditBadLogin($data->member);
             $data = new Data();
             $data->status = 'bad';
@@ -139,8 +140,6 @@ class FormsAndCookies implements Mechanism
             return $data;
         }
         
-        $member['password'] = '';
-        
         $details = $this->sql->getSession($pinput, $uinput);
 
         if (empty($details)) {
@@ -161,21 +160,22 @@ class FormsAndCookies implements Mechanism
             $cookie2 = $this->get_cookie(self::REGEN_COOKIE);
             if ($cookie2 != '' && $cookie2 === $details['replaces']) {
                 // Normal: Client responded with both the new token and the old token. Ready to delete old token.
-                $this->sql->deleteSession($details['replaces']);
-                $this->sql->clearSessionParent($details['token']);
+                $this->sql->deleteSession($details['replaces']); // Delete old token
+                $this->sql->clearSessionParent($details['token']); // Make replacement permanent
+                $this->sql->deleteSessionReplacements($details['replaces']); // Cleanup any orphans
                 $details['replaces'] = '';
                 $this->delete_cookie(self::REGEN_COOKIE);
             } elseif ($details['replaces'] != '') {
                 // Abnormal: Client responded with the new token but doesn't posess the current (old) token.
                 // Regeneration is compromised.  Both tokens must be destroyed.
-                $this->sql->deleteSession($details['replaces']);
-                $this->sql->deleteSession($details['token']);
+                $this->sql->deleteSession($details['replaces']); // Delete old token
+                $this->sql->deleteSessionReplacements($details['replaces']); // Delete new token and any orphans
                 $this->core->auditBadSession($member);
                 $data->status = 'bad';
                 return $data;
             } elseif (time() > (int) $details['regenerate']) {
                 // Current session needs to be regenerated.
-                $newdetails = $this->sql->getSessionReplacement($pinput, $uinput);
+                $newdetails = $this->sql->getSessionReplacements($pinput, $uinput);
                 if (empty($newdetails)) {
                     // Normal: This is the first stale hit. New token is needed.
                     $this->regenerate($details);
@@ -204,12 +204,9 @@ class FormsAndCookies implements Mechanism
 
         if ('good' == $data->status) {
             $token = $this->get_cookie(self::SESSION_COOKIE);
-            $child = $this->sql->getSessionReplacement($token, $data->member['username']);
 
             $this->sql->deleteSession($token);
-            if (! empty($child)) {
-                $this->sql->deleteSession($child['token']);
-            }
+            $this->sql->deleteSessionReplacements($token);
             $this->deleteClientData();
             $data->status = 'logged-out';
             // $data->member passes through so the manager knows who is logging out.
@@ -304,8 +301,6 @@ class FormsAndCookies implements Mechanism
      */
     private function regenerate(array $oldsession)
     {
-        $token = bin2hex(random_bytes(self::TOKEN_BYTES));
-
         $regenerate = time() + self::REGEN_AFTER;
 
         $replaces = $oldsession['token'];
@@ -315,6 +310,7 @@ class FormsAndCookies implements Mechanism
             $agent = substr($_SERVER['HTTP_USER_AGENT'], 0, 255);
         }
 
+        $token = bin2hex(random_bytes(self::TOKEN_BYTES));
         $success = $this->sql->saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent);
 
         if (! $success) {
@@ -341,10 +337,16 @@ class FormsAndCookies implements Mechanism
     /**
      * Resets session cookies for a client who has authenticated but lost the regeneration data.
      *
-     * @param array $newsession
+     * @param array $newSessions
      */
-    private function recover(array $newsession)
+    private function recover(array $newSessions)
     {
+        $newsession = $newSessions[0];
+        if (count($newSessions > 1)) {
+            // Abnormal: Client responded with old token after multiple new tokens were created.
+            // Caused by race conditions.
+            $this->sql->deleteSessionReplacements($newsession['replaces'], except: $newsession['token']);
+        }
         if ((int) $newsession['expire'] > time() + self::SESSION_LIFE_SHORT) {
             $expires = (int) $newsession['expire'];
         } else {
