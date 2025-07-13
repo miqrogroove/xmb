@@ -93,5 +93,5 @@ try {
 if ($trigger_old_schema < 5) {
     $show->finished('<b>Done! :D</b><br />Now <a href="../misc.php?action=login" target="_parent">login and remember to turn your board back on</a>.<br />');
 } else {
-    $show->finished('<b>Done! :D</b><br />Now <a href="../admin/settings.php#1" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />');
+    $show->finished('<b>Done! :D</b><br />Now <a href="../admin/settings.php" target="_parent">reset the Board Status setting to turn your board back on</a>.<br />');
 }
