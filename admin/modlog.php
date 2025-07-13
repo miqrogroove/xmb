@@ -73,16 +73,16 @@ $template->random_var = '';
 
 $query = $db->query("SELECT l.*, t.subject FROM " . $vars->tablepre . "logs l LEFT JOIN " . $vars->tablepre . "threads t ON l.tid=t.tid WHERE NOT (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
 $template->url = '';
-while($recordinfo = $db->fetch_array($query)) {
+while ($recordinfo = $db->fetch_array($query)) {
     $template->date = $core->printGmDate((int) $recordinfo['date']);
     $template->time = gmdate($vars->timecode, (int) $recordinfo['date']);
-    if ((int) $recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject']) != '') {
+    if ((int) $recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject'] ?? '') != '') {
         $template->url = "<a href='" . $vars->full_url . "viewthread.php?tid={$recordinfo['tid']}' target='_blank'>{$recordinfo['subject']}</a>";
-    } else if ($recordinfo['action'] == 'delete') {
+    } elseif ($recordinfo['action'] == 'delete') {
         $recordinfo['action'] = '<strong>'.$recordinfo['action'].'</strong>';
-        $template->url = '&nbsp;';
+        $template->url = "tid={$recordinfo['tid']} - fid:{$recordinfo['fid']}";
     } else {
-        $template->url = 'tid='.$recordinfo['tid'].' - fid:'.$recordinfo['fid'];
+        $template->url = "tid={$recordinfo['tid']} - fid:{$recordinfo['fid']}";
     }
     $template->recordinfo = $recordinfo;
     $body .= $template->process('admin_modlog_row.php');
