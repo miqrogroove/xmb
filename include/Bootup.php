@@ -40,6 +40,11 @@ class Bootup
 
     public function loadConfig()
     {
+        if (! is_readable(ROOT . 'config.php')) {
+            header('HTTP/1.0 500 Internal Server Error');
+            exit('XMB is not yet installed.<br />The <code>config.php</code> file was not found.<br /><br />To start the install, just <a href="install/">click here</a>.');
+        }
+
         require ROOT . 'config.php';
         
         $this->vars->dbname = $dbname;
@@ -76,7 +81,7 @@ class Bootup
         foreach ($config_array as $key => $value) {
             if ($this->vars->$key === $value) {
                 header('HTTP/1.0 500 Internal Server Error');
-                exit('Configuration Problem: XMB is not yet installed.<br />The <code>$'.$key.'</code> has not been specified in <code>conifg.php</code>.<br /><br />To start the install, just <a href="install/">click here</a>.');
+                exit('Configuration Problem: XMB is not yet installed.<br />The <code>$'.$key.'</code> has not been specified in <code>config.php</code>.<br /><br />To start the install, just <a href="install/">click here</a>.');
             }
         }
     }
