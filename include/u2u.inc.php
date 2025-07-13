@@ -31,7 +31,7 @@ class U2U
     private array $farray = []; // Array of ints, message counts indexed by English internal folder name.
     private array $folders = []; // Array of strings, translated folder names.
 
-    private int $messageCount;
+    private int $messageCount = 0;
     
     private string $folder; // The current folder name, as supplied by the user.  Used in mass editing.
     private string $footer;
@@ -47,12 +47,27 @@ class U2U
         private Validation $validate,
         private Variables $vars,
     ) {
+        $folders = empty($this->vars->self['u2ufolders']) ? [] : explode(",", $this->vars->self['u2ufolders']);
+        $folders = array_map('trim', $folders);
+        sort($folders);
+        $this->folders = array_merge([
+            'Inbox' => $this->vars->lang['textu2uinbox'],
+            'Outbox' => $this->vars->lang['textu2uoutbox'],
+            'Drafts' => $this->vars->lang['textu2udrafts'],
+            'Trash' => $this->vars->lang['textu2utrash'],
+        ], $folders);
+
         $this->header = $template->process('u2u_header.php');
         $this->footer = $template->process('u2u_footer.php');
     }
 
     public function setFolder(string $folder)
     {
+        if (! $this->folderExists($folder)) {
+            header('HTTP/1.0 404 Not Found');
+            $this->error($this->vars->lang['textnofolder']);
+        }
+
         $this->folder = $folder;
     }
 
@@ -835,7 +850,7 @@ class U2U
     }
 
     /**
-     * Gathers names and stats about the user's U2U folders.
+     * Gathers stats about the user's U2U folders.
      *
      * @since 1.9.1 Formerly u2u_folderList()
      * @since 1.10.00
@@ -843,17 +858,6 @@ class U2U
      */
     public function folderList(): int
     {
-        $this->messageCount = 0;
-        $folders = empty($this->vars->self['u2ufolders']) ? [] : explode(",", $this->vars->self['u2ufolders']);
-        $folders = array_map('trim', $folders);
-        sort($folders);
-        $this->folders = array_merge([
-            'Inbox' => $this->vars->lang['textu2uinbox'],
-            'Outbox' => $this->vars->lang['textu2uoutbox'],
-            'Drafts' => $this->vars->lang['textu2udrafts'],
-            'Trash' => $this->vars->lang['textu2utrash'],
-        ], $folders);
-
         $query = $this->db->query("SELECT folder, count(u2uid) as count FROM " . $this->vars->tablepre . "u2u WHERE owner = '" . $this->vars->xmbuser . "' GROUP BY folder ORDER BY folder ASC");
         while ($flist = $this->db->fetch_array($query)) {
             $this->farray[$flist['folder']] = (int) $flist['count'];
@@ -889,6 +893,27 @@ class U2U
         }
 
         return $this->messageCount;
+    }
+
+    /**
+     * Folder existence checker
+     *
+     * @since 1.10.00
+     */
+    public function folderExists(string $folder): bool
+    {
+        $ci_value = strtolower($folder);
+        $testarray = ['inbox', 'outbox', 'drafts', 'trash'];
+
+        if (in_array($ci_value, $testarray)) return true;
+
+        foreach ($this->folders as $name) {
+            if ($ci_value === strtolower($name)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -163,7 +163,7 @@ switch ($action) {
             $u2ufolders = $validate->postedVar('u2ufolders', dbescape: false);
             $u2u->folderSubmit($u2ufolders);
         } else {
-            $template->hU2ufolders = $vars->self->u2ufolders;
+            $template->hU2ufolders = $vars->self['u2ufolders'];
             $template->leftpane = $template->process('u2u_folders.php');
         }
         break;
