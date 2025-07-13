@@ -115,7 +115,7 @@ switch ($status) {
         $config_error = $vars->lang['config_error_connect'];
 }
 
-$vStep = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 1;
+$vStep = intval($_REQUEST['step'] ?? 1);
 
 if ($vStep != 4) {
     header("Content-type: text/html;charset=ISO-8859-1");
@@ -165,6 +165,11 @@ if ($status == 'installed') {
         throw new RuntimeException(str_replace('$filepath', LoggedOutput::LOG_FILE, $vars->lang['write_error']));
     }
 
+    if ($vStep > 2) {
+        header('Location: ' . $template->full_url . 'install/?step=1');
+        exit;
+    }
+
     $template->process('install_header.php', echo: true);
 
     if (ERR_DISPLAY_FORCED_OFF) {
@@ -179,9 +184,9 @@ if ($status == 'installed') {
 
     $template->version = $vars->versiongeneral;
 
-    if (! isset($_GET['step']) || '1' === $_GET['step']) {
+    if ($vStep <= 1) {
         $template->process('install_upgrade_intro.php', echo: true);
-    } elseif ('2' === $_GET['step']) {
+    } elseif (2 === $vStep) {
 
         // The status.php frame will show logged output.
         // The trigger.php frame will create the logged output and display any fatal errors.
@@ -432,7 +437,7 @@ switch ($vStep) {
         $template->process('install_footer.php', echo: true);
         exit;
     default:
-        header('Location: ' . $template->full_url . 'index.php?step=1');
+        header('Location: ' . $template->full_url . 'install/step=1');
         exit;
 }
     
