@@ -1,7 +1,7 @@
 <script type="text/javascript">
 var sendMode = true;
 </script>
-<form method="post" action="<?= $full_url ?>u2u.php?action=send">
+<form method="post" action="<?= $full_url ?>u2u.php?action=send" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="" />
 <input name="u2uid" type="hidden" value="<?= $u2uid ?>" />
 <?= $u2upreview ?>
