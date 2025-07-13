@@ -548,8 +548,9 @@ if ($action == '') {
     $counter = 0;
     $template->posts = '';
     while ($post = $db->fetch_array($querypost)) {
-        $date = gmdate($vars->dateformat, $core->timeKludge((int) $post['dateline']));
-        $time = gmdate($vars->timecode, $core->timeKludge((int) $post['dateline']));
+        $adjStamp = $core->timeKludge((int) $post['dateline']);
+        $date = $core->printGmDate($adjStamp);
+        $time = gmdate($vars->timecode, $adjStamp);
         $subTemplate->poston = "$date $lang[textat] $time";
         $bbcodeoff = $post['bbcodeoff'];
         $smileyoff = $post['smileyoff'];

@@ -442,7 +442,7 @@ switch ($action) {
             $template->members = $template->process('misc_mlist_results_none.php');
         } else {
             while ($member = $db->fetch_array($querymem)) {
-                $template->regdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['regdate']));
+                $template->regdate = $core->printGmDate($core->timeKludge((int) $member['regdate']));
 
                 $member['site'] = format_member_site($member['site']);
                 if ($member['site'] == '') {

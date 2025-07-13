@@ -75,13 +75,14 @@ if (noSubmit('editsubmit')) {
 
     $subTemplate->custout = attrOut($member['customstatus']);
 
-    $subTemplate->registerdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['regdate']));
+    $subTemplate->registerdate = $core->printGmDate($core->timeKludge((int) $member['regdate']));
 
     if (0 == (int) $member['lastvisit']) {
         $subTemplate->lastlogdate = $lang['textpendinglogin'];
     } else {
-        $lastvisitdate = gmdate($vars->dateformat, $core->timeKludge((int) $member['lastvisit']));
-        $lastvisittime = gmdate($vars->timecode, $core->timeKludge((int) $member['lastvisit']));
+        $adjStamp = $core->timeKludge((int) $member['lastvisit']);
+        $lastvisitdate = $core->printGmDate($adjStamp);
+        $lastvisittime = gmdate($vars->timecode, $adjStamp);
         $subTemplate->lastlogdate = $lastvisitdate.' '.$lang['textat'].' '.$lastvisittime;
     }
 
@@ -90,8 +91,9 @@ if (noSubmit('editsubmit')) {
         $subTemplate->loginfails = $lang['textnone'];
         $subTemplate->loginfaildate = $lang['textnone'];
     } else {
-        $loginfaildate = gmdate($vars->dateformat, $core->timeKludge((int) $member['bad_login_date']));
-        $loginfailtime = gmdate($vars->timecode, $core->timeKludge((int) $member['bad_login_date']));
+        $adjStamp = $core->timeKludge((int) $member['bad_login_date']);
+        $loginfaildate = $core->printGmDate($adjStamp);
+        $loginfailtime = gmdate($vars->timecode, $adjStamp);
         $subTemplate->loginfaildate = $loginfaildate.' '.$lang['textat'].' '.$loginfailtime;
     }
 
@@ -100,8 +102,9 @@ if (noSubmit('editsubmit')) {
         $subTemplate->sessfails = $lang['textnone'];
         $subTemplate->sessfaildate = $lang['textnone'];
     } else {
-        $sessfaildate = gmdate($vars->dateformat, $core->timeKludge((int) $member['bad_session_date']));
-        $sessfailtime = gmdate($vars->timecode, $core->timeKludge((int) $member['bad_session_date']));
+        $adjStamp = $core->timeKludge((int) $member['bad_session_date']);
+        $sessfaildate = $core->printGmDate($adjStamp);
+        $sessfailtime = gmdate($vars->timecode, $adjStamp);
         $subTemplate->sessfaildate = $sessfaildate.' '.$lang['textat'].' '.$sessfailtime;
     }
 

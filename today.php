@@ -144,8 +144,9 @@ if ($threadcount == 0) {
             $lastpostname = $lang['textanonymous'];
         }
 
-        $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
-        $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
+        $adjStamp = $core->timeKludge((int) $lastpost[0]);
+        $lastreplydate = $core->printGmDate($adjStamp);
+        $lastreplytime = gmdate($vars->timecode, $adjStamp);
         $template->lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 
         if ($thread['icon'] != '' && file_exists(ROOT . $vars->theme['smdir'] . '/' . $thread['icon'])) {

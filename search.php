@@ -256,8 +256,9 @@ if (empty($searchsubmit) && empty($page)) {
             $template->show = $core->postify($show, bbcodeoff: 'yes', allowbbcode: 'no', allowimgcode: 'no');
             $post['subject'] = $core->rawHTMLsubject($post['subject']);
 
-            $date = gmdate($vars->dateformat, $core->timeKludge((int) $post['dateline']));
-            $time = gmdate($vars->timecode, $core->timeKludge((int) $post['dateline']));
+            $adjStamp = $core->timeKludge((int) $post['dateline']);
+            $date = $core->printGmDate($adjStamp);
+            $time = gmdate($vars->timecode, $adjStamp);
 
             $template->poston = $date.' '.$lang['textat'].' '.$time;
             $template->postby = $post['author'];

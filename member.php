@@ -626,7 +626,7 @@ switch ($action) {
             $template->ppd = $memberinfo['postnum'];
         }
 
-        $template->regdate = gmdate($vars->dateformat, $core->timeKludge((int) $memberinfo['regdate']));
+        $template->regdate = $core->printGmDate($core->timeKludge((int) $memberinfo['regdate']));
 
         $template->site = format_member_site($memberinfo['site']);
 
@@ -669,8 +669,9 @@ switch ($action) {
         if (! ((int) $memberinfo['lastvisit'] > 0)) {
             $template->lastmembervisittext = $lang['textpendinglogin'];
         } else {
-            $lastvisitdate = gmdate($vars->dateformat, $core->timeKludge((int) $memberinfo['lastvisit']));
-            $lastvisittime = gmdate($vars->timecode, $core->timeKludge((int) $memberinfo['lastvisit']));
+            $adjStamp = $core->timeKludge((int) $memberinfo['lastvisit']);
+            $lastvisitdate = $core->printGmDate($adjStamp);
+            $lastvisittime = gmdate($vars->timecode, $adjStamp);
             $template->lastmembervisittext = "$lastvisitdate {$lang['textat']} $lastvisittime";
         }
 
@@ -762,8 +763,9 @@ switch ($action) {
         if ($lpfound) {
             $post = $db->fetch_array($pq);
 
-            $lastpostdate = gmdate($vars->dateformat, $core->timeKludge((int) $post['dateline']));
-            $lastposttime = gmdate($vars->timecode, $core->timeKludge((int) $post['dateline']));
+            $adjStamp = $core->timeKludge((int) $post['dateline']);
+            $lastpostdate = $core->printGmDate($adjStamp);
+            $lastposttime = gmdate($vars->timecode, $adjStamp);
             $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
             $lpsubject = $core->rawHTMLsubject(stripslashes($post['subject']));
             $template->lastpost = "<a href='" . $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}'>$lpsubject</a> ($lastposttext)";

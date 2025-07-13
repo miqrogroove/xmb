@@ -73,8 +73,8 @@ $template->random_var = '';
 
 $query = $db->query("SELECT l.*, t.subject FROM " . $vars->tablepre . "logs l LEFT JOIN " . $vars->tablepre . "threads t ON l.tid=t.tid WHERE (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
 $template->url = '';
-while($recordinfo = $db->fetch_array($query)) {
-    $template->date = gmdate($vars->dateformat, (int) $recordinfo['date']);
+while ($recordinfo = $db->fetch_array($query)) {
+    $template->date = $core->printGmDate((int) $recordinfo['date']);
     $template->time = gmdate($vars->timecode, (int) $recordinfo['date']);
     $action = explode('|#|', $recordinfo['action']);
     if (strpos($action[1], '/') === false) {

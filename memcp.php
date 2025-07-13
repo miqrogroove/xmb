@@ -241,8 +241,9 @@ if ($action == 'profile') {
                     $lastpostname = $lang['textanonymous'];
                 }
 
-                $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
-                $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
+                $adjStamp = $core->timeKludge((int) $lastpost[0]);
+                $lastreplydate = $core->printGmDate($adjStamp);
+                $lastreplytime = gmdate($vars->timecode, $adjStamp);
                 $template->lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
                 $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
 
@@ -312,8 +313,9 @@ if ($action == 'profile') {
                 $lastpostname = $lang['textanonymous'];
             }
 
-            $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
-            $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
+            $adjStamp = $core->timeKludge((int) $lastpost[0]);
+            $lastreplydate = $core->printGmDate($adjStamp);
+            $lastreplytime = gmdate($vars->timecode, $adjStamp);
             $template->lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
 
@@ -400,7 +402,7 @@ if ($action == 'profile') {
         foreach ($list as $device) {
             $template->did = $device['token'];
             $time = $core->timeKludge((int) $device['login_date']);
-            $template->dlogin = gmdate($vars->dateformat, $time).' '.$lang['textat'].' '.gmdate($vars->timecode, $time);
+            $template->dlogin = $core->printGmDate($time) . ' ' . $lang['textat'] . ' ' . gmdate($vars->timecode, $time);
             $template->dagent = parse_user_agent($device['agent']);
             if ($device['current']) {
                 $template->current .= $template->process('memcp_devices_firstrow.php');
@@ -449,8 +451,9 @@ if ($action == 'profile') {
     $u2uquery = $sql->getU2UInbox($vars->self['username']);
     $template->messages = '';
     foreach ($u2uquery as $message) {
-        $postdate = gmdate($vars->dateformat, $core->timeKludge((int) $message['dateline']));
-        $posttime = gmdate($vars->timecode, $core->timeKludge((int) $message['dateline']));
+        $adjStamp = $core->timeKludge((int) $message['dateline']);
+        $postdate = $core->printGmDate($adjStamp);
+        $posttime = gmdate($vars->timecode, $adjStamp);
         $template->senton = $postdate.' '.$lang['textat'].' '.$posttime;
 
         $message['subject'] = $core->rawHTMLsubject(stripslashes($message['subject']));
@@ -490,8 +493,9 @@ if ($action == 'profile') {
                 $lastpostname = $lang['textanonymous'];
             }
 
-            $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
-            $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
+            $adjStamp = $core->timeKludge((int) $lastpost[0]);
+            $lastreplydate = $core->printGmDate($adjStamp);
+            $lastreplytime = gmdate($vars->timecode, $adjStamp);
             $template->lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
             $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
 

@@ -74,7 +74,7 @@ $template->random_var = '';
 $query = $db->query("SELECT l.*, t.subject FROM " . $vars->tablepre . "logs l LEFT JOIN " . $vars->tablepre . "threads t ON l.tid=t.tid WHERE NOT (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
 $template->url = '';
 while($recordinfo = $db->fetch_array($query)) {
-    $template->date = gmdate($vars->dateformat, (int) $recordinfo['date']);
+    $template->date = $core->printGmDate((int) $recordinfo['date']);
     $template->time = gmdate($vars->timecode, (int) $recordinfo['date']);
     if ((int) $recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject']) != '') {
         $template->url = "<a href='" . $vars->full_url . "viewthread.php?tid={$recordinfo['tid']}' target='_blank'>{$recordinfo['subject']}</a>";

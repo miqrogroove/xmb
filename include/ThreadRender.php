@@ -100,8 +100,9 @@ class ThreadRender
      */
     private function postDate(int $timestamp): string
     {
-        $date = gmdate($this->vars->dateformat, $this->core->timeKludge($timestamp));
-        $time = gmdate($this->vars->timecode, $this->core->timeKludge($timestamp));
+        $adjStamp = $this->core->timeKludge($timestamp);
+        $date = $this->core->printGmDate($adjStamp);
+        $time = gmdate($this->vars->timecode, $adjStamp);
 
         return $this->vars->lang['textposton'] . " $date " . $this->vars->lang['textat'] . " $time";
     }
@@ -232,7 +233,7 @@ class ThreadRender
                 $template->location = '';
             }
 
-            $template->tharegdate = gmdate($this->vars->dateformat, $this->core->timeKludge((int) $post['regdate']));
+            $template->tharegdate = $this->core->printGmDate($this->core->timeKludge((int) $post['regdate']));
 
             // Some of the post record fields may be unused but they are made available anyway.
             $template->author = $post['author'];

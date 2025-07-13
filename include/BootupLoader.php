@@ -220,7 +220,7 @@ class BootupLoader
                 $thetime = (int) $this->vars->self['lastvisit'];
             }
             $lastlocal = $this->core->timeKludge($thetime);
-            $lastdate = gmdate($this->vars->dateformat, $lastlocal);
+            $lastdate = $this->core->printGmDate($lastlocal);
             $lasttime = gmdate($this->vars->timecode, $lastlocal);
             $this->template->lastvisittext = $this->vars->lang['lastactive'] . ' ' . $lastdate . ' ' . $this->vars->lang['textat'] . ' ' . $lasttime;
         } else {

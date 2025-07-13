@@ -125,9 +125,9 @@ $db->free_result($query);
 $latest = array();
 $query = $db->query("SELECT lastpost, tid, subject FROM " . $vars->tablepre . "threads WHERE $restrict ORDER BY lastpost DESC LIMIT 5");
 while ($last = $db->fetch_array($query)) {
-    $last['lastpost'] = (int) $last['lastpost'];
-    $lpdate = gmdate($vars->dateformat, $core->timeKludge((int) $last['lastpost']));
-    $lptime = gmdate($vars->timecode, $core->timeKludge((int) $last['lastpost']));
+    $adjStamp = $core->timeKludge((int) $last['lastpost']);
+    $lpdate = $core->printGmDate($adjStamp);
+    $lptime = gmdate($vars->timecode, $adjStamp);
     $thislast = $lang['lpoststats'].' '.$lang['lastreply1'].' '.$lpdate.' '.$lang['textat'].' '.$lptime;
     $last['subject'] = shortenString($core->rawHTMLsubject(stripslashes($last['subject'])));
     $latest[] = '<a href="' . $vars->full_url . 'viewthread.php?tid=' . intval($last['tid']) . '">' . $last['subject'] . '</a> (' . $thislast . ')';

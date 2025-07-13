@@ -524,8 +524,9 @@ class Core
 
             $lastPid = isset($lastpost[2]) ? $lastpost[2] : 0;
 
-            $lastpostdate = gmdate($this->vars->dateformat, $this->timeKludge((int) $lastpost[0]));
-            $lastposttime = gmdate($this->vars->timecode, $this->timeKludge((int) $lastpost[0]));
+            $adjStamp = $this->timeKludge((int) $lastpost[0]);
+            $lastpostdate = $this->printGmDate($adjStamp);
+            $lastposttime = gmdate($this->vars->timecode, $adjStamp);
             $template->lastpost = "$lastpostdate {$lang['textat']} $lastposttime<br />{$lang['textby']} $lastpostname";
             $template->lastpostrow = $template->process($templateName.'_lastpost.php');
         } else {

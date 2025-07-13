@@ -626,7 +626,7 @@ switch ($action) {
                 }
                 $subTemplate->thread = $thread;
                 $currtime = $core->timeKludge($vars->onlinetime);
-                $date = gmdate($vars->dateformat, $currtime);
+                $date = $core->printGmDate($currtime);
                 $time = gmdate($vars->timecode, $currtime);
                 $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 if (strlen($template->subject) > 0) {
@@ -682,7 +682,7 @@ switch ($action) {
                 $posts = $sql->getPostsByTID($tid, $vars->ppp, ascending: false);
                 foreach ($posts as $post) {
                     $currtime = $core->timeKludge((int) $post['dateline']);
-                    $date = gmdate($vars->dateformat, $currtime);
+                    $date = $core->printGmDate($currtime);
                     $time = gmdate($vars->timecode, $currtime);
                     $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
@@ -1030,7 +1030,7 @@ switch ($action) {
                 }
                 $subTemplate->thread = $thread;
                 $currtime = $core->timeKludge($vars->onlinetime);
-                $date = gmdate($vars->dateformat, $currtime);
+                $date = $core->printGmDate($currtime);
                 $time = gmdate($vars->timecode, $currtime);
                 $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 if (strlen($template->subject) > 0) {
@@ -1174,7 +1174,7 @@ switch ($action) {
 
             if (!(isset($delete) && $delete == 'yes')) {
                 if ($SETTINGS['editedby'] == 'on') {
-                    $messageinput .= "\n\n[".$lang['textediton'].' '.gmdate($vars->dateformat).' '.$lang['textby']." $username]";
+                    $messageinput .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
                 }
 
                 if ($bBBcodeOnForThisPost) {
@@ -1313,7 +1313,7 @@ switch ($action) {
                 }
                 $subTemplate->thread = $thread;
                 $currtime = $core->timeKludge((int) $postinfo['dateline']);
-                $date = gmdate($vars->dateformat, $currtime);
+                $date = $core->printGmDate($currtime);
                 $time = gmdate($vars->timecode, $currtime);
                 $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
                 if (strlen($subject) > 0) {
@@ -1323,7 +1323,7 @@ switch ($action) {
                 }
                 $message1 = $postinfo['message'];
                 if ($SETTINGS['editedby'] == 'on') {
-                    $message1 .= "\n\n[".$lang['textediton'].' '.gmdate($vars->dateformat).' '.$lang['textby']." $username]";
+                    $message1 .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
                 }
                 if ($bBBcodeOnForThisPost) {
                     $core->postLinkBBcode($message1);

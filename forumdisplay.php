@@ -287,8 +287,9 @@ while ($thread = $db->fetch_array($querytop)) {
         $folder = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/'.$folder.'" alt="'.$lang['altfolder'].'" border="0" />';
     }
 
-    $lastreplydate = gmdate($vars->dateformat, $core->timeKludge((int) $lastpost[0]));
-    $lastreplytime = gmdate($vars->timecode, $core->timeKludge((int) $lastpost[0]));
+    $adjStamp = $core->timeKludge((int) $lastpost[0]);
+    $lastreplydate = $core->printGmDate($adjStamp);
+    $lastreplytime = gmdate($vars->timecode, $adjStamp);
 
     $template->lastpost = "$lastreplydate {$lang['textat']} $lastreplytime<br />{$lang['textby']} $lastpostname";
 

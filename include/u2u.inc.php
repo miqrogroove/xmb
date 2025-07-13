@@ -352,7 +352,7 @@ class U2U
         }
 
         $adjTime = $this->core->timeKludge((int) $u2u['dateline']);
-        $u2udate = gmdate($this->vars->dateformat, $adjTime);
+        $u2udate = $this->core->printGmDate($adjTime);
         $u2utime = gmdate($this->vars->timecode, $adjTime);
         $subTemplate->u2udateline = "$u2udate " . $this->vars->lang['textat'] . " $u2utime";
         $subTemplate->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
@@ -412,7 +412,7 @@ class U2U
         }
 
         $adjTime = $this->core->timeKludge((int) $u2u['dateline']);
-        $u2udate = gmdate($this->vars->dateformat, $adjTime);
+        $u2udate = $this->core->printGmDate($adjTime);
         $u2utime = gmdate($this->vars->timecode, $adjTime);
         $this->template->u2udateline = $u2udate . ' ' . $this->vars->lang['textat'] . ' ' . $u2utime;
         $this->template->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject']));  // Message and subject were historically double-slashed
@@ -765,7 +765,7 @@ class U2U
             }
 
             $adjTime = $this->core->timeKludge((int) $u2u['dateline']);
-            $u2udate = gmdate($this->vars->dateformat, $adjTime);
+            $u2udate = $this->core->printGmDate($adjTime);
             $u2utime = gmdate($this->vars->timecode, $adjTime);
             $subTemplate->u2udateline = "$u2udate " . $this->vars->lang['textat'] . " $u2utime";
 

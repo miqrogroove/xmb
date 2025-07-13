@@ -69,7 +69,8 @@ if ($vars->settings['ip_banning'] == 'on') {
                     $ipaddress[$j] = "*";
                 }
             }
-            $template->ipdate = gmdate($vars->dateformat, $core->timeKludge((int) $ipaddress['dateline'])) . ' ' . $lang['textat'] . ' ' . gmdate($vars->timecode, $core->timeKludge((int) $ipaddress['dateline']));
+            $adjStamp = $core->timeKludge((int) $ipaddress['dateline']);
+            $template->ipdate = $core->printGmDate($adjStamp) . ' ' . $lang['textat'] . ' ' . gmdate($vars->timecode, $adjStamp);
             $template->theip = "$ipaddress[ip1].$ipaddress[ip2].$ipaddress[ip3].$ipaddress[ip4]";
             $template->id = $ipaddress['id'];
 
