@@ -164,7 +164,13 @@ class FormsAndCookies implements Mechanism
                 $this->sql->clearSessionParent($details['token']); // Make replacement permanent
                 $this->sql->deleteSessionReplacements($details['replaces']); // Cleanup any orphans
                 $details['replaces'] = '';
-                $this->delete_cookie(self::REGEN_COOKIE);
+                if (time() > (int) $details['regenerate']) {
+                    // Much time has passed between client's requests. Start a new cycle.
+                    $this->regenerate($details);
+                } else {
+                    // Regeneration complete.
+                    $this->delete_cookie(self::REGEN_COOKIE);
+                }
             } elseif ($details['replaces'] != '') {
                 // Abnormal: Client responded with the new token but doesn't posess the current (old) token.
                 // Regeneration is compromised.  Both tokens must be destroyed.
