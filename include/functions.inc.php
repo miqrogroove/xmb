@@ -1187,36 +1187,15 @@ class Core
     }
 
     /**
-     * Performs translation of the 'F' and 'M' month codes for date formatting.
-     *
-     * Does not respect character escaping.
-     *
-     * TODO: This can't work properly.  The $pos2 variable is never used.
-     * TODO: This method is recursive but does not have a recursive purpose.  A simple call to str_replace() would take care of most of this nonsense.
-     * TODO: Use $this->timeKludge() to do away with the logic duplication.
+     * Performs translation of the 'F' month code for date formatting.
      *
      * @since 1.9.8 SP2
      */
-    public function printGmDate($timestamp = null, $altFormat = null, $altOffset = 0): string
+    public function printGmDate(int $timestamp): string
     {
-        if ($timestamp === null) {
-            $timestamp = time();
-        }
-
-        if ($altFormat === null) {
-            $altFormat = $this->vars->dateformat;
-        }
-
-        $f = false; // Sloppy code, used to determine if the entire month name should be included.
-        if ((($pos = strpos($altFormat, 'F')) !== false && $f = true) || ($pos2 = strpos($altFormat, 'M')) !== false) {
-            $startStr = substr($altFormat, 0, $pos);
-            $endStr = substr($altFormat, $pos + 1);
-            $month = (int) gmdate('m', intval($timestamp + ($this->vars->timeoffset * 3600)+(($altOffset + $this->vars->settings['addtime'])*3600)));
-            $textM = $this->month2text($month);
-            return $this->printGmDate($timestamp, $startStr, $altOffset) . substr($textM,0, ($f ? strlen($textM) : 3)) . $this->printGmDate($timestamp, $endStr, $altOffset);
-        } else {
-            return gmdate($altFormat, intval($timestamp + ($this->vars->timeoffset * 3600) + (($altOffset + $this->vars->settings['addtime']) * 3600)));
-        }
+        $month = $this->month2text((int) gmdate('m', $timestamp));
+        $format = dateTimeFormatReplace($this->vars->dateformat, 'F', $month);
+        return gmdate($format, $timestamp);
     }
 
     /**

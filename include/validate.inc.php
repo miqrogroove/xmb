@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use DomainException;
+
 /**
  * Has the named submit button been invoked?
  *
@@ -408,4 +410,51 @@ function input_to_literal(string $value, string $style = 'single'): string
 function arrayCoalesce(array $array, string $index): mixed
 {
     return $array[$index] ?? null;
+}
+
+/**
+ * Convert a string so it can be included as literal text inside a DateTime format.
+ *
+ * @since 1.10.00
+ */
+function dateTimeFormatEscape(string $raw): string
+{
+    if ($raw == '') return '';
+
+    $array = str_split($raw);
+    
+    return "\\" . implode("\\", $array);
+}
+
+/**
+ * Replace part of a DateTime format with other text.
+ *
+ * @since 1.10.00
+ * @param string $format
+ * @param string $search
+ * @param string $replace Raw text to be added in place of the $search. HTML will be rejected for simplicity.
+ * @return string The revised format.
+ */
+function dateTimeFormatReplace(string $format, string $search, string $replace): string
+{
+    if (attrOut($replace) !== $replace) throw new DomainException('HTML is not allowed in the replacement string');
+
+    $pos = 0;
+    $newformat = $format;
+    $newreplace = dateTimeFormatEscape($replace);
+    while ($pos < strlen($newformat)) {
+        $newpos = strpos($newformat, $search, $pos);
+        if ($newpos === false) break;
+        $pos = $newpos;
+        if ($pos > 0) {
+            if (substr($newformat, $pos - 1, 1) == "\\") {
+                // Slashes preceding the search text are rejected because we haven't parsed those here.
+                $pos++;
+                continue;
+            }
+        }
+        $newformat = substr($newformat, 0, $pos) . $newreplace . substr($newformat, $pos + strlen($search));
+        $pos += strlen($newreplace);
+    }
+    return $newformat;
 }

@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use LogicException;
+
 /**
  * Get the filename extension, if any.
  *
@@ -31,61 +33,29 @@ namespace XMB;
  * @param string $filename
  * @return string
  */
-function get_extension($filename)
+function get_extension(string $filename): string
 {
-    $a = explode('.', $filename);
-    $count = count($a);
-    if ($count == 1) {
-        return '';
-    } else {
-        return $a[$count-1];
-    }
+    return pathinfo($filename, PATHINFO_EXTENSION);
 }
 
 /**
+ * Alias of gmmktime() that always returns an int.
+ *
  * @since 1.9.8 SP2
+ * @param int 0...5 Values for hour, minute, second, day, month, and year.
+ * @return int Timestamp, or zero on 32-bit systems where the year is out of range.
  */
-function MakeTime()
+function MakeTime(int ...$objArgs): int
 {
-   $objArgs = func_get_args();
-   $nCount = count($objArgs);
-   if ($nCount < 7) {
-       if ($nCount < 1) {
-           $objArgs[] = intval(gmdate('H'));
-       } else if ($nCount < 2) {
-           $objArgs[] = intval(gmdate('i'));
-       } else if ($nCount < 3) {
-           $objArgs[] = intval(gmdate('s'));
-       } else if ($nCount < 4) {
-           $objArgs[] = intval(gmdate('n'));
-       } else if ($nCount < 5) {
-           $objArgs[] = intval(gmdate('j'));
-       } else if ($nCount < 6) {
-           $objArgs[] = intval(gmdate('Y'));
-       }
-   }
+    if (count($objArgs) != 6) throw new LogicException('Exactly 6 arguments required');
 
-   $nYear = $objArgs[5];
-   $nOffset = 0;
-   if ($nYear < 1970) {
-       if ($nYear < 1902) {
-           return 0;
-       } else if ($nYear < 1952) {
-           $nOffset = -2650838400;
-           $objArgs[5] += 84;
-       } else {
-           $nOffset = -883612800;
-           $objArgs[5] += 28;
-       }
-   }
-
-   return call_user_func_array("gmmktime", $objArgs) + $nOffset;
+    return (int) call_user_func_array('gmmktime', $objArgs);
 }
 
 /**
  * @since 1.9.4
  */
-function iso8601_date(int $year, int $month, int $day)
+function iso8601_date(int $year, int $month, int $day): string
 {
     if ($year < 1 || $month < 1 || $day < 1) {
         return '0000-00-00';
@@ -144,7 +114,7 @@ function get_img_regexp(bool $https_only = false): string
  * @param string $site The members.site value retrieved from the database.
  * @return string A URL or an empty string.
  */
-function format_member_site($site)
+function format_member_site(string $site): string
 {
     $site = trim($site);
     $length = strlen($site);
@@ -152,13 +122,13 @@ function format_member_site($site)
     if ($length < 4) {
         // Found some garbage value like 'a.b'
         $url = '';
-    } else if (false === strpos($site, '.')) {
+    } elseif (false === strpos($site, '.')) {
         // Found some garbage value like 'aaaa'
         $url = '';
-    } else if (1 !== preg_match('@^https?://@i', $site)) {
+    } elseif (1 !== preg_match('@^https?://@i', $site)) {
         // Scheme missing, assume it starts with a domain name.
         $url = "http://$site";
-    } else if ($length < 11) {
+    } elseif ($length < 11) {
         // Found some garbage value like 'http://a.b'
         $url = '';
     } else {
@@ -192,7 +162,7 @@ function parse_user_agent(string $raw): string
  * Coerces any null value to an empty string.
  *
  * @since 1.9.12.05
- * @param string|null $var Passed by reference for easier coding.
+ * @param ?string $var Passed by reference for easier coding.
  */
 function null_string(?string &$var)
 {

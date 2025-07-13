@@ -501,8 +501,8 @@ class UserEditForm
     public function readMiscFields()
     {
         $dateformat = getPhpInput('dateformatnew');
-        $dateformattest = attrOut($dateformat, 'javascript');
-        // Never allow attribute-special data in the date format because it can be unescaped using the date() parser.
+        $dateformattest = attrOut($dateformat);
+        // Never allow attribute-special data in the date format. They are invalid for date formats, as are the html-encoded versions of them.
         if (empty($dateformat) || $dateformat !== $dateformattest) {
             $this->edits['dateformat'] = $this->vars->settings['dateformat'];
         } elseif ($this->formMode == 'new' || $this->targetUser['dateformat'] != $dateformat) {

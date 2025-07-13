@@ -708,7 +708,16 @@ switch ($action) {
         if ($memberinfo['bday'] === iso8601_date(0,0,0)) {
             $template->bday = $lang['textnone'];
         } else {
-            $template->bday = $core->printGmDate(MakeTime(12,0,0,substr($memberinfo['bday'],5,2),substr($memberinfo['bday'],8,2),substr($memberinfo['bday'],0,4)), $vars->dateformat, -$vars->timeoffset);
+            $template->bday = $core->printGmDate(
+                MakeTime(
+                    12,
+                    0,
+                    0,
+                    (int) substr($memberinfo['bday'], 5, 2),
+                    (int) substr($memberinfo['bday'], 8, 2),
+                    (int) substr($memberinfo['bday'], 0, 4),
+                ),
+            );
         }
 
         // Forum most active in
