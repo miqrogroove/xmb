@@ -276,7 +276,6 @@ class Bootup
             $this->vars->dbpw,
             $this->vars->dbname,
             $this->vars->pconnect,
-            force_db: true,
         );
 
         return $db;

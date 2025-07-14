@@ -51,10 +51,7 @@ class MySQLiDatabase implements DBStuff
 
     public function __construct(private bool $debug, private bool $logErrors)
     {
-        // Force older versions of PHP to behave like PHP v8.1.  This assumes there are no incompatible mysqli scripts running.
-        if ($this->isInstalled()) {
-            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-        }
+        // Property promotion
     }
 
     /**
@@ -79,7 +76,7 @@ class MySQLiDatabase implements DBStuff
      * @param string $dbname
      * @param bool   $pconnect Keep the connection open after the script ends.
      * @param bool   $force_db Generate a fatal error if the $dbname database doesn't exist on the server.
-     * @return bool  Whether or not the database was found after connecting.
+     * @return bool  Whether or not the database was found.
      */
     public function connect(
         string $dbhost,
@@ -88,7 +85,7 @@ class MySQLiDatabase implements DBStuff
         string $dbpw,
         string $dbname,
         bool $pconnect = false,
-        bool $force_db = false,
+        bool $force_db = true,
     ): bool {
         // Verify compatiblity.
         if (! $this->isInstalled()) {
@@ -102,13 +99,17 @@ class MySQLiDatabase implements DBStuff
         }
 
         if ($force_db) {
+            // Set default upon connection, but panic when not found.
             $database = $dbname;
         } else {
             $database = '';
         }
 
         try {
-            $this->link = new mysqli($dbhost, $dbuser, $dbpw, $database);
+            $this->link = new mysqli();
+            // Always force single byte mode so the PHP mysql client doesn't throw non-UTF input errors.
+            $this->link->options(MYSQLI_SET_CHARSET_NAME, 'latin1');
+            $this->link->real_connect($dbhost, $dbuser, $dbpw, $database);
         } catch (mysqli_sql_exception $e) {
             $msg = "<h3>Database connection error!</h3>\n"
                  . "A connection to the Database could not be established.<br />\n"
@@ -118,22 +119,12 @@ class MySQLiDatabase implements DBStuff
             $this->panic($e, $sql, $msg);
         }
 
-        // Always force single byte mode so the PHP mysql client doesn't throw non-UTF input errors.
-        try {
-            $result = $this->link->set_charset('latin1');
-        } catch (mysqli_sql_exception $e) {
-            $msg = "<h3>Database connection error!</h3>\n"
-                 . "The database connection could not be configured for XMB.<br />\n"
-                 . "Please ensure the mysqli_set_charset function is working.<br />\n";
-            $sql = '';
-            $this->panic($e, $sql, $msg);
-        }
-
         if ($force_db) {
             $this->db = $dbname;
             return true;
         } else {
-            return $this->select_db($dbname, $force_db);
+            // Set default after connection, but return false if not found.
+            return $this->select_db($dbname, force: 'no');
         }
     }
 
@@ -222,6 +213,8 @@ class MySQLiDatabase implements DBStuff
 
     /**
      * Searches for an accessible database containing the XMB settings table.
+     *
+     * This was used internally prior to v1.9.11.11, but now considered inappropriate for normal connections.
      *
      * @since 1.9.1
      * @param string $tablepre The settings table name prefix.
