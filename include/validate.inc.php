@@ -413,6 +413,16 @@ function arrayCoalesce(array $array, string $index): mixed
 }
 
 /**
+ * Retrieve a constant whose existence is unknown.
+ *
+ * @since 1.10.00
+ */
+function constantCoalesce(string $name): mixed
+{
+    return defined("XMB\\$name") ? constant("XMB\\$name") : null;
+}
+
+/**
  * Convert a string so it can be included as literal text inside a DateTime format.
  *
  * @since 1.10.00
