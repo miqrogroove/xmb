@@ -99,7 +99,7 @@ class Forums
 
         $children = [];
 
-        foreach($this->forumcache as $forum) {
+        foreach ($this->forumcache as $forum) {
             if ((int) $forum['fup'] == $fid && $forum['type'] == 'sub') {
                 $children[] = $forum;
             }

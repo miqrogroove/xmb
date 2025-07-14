@@ -77,7 +77,7 @@ if (onSubmit('nosubmit')) {
 
     $start = true;
     $tables = $schema->listTables();
-    foreach($tables as $val) {
+    foreach ($tables as $val) {
         $body .= $admin->dump_query($db->query('REPAIR TABLE `' . $vars->tablepre . $val.'`'), header: $start);
         if ($start) $start = false;
     }

@@ -287,7 +287,7 @@ switch ($action) {
                         $newPass = '';
                         $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
                         $get = strlen($chars) - 1;
-                        for($i = 0; $i < 10; $i++) {
+                        for ($i = 0; $i < 10; $i++) {
                             $newPass .= $chars[random_int(0, $get)];
                         }
                     } else {

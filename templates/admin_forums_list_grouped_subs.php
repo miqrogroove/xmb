@@ -6,13 +6,13 @@
 <option value="on" <?= $on ?>><?= $lang['texton'] ?></option><option value="off" <?= $off ?>><?= $lang['textoff'] ?></option></select>
 &nbsp; <select name="moveto<?= $subforum['fid'] ?>"><option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
 <?php
-foreach($forums[0] as $moveforum) { //Ungrouped forum options.
+foreach ($forums[0] as $moveforum) { //Ungrouped forum options.
     echo "<option value=\"$moveforum[fid]\" $curgroup> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
 }
-foreach($groups as $moveforum) { //Groups and grouped forum options.
+foreach ($groups as $moveforum) { //Groups and grouped forum options.
     echo '<option value="'.$moveforum['fid'].'">'.stripslashes($moveforum['name']).'</option>';
     if (isset($forums[$moveforum['fid']])) {
-        foreach($forums[$moveforum['fid']] as $moveforum) {
+        foreach ($forums[$moveforum['fid']] as $moveforum) {
             if ($moveforum['fid'] == $subforum['fup']) {
                 $curgroup = $selHTML;
             } else {

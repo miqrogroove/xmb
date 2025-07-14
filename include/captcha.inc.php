@@ -164,7 +164,7 @@ class Captcha
                 $this->aCharSet = array();
 
                 // loop through items
-                foreach($aCharSet as $sCurrentItem) {
+                foreach ($aCharSet as $sCurrentItem) {
                     // a range should have 3 characters, otherwise is normal character
                     if (strlen($sCurrentItem) == 3) {
                         // split on range character
@@ -231,7 +231,7 @@ class Captcha
             $rmax = 255;
         }
 
-        for($i = 0; $i < $this->iNumLines; $i++) {
+        for ($i = 0; $i < $this->iNumLines; $i++) {
             // allocate color
             if ($this->bUseColor) {  // XMB forces true color mode to prevent palette overflow.
                 $iLineColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));
@@ -273,7 +273,7 @@ class Captcha
         $this->sCode = '';
 
         // loop through and generate the code letter by letter
-        for($i = 0; $i < $this->iNumChars; $i++) {
+        for ($i = 0; $i < $this->iNumChars; $i++) {
             if (count($this->aCharSet) >= $this->iNumChars) {
                 // select random character and add to code string
                 $this->sCode .= $this->aCharSet[array_rand($this->aCharSet)];
@@ -305,7 +305,7 @@ class Captcha
         }
 
         // loop through and write out selected number of characters
-        for($i = 0; $i < strlen($this->sCode); $i++) {
+        for ($i = 0; $i < strlen($this->sCode); $i++) {
             // select random font
             $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
 
@@ -497,10 +497,10 @@ class Captcha
         $this->aFonts = [];
 
         // loop through items
-        foreach($aFonts as $sCurrentItem) {
+        foreach ($aFonts as $sCurrentItem) {
             if (is_dir(ROOT . $sCurrentItem)) {
                 $dir = opendir(ROOT . $sCurrentItem);
-                while($file = readdir($dir)) {
+                while ($file = readdir($dir)) {
                     if (false !== strpos($file, '.ttf')) {
                         $this->aFonts[] = ROOT . $sCurrentItem . '/' . $file;
                     }
@@ -537,10 +537,10 @@ class Captcha
         $this->aBackgroundImages = array();
 
         // loop through items
-        foreach($aBackgroundImages as $sCurrentItem) {
+        foreach ($aBackgroundImages as $sCurrentItem) {
             if (is_dir(ROOT . $sCurrentItem)) {
                 $dir = opendir(ROOT . $sCurrentItem);
-                while($file = readdir($dir)) {
+                while ($file = readdir($dir)) {
                     if (false !== strpos($file, '.png')) {
                         $this->aBackgroundImages[] = ROOT . $sCurrentItem . '/' . $file;
                     } else if (false !== strpos($file, '.gif')) {
@@ -570,7 +570,7 @@ class Captcha
         $rmin = 0;
         $rmax = 255;
 
-        for($i = 0; $i < $this->iNumDots; $i++) {
+        for ($i = 0; $i < $this->iNumDots; $i++) {
             // allocate color
             if ($this->bUseColor) {
                 $iDotColor = imagecolorallocate($this->oImage, rand($rmin, $rmax), rand($rmin, $rmax), rand($rmin, $rmax));

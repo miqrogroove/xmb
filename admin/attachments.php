@@ -140,12 +140,12 @@ if ($action == '' && onSubmit('searchsubmit')) {
     if ($diskpath !== false) {
         $diskpath = is_dir($diskpath);
     }
-    while($attachment = $db->fetch_array($query)) {
+    while ($attachment = $db->fetch_array($query)) {
         $template->attachsize = $attach->getSizeFormatted($attachment['filesize']);
 
         $attachment['tsubject'] = stripslashes($attachment['tsubject']); //old databases were double-slashed
         $attachment['fname'] = fnameOut($attachment['fname']);
-        $attachment['filename'] = attrOut($attachment['filename'], 'javascript');
+        $attachment['filename'] = htmlEsc($attachment['filename']);
         $template->movelink = '';
         $template->newthumblink = '';
         if ($attachment['subdir'] == '') {
@@ -176,7 +176,7 @@ if ($action == '' && onSubmit('searchsubmit')) {
         if ($db->num_rows($query2) > 0) {
             $db->data_seek($query2, 0);
         }
-        while($child = $db->fetch_array($query2)) {
+        while ($child = $db->fetch_array($query2)) {
             if ($child['parentid'] == $attachment['aid'] && substr($child['filename'], -10) == '-thumb.jpg') {
                 $template->attachsize = $attach->getSizeFormatted($child['filesize']);
                 $template->movelink = '';
@@ -207,7 +207,7 @@ if ($action == '' && onSubmit('searchsubmit')) {
 if ($action == '' && onSubmit('attachsubmit')) {
     $core->request_secure('Control Panel/Attachments', 'mass-edit');
     $filelist = [];
-    foreach($_POST as $postedname => $rawvalue) {
+    foreach ($_POST as $postedname => $rawvalue) {
         if (substr($postedname, 0, 8) == 'filename' && is_numeric($fileaid = substr($postedname, 8))) {
             $filelist[] = $fileaid;
         }
@@ -215,7 +215,7 @@ if ($action == '' && onSubmit('attachsubmit')) {
     $filelist = implode(', ', $filelist);
 
     $query = $db->query("SELECT aid, pid, filename FROM " . $vars->tablepre . "attachments WHERE aid IN ($filelist)");
-    while($attachment = $db->fetch_array($query)) {
+    while ($attachment = $db->fetch_array($query)) {
         $afilename = "filename" . $attachment['aid'];
         $postedvalue = trim(getPhpInput($afilename));
         if ($attachment['filename'] !== $postedvalue) {

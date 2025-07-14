@@ -81,7 +81,7 @@ if (noSubmit('pruneSubmit')) {
             break;
         case 'list':
             $fs = [];
-            foreach($pruneFromList as $fid) {
+            foreach ($pruneFromList as $fid) {
                 if ($fid > 0) {
                     $fs[] = $fid;
                 }
@@ -95,7 +95,7 @@ if (noSubmit('pruneSubmit')) {
         case 'fid':
             $fs = [];
             $fids = explode(',', $pruneFromFid);
-            foreach($fids as $fid) {
+            foreach ($fids as $fid) {
                 $fid = (int) $fid;
                 if ($fid > 0) {
                     $fs[] = $fid;

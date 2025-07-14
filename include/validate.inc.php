@@ -293,7 +293,7 @@ function getFormArrayInt(string $varname, bool $doCount = true): array|false
         }
     }
 
-    foreach($formval as $value) {
+    foreach ($formval as $value) {
         $retval[] = intval($value);
     }
 

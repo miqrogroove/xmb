@@ -7,16 +7,16 @@
 &nbsp; <select name="moveto<?= $forum['fid'] ?>"><option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
 <?php
 if (!isset($subs[$forum['fid']])) { //Ungrouped forum options.
-    foreach($forums[0] as $moveforum) {
+    foreach ($forums[0] as $moveforum) {
         if ($moveforum['fid'] != $forum['fid']) {
             echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
         }
     }
 }
-foreach($groups as $moveforum) { //Groups and grouped forum options.
+foreach ($groups as $moveforum) { //Groups and grouped forum options.
     echo "<option value=\"$moveforum[fid]\">".stripslashes($moveforum['name'])."</option>";
     if (isset($forums[$moveforum['fid']]) && !isset($subs[$forum['fid']])) {
-        foreach($forums[$moveforum['fid']] as $moveforum) {
+        foreach ($forums[$moveforum['fid']] as $moveforum) {
             echo "<option value=\"$moveforum[fid]\"> &nbsp; &raquo; ".stripslashes($moveforum['name'])."</option>";
         }
     }

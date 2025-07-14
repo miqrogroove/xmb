@@ -267,7 +267,7 @@ if ($gid == 0) {
             $todaymembers = [];
             $pre = $suff = '';
             $x = 0;
-            while($memberstoday = $db->fetch_array($query)) {
+            while ($memberstoday = $db->fetch_array($query)) {
                 if ($x <= $SETTINGS['onlinetodaycount']) {
                     $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
                     $suff = '</span>';

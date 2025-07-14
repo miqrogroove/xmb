@@ -2343,7 +2343,7 @@ class Upgrade
 
         // store
         $q = $this->upgrade_query("SELECT fid, private, userlist, postperm, guestposting, pollstatus FROM " . $this->vars->tablepre . "forums WHERE (type='forum' OR type='sub')");
-        while($forum = $this->db->fetch_array($q)) {
+        while ($forum = $this->db->fetch_array($q)) {
             // check if we need to change it first
             $parts = explode('|', $forum['postperm']);
             if (count($parts) == 1) {
@@ -2422,7 +2422,7 @@ class Upgrade
         if (FALSE !== strpos(strtolower($result['Type']), 'int')) return; // Schema already at 1.9.8+
 
         $q = $this->upgrade_query("SELECT tid, subject, pollopts FROM " . $this->vars->tablepre . "threads WHERE pollopts != '' AND pollopts != '1'");
-        while($thread = $this->db->fetch_array($q)) {
+        while ($thread = $this->db->fetch_array($q)) {
             // Poll titles are historically unslashed, but thread titles are double-slashed.
             $thread['subject'] = stripslashes($thread['subject']);
             $this->db->escape_fast($thread['subject']);
@@ -2447,7 +2447,7 @@ class Upgrade
                 $name = "'".implode("', '", $name)."'";
                 $query = $this->upgrade_query("SELECT uid FROM " . $this->vars->tablepre . "members WHERE username IN ($name)");
                 $values = [];
-                while($u = $this->db->fetch_array($query)) {
+                while ($u = $this->db->fetch_array($query)) {
                     $values[] = "($poll_id, {$u['uid']})";
                 }
                 $this->db->free_result($query);
@@ -2457,7 +2457,7 @@ class Upgrade
             }
 
             $values = [];
-            for($i = 0; $i < $num_options; $i++) {
+            for ($i = 0; $i < $num_options; $i++) {
                 $bit = explode('||~|~||', $options[$i]);
                 $option_name = $this->db->escape(trim($bit[0]));
                 $num_votes = (int) trim($bit[1]);

@@ -230,7 +230,7 @@ class MySQLiDatabase implements DBStuff
     public function find_database(string $tablepre): bool
     {
         $dbs = $this->query('SHOW DATABASES');
-        while($db = $this->fetch_array($dbs)) {
+        while ($db = $this->fetch_array($dbs)) {
             if ('information_schema' == $db['Database']) {
                 continue;
             }
@@ -604,7 +604,7 @@ class MySQLiDatabase implements DBStuff
 
         $array = array();
         $q = $this->query("SHOW TABLES");
-        while($table = $this->fetch_row($q)) {
+        while ($table = $this->fetch_row($q)) {
             $array[] = $table[0];
         }
         $this->free_result($q);

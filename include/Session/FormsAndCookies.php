@@ -243,7 +243,7 @@ class FormsAndCookies implements Mechanism
         $this->delete_cookie('xmblva');
         $this->delete_cookie('xmblvb');
 
-        foreach($_COOKIE as $key=>$val) {
+        foreach ($_COOKIE as $key=>$val) {
             if (preg_match('#^fidpw([0-9]+)$#', $key)) {
                 $this->delete_cookie($key);
             }

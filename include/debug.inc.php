@@ -97,7 +97,7 @@ class Debug
         ];
 
         $replace = [];
-        foreach($find as $key => $val) {
+        foreach ($find as $key => $val) {
             $replace[$key] = "</em><strong>$val</strong><em>";
         }
 

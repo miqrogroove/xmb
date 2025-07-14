@@ -21,7 +21,7 @@ namespace XMB;
 <option value="on"><?= $lang['texton'] ?></option><option value="off"><?= $lang['textoff'] ?></option></select>
 &nbsp; <select name="newffup"><option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
 <?php
-foreach($groups as $group) {
+foreach ($groups as $group) {
     echo '<option value="'.$group['fid'].'">'.fnameOut($group['name']).'</option>';
 }
 ?>
@@ -34,7 +34,7 @@ foreach($groups as $group) {
 &nbsp; <select name="newsubstatus"><option value="on"><?= $lang['texton'] ?></option><option value="off"><?= $lang['textoff'] ?></option></select>
 &nbsp; <select name="newsubfup">
 <?php
-foreach($forumlist as $group) {
+foreach ($forumlist as $group) {
     echo '<option value="'.$group['fid'].'">'.fnameOut($group['name']).'</option>';
 }
 ?>

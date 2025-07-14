@@ -72,7 +72,7 @@ if (onSubmit('nosubmit')) {
     $rawuser = $member;
     $member = $db->escape($rawuser);
     $countquery = $db->query("SELECT tid FROM " . $this->vars->tablepre . "posts WHERE author='$member' GROUP BY tid");
-    while($post = $db->fetch_array($countquery)) {
+    while ($post = $db->fetch_array($countquery)) {
         $dirty[] = $post['tid'];
     }
     $db->free_result($countquery);
@@ -82,7 +82,7 @@ if (onSubmit('nosubmit')) {
     if (count($dirty) > 0) {
         $csv = implode(',', $dirty);
         $countquery = $db->query("SELECT fid FROM " . $this->vars->tablepre . "threads WHERE tid IN ($csv) GROUP BY fid");
-        while($thread = $db->fetch_array($countquery)) {
+        while ($thread = $db->fetch_array($countquery)) {
             $fids[] = (int) $thread['fid'];
         }
         $db->free_result($countquery);
@@ -98,7 +98,7 @@ if (onSubmit('nosubmit')) {
     $tids = [];
     $movedids = [];
     $countquery = $db->query("SELECT t.tid FROM " . $this->vars->tablepre . "threads AS t LEFT JOIN " . $this->vars->tablepre . "posts AS p USING (tid) WHERE t.closed NOT LIKE 'moved%' GROUP BY t.tid HAVING COUNT(p.pid) = 0");
-    while($threads = $db->fetch_array($countquery)) {
+    while ($threads = $db->fetch_array($countquery)) {
         $tids[] = $threads['tid'];
         $movedids[] = 'moved|'.$threads['tid'];
     }
@@ -113,7 +113,7 @@ if (onSubmit('nosubmit')) {
 
     // Update Thread Stats
     $dirty = array_diff($dirty, $tids);
-    foreach($dirty as $tid) {
+    foreach ($dirty as $tid) {
         $core->updatethreadcount($tid);
     }
 

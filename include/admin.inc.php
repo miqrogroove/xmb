@@ -187,7 +187,7 @@ class admin
         $template->boxname = $boxname;
         $template->multi = $multi;
 
-        foreach($varnames as $key=>$val) {
+        foreach ($varnames as $key=>$val) {
             if (isset($checked[$key]) && $checked[$key] !== true) {
                 $optionlist[] = '<option value="'.$values[$key].'">'.$varnames[$key].'</option>';
             } else {
@@ -339,7 +339,7 @@ class admin
     {
         $thefile = [];
         $lines = file($filename);
-        foreach($lines as $line_num => $line) {
+        foreach ($lines as $line_num => $line) {
             $temp = explode("=", $line);
             if ($temp[0] != 'dummy') {
                 $key = trim($temp[0]);
