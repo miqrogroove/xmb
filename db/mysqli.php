@@ -231,7 +231,7 @@ class MySQLiDatabase implements DBStuff
 
             while ($table = $this->fetch_array($q)) {
                 if ($tablepre.'settings' == $table[0]) {
-                    if ($this->select_db($db['Database'], false)) {
+                    if ($this->select_db($db['Database'], force: 'no')) {
                         $this->free_result($dbs);
                         $this->free_result($q);
                         return true;
@@ -590,12 +590,13 @@ class MySQLiDatabase implements DBStuff
      */
     public function fetch_tables(?string $dbname = null): array
     {
-        if ($dbname === null) {
-            $dbname = $this->db;
+        if (! is_null($dbname)) {
+            if ($dbname !== $this->db) {
+                $this->select_db($dbname);
+            }
         }
-        $this->select_db($dbname);
 
-        $array = array();
+        $array = [];
         $q = $this->query("SHOW TABLES");
         while ($table = $this->fetch_row($q)) {
             $array[] = $table[0];
