@@ -16,13 +16,13 @@
 <option value="Courier New">Courier New</option>
 <option value="Georgia">Georgia</option>
 <option value="Impact">Impact</option>
+<option value="Lucida Console">Lucida Console</option>
+<option value="Script MT Bold">Script MT Bold</option>
+<option value="Stencil">Stencil</option>
 <option value="Tahoma">Tahoma</option>
 <option value="Times New Roman">Times New Roman</option>
 <option value="Trebuchet MS">Trebuchet MS</option>
-<option value="Script MT Bold">Script MT Bold</option>
-<option value="Stencil">Stencil</option>
 <option value="Verdana">Verdana</option>
-<option value="Lucida Console">Lucida Console</option>
 </select>
 <select name="size" onchange="chsize(this.options[this.selectedIndex].value)" size="1">
 <option value="-2">-2</option>
