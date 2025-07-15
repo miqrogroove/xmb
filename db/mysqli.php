@@ -582,13 +582,17 @@ class MySQLiDatabase implements DBStuff
     	if ($this->debug) {
             $weave = [];
             foreach ($statements as $stmt) {
-                $weave[] = $stmt;
-                $weave[] = 'SHOW WARNINGS';
+                if ($this->logErrors) {
+                    $weave[] = $stmt;
+                    $weave[] = 'SHOW WARNINGS';
+                }
                 if (constantCoalesce('X_SADMIN') !== false) {
                     $this->querylist[] = $stmt;
                 }
             }
-            $statements = &$weave;
+            if ($this->logErrors) {
+                $statements = &$weave;
+            }
             unset($weave);
         }
         $sql = implode(';', $statements);
