@@ -76,26 +76,6 @@ if ($threadcount == 0) {
         $template->multipage = $template->process('today_multipage.php');
     }
 
-    $t_extension = get_extension($lang['toppedprefix']);
-    switch ($t_extension) {
-        case 'gif':
-        case 'jpg':
-        case 'jpeg':
-        case 'png':
-            $lang['toppedprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['toppedprefix'] . '" alt="' . $lang['toppedpost'] . '" border="0" />';
-            break;
-    }
-
-    $p_extension = get_extension($lang['pollprefix']);
-    switch ($p_extension) {
-        case 'gif':
-        case 'jpg':
-        case 'jpeg':
-        case 'png':
-            $lang['pollprefix'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/' . $lang['pollprefix'] . '" alt="' . $lang['postpoll'] . '" border="0" />';
-            break;
-    }
-
     $query = $db->query(
         "SELECT t.*, t.replies+1 as posts, m.uid
          FROM " . $vars->tablepre . "threads t
@@ -194,11 +174,11 @@ if ($threadcount == 0) {
         $template->prefix = '';
 
         if ('1' === $thread['pollopts']) {
-            $template->prefix = $lang['pollprefix'] . ' ';
+            $template->prefix = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/pollsmall.gif" alt="' . $lang['postpoll'] . '" border="0" /> ';
         }
 
         if ('1' === $thread['topped']) {
-            $template->prefix = $lang['toppedprefix'] . ' ' . $template->prefix;
+            $template->prefix = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/pin.gif" alt="' . $lang['toppedpost'] . '" border="0" /> ' . $template->prefix;
         }
 
         $multipage2 = '';

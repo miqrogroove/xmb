@@ -116,26 +116,6 @@ if (X_MEMBER && 'yes' == $vars->self['waiting_for_mod']) {
     }
 }
 
-$t_extension = get_extension($lang['toppedprefix']);
-switch ($t_extension) {
-    case 'gif':
-    case 'jpg':
-    case 'jpeg':
-    case 'png':
-        $lang['toppedprefix'] = '<img src="' . $vars->theme['imgdir'] . '/'.$lang['toppedprefix'].'" alt="'.$lang['toppedpost'].'" border="0" />';
-        break;
-}
-
-$p_extension = get_extension($lang['pollprefix']);
-switch ($p_extension) {
-    case 'gif':
-    case 'jpg':
-    case 'jpeg':
-    case 'png':
-        $lang['pollprefix'] = '<img src="' . $vars->theme['imgdir'] . '/'.$lang['pollprefix'].'" alt="'.$lang['postpoll'].'" border="0" />';
-        break;
-}
-
 $cusdate = formInt('cusdate');
 if ($cusdate) {
     $cusdateval = $vars->onlinetime - $cusdate;
@@ -314,11 +294,11 @@ while ($thread = $db->fetch_array($querytop)) {
     $template->lastpostrow = $template->process('forumdisplay_thread_lastpost.php');
 
     if ('1' === $thread['pollopts']) {
-        $prefix = $lang['pollprefix'].' ';
+        $prefix = "<img src='" . $vars->full_url . $vars->theme['imgdir'] . "/pollsmall.gif' alt='{$lang['postpoll']}' border='0' /> $prefix";
     }
 
     if ('1' === $thread['topped']) {
-        $prefix = $lang['toppedprefix'].' '.$prefix;
+        $prefix = "<img src='" . $vars->full_url . $vars->theme['imgdir'] . "/pin.gif' alt='{$lang['toppedpost']}' border='0' /> $prefix";
     }
 
     $template->folder = $folder;
