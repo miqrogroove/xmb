@@ -26,6 +26,7 @@ namespace XMB;
 
 class Variables
 {
+    public const FILENAME_MAX_LENGTH = 120; // Size of attachments.filename.
     public const NONCE_AYS_EXP = 300; // Yes/no prompt expiration, in seconds.
     public const NONCE_FORM_EXP = 3600; // Form expiration, in seconds.
     public const NONCE_MAX_AGE = 43200; // CAPTCHA expiration, in seconds.

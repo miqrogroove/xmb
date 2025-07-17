@@ -2347,6 +2347,14 @@ class Upgrade
                 $edits = [];
                 $new = htmlEsc($row['filename']);
                 if ($row['filename'] !== $new) {
+                    // During alpha testing, this actually caused one of the thumbnail filenames to overflow the db column, so now we check for it.
+                    $excess = strlen($new) - $this->vars::FILENAME_MAX_LENGTH;
+                    if ($excess > 0) {
+                        // Preserve the last 10 chars of the filename, in case it's our '-thumb.jpg' suffix.
+                        $front = substr($row['filename'], 0, -($excess + 10));
+                        $back = substr($row['filename'], -10);
+                        $new = htmlEsc($front . $back);
+                    }
                     $edits['filename'] = $new;
                 }
                 $new = htmlEsc($row['filetype']);

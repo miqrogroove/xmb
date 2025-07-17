@@ -52,6 +52,11 @@ $auditaction = $_SERVER['REQUEST_URI'];
 $aapos = strpos($auditaction, "?");
 if ($aapos !== false) {
     $auditaction = substr($auditaction, $aapos + 1);
+    $pidpos = strpos($auditaction, '&pid');
+    if ($pidpos !== false && strpos($auditaction, 'regenerate') !== false) {
+        // Remove the PID to avoid overflowing the action column.
+        $auditaction = substr($auditaction, 0, $pidpos - strlen($auditaction));
+    }
 }
 $auditaction = $vars->onlineip . '|#|' . $auditaction;
 $core->audit($vars->self['username'], $auditaction);

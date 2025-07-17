@@ -154,7 +154,7 @@ if (noSubmit('membersubmit')) {
     }
 } elseif (onSubmit('membersubmit')) {
     $core->request_secure('Control Panel/Members', 'mass-edit');
-    $query = $db->query("SELECT uid, username, status FROM " . $vars->tablepre . "members $where");
+    $query = $db->query("SELECT uid, username, status, ban, customstatus FROM " . $vars->tablepre . "members $where");
 
     // Guarantee this request will not remove all Super Administrators.
     if (X_SADMIN && $db->num_rows($query) > 0) {
@@ -208,7 +208,9 @@ if (noSubmit('membersubmit')) {
                 $edits['customstatus'] = $cusstatus;
             }
 
-            $sql->updateMember((int) $mem['uid'], $edits);
+            if (count($edits) > 0) {
+                $sql->updateMember((int) $mem['uid'], $edits);
+            }
 
             if (getRawString('pw' . $mem['uid']) != '') {
                 $newPass = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);

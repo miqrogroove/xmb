@@ -136,7 +136,7 @@ class Attach
         if ($urlparts === false) {
             return new UploadResult(UploadStatus::InvalidURL);
         }
-        if (!isset($urlparts['path'])) { // Parse was successful but $url had no path
+        if (! isset($urlparts['path'])) { // Parse was successful but $url had no path
             return new UploadResult(UploadStatus::InvalidURL);
         }
         if ($urlparts['path'] == '/') {
@@ -145,10 +145,10 @@ class Attach
         $filename = false;
         $urlparts = explode('/', $urlparts['path']);
         for ($i = count($urlparts) - 1; $i >= 0; $i--) {
-            if (isValidFilename($urlparts[$i])) {
+            if ($this->checkFilename($urlparts[$i])) {
                 $filename = $urlparts[$i];
                 break;
-            } elseif (isValidFilename(urldecode($urlparts[$i]))) {
+            } elseif ($this->checkFilename(urldecode($urlparts[$i]))) {
                 $filename = urldecode($urlparts[$i]);
                 break;
             }
@@ -434,7 +434,7 @@ class Attach
      */
     public function changeName(int $aid, int $pid, string $newname, bool $quarantine = false): UploadStatus
     {
-        if (isValidFilename(rawHTML($newname))) {
+        if ($this->checkFilename(rawHTML($newname))) {
             $this->sql->renameAttachment($aid, $newname, $quarantine);
 
             $extension = strtolower(get_extension($newname));
@@ -790,9 +790,15 @@ class Attach
         }
 
         $file['name'] = trim($file['name']);
-        if (! isValidFilename($file['name'])) {
+
+        if (! $this->checkFilename($file['name'])) {
+            // Use an alternative name, but attempt to preserve the extension.
+            $ext = get_extension($file['name']);
             $file['name'] = basename($file['tmp_name']);
-            if (! isValidFilename($file['name'])) {
+            if (strlen($ext) > 0 && strlen($ext) <= 10) {
+                $file['name'] .= '.' . $ext;
+            }
+            if (! $this->checkFilename($file['name'])) {
                 unlink($file['tmp_name']);
                 return new UploadResult(UploadStatus::InvalidFilename);
             }
@@ -1344,5 +1350,20 @@ class Attach
         } else {
             return $lang[$key];
         }
+    }
+
+    /**
+     * Check the filename requirements.
+     *
+     * @since 1.10.00
+     * @param string $filename The original raw file name.
+     * @return bool
+     */
+    public function checkFilename(string $filename): bool
+    {
+        // Make sure there's enough room for our thumbnail suffix.
+        if (strlen(htmlEsc($filename)) > $this->vars::FILENAME_MAX_LENGTH - 10) return false;
+        
+        return isValidFilename($filename);
     }
 }

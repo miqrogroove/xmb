@@ -288,6 +288,8 @@ class SQL
             }
         }
 
+        if (count($sql) == 0) throw new InvalidArgumentException('No valid values were provided');
+
         $this->db->query("UPDATE " . $this->tablepre . "members SET " . implode(', ', $sql) . " WHERE uid = $uid");
     }
 
