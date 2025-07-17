@@ -144,7 +144,7 @@ class ThreadRender
 
         $template->fid = $post['fid'];
         $template->icon = $this->postIcon($post['icon']);
-        $template->linktitle = $this->core->rawHTMLsubject(stripslashes($post['subject']));
+        $template->linktitle = $this->core->rawHTMLsubject($post['subject']);
         $template->onlinenow = $this->onlineNow((int) $post['lastvisit'], $post['invisible']);
         $template->pid = $post['pid'];
         $template->poston = $this->postDate((int) $post['dateline']);
@@ -187,7 +187,7 @@ class ThreadRender
 
             $rank = $this->ranks->find($post['status'], (int) $post['postnum']);
 
-            $template->showtitle = ($post['customstatus'] != '') ? $post['customstatus'] . '<br />' : $rank['title'] . '<br />';
+            $template->showtitle = ($post['customstatus'] != '') ? rawHTML($post['customstatus']) . '<br />' : rawHTML($rank['title']) . '<br />';
             $template->stars = str_repeat("<img src='" . $full_url . $this->vars->theme['imgdir'] . "/star.gif' alt='*' border='0' />", (int) $rank['stars']) . '<br />';
 
             $prepTemplate->url = format_member_site($post['site']);
@@ -279,7 +279,7 @@ class ThreadRender
         }
 
         $template->message = $this->core->postify(
-            message: stripslashes($post['message']),
+            message: $post['message'],
             smileyoff: $post['smileyoff'],
             bbcodeoff: $post['bbcodeoff'],
             allowsmilies: $forum['allowsmilies'],

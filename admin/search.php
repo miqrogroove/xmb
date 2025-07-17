@@ -77,7 +77,7 @@ if (onSubmit('searchsubmit')) {
         while ($post = $db->fetch_array($query)) {
             $link = $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}";
             if (! empty($post['subject'])) {
-                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject(stripslashes($post['subject'])) . '<br />';
+                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject($post['subject']) . '<br />';
             } else {
                 $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
             }
@@ -99,7 +99,7 @@ if (onSubmit('searchsubmit')) {
         while ($post = $db->fetch_array($query)) {
             $link = $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}";
             if (! empty($post['subject'])) {
-                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject(stripslashes($post['subject'])) . '<br />';
+                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject($post['subject']) . '<br />';
             } else {
                 $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
             }

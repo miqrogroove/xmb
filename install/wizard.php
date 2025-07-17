@@ -387,6 +387,7 @@ switch ($vStep) {
         require_once ROOT . "db/{$database}.php";
 
         $db = new MySQLiDatabase($debug, $log_mysql_errors);
+        $db->stopQueryLogging();
         
         // let's check if the actual functionality exists...
 

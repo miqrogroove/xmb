@@ -40,6 +40,14 @@ class URL2Text
         // Property promotion.
     }
 
+    /**
+     * Produces metadata about a URL path.
+     *
+     * @since 1.9.8 Formerly url_to_text()
+     * @since 1.10.00
+     * @param string $url Must be encoded for HTML output.
+     * @return array
+     */
     public function convert(string $url): array
     {
         $lang = &$this->vars->lang;
@@ -72,7 +80,7 @@ class URL2Text
                 } else {
                     $query = $this->db->query("SELECT t.fid, t.subject FROM " . $this->vars->tablepre . "forums f INNER JOIN " . $this->vars->tablepre . "threads t USING (fid) WHERE " . $this->restrict . " AND t.tid = $tid");
                     while ($locate = $this->db->fetch_array($query)) {
-                        $location = $lang['onlineviewthread'] . ' ' . $this->core->rawHTMLsubject(stripslashes($locate['subject']));
+                        $location = $lang['onlineviewthread'] . ' ' . $this->core->rawHTMLsubject($locate['subject']);
                         $this->tsub[$tid] = $locate['subject'];
                     }
                     $this->db->free_result($query);
@@ -257,7 +265,7 @@ class URL2Text
         }
 
         $return = [
-            'url' => attrOut($this->core->makeFullURL($url)),
+            'url' => $this->core->makeFullURL($url),
             'text' => $location,
         ];
         return $return;

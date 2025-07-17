@@ -154,6 +154,10 @@ class Login
             define('XMB\X_STAFF', X_MOD);
         }
 
+        if ($this->vars->debug && ! X_SADMIN) {
+            $this->db->stopQueryLogging();
+        }
+
         // Set variables
         $vars->dateformat = $vars->settings['dateformat'];
 
@@ -204,7 +208,7 @@ class Login
             } else {
                 $useip = $vars->onlineip;
             }
-            $wollocation = substr($vars->url, 0, $maxurl);
+            $wollocation = htmlEsc(substr($vars->url, 0, $maxurl));
             $newtime = $vars->onlinetime - $vars::ONLINE_TIMER;
             $this->sql->deleteOldWhosonline($useip, $vars->self['username'], $newtime);
             $this->sql->addWhosonline($useip, $onlineuser, $vars->onlinetime, $wollocation, $invisible);

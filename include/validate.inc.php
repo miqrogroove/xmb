@@ -182,6 +182,13 @@ function rawHTML(string $encodedText) {
     return htmlspecialchars_decode($encodedText, ENT_QUOTES | ENT_XHTML);
 }
 
+/**
+ * Decode any double-encoded &amp; in front of any decimal entity reference.
+ *
+ * This will undo the double encoding that results after a browser processes input from mismatched character sets.
+ *
+ * @since 1.9.10
+ */
 function decimalEntityDecode(string $rawstring): string
 {
     $currPos = 0;
@@ -203,14 +210,28 @@ function decimalEntityDecode(string $rawstring): string
 }
 
 /**
- * fnameOut is intended to take the raw db value of a forum's name and convert it to the standard HTML version used throughout XMB.
+ * Take the raw db value of a forum's name and convert it to the standard HTML version used throughout XMB.
  *
- * This function must not be used for any other purpose.
- * Forum names historically used double-slashed db values and default (ENT_COMPAT) quote decoding.
+ * Starting with 1.10.00, this is a simple alias of rawHTML().
+ *
+ * @since 1.9.10
  */
 function fnameOut(string $rawstring): string
 {
-    return htmlspecialchars_decode(stripslashes($rawstring), ENT_COMPAT);
+    return rawHTML($rawstring);
+}
+
+/**
+ * Take the raw db value of an admin setting and strip any HTML.
+ *
+ * This is needed when HTML is expected but the value needs to be displayed in a text-only element such as <option>.
+ * This does not strip quotes and is not appropriate for attribute context or any non-admin inputs.
+ *
+ * @since 1.10.00
+ */
+function adminStripText(string $rawstring): string
+{
+    return strip_tags(rawHTML($rawstring));
 }
 
 /**
@@ -373,6 +394,8 @@ function isChecked(string $varname, string $compare = 'yes'): string
 
 /**
  * @since 1.9.8
+ * @param string $filename The original raw file name.
+ * @return bool
  */
 function isValidFilename(string $filename): bool
 {

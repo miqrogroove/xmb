@@ -426,6 +426,8 @@ class FormsAndCookies implements Mechanism
      */
     public function checkOrigin(): bool
     {
+        if (! $this->core->schemaHasTokens()) return true;
+
         // Due to the anonymous nature of a login request, we need to check both the form integrity and the cookie integrity.
         $cookieToken = $this->get_cookie(self::FORM_COOKIE);
         $postToken = getPhpInput('token');

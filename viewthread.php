@@ -161,7 +161,7 @@ if (strpos($thread['closed'], '|') !== false) {
     }
 }
 
-$thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+$thread['subject'] = shortenString($core->rawHTMLsubject($thread['subject']));
 
 $lastPid = isset($thislast[2]) ? $thislast[2] : 0;
 $expire = $vars->onlinetime + $vars::ONLINE_TIMER;
@@ -557,7 +557,7 @@ if ($action == '') {
         if ($counter == 0) {
             $subTemplate->subject = '';
         } else {
-            $subTemplate->subject = $core->rawHTMLsubject(stripslashes($post['subject']));
+            $subTemplate->subject = $core->rawHTMLsubject($post['subject']);
         }
         if ($forum['attachstatus'] == 'on' && $db->num_rows($queryattach) > 0) {
             $files = [];
@@ -571,7 +571,7 @@ if ($action == '') {
                 $post['message'] = $core->bbcodeFileTags($post['message'], $files, (int) $post['pid'], ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no'));
             }
         }
-        $post['message'] = $core->postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
+        $post['message'] = $core->postify($post['message'], $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
         $subTemplate->post = $post;
         $template->posts .= $subTemplate->process('viewthread_printable_row.php');
         $counter++;

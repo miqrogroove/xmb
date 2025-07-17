@@ -45,9 +45,10 @@ class MySQLiDatabase implements DBStuff
     private int        $last_rows  = 0;    // Number of rows affected by the last INSERT, UPDATE, REPLACE or DELETE query.  Stored for DEBUG mode only.
     private mysqli     $link;              // Connection object.
     private array      $multi_list = [];   // List of queries not yet processed by the last multi_query.
+    private bool       $printQueries = true;
     private int        $querynum   = 0;    // Count of commands sent on this connection.
-    private array      $querylist  = [];   // Log of all SQL commands sent.  Stored for DEBUG mode only.
-    private array      $querytimes = [];   // Log of all SQL execution times.  Stored for DEBUG mode only.
+    private array      $querylist  = [];   // Log of all SQL commands sent.  Stored only when $debug and $printQueries are both true.
+    private array      $querytimes = [];   // Log of all SQL execution times.
     private float      $timer      = 0.0;  // Date/time the last query started.  Class scope not needed, just simplifies code.
     private string     $test_error = '';   // Any error message collected by testConnect().
 
@@ -526,9 +527,7 @@ class MySQLiDatabase implements DBStuff
             if ($this->logErrors) {
                 $this->log_warnings($sql);
             }
-            if (constantCoalesce('X_SADMIN') !== false) {
-                $this->querylist[] = $sql;
-            }
+            $this->save_query($sql);
         }
         return $result;
     }
@@ -558,9 +557,7 @@ class MySQLiDatabase implements DBStuff
             }
         }
         $this->querynum++;
-    	if ($this->debug && (! defined('XMB\X_SADMIN') || X_SADMIN)) {
-            $this->querylist[] = $sql;
-        }
+        $this->save_query($sql);
         $this->querytimes[] = $this->stop_timer();
         return $query;
     }
@@ -586,9 +583,7 @@ class MySQLiDatabase implements DBStuff
                     $weave[] = $stmt;
                     $weave[] = 'SHOW WARNINGS';
                 }
-                if (constantCoalesce('X_SADMIN') !== false) {
-                    $this->querylist[] = $stmt;
-                }
+                $this->save_query($stmt);
             }
             if ($this->logErrors) {
                 $statements = &$weave;
@@ -645,6 +640,23 @@ class MySQLiDatabase implements DBStuff
         }
 
         return $result;
+    }
+
+    /**
+     * Save the query string for debugging.
+     *
+     * @since 1.10.00
+     */
+    private function save_query(string $sql)
+    {
+        if ($this->debug && $this->printQueries) {
+            $count = count($this->querylist);
+            if ($count == 1000) {
+                $this->querylist[] = 'Logging Suspended';
+            } elseif ($count < 1000) {
+                $this->querylist[] = $sql;
+            }
+        }
     }
 
     /**
@@ -891,5 +903,15 @@ class MySQLiDatabase implements DBStuff
     public function getQueryTimes(): array
     {
         return $this->querytimes;
+    }
+
+    /**
+     * Signals the query methods to stop caching the text of every query.
+     *
+     * @since 1.10.00
+     */
+    public function stopQueryLogging()
+    {
+        $this->printQueries = false;
     }
 }

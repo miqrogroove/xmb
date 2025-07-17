@@ -122,7 +122,7 @@ if ($threadcount == 0) {
 
     $today_row = [];
     while ($thread = $db->fetch_array($query)) {
-        $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+        $thread['subject'] = shortenString($core->rawHTMLsubject($thread['subject']));
         $forum = $forums->getForum((int) $thread['fid']);
         $thread['name'] = fnameOut($forum['name']);
 

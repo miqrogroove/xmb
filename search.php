@@ -151,8 +151,8 @@ if (empty($searchsubmit) && empty($page)) {
     if (! empty($srchtxt)) {
         $srchtxtsq = explode(' ', $srchtxt);
         foreach ($srchtxtsq as $stxt) {
-            $dblikebody = $db->like_escape(addslashes(lessThanEsc($stxt)));  //Messages are historically double-slashed.
-            $dblikesub = $db->like_escape(addslashes(htmlEsc($stxt)));
+            $dblikebody = $db->like_escape(htmlEsc($stxt));
+            $dblikesub = $db->like_escape(htmlEsc($stxt));
             if ($srchfield == 'body') {
                 $where[] = "(p.message LIKE '%$dblikebody%' OR p.subject LIKE '%$dblikesub%')";
                 $ext[] = 'srchfield=body';
@@ -213,12 +213,12 @@ if (empty($searchsubmit) && empty($page)) {
         $counter++;
         if ($distinct != 'yes' || ! array_key_exists($post['tid'], $temparray)) {
             $temparray[$post['tid']] = true;
-            $message = stripslashes($post['message']);
+            $message = $post['message'];
 
             if (empty($srchtxt)) {
                 $position = 0;
             } else {
-                $position = stripos($message, lessThanEsc($srchtxtsq[0]), 0);
+                $position = stripos($message, htmlEsc($srchtxtsq[0]), 0);
             }
 
             $show_num = 100;
@@ -245,10 +245,9 @@ if (empty($searchsubmit) && empty($page)) {
             }
 
             $show = substr($message, $min, $max - $min);
-            $post['subject'] = stripslashes($post['subject']);
             if (! empty($srchtxt)) {
                 foreach ($srchtxtsq as $stxt) {
-                    $show = str_ireplace(lessThanEsc($stxt), '<b><i>'.lessThanEsc($stxt).'</i></b>', $show);
+                    $show = str_ireplace(htmlEsc($stxt), '<b><i>'.htmlEsc($stxt).'</i></b>', $show);
                     $post['subject'] = str_ireplace(htmlEsc($stxt), '<i>'.htmlEsc($stxt).'</i>', $post['subject']);
                 }
             }

@@ -172,16 +172,29 @@ class Core
         }
     }
 
+    /**
+     * Decode the HTML content of a message field
+     *
+     * Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
+     *
+     * @since 1.9.10
+     */
     public function rawHTMLmessage(string $rawstring, string $allowhtml = 'no'): string
     {
         if ($allowhtml == 'yes') {
-            return $this->smile->censor(htmlspecialchars_decode($rawstring, ENT_NOQUOTES));
+            return $this->smile->censor(htmlspecialchars_decode($rawstring));
         } else {
             return $this->smile->censor(decimalEntityDecode($rawstring));
         }
     }
 
-    //Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
+    /**
+     * Decode the HTML content of a subject field
+     *
+     * Per the design of version 1.9.9, subjects are only allowed decimal entity references and no other HTML.
+     *
+     * @since 1.9.10
+     */
     public function rawHTMLsubject(string $rawstring): string
     {
         return $this->smile->censor(decimalEntityDecode($rawstring));
@@ -320,8 +333,8 @@ class Core
         $template->addRefs();
         foreach ($files as $attach) {
             $post = [];
-            $post['filename'] = attrOut($attach['filename']);
-            $post['filetype'] = attrOut($attach['filetype']);
+            $post['filename'] = $attach['filename'];
+            $post['filetype'] = $attach['filetype'];
             $post['fileurl'] = $this->attach->getURL((int) $attach['aid'], $pid, $attach['filename'], $htmlencode, $quarantine);
             $template->attachsize = $this->attach->getSizeFormatted($attach['filesize']);
 
@@ -399,9 +412,9 @@ class Core
             $perms = $this->checkForumPermissions($this->forums->getForum((int) $row['fid']));
             if ($perms[$this->vars::PERMS_VIEW] && $perms[$this->vars::PERMS_PASSWORD]) {
                 if ($row['subject'] != '') {
-                    $subject = stripslashes($row['subject']);
+                    $subject = $row['subject'];
                 } else {
-                    $subject = stripslashes($row['tsubject']);
+                    $subject = $row['tsubject'];
                 }
                 $pattern = "[pid]{$row['pid']}[/pid]";
                 $replacement = "[pid={$row['pid']}&amp;tid={$row['tid']}]{$subject}[/pid]";
@@ -1437,10 +1450,10 @@ class Core
         $permitted = $this->getStructuredForums(usePerms: true, permLevel: $permLevel);
 
         foreach ($permitted['forum']['0'] as $forum) {
-            $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+            $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.adminStripText($forum['name']).'</option>';
             if (isset($permitted['sub'][$forum['fid']])) {
                 foreach ($permitted['sub'][$forum['fid']] as $sub) {
-                    $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                    $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.adminStripText($sub['name']).'</option>';
                 }
             }
         }
@@ -1450,10 +1463,10 @@ class Core
             if (isset($permitted['forum'][$group['fid']]) && count($permitted['forum'][$group['fid']]) > 0) {
                 $forumselect[] = '<option value="'.intval($group['fid']).'" disabled="disabled">'.fnameOut($group['name']).'</option>';
                 foreach ($permitted['forum'][$group['fid']] as $forum) {
-                    $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+                    $forumselect[] = '<option value="'.intval($forum['fid']).'"'.($forum['fid'] == $currentfid ? ' selected="selected"' : '').'> &nbsp; &raquo; '.adminStripText($forum['name']).'</option>';
                     if (isset($permitted['sub'][$forum['fid']])) {
                         foreach ($permitted['sub'][$forum['fid']] as $sub) {
-                            $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                            $forumselect[] = '<option value="'.intval($sub['fid']).'"'.($sub['fid'] == $currentfid ? ' selected="selected"' : '').'>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &raquo; '.adminStripText($sub['name']).'</option>';
                         }
                     }
                 }
@@ -1489,11 +1502,11 @@ class Core
 
         foreach ($permitted['forum']['0'] as $forum) {
             $dropselc1 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
-            $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+            $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc1.'> &nbsp; &raquo; '.adminStripText($forum['name']).'</option>';
             if (isset($permitted['sub'][$forum['fid']])) {
                 foreach ($permitted['sub'][$forum['fid']] as $sub) {
                     $dropselc2 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
-                    $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                    $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc2.'>&nbsp; &nbsp; &raquo; '.adminStripText($sub['name']).'</option>';
                 }
             }
         }
@@ -1502,14 +1515,14 @@ class Core
             if (isset($permitted['forum'][$group['fid']])) {
                 $dropselc3 = ($checkid == $group['fid']) ? $this->vars::selHTML : '';
                 $forumselect[] = '<option value=""></option>';
-                $forumselect[] = '<option value="' . $full_url . 'index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.fnameOut($group['name']).'</option>';
+                $forumselect[] = '<option value="' . $full_url . 'index.php?gid='.intval($group['fid']).'" '.$dropselc3.'>'.adminStripText($group['name']).'</option>';
                 foreach ($permitted['forum'][$group['fid']] as $forum) {
                     $dropselc4 = ($checkid == $forum['fid']) ? $this->vars::selHTML : '';
-                    $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.fnameOut($forum['name']).'</option>';
+                    $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($forum['fid']).'" '.$dropselc4.'> &nbsp; &raquo; '.adminStripText($forum['name']).'</option>';
                     if (isset($permitted['sub'][$forum['fid']])) {
                         foreach ($permitted['sub'][$forum['fid']] as $sub) {
                             $dropselc5 = ($checkid == $sub['fid']) ? $this->vars::selHTML : '';
-                            $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.fnameOut($sub['name']).'</option>';
+                            $forumselect[] = '<option value="' . $full_url . 'forumdisplay.php?fid='.intval($sub['fid']).'" '.$dropselc5.'>&nbsp; &nbsp; &raquo; '.adminStripText($sub['name']).'</option>';
                         }
                     }
                 }
@@ -2289,6 +2302,14 @@ class Core
      * @since 1.10.00
      */
     public function schemaHasSessions(): bool
+    {
+        return (int) $this->vars->settings['schema_version'] >= 5;
+    }
+
+    /**
+     * @since 1.10.00
+     */
+    public function schemaHasTokens(): bool
     {
         return (int) $this->vars->settings['schema_version'] >= 5;
     }

@@ -442,3 +442,7 @@ textarea, select, input, object {
 #tabs button.active {
     background-color: <?= $THEME['header'] ?>;
 }
+
+table.fdetails {
+    max-width: 1024px;
+}

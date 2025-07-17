@@ -105,7 +105,7 @@ $mapercent  = number_format(($membersact*100/$members), 2).'%';
 $viewmost = [];
 $query = $db->query("SELECT views, tid, subject FROM " . $vars->tablepre . "threads WHERE $restrict ORDER BY views DESC LIMIT 5");
 while ($views = $db->fetch_array($query)) {
-    $views['subject'] = shortenString($core->rawHTMLsubject(stripslashes($views['subject'])));
+    $views['subject'] = shortenString($core->rawHTMLsubject($views['subject']));
     $viewmost[] = '<a href="' . $vars->full_url . 'viewthread.php?tid=' . intval($views['tid']) . '">' . $views['subject'] . '</a> (' . $views['views'] . ')';
 }
 $viewmost = implode('<br />', $viewmost);
@@ -115,7 +115,7 @@ $db->free_result($query);
 $replymost = [];
 $query = $db->query("SELECT replies, tid, subject FROM " . $vars->tablepre . "threads WHERE $restrict ORDER BY replies DESC LIMIT 5");
 while ($reply = $db->fetch_array($query)) {
-    $reply['subject'] = shortenString($core->rawHTMLsubject(stripslashes($reply['subject'])));
+    $reply['subject'] = shortenString($core->rawHTMLsubject($reply['subject']));
     $replymost[] = '<a href="' . $vars->full_url . 'viewthread.php?tid='.intval($reply['tid']).'">'.$reply['subject'].'</a> ('.$reply['replies'].')';
 }
 $replymost = implode('<br />', $replymost);
@@ -129,7 +129,7 @@ while ($last = $db->fetch_array($query)) {
     $lpdate = $core->printGmDate($adjStamp);
     $lptime = gmdate($vars->timecode, $adjStamp);
     $thislast = $lang['lpoststats'].' '.$lang['lastreply1'].' '.$lpdate.' '.$lang['textat'].' '.$lptime;
-    $last['subject'] = shortenString($core->rawHTMLsubject(stripslashes($last['subject'])));
+    $last['subject'] = shortenString($core->rawHTMLsubject($last['subject']));
     $latest[] = '<a href="' . $vars->full_url . 'viewthread.php?tid=' . intval($last['tid']) . '">' . $last['subject'] . '</a> (' . $thislast . ')';
 }
 $latest = implode('<br />', $latest);

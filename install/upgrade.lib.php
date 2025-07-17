@@ -96,6 +96,9 @@ class Upgrade
                 // No break
             case 11:
                 $this->upgrade_schema_to_v12();
+                // No break
+            case 12:
+                $this->upgrade_schema_to_v13();
 
                 // Break only before case default.
                 break;
@@ -105,19 +108,6 @@ class Upgrade
                 break;
         }
         $this->show->progress('Database schema is now current');
-
-        $this->show->progress('Checking for new themes');
-        if ((int) $SETTINGS['schema_version'] < 3) {
-            $query = $this->upgrade_query("SELECT themeid FROM " . $this->vars->tablepre . "themes WHERE name='XMB Davis'");
-            if ($this->db->num_rows($query) == 0 && is_dir(ROOT . 'images/davis')) {
-                $this->show->progress('Adding Davis as the new default theme');
-                $this->upgrade_query("INSERT INTO " . $this->vars->tablepre . "themes (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`) "
-                                                     ."VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b');");
-                $newTheme = $this->db->insert_id();
-                $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value='$newTheme' WHERE name='theme'");
-            }
-            $this->db->free_result($query);
-        }
     }
 
     /**
@@ -1668,6 +1658,20 @@ class Upgrade
         $this->show->progress('Releasing the lock on the logs table');
         $this->upgrade_query('UNLOCK TABLES');
 
+        $this->show->progress('Checking for new themes');
+        $query = $this->upgrade_query("SELECT themeid FROM " . $this->vars->tablepre . "themes WHERE name = 'XMB Davis'");
+        if ($this->db->num_rows($query) == 0 && is_dir(ROOT . 'images/davis')) {
+            $this->show->progress('Adding Davis as the new default theme');
+            $this->upgrade_query("
+                INSERT INTO " . $this->vars->tablepre . "themes
+                       (`name`,      `bgcolor`, `altbg1`,  `altbg2`,  `link`,    `bordercolor`, `header`,  `headertext`, `top`,       `catcolor`,   `tabletext`, `text`,    `borderwidth`, `tablewidth`, `tablespace`, `font`,                              `fontsize`, `boardimg`, `imgdir`,       `smdir`,          `cattext`)
+                VALUES ('XMB Davis', 'bg.gif',  '#FFFFFF', '#f4f7f8', '#24404b', '#86a9b6',     '#d3dfe4', '#24404b',    'topbg.gif', 'catbar.gif', '#000000',   '#000000', '1px',         '97%',        '5px',        'Tahoma, Arial, Helvetica, Verdana', '11px',     'logo.gif', 'images/davis', 'images/smilies', '#163c4b')
+            ");
+            $newTheme = $this->db->insert_id();
+            $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '$newTheme' WHERE name = 'theme'");
+        }
+        $this->db->free_result($query);
+
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET schema_version = 3");
     }
@@ -2305,11 +2309,336 @@ class Upgrade
         $this->show->progress("Releasing the lock on the $table table");
         $this->upgrade_query('UNLOCK TABLES');
 
+        $this->show->progress('Resetting the schema version number');
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '12' WHERE name = 'schema_version'");
+    }
+
+    /**
+     * Performs all tasks needed to raise the database schema_version number to 13.
+     *
+     * @since 1.10.00
+     */
+    function upgrade_schema_to_v13()
+    {
+        $table = 'attachments';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Batching changes for the $table table");
+        set_time_limit(60);
+        $startTime = time();
+        $offset = 0;
+        $recsFound = 0;
+        $recsUpdated = 0;
+        $aid = null;
+        do {
+            $where = is_int($aid) ? "WHERE aid > $aid" : '';
+            $result = $this->upgrade_query('SELECT aid, filename, filetype FROM ' . $this->vars->tablepre . $table . " $where ORDER BY aid LIMIT 100");
+            $batchSize = $this->db->num_rows($result);
+            $recsFound += $batchSize;
+            while ($row = $this->db->fetch_array($result)) {
+                $edits = [];
+                $new = htmlEsc($row['filename']);
+                if ($row['filename'] !== $new) {
+                    $edits['filename'] = $new;
+                }
+                $new = htmlEsc($row['filetype']);
+                if ($row['filetype'] !== $new) {
+                    $edits['filetype'] = $new;
+                }
+                if (count($edits) > 0) {
+                    $aid = (int) $row['aid'];
+                    $values = [];
+                    foreach ($edits as $field => $value) {
+                        $this->db->escape_fast($value);
+                        $values[] = "$field = '$value'";
+                    }
+                    $values = implode(', ', $values);
+                    $this->upgrade_query("UPDATE " . $this->vars->tablepre . $table . " SET $values WHERE aid = $aid");
+                    $recsUpdated++;
+                }
+            }
+            $this->db->free_result($result);
+            if (time() >= $startTime + 2) {
+                $this->show->progress("Checked $recsFound rows in the $table table");
+                $startTime = time();
+            }
+        } while ($batchSize === 100);
+        $this->show->progress("Found $recsFound rows and modified $recsUpdated rows in the $table table");
+
+        $table = 'forums';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Revising values in the $table table");
+        $result = $this->upgrade_query('SELECT fid, name FROM ' . $this->vars->tablepre . $table);
+        $forums = $this->db->fetch_all($result);
+        foreach ($forums as $forum) {
+            $newname = htmlEsc(htmlspecialchars_decode(stripslashes($forum['name']), ENT_COMPAT));
+            if ($newname !== $forum['name']) {
+                $fid = $forum['fid'];
+                $this->db->escape_fast($newname);
+                $this->upgrade_query('UPDATE ' . $this->vars->tablepre . $table . " SET name = '$newname' WHERE fid = $fid");
+            }
+        }
+        $this->db->free_result($result);
+
+        $table = 'members';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Batching changes for the $table table");
+        set_time_limit(60);
+        $startTime = time();
+        $offset = 0;
+        $recsFound = 0;
+        $recsUpdated = 0;
+        $uid = null;
+        do {
+            $where = is_int($uid) ? "WHERE uid > $uid" : '';
+            $result = $this->upgrade_query('SELECT uid, avatar, customstatus FROM ' . $this->vars->tablepre . $table . " $where ORDER BY uid LIMIT 100");
+            $batchSize = $this->db->num_rows($result);
+            $recsFound += $batchSize;
+            while ($row = $this->db->fetch_array($result)) {
+                $edits = [];
+                null_string($row['avatar']);
+                if (substr($row['avatar'], 0, 2) == './') {
+                    $edits['avatar'] = $this->vars->full_url . substr($row['avatar'], 2);
+                }
+                if ($row['customstatus'] !== '') {
+                    $new = htmlEsc($row['customstatus']);
+                    if ($row['customstatus'] !== $new) {
+                        $edits['customstatus'] = $new;
+                    }
+                }
+                if (count($edits) > 0) {
+                    $uid = (int) $row['uid'];
+                    $values = [];
+                    foreach ($edits as $field => $value) {
+                        $this->db->escape_fast($value);
+                        $values[] = "$field = '$value'";
+                    }
+                    $values = implode(', ', $values);
+                    $this->upgrade_query("UPDATE " . $this->vars->tablepre . $table . " SET $values WHERE uid = $uid");
+                    $recsUpdated++;
+                }
+            }
+            $this->db->free_result($result);
+            if (time() >= $startTime + 2) {
+                $this->show->progress("Checked $recsFound rows in the $table table");
+                $startTime = time();
+            }
+        } while ($batchSize === 100);
+        $this->show->progress("Found $recsFound rows and modified $recsUpdated rows in the $table table");
+
+        $table = 'posts';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Batching changes for the $table table");
+        set_time_limit(600);
+        $startTime = time();
+        $offset = 0;
+        $recsFound = 0;
+        $recsUpdated = 0;
+        $pid = null;
+        do {
+            $where = is_int($pid) ? "WHERE pid > $pid" : '';
+            $result = $this->upgrade_query('SELECT pid, message, subject FROM ' . $this->vars->tablepre . $table . " $where ORDER BY pid LIMIT 100");
+            $batchSize = $this->db->num_rows($result);
+            $recsFound += $batchSize;
+            while ($row = $this->db->fetch_array($result)) {
+                $edits = [];
+                $new = htmlEsc(htmlspecialchars_decode(stripslashes($row['message']), ENT_NOQUOTES));
+                if ($row['message'] !== $new) {
+                    $edits['message'] = $new;
+                }
+                $new = stripslashes($row['subject']);
+                if ($row['subject'] !== $new) {
+                    $edits['subject'] = $new;
+                }
+                if (count($edits) > 0) {
+                    $pid = (int) $row['pid'];
+                    $values = [];
+                    foreach ($edits as $field => $value) {
+                        $this->db->escape_fast($value);
+                        $values[] = "$field = '$value'";
+                    }
+                    $values = implode(', ', $values);
+                    $this->upgrade_query("UPDATE " . $this->vars->tablepre . $table . " SET $values WHERE pid = $pid");
+                    $recsUpdated++;
+                }
+            }
+            $this->db->free_result($result);
+            if (time() >= $startTime + 2) {
+                $this->show->progress("Checked $recsFound rows in the $table table");
+                $startTime = time();
+            }
+        } while ($batchSize === 100);
+        $this->show->progress("Found $recsFound rows and modified $recsUpdated rows in the $table table");
+
+        $table = 'ranks';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Revising values in the $table table");
+        $result = $this->upgrade_query('SELECT id, title FROM ' . $this->vars->tablepre . $table);
+        $ranks = $this->db->fetch_all($result);
+        foreach ($ranks as $rank) {
+            $newtitle = htmlEsc($rank['title']);
+            if ($newtitle !== $rank['title']) {
+                $id = $rank['id'];
+                $this->db->escape_fast($newtitle);
+                $this->upgrade_query('UPDATE ' . $this->vars->tablepre . $table . " SET title = '$newtitle' WHERE id = $id");
+            }
+        }
+        $this->db->free_result($result);
+
+        $table = 'sessions';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table." WRITE");
+        $this->show->progress("Gathering schema information from the $table table");
+
+        $sql = [];
+        $columns = [
+            'name' => "varchar(80) NOT NULL DEFAULT ''",
+        ];
+        foreach ($columns as $colname => $coltype) {
+            $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
+            if ($this->db->num_rows($query) == 0) {
+                $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+            }
+            $this->db->free_result($query);
+        }
+
+        if (count($sql) > 0) {
+            $this->show->progress("Adding/Deleting columns in the $table table");
+            $sql = 'ALTER TABLE ' . $this->vars->tablepre . $table.' ' . implode(', ', $sql);
+            $this->upgrade_query($sql);
+        }
+
+        $table = 'settings';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Revising values in the $table table");
+        $result = $this->upgrade_query('SELECT value FROM ' . $this->vars->tablepre . $table . " WHERE name = 'bbrulestxt'");
+        $value = $this->db->result($result);
+        $this->db->free_result($result);
+        $newvalue = htmlEsc($value);
+        if ($newvalue !== $value) {
+            $this->db->escape_fast($newvalue);
+            $this->upgrade_query('UPDATE ' . $this->vars->tablepre . $table . " SET value = '$newvalue' WHERE name = 'bbrulestxt'");
+        }
+
+        $table = 'threads';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Batching changes for the $table table");
+        set_time_limit(600);
+        $startTime = time();
+        $offset = 0;
+        $recsFound = 0;
+        $recsUpdated = 0;
+        $tid = null;
+        do {
+            $where = is_int($tid) ? "WHERE tid > $tid" : '';
+            $result = $this->upgrade_query('SELECT tid, subject FROM ' . $this->vars->tablepre . $table . " $where ORDER BY tid LIMIT 100");
+            $batchSize = $this->db->num_rows($result);
+            $recsFound += $batchSize;
+            while ($row = $this->db->fetch_array($result)) {
+                $edits = [];
+                $new = stripslashes($row['subject']);
+                if ($row['subject'] !== $new) {
+                    $edits['subject'] = $new;
+                }
+                if (count($edits) > 0) {
+                    $tid = (int) $row['tid'];
+                    $values = [];
+                    foreach ($edits as $field => $value) {
+                        $this->db->escape_fast($value);
+                        $values[] = "$field = '$value'";
+                    }
+                    $values = implode(', ', $values);
+                    $this->upgrade_query("UPDATE " . $this->vars->tablepre . $table . " SET $values WHERE tid = $tid");
+                    $recsUpdated++;
+                }
+            }
+            $this->db->free_result($result);
+            if (time() >= $startTime + 2) {
+                $this->show->progress("Checked $recsFound rows in the $table table");
+                $startTime = time();
+            }
+        } while ($batchSize === 100);
+        $this->show->progress("Found $recsFound rows and modified $recsUpdated rows in the $table table");
+
+        $table = 'u2u';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
+
+        $this->show->progress("Batching changes for the $table table");
+        set_time_limit(600);
+        $startTime = time();
+        $offset = 0;
+        $recsFound = 0;
+        $recsUpdated = 0;
+        $u2uid = null;
+        do {
+            $where = is_int($u2uid) ? "WHERE u2uid > $u2uid" : '';
+            $result = $this->upgrade_query('SELECT u2uid, message, subject FROM ' . $this->vars->tablepre . $table . " $where ORDER BY u2uid LIMIT 100");
+            $batchSize = $this->db->num_rows($result);
+            $recsFound += $batchSize;
+            while ($row = $this->db->fetch_array($result)) {
+                $edits = [];
+                $new = htmlEsc(htmlspecialchars_decode(stripslashes($row['message']), ENT_NOQUOTES));
+                if ($row['message'] !== $new) {
+                    $edits['message'] = $new;
+                }
+                $new = stripslashes($row['subject']);
+                if ($row['subject'] !== $new) {
+                    $edits['subject'] = $new;
+                }
+                if (count($edits) > 0) {
+                    $u2uid = (int) $row['u2uid'];
+                    $values = [];
+                    foreach ($edits as $field => $value) {
+                        $this->db->escape_fast($value);
+                        $values[] = "$field = '$value'";
+                    }
+                    $values = implode(', ', $values);
+                    $this->upgrade_query("UPDATE " . $this->vars->tablepre . $table . " SET $values WHERE u2uid = $u2uid");
+                    $recsUpdated++;
+                }
+            }
+            $this->db->free_result($result);
+            if (time() >= $startTime + 2) {
+                $this->show->progress("Checked $recsFound rows in the $table table");
+                $startTime = time();
+            }
+        } while ($batchSize === 100);
+        $this->show->progress("Found $recsFound rows and modified $recsUpdated rows in the $table table");
+
+        $this->show->progress("Releasing the lock on the $table table");
+        $this->upgrade_query('UNLOCK TABLES');
+
+        $this->show->progress('Emptying the whosonline table');
+        $this->upgrade_query('TRUNCATE TABLE ' . $this->vars->tablepre . "whosonline");
+
         $this->show->progress('Resetting the theme version numbers');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "themes SET version = version + 1");
 
         $this->show->progress('Resetting the schema version number');
-        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '12' WHERE name = 'schema_version'");
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '13' WHERE name = 'schema_version'");
     }
 
     /**

@@ -80,7 +80,6 @@ if (noSubmit('rankssubmit')) {
             $template->avatarno = $vars::selHTML;
             $template->avataryes = '';
         }
-        $rank['title'] = attrOut($rank['title']);
         $template->rank = $rank;
         $body .= $template->process('admin_ranks_row.php');
     }
@@ -89,12 +88,12 @@ if (noSubmit('rankssubmit')) {
     $core->request_secure('Control Panel/User Ranks', 'mass-edit');
     $id = $validate->postedArray('id', 'int');
     $delete = $validate->postedArray('delete', 'int');
-    $title = $validate->postedArray('title', htmlencode: false, dbescape: false);
+    $title = $validate->postedArray('title', dbescape: false);
     $posts = $validate->postedArray('posts', 'int');
     $stars = $validate->postedArray('stars', 'int');
     $allowavatars = $validate->postedArray('allowavatars', 'yesno');
     $avaurl = $validate->postedArray('avaurl', word: 'javascript');
-    $newtitle = $validate->postedVar('newtitle', htmlencode: false, dbescape: false);
+    $newtitle = $validate->postedVar('newtitle', dbescape: false);
     $newposts = formInt('newposts');
     $newstars = formInt('newstars');
     $newallowavatars = formYesNo('newallowavatars');

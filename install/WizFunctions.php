@@ -68,6 +68,7 @@ function already_installed(
     require_once ROOT . "db/{$database}.php";
 
     $db = new MySQLiDatabase(debug: true, logErrors: true);
+    $db->stopQueryLogging();
 
     if (! $db->isInstalled()) {
         return 'no-db-extension';

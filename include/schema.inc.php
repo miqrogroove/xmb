@@ -33,7 +33,7 @@ use InvalidArgumentException;
  */
 class Schema
 {
-    public const VER = 12;
+    public const VER = 13;
     
     public function __construct(private DBStuff $db, private Variables $vars)
     {
@@ -393,6 +393,7 @@ class Schema
                   `regenerate` int unsigned NOT NULL,
                   `replaces` varchar(32) NOT NULL,
                   `agent` varchar(255) NOT NULL,
+                  `name` varchar(80) NOT NULL DEFAULT '',
                   PRIMARY KEY (`token`),
                   KEY `username` (`username`),
                   KEY `replaces` (`replaces`(6)),

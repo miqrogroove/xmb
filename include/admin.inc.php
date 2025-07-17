@@ -204,7 +204,7 @@ class admin
      *
      * @since 1.9.4
      */
-    public function printsetting4($settingDesc, $name, $value, $rows = 5, $cols = 50)
+    public function printsetting4($settingDesc, $name, $value, $rows = 5, $cols = 50, string $note = '')
     {
         $template = new Template($this->vars);
         $template->addRefs();
@@ -214,6 +214,7 @@ class admin
         $template->value = $value;
         $template->rows = $rows;
         $template->cols = $cols;
+        $template->note = $note;
 
         $template->process('admin_printsetting4.php', echo: true);
     }

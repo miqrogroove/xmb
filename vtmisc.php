@@ -81,13 +81,13 @@ $core->assertForumPermissions($forum);
 $core->forumBreadcrumbs($forum);
 
 if ($tid > 0) {
-    $subject = shortenString($core->rawHTMLsubject(stripslashes($forum['subject'])));
+    $subject = shortenString($core->rawHTMLsubject($forum['subject']));
     $core->nav('<a href="' . $vars->full_url . 'viewthread.php?tid='.$tid.'">'.$subject.'</a>');
     unset($subject);
 }
 
 if ($vars->settings['subject_in_title'] == 'on') {
-    $threadSubject = $core->rawHTMLsubject(stripslashes($forum['subject'])) . ' - ';
+    $threadSubject = $core->rawHTMLsubject($forum['subject']) . ' - ';
 }
 
 // Search-link

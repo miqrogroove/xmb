@@ -118,7 +118,7 @@ class Validation
      *
      * @since 1.10.00
      */
-    private function sanitizeString(string $input, string $word = '', bool $htmlencode = true, bool $dbescape = true, bool $quoteencode = false): string
+    private function sanitizeString(string $input, string $word, bool $htmlencode, bool $dbescape, bool $quoteencode): string
     {
         $retval = $input;
 

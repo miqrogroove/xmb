@@ -57,7 +57,7 @@ if (count($tids) == 1) {
     $query = $db->query("SELECT * FROM " . $vars->tablepre . "threads WHERE tid={$tids[0]}");
     $thread = $db->fetch_array($query);
     $db->free_result($query);
-    $threadname = $core->rawHTMLsubject(stripslashes($thread['subject']));
+    $threadname = $core->rawHTMLsubject($thread['subject']);
     $fid = (int) $thread['fid'];
 } else {
     $threadname = '';
@@ -519,7 +519,7 @@ switch ($action) {
                 $template->author = $post['author'];
                 $bbcodeoff = $post['bbcodeoff'];
                 $smileyoff = $post['smileyoff'];
-                $template->message = $core->postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, allowbbcode: 'no', allowimgcode: 'no');
+                $template->message = $core->postify($post['message'], $smileyoff, $bbcodeoff, allowbbcode: 'no', allowimgcode: 'no');
                 $posts .= $template->process('topicadmin_split_row.php');
             }
             $db->free_result($query);
@@ -528,7 +528,7 @@ switch ($action) {
             $page = $template->process('topicadmin_split.php');
         } else {
             $core->request_secure('Thread Admin Options/Split', (string) min($tids));
-            $subject = addslashes($validate->postedVar('subject'));  // Subjects are historically double-quoted
+            $subject = $validate->postedVar('subject');
             if ($subject == '') {
                 $core->error($lang['textnosubject']);
             }
@@ -682,7 +682,7 @@ switch ($action) {
                 $template->author = $post['author'];
                 $bbcodeoff = $post['bbcodeoff'];
                 $smileyoff = $post['smileyoff'];
-                $template->message = $core->postify(stripslashes($post['message']), $smileyoff, $bbcodeoff, allowbbcode: 'no', allowimgcode: 'no');
+                $template->message = $core->postify($post['message'], $smileyoff, $bbcodeoff, allowbbcode: 'no', allowimgcode: 'no');
                 $posts .= $template->process('topicadmin_threadprune_row.php');
             }
             $db->free_result($query);

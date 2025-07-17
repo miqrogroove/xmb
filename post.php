@@ -117,7 +117,7 @@ if ($tid > 0) {
     }
     $thread = $db->fetch_array($query);
     $db->free_result($query);
-    $threadname = $core->rawHTMLsubject(stripslashes($thread['subject']));
+    $threadname = $core->rawHTMLsubject($thread['subject']);
 } else {
     $thread = [];
     $threadname = '';
@@ -280,7 +280,7 @@ if (X_STAFF) {
     }
 }
 
-$messageinput = $validate->postedVar('message', dbescape: false, quoteencode: false);  //postify() was responsible for decoding this if html was allowed in the past.
+$messageinput = $validate->postedVar('message', dbescape: false);
 $subjectinput = $validate->postedVar('subject', dbescape: false);
 $subjectinput = trim($subjectinput);
 $subjectinput = str_replace(["\r", "\n"], ['', ''], $subjectinput);
@@ -428,8 +428,8 @@ switch ($action) {
                 $core->postLinkBBcode($messageinput);
             }
 
-            $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
-            $dbsubject = addslashes($subjectinput);
+            $dbmessage = $messageinput;
+            $dbsubject = $subjectinput;
 
             if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 255) {
                 // Inputs are suspiciously long.  Has the schema been customized?
@@ -546,7 +546,7 @@ switch ($action) {
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         $attachSvc->remoteImages($pid, $messageinput, $quarantine);
-                        $newdbmessage = addslashes($messageinput);
+                        $newdbmessage = $messageinput;
                         if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
                             $sql->savePostBody($pid, $newdbmessage, $quarantine);
                         }
@@ -572,8 +572,8 @@ switch ($action) {
                 $db->free_result($query);
                 $quoteperms = $core->checkForumPermissions($forums->getForum((int) $thaquote['fid']));
                 if ($quoteperms[$vars::PERMS_VIEW] && $quoteperms[$vars::PERMS_PASSWORD]) {
-                    $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); //These codes will not work inside quotes.
-                    $quoteblock = $core->rawHTMLmessage(stripslashes($thaquote['message'])); //Messages are historically double-quoted.
+                    $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); // These codes will not work inside quotes.
+                    $quoteblock = $core->rawHTMLmessage($thaquote['message']);
                     if ($bBBcodeOnForThisPost) {
                         $messageinput = "[rquote=$repquote&amp;tid={$thaquote['tid']}&amp;author={$thaquote['author']}]{$quoteblock}[/rquote]";
                     } else {
@@ -592,7 +592,6 @@ switch ($action) {
                 $counter = 0;
                 $prevsize = '';
                 foreach ($files as $postinfo) {
-                    $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format((int) $postinfo['filesize'], 0, '.', ',');
                     $subTemplate->postinfo = $postinfo;
                     $template->attachfile .= $subTemplate->process('post_attachment_orphan.php');
@@ -693,7 +692,7 @@ switch ($action) {
                     }
 
                     $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
-                    $post['message'] = $core->postify(stripslashes($post['message']), $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
+                    $post['message'] = $core->postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
                     $subTemplate->post = $post;
                     $template->posts .= $subTemplate->process('post_reply_review_post.php');
                     if ($subTemplate->thisbg == $vars->theme['altbg2']) {
@@ -832,8 +831,8 @@ switch ($action) {
             if ($bBBcodeOnForThisPost) {
                 $core->postLinkBBcode($messageinput);
             }
-            $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
-            $dbsubject = addslashes($subjectinput);
+            $dbmessage = $messageinput;
+            $dbsubject = $subjectinput;
             $dbtsubject = $dbsubject;
 
             if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 128) {
@@ -924,7 +923,7 @@ switch ($action) {
 
             if ($poll == 'yes') {
                 // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
-                $dbsubject = addslashes($subjectinput);
+                $dbsubject = $subjectinput;
                 $vote_id = $sql->addVoteDesc($tid, $quarantine);
                 
                 // Create poll options.  This is the part we care about.
@@ -966,7 +965,7 @@ switch ($action) {
                     }
                     if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
                         $attachSvc->remoteImages($pid, $messageinput, $quarantine);
-                        $newdbmessage = addslashes($messageinput);
+                        $newdbmessage = $messageinput;
                         if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
                             $sql->savePostBody($pid, $newdbmessage, $quarantine);
                         }
@@ -996,7 +995,6 @@ switch ($action) {
                 $counter = 0;
                 $prevsize = '';
                 foreach ($files as $postinfo) {
-                    $postinfo['filename'] = attrOut($postinfo['filename']);
                     $postinfo['filesize'] = number_format((int) $postinfo['filesize'], 0, '.', ',');
                     $subTemplate->postinfo = $postinfo;
                     $template->attachfile .= $subTemplate->process('post_attachment_orphan.php');
@@ -1180,8 +1178,8 @@ switch ($action) {
                 if ($bBBcodeOnForThisPost) {
                     $core->postLinkBBcode($messageinput);
                 }
-                $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
-                $dbsubject = addslashes($subjectinput);
+                $dbmessage = $messageinput;
+                $dbsubject = $subjectinput;
 
                 if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 255) {
                     // Inputs are suspiciously long.  Has the schema been customized?
@@ -1260,8 +1258,6 @@ switch ($action) {
                 ];
             } else {
                 $postinfo = $orig;
-                $postinfo['message'] = stripslashes($postinfo['message']); //Messages are historically double-quoted.
-                $postinfo['subject'] = stripslashes($postinfo['subject']);
                 $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $postinfo['bbcodeoff'] == 'no');
                 $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
                 $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $postinfo['smileyoff'] == 'no');
@@ -1282,7 +1278,7 @@ switch ($action) {
                     $subTemplate->aInfo = [
                         'aid' => $attach['aid'],
                         'downloads' => $attach['downloads'],
-                        'filename' => attrOut($attach['filename']),
+                        'filename' => $attach['filename'],
                         'filesize' => number_format((int) $attach['filesize'], 0, '.', ','),
                         'url' => $attachSvc->getURL((int) $attach['aid'], $pid, $attach['filename']),
                     ];

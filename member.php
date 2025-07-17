@@ -468,7 +468,7 @@ switch ($action) {
             if (4 == $stepout) {
                 if ('on' == $SETTINGS['bbrules']) {
                     // Display the rules form
-                    $template->rules = nl2br($SETTINGS['bbrulestxt']);
+                    $template->rules = nl2br(rawHTML($vars->settings['bbrulestxt']));
 
                     // Every step except 'done' will require new tokens.
                     $template->token = $token->create('Registration', (string) $stepout, $vars::NONCE_FORM_EXP, anonymous: true);
@@ -657,11 +657,11 @@ switch ($action) {
             $template->newsitelink = $memberinfo['avatar'];
         }
 
-        $template->showtitle = $rank['title'];
+        $template->showtitle = rawHTML($rank['title']);
         $template->stars = str_repeat('<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/star.gif" alt="*" border="0" />', (int) $rank['stars']);
 
         if ($memberinfo['customstatus'] != '') {
-            $template->customstatus = '<br />' . $smile->censor($memberinfo['customstatus']);
+            $template->customstatus = '<br />' . rawHTML($memberinfo['customstatus']);
         } else {
             $template->customstatus = '';
         }
@@ -767,7 +767,7 @@ switch ($action) {
             $lastpostdate = $core->printGmDate($adjStamp);
             $lastposttime = gmdate($vars->timecode, $adjStamp);
             $lastposttext = $lastpostdate.' '.$lang['textat'].' '.$lastposttime;
-            $lpsubject = $core->rawHTMLsubject(stripslashes($post['subject']));
+            $lpsubject = $core->rawHTMLsubject($post['subject']);
             $template->lastpost = "<a href='" . $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}'>$lpsubject</a> ($lastposttext)";
         } else {
             $template->lastpost = $lang['textnopostsyet'];

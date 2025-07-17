@@ -149,7 +149,7 @@ switch ($action) {
     case 'send':
         $msgto = $validate->postedVar('msgto', dbescape: false);
         $subject = $validate->postedVar('subject', dbescape: false);
-        $message = $validate->postedVar('message', dbescape: false, quoteencode: false);
+        $message = $validate->postedVar('message', dbescape: false);
         $template->leftpane = $u2u->send($u2uid, $msgto, $subject, $message);
         break;
     case 'view':

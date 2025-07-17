@@ -243,7 +243,7 @@ if (noSubmit('settingsubmit')) {
     $admin->input_string_setting('bbname', 'bbnamenew');
     $admin->input_string_setting('bboffreason', 'bboffreasonnew');
     $admin->input_onoff_setting('bbrules', 'bbrulesnew');
-    $admin->input_string_setting('bbrulestxt', 'bbrulestxtnew', false);
+    $admin->input_string_setting('bbrulestxt', 'bbrulestxtnew');
     $admin->input_onoff_setting('bbstatus', 'bbstatusnew');
     if ($captcha->bCompatible) {
         $admin->input_onoff_setting('captcha_code_casesensitive', 'captchacodecasenew');

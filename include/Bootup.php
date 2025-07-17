@@ -270,6 +270,11 @@ class Bootup
             default:
                 $db = new MySQLiDatabase($this->vars->debug, $this->vars->log_mysql_errors);
         }
+
+        if ($this->vars->debug && defined('XMB\UPGRADE')) {
+            $db->stopQueryLogging();
+        }
+
         $db->connect(
             $this->vars->dbhost,
             $this->vars->dbuser,

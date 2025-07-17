@@ -51,53 +51,52 @@ if ('off' == $vars->settings['quarantine_new_users'] && ! X_SMOD) {
 }
 
 // Parse "Pretty" URLs
-switch($format) {
-case 1:
-//    $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
-    $aid = getInt('aid');
-    $pid = getInt('pid');
-    break;
-case 2:
-//    $url = "{$virtual_path}files/$pid/$aid/";
-    $result = explode('/', $vars->url);
-    if (count($result) < 4) break;
-    if ($result[count($result) - 4] == 'files') { // Remember count() is 1-based
+switch ($format) {
+    case 1:
+    //    $url = "{$virtual_path}files.php?pid=$pid&amp;aid=$aid";
+        $aid = getInt('aid');
+        $pid = getInt('pid');
+        break;
+    case 2:
+    //    $url = "{$virtual_path}files/$pid/$aid/";
+        $result = explode('/', $vars->url);
+        if (count($result) < 4) break;
+        if ($result[count($result) - 4] == 'files') { // Remember count() is 1-based
+            $pid = intval($result[count($result) - 3]);
+            $aid = intval($result[count($result) - 2]);
+        }
+        break;
+    case 3:
+    //    $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
+        $result = explode('/', $vars->url);
+        if (count($result) < 3) break;
+        if ($result[count($result) - 3] == 'files') {
+            $aid = intval($result[count($result) - 2]);
+            $filename = htmlEsc(urldecode($result[count($result) - 1]));
+        }
+        break;
+    case 4:
+    //    $url = "{$virtual_path}/$pid/$aid/";
+        $result = explode('/', $vars->url);
+        if (count($result) < 3) break;
         $pid = intval($result[count($result) - 3]);
         $aid = intval($result[count($result) - 2]);
-    }
-    break;
-case 3:
-//    $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
-    $result = explode('/', $vars->url);
-    if (count($result) < 3) break;
-    if ($result[count($result) - 3] == 'files') {
+        break;
+    case 5:
+    //    $url = "{$virtual_path}/$aid/".rawurlencode($filename);
+        $result = explode('/', $vars->url);
+        if (count($result) < 2) break;
         $aid = intval($result[count($result) - 2]);
-        $filename = urldecode($result[count($result) - 1]);
-    }
-    break;
-case 4:
-//    $url = "{$virtual_path}/$pid/$aid/";
-    $result = explode('/', $vars->url);
-    if (count($result) < 3) break;
-    $pid = intval($result[count($result) - 3]);
-    $aid = intval($result[count($result) - 2]);
-    break;
-case 5:
-//    $url = "{$virtual_path}/$aid/".rawurlencode($filename);
-    $result = explode('/', $vars->url);
-    if (count($result) < 2) break;
-    $aid = intval($result[count($result) - 2]);
-    $filename = urldecode($result[count($result) - 1]);
-    break;
-case 99:
-//    $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
-    $aid = getInt('newaid');
-    $pid = getInt('newpid');
-    break;
-default:
-    $aid = getInt('aid');
-    $pid = getInt('pid');
-    break;
+        $filename = htmlEsc(urldecode($result[count($result) - 1]));
+        break;
+    case 99:
+    //    $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
+        $aid = getInt('newaid');
+        $pid = getInt('newpid');
+        break;
+    default:
+        $aid = getInt('aid');
+        $pid = getInt('pid');
 }
 
 // Sanity Checks
@@ -108,7 +107,7 @@ if ($aid <= 0 || $pid < 0 || ($pid == 0 && $filename == '' && '0' === $vars->sel
 
 // Retrieve attachment metadata
 if ($filename == '') {
-    if ($pid == 0 && !X_ADMIN) {
+    if ($pid == 0 && ! X_ADMIN) {
         // Allow preview of own attachments when the URL format requires a PID.
         $file = $sql->getAttachmentAndFID($aid, $quarantine, $pid, $filename, (int) $vars->self['uid']);
     } else {
@@ -183,13 +182,15 @@ if ($file['img_size'] == '') {
     $dispositionType = 'attachment';
     header('X-Robots-Tag: nofollow, noimageindex');
 } else {
-    $type = strtolower($file['filetype']);
+    $type = strtolower(rawHTML($file['filetype']));
     $dispositionType = 'inline';
 }
 
+$rawfilename = rawHTML($file['filename']):
+
 header("Content-type: $type");
 header("Content-length: $size");
-header("Content-Disposition: {$dispositionType}; filename=\"{$file['filename']}\"");
+header("Content-Disposition: {$dispositionType}; filename=\"$rawfilename\"");
 header("Content-Description: XMB Attachment");
 header("Cache-Control: public, max-age=604800");
 header("Expires: " . gmdate('D, d M Y H:i:s', time() + 604800) . " GMT");

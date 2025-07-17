@@ -110,7 +110,7 @@ if (noSubmit('membersubmit')) {
             $template->username = $member['username'];
             $template->postnum = $member['postnum'];
             $template->userLink = recodeOut($member['username']);
-            $template->statusAttr = attrOut($member['customstatus']);
+            $template->statusAttr = $member['customstatus'];
             $template->userStatus = $core->userStatusControl("status{$member['uid']}", $member['status']);
             $template->noban = '';
             $template->u2uban = '';
@@ -174,7 +174,7 @@ if (noSubmit('membersubmit')) {
     // Now execute this request
     while ($mem = $db->fetch_array($query)) {
         $origstatus = $mem['status'];
-        $status = $validate->postedVar('status' . $mem['uid']);
+        $status = $validate->postedVar('status' . $mem['uid'], dbescape: false);
         if ($status == '') {
             $status = 'Member';
         }
@@ -183,8 +183,6 @@ if (noSubmit('membersubmit')) {
             continue;
         }
 
-        $banstatus = $validate->postedVar('banstatus' . $mem['uid']);
-        $cusstatus = $validate->postedVar('cusstatus' . $mem['uid'], htmlencode: false);
         $delete = getInt('delete'.$mem['uid'], 'p');
 
         if ($delete == (int) $mem['uid'] && $delete != (int) $vars->self['uid'] && $origstatus != "Super Administrator") {
@@ -195,7 +193,22 @@ if (noSubmit('membersubmit')) {
             $db->query("DELETE FROM " . $vars->tablepre . "u2u WHERE owner='{$mem['username']}'");
             $db->query("UPDATE " . $vars->tablepre . "whosonline SET username='xguest123' WHERE username='{$mem['username']}'");
         } else {
-            $db->query("UPDATE " . $vars->tablepre . "members SET ban='$banstatus', status='$status', customstatus='$cusstatus' WHERE uid={$mem['uid']}");
+            $edits = [];
+            if ($mem['status'] !== $status) {
+                $edits['status'] = $status;
+            }
+
+            $banstatus = $validate->postedVar('banstatus' . $mem['uid'], dbescape: false);
+            if ($mem['ban'] !== $banstatus) {
+                $edits['ban'] = $banstatus;
+            }
+
+            $cusstatus = $validate->postedVar('cusstatus' . $mem['uid'], dbescape: false);
+            if ($mem['customstatus'] !== $cusstatus)
+                $edits['customstatus'] = $cusstatus;
+            }
+
+            $sql->updateMember((int) $mem['uid'], $edits);
 
             if (getRawString('pw' . $mem['uid']) != '') {
                 $newPass = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);

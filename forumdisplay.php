@@ -239,7 +239,7 @@ while ($thread = $db->fetch_array($querytop)) {
         $template->topimage = '<img src="' . $vars->full_url . $vars->theme['admdir'] . '/top.gif" alt="' . $lang['alttopthread'] . '" border="0" />';
     }
 
-    $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+    $thread['subject'] = shortenString($core->rawHTMLsubject($thread['subject']));
 
     if ($thread['author'] == 'Anonymous') {
         $template->authorlink = $lang['textanonymous'];

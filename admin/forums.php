@@ -60,7 +60,7 @@ $body = '';
 $fdetails = getInt('fdetails');
 $delete = getInt('delete', 'p');
 $template->fdetails = $fdetails;
-if (noSubmit('forumsubmit') && !$fdetails) {
+if (noSubmit('forumsubmit') && ! $fdetails) {
     $groups = [];
     $forums = [];
     $forums[0] = [];
@@ -215,8 +215,6 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         $template->checked6 = '';
     }
 
-    $forum['name'] = stripslashes($forum['name']);
-
     $template->forum = $forum;
 
     $body = $template->process('admin_forums_detail_start.php');
@@ -227,7 +225,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         if ($key != '' && $val <= $vars->status_enum['Guest']) {
             $template->val = $val;
             $template->statusKey = $vars->status_translate[$val];
-            if (!X_SADMIN && $key == 'Super Administrator') {
+            if (! X_SADMIN && $key == 'Super Administrator') {
                 $template->disabled = 'disabled="disabled"';
             } else {
                 $template->disabled = '';
@@ -246,7 +244,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
     while ($forum = $db->fetch_array($queryforum)) {
         $displayorder = formInt('displayorder'.$forum['fid']);
         $forum['status'] = formOnOff('status'.$forum['fid']);
-        $name = addslashes(htmlspecialchars($validate->postedVar('name' . $forum['fid'], htmlencode: false), ENT_COMPAT)); //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $name = $validate->postedVar('name' . $forum['fid']);
         $delete = formInt('delete'.$forum['fid']);
         $moveto = formInt('moveto'.$forum['fid']);
 
@@ -277,7 +275,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
         if (! $dsuccess) {
             $settype = '';
-            if ($moveto != (int) $forum['fup'] && $moveto != (int) $forum['fid'] && $forum['type'] != 'group') { //Forum is being moved
+            if ($moveto != (int) $forum['fup'] && $moveto != (int) $forum['fid'] && $forum['type'] != 'group') { // Forum is being moved
                 if ($moveto == 0) {
                     $settype = ", type='forum', fup=0";
                 } else {
@@ -288,7 +286,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
                         } elseif ($frow['type'] == 'forum') {
                             if ($forum['type'] == 'sub') {
                                 $settype = ", fup=$moveto";
-                            } elseif ($forum['type'] == 'forum') { //Make sure the admin didn't try to demote a parent
+                            } elseif ($forum['type'] == 'forum') { // Make sure the admin didn't try to demote a parent
                                 $query2 = $db->query("SELECT COUNT(*) AS subcount FROM " . $vars->tablepre . "forums WHERE fup = {$forum['fid']}");
                                 $frow = $db->fetch_array($query2);
                                 $db->free_result($query2);
@@ -307,7 +305,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
 
     $querygroup = $db->query("SELECT fid FROM " . $vars->tablepre . "forums WHERE type = 'group'");
     while ($group = $db->fetch_array($querygroup)) {
-        $name = addslashes(htmlspecialchars($validate->postedVar('name' . $group['fid'], htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $name = $validate->postedVar('name' . $group['fid']);
         $displayorder = formInt('displayorder'.$group['fid']);
         $group['status'] = formOnOff('status'.$group['fid']);
         $delete = formInt('delete'.$group['fid']);
@@ -332,9 +330,9 @@ if (noSubmit('forumsubmit') && !$fdetails) {
         }
     }
 
-    $newgname = addslashes(htmlspecialchars($validate->postedVar('newgname', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
-    $newfname = addslashes(htmlspecialchars($validate->postedVar('newfname', htmlencode: false), ENT_COMPAT));
-    $newsubname = addslashes(htmlspecialchars($validate->postedVar('newsubname', htmlencode: false), ENT_COMPAT));
+    $newgname = $validate->postedVar('newgname');
+    $newfname = $validate->postedVar('newfname');
+    $newsubname = $validate->postedVar('newsubname');
     $newgorder = formInt('newgorder');
     $newforder = formInt('newforder');
     $newsuborder = formInt('newsuborder');
@@ -375,7 +373,7 @@ if (noSubmit('forumsubmit') && !$fdetails) {
             }
         }
     } else {
-        $namenew = addslashes(htmlspecialchars($validate->postedVar('namenew', htmlencode: false), ENT_COMPAT));  //Forum names are historically double-slashed.  We also have an unusual situation where ENT_COMPAT is the XMB standard.
+        $namenew = $validate->postedVar('namenew');
         $descnew = $validate->postedVar('descnew');
         $allowsmiliesnew = formYesNo('allowsmiliesnew');
         $allowbbcodenew = formYesNo('allowbbcodenew');

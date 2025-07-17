@@ -8,7 +8,7 @@
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
 <td class="category" align="center"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textdeleteques'] ?></font></strong></td>
-<td class="category" align="left"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textcusstatus'] ?></font></strong></td>
+<td class="category" align="left"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textcusstatus'] ?></font></strong> [<?= $lang['texthtmlis']?> <?= $lang['texton']?>]</td>
 <td class="category"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textposts'] ?></font></strong></td>
 <td class="category"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textstars'] ?></font></strong></td>
 <td class="category"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textallowavatars'] ?></font></strong></td>

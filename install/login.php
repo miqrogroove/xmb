@@ -24,23 +24,34 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use Exception;
+
 const ROOT = '../';
 const UPGRADE = true;
 
 require ROOT . 'header.php';
 
 $core = Services\core();
+$session = Services\session();
 $sql = Services\sql();
+$tokenSvc = Services\token();
+$validate = Services\validate();
 $vars = Services\vars();
 
 $username = $validate->postedVar('username', dbescape: false);
 
 if (strlen($username) == 0) {
     $core->put_cookie('xmbuser');  // Make sure user is logged out.
+    $token = '';
+    if ($core->schemaHasTokens()) {
+        $token = $tokenSvc->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
+        $session->preLogin($token);
+    }
     ?>
     <form method="post" action="">
         <label>Username: <input type="text" name="username" /></label><br />
         <label>Password: <input type="password" name="password" /></label><br />
+        <input type="hidden" name="token" value="<?= $token ?>" />
         <input type="submit" />
     </form>
     <?php
@@ -48,7 +59,7 @@ if (strlen($username) == 0) {
     if ((int) $vars->settings['schema_version'] >= 5) {
         // Already logged in by Session\Manager
         if (! X_SADMIN) {
-            echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "upgrade/login.php'>Try Again</a>.<br />";
+            echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "install/login.php'>Try Again</a>.<br />";
             throw new Exception('Upgrade login failure by '.$_SERVER['REMOTE_ADDR']);
         }
     } else {
@@ -57,10 +68,10 @@ if (strlen($username) == 0) {
             $core->put_cookie('xmbuser', $username);
             $core->put_cookie('xmbpw', $password);
         } else {
-            echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "upgrade/login.php'>Try Again</a>.<br />";
+            echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "install/login.php'>Try Again</a>.<br />";
             throw new Exception('Upgrade login failure by '.$_SERVER['REMOTE_ADDR']);
         }
     }
 
-    echo "Cookies set.  <a href='" . $vars->full_url . "upgrade/'>Return to upgrade.</a>";
+    echo "Cookies set.  <a href='" . $vars->full_url . "install/'>Return to upgrade.</a>";
 }

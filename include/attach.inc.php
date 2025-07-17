@@ -103,7 +103,8 @@ class Attach
      * orphaned attachments that the registered user will be allowed to manage.
      * Storage responsibilities include subdirectory and thumbnail creation.
      *
-     * @since 1.9.11
+     * @since 1.9.11 Formerly attachRemoteFile()
+     * @since 1.10.00
      * @param string $url Web address of the remote file.
      * @param int $pid Optional. PID of the related post. Attachment becomes orphaned if omitted.
      * @param bool $quarantine Save this record in a private table for later review?
@@ -143,7 +144,7 @@ class Attach
         }
         $filename = false;
         $urlparts = explode('/', $urlparts['path']);
-        for ($i=count($urlparts)-1; $i>=0; $i--) {
+        for ($i = count($urlparts) - 1; $i >= 0; $i--) {
             if (isValidFilename($urlparts[$i])) {
                 $filename = $urlparts[$i];
                 break;
@@ -152,7 +153,7 @@ class Attach
                 break;
             }
         }
-        if ($filename === false) { //Failed to find a usable filename in $url.
+        if ($filename === false) { // Failed to find a usable filename in $url.
             $filename = explode('/', $filepath);
             $filename = array_pop($filename);
         }
@@ -205,27 +206,27 @@ class Attach
         // Try to make sure the filename extension is okay
         $extension = strtolower(get_extension($filename));
         $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico');
-        if (!in_array($extension, $img_extensions)) {
+        if (! in_array($extension, $img_extensions)) {
             $extension = '';
             $filetypei = strtolower($filetype);
-            if (strpos($filetypei, 'jpeg') !== FALSE) {
+            if (strpos($filetypei, 'jpeg') !== false) {
                 $extension = '.jpg';
-            } elseif (strpos($filetypei, 'gif') !== FALSE) {
+            } elseif (strpos($filetypei, 'gif') !== false) {
                 $extension = '.gif';
-            } elseif (strpos($filetypei, 'wbmp') !== FALSE) {
+            } elseif (strpos($filetypei, 'wbmp') !== false) {
                 $extension = '.wbmp';
-            } elseif (strpos($filetypei, 'bmp') !== FALSE) {
+            } elseif (strpos($filetypei, 'bmp') !== false) {
                 $extension = '.bmp';
-            } elseif (strpos($filetypei, 'png') !== FALSE) {
+            } elseif (strpos($filetypei, 'png') !== false) {
                 $extension = '.png';
-            } elseif (strpos($filetypei, 'ico') !== FALSE) {
+            } elseif (strpos($filetypei, 'ico') !== false) {
                 $extension = '.ico';
             }
             $filename .= $extension;
         }
 
         // Check minimum file size for disk storage
-        if (!$usedb) {
+        if (! $usedb) {
             if ($filesize < (int) $this->vars->settings['files_min_disk_size']) {
                 $usedb = true;
             } else {
@@ -235,8 +236,8 @@ class Attach
 
         $result = new UploadResult(UploadStatus::Success);
         $result->binaryFile = &$file;
-        $result->filename = $filename;
-        $result->filetype = $filetype;
+        $result->filename = htmlEsc($filename);
+        $result->filetype = htmlEsc($filetype);
         $result->filesize = $filesize;
         unset($file); // Avoid accidental re-use.
 
@@ -420,9 +421,20 @@ class Attach
         return $return;
     }
 
+    /**
+     * Modify the original file name for a specific attachment.
+     *
+     * @since 1.9.11.00 Formerly renameAttachment()
+     * @since 1.10.00
+     * @param int $aid
+     * @param int $pid
+     * @param int $newname Must be encoded for HTML output.
+     * @param bool $quarantine
+     * @return UploadStatus
+     */
     public function changeName(int $aid, int $pid, string $newname, bool $quarantine = false): UploadStatus
     {
-        if (isValidFilename($newname)) {
+        if (isValidFilename(rawHTML($newname))) {
             $this->sql->renameAttachment($aid, $newname, $quarantine);
 
             $extension = strtolower(get_extension($newname));
@@ -804,13 +816,25 @@ class Attach
         if ($loadfile) {
             $result->binaryFile = file_get_contents($file['tmp_name']);
         }
-        $result->filename = $file['name'];
-        $result->filetype = preg_replace('#[\\x00\\r\\n%]#', '', $file['type']);
+        $result->filename = htmlEsc($file['name']);
+        $result->filetype = htmlEsc(preg_replace('#[\\x00\\r\\n%]#', '', $file['type']));
         $result->filesize = $filesize;
 
         return $result;
     }
 
+    /**
+     * Find the full URL for a specific attachment.
+     *
+     * @since 1.9.11.00 Formerly getAttachmentUrl()
+     * @since 1.10.00
+     * @param int $aid
+     * @param int $pid
+     * @param int $filename Must be encoded for HTML output.
+     * @param bool $htmlencode Should the return value be encoded for HTML output?
+     * @param bool $quarantine
+     * @return string
+     */
     public function getURL(int $aid, int $pid, string $filename, bool $htmlencode = true, bool $quarantine = false): string
     {
         if ($this->vars->settings['files_virtual_url'] == '') {
@@ -837,13 +861,13 @@ class Attach
                 $url = "{$virtual_path}files/$pid/$aid/";
                 break;
             case 3:
-                $url = "{$virtual_path}files/$aid/".rawurlencode($filename);
+                $url = "{$virtual_path}files/$aid/" . rawurlencode(rawHTML($filename));
                 break;
             case 4:
                 $url = "{$virtual_path}$pid/$aid/";
                 break;
             case 5:
-                $url = "{$virtual_path}$aid/".rawurlencode($filename);
+                $url = "{$virtual_path}$aid/" . rawurlencode(rawHTML($filename));
                 break;
             case 99:
                 $url = "{$virtual_path}files.php?newpid=$pid&amp;newaid=$aid";
@@ -961,7 +985,7 @@ class Attach
      * Otherwise, the thumbnail will simply be saved to disk at $filepath.'-thumb.jpg'
      *
      * @since 1.9.11
-     * @param string $filename   Original name of the input file.
+     * @param string $filename   Name of the input file, encoded for HTML output.
      * @param string $filepath   Current name and location (full path) of the input file.
      * @param int    $filesize   The size, in bytes, that you want printed on the thumbnail.
      * @param object $imgSize    Caller must construct a CartesianSize object to specify the dimensions of the input image.

@@ -30,12 +30,12 @@ namespace XMB;
 <td colspan="2"><strong><font color="<?= $THEME['cattext'] ?>"><a name="1" />&raquo;&nbsp;<?= $lang['admin_main_settings1'] ?></font></strong></td>
 </tr>
 <?php
-$rulesDesc = $lang['textbbrulestxt'] . '<br /><br />' . $lang['texthtmlis'] . ' ' . $lang['texton'];
+$rulesNote = '<br />' . $lang['texthtmlis'] . ' ' . $lang['texton'];
 $admin->printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'], 50);
 $admin->printsetting2($lang['bbname'], 'bbnamenew', $SETTINGS['bbname'], 50);
 $admin->printsetting2($lang['textsiteurl'], 'siteurlnew', $SETTINGS['siteurl'], 50);
 $admin->printsetting6($lang['textbbrules'], 'bbrulesnew', 'bbrules');
-$admin->printsetting4($rulesDesc, 'bbrulestxtnew', htmlEsc($SETTINGS['bbrulestxt']), 5, 50);
+$admin->printsetting4($lang['textbbrulestxt'], 'bbrulestxtnew', $SETTINGS['bbrulestxt'], 5, 50, $rulesNote);
 $admin->printsetting6($lang['textbstatus'], 'bbstatusnew', 'bbstatus');
 $admin->printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
 $admin->printsetting6($lang['gzipcompression'], 'gzipcompressnew', 'gzipcompress');

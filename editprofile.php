@@ -73,7 +73,7 @@ if (noSubmit('editsubmit')) {
 
     $subTemplate = $form->getTemplate();
 
-    $subTemplate->custout = attrOut($member['customstatus']);
+    $subTemplate->custout = $member['customstatus'];
 
     $subTemplate->registerdate = $core->printGmDate($core->timeKludge((int) $member['regdate']));
 
@@ -157,7 +157,7 @@ if (noSubmit('editsubmit')) {
         $edits['email'] = $email;
     }
 
-    $cusstatus = getPhpInput('cusstatus');
+    $cusstatus = $validate->postedVar('cusstatus', dbescape: false);
     if ($member['customstatus'] != $cusstatus) {
         $edits['customstatus'] = $cusstatus;
     }

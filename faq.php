@@ -58,6 +58,7 @@ switch ($page) {
         $template->rankrows = '';
         $ranks = $sql->getRanks(noStaff: true);
         foreach ($ranks as $rank) {
+            $ranks['title'] = rawHTML($ranks['title']);
             $template->ranks = $rank;
             $template->stars = str_repeat('<img src="' . $vars->theme['imgdir'] . '/star.gif" alt="*" border="0" />', (int) $rank['stars']);
             $template->rankrows .= $template->process('faq_using_rankrow.php');
@@ -80,9 +81,9 @@ switch ($page) {
         $core->nav();
         $core->nav($vars->lang['textbbrules']);
         if (empty($vars->settings['bbrulestxt'])) {
-            $vars->settings['bbrulestxt'] = $this->vars->lang['textnone'];
+            $template->rules = $this->vars->lang['textnone'];
         } else {
-            $vars->settings['bbrulestxt'] = nl2br($vars->settings['bbrulestxt']);
+            $template->rules = nl2br(rawHTML($vars->settings['bbrulestxt']));
         }
         $faq = $template->process('faq_forumrules.php');
         break;

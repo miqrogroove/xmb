@@ -28,9 +28,9 @@ class UploadResult
 {
     public int    $aid = 0;
     public string $binaryFile = ''; // To be assigned by reference where appropriate.
-    public string $filename = '';
+    public string $filename = ''; // Must be encoded for HTML output.
     public int    $filesize = 0;
-    public string $filetype = '';
+    public string $filetype = ''; // Must be encoded for HTML output.
     
     public function __construct(public UploadStatus $status)
     {

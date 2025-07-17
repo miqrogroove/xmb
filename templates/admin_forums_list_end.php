@@ -22,7 +22,7 @@ namespace XMB;
 &nbsp; <select name="newffup"><option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
 <?php
 foreach ($groups as $group) {
-    echo '<option value="'.$group['fid'].'">'.fnameOut($group['name']).'</option>';
+    echo "<option value='{$group['fid']}'>" . adminStripText($group['name']) . "</option>";
 }
 ?>
 </select>
@@ -35,7 +35,7 @@ foreach ($groups as $group) {
 &nbsp; <select name="newsubfup">
 <?php
 foreach ($forumlist as $group) {
-    echo '<option value="'.$group['fid'].'">'.fnameOut($group['name']).'</option>';
+    echo "<option value='{$group['fid']}'>" . adminStripText($group['name']) . "</option>";
 }
 ?>
 </select>

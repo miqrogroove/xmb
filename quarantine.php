@@ -98,7 +98,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $tid = (int) $thread['tid'];
             $fid = (int) $thread['fid'];
             $forum = $forums->getForum($fid);
-            $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+            $thread['subject'] = shortenString($core->rawHTMLsubject($thread['subject']));
             $template->subject = $thread['subject'];
 
             if ('viewforum' == $action) {
@@ -201,7 +201,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
                 $result2 = $db->query("SELECT * FROM " . $vars->tablepre . "threads WHERE tid = $tid");
                 $thread = $db->fetch_array($result2);
                 $db->free_result($result2);
-                $thread['subject'] = shortenString($core->rawHTMLsubject(stripslashes($thread['subject'])));
+                $thread['subject'] = shortenString($core->rawHTMLsubject($thread['subject']));
                 $template->subject = $thread['subject'];
                 $template->process('quarantine_post_wrap.php', echo: true);
             }
@@ -388,7 +388,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $result2 = $db->query("SELECT subject FROM " . $vars->tablepre . "threads WHERE tid = {$post['tid']}");
             $thread = $db->fetch_array($result2);
             $db->free_result($result2);
-            $threadname = $core->rawHTMLsubject(stripslashes($thread['subject']));
+            $threadname = $core->rawHTMLsubject($thread['subject']);
 
             $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE pid <= $newpid AND tid={$post['tid']}");
             $posts = $db->result($query,0);
@@ -561,7 +561,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $result2 = $db->query("SELECT subject FROM " . $vars->tablepre . "threads WHERE tid = {$post['tid']}");
     $thread = $db->fetch_array($result2);
     $db->free_result($result2);
-    $threadname = $core->rawHTMLsubject(stripslashes($thread['subject']));
+    $threadname = $core->rawHTMLsubject($thread['subject']);
 
     $query = $db->query("SELECT COUNT(pid) FROM " . $vars->tablepre . "posts WHERE pid <= $newpid AND tid={$post['tid']}");
     $posts = $db->result($query,0);

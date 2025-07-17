@@ -39,7 +39,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $lang['textcusstatus'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>" valign="top"><?= $member['customstatus'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" valign="top"><?= $customstatus ?></td>
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top">&nbsp;</td>
 <td bgcolor="<?= $THEME['altbg2'] ?>" valign="top">&nbsp;</td>
 <td bgcolor="<?= $THEME['altbg1'] ?>" valign="top">&nbsp;</td>

@@ -6,7 +6,7 @@
 <td class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textbbrules'] ?></strong></font></td>
 </tr>
 <tr>
-<td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $SETTINGS['bbrulestxt'] ?></td>
+<td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $rules ?></td>
 </tr>
 </table>
 </td>

@@ -69,7 +69,7 @@ if ($action == '' && noSubmit('attachsubmit') && noSubmit('searchsubmit')) {
 
 if ($action == '' && onSubmit('searchsubmit')) {
     $template->token = $token->create('Control Panel/Attachments', 'mass-edit', $vars::NONCE_FORM_EXP);
-    $dblikefilename = $db->like_escape(getPhpInput('filename'));
+    $dblikefilename = $db->like_escape($validate->postedVar('filename', dbescape: false));
     $author = $validate->postedVar('author');
     $forumprune = getPhpInput('forumprune');
     $forumprune = $forumprune == 'all' ? '' : intval($forumprune);
@@ -143,9 +143,7 @@ if ($action == '' && onSubmit('searchsubmit')) {
     while ($attachment = $db->fetch_array($query)) {
         $template->attachsize = $attach->getSizeFormatted($attachment['filesize']);
 
-        $attachment['tsubject'] = stripslashes($attachment['tsubject']); //old databases were double-slashed
         $attachment['fname'] = fnameOut($attachment['fname']);
-        $attachment['filename'] = htmlEsc($attachment['filename']);
         $template->movelink = '';
         $template->newthumblink = '';
         if ($attachment['subdir'] == '') {
@@ -163,7 +161,7 @@ if ($action == '' && onSubmit('searchsubmit')) {
             $attachment['author'] = $attachment['username'];
             $template->downloadlink = '';
         } else {
-        $template->downloadlink = "<a href='" . $attach->getURL((int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename']) . "' target='_blank'>{$lang['textdownload']}</a>";
+            $template->downloadlink = "<a href='" . $attach->getURL((int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename']) . "' target='_blank'>{$lang['textdownload']}</a>";
             if (function_exists('imagecreatetruecolor')) {
                 $template->newthumblink = "<a href='" . $vars->full_url . "admin/attachments.php?action=regeneratethumbnail&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['regeneratethumbnail']}</a>";
             }
@@ -217,7 +215,7 @@ if ($action == '' && onSubmit('attachsubmit')) {
     $query = $db->query("SELECT aid, pid, filename FROM " . $vars->tablepre . "attachments WHERE aid IN ($filelist)");
     while ($attachment = $db->fetch_array($query)) {
         $afilename = "filename" . $attachment['aid'];
-        $postedvalue = trim(getPhpInput($afilename));
+        $postedvalue = trim(postedVar($afilename, dbescape: false));
         if ($attachment['filename'] !== $postedvalue) {
             $attach->changeName((int) $attachment['aid'], (int) $attachment['pid'], $postedvalue);
         }

@@ -245,7 +245,7 @@ if ($action == 'profile') {
                 $lastreplydate = $core->printGmDate($adjStamp);
                 $lastreplytime = gmdate($vars->timecode, $adjStamp);
                 $template->lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
-                $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
+                $fav['subject'] = $core->rawHTMLsubject($fav['subject']);
 
                 if ($fav['icon'] != '') {
                     $fav['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $fav['icon'] . '" alt="" border="0" />';
@@ -317,7 +317,7 @@ if ($action == 'profile') {
             $lastreplydate = $core->printGmDate($adjStamp);
             $lastreplytime = gmdate($vars->timecode, $adjStamp);
             $template->lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
-            $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
+            $fav['subject'] = $core->rawHTMLsubject($fav['subject']);
 
             if ($fav['icon'] != '') {
                 $fav['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $fav['icon'] . '" alt="" border="0" />';
@@ -456,7 +456,7 @@ if ($action == 'profile') {
         $posttime = gmdate($vars->timecode, $adjStamp);
         $template->senton = $postdate.' '.$lang['textat'].' '.$posttime;
 
-        $message['subject'] = $core->rawHTMLsubject(stripslashes($message['subject']));
+        $message['subject'] = $core->rawHTMLsubject($message['subject']);
         if ($message['subject'] == '') {
             $message['subject'] = '&laquo;'.$lang['textnosub'].'&raquo;';
         }
@@ -497,7 +497,7 @@ if ($action == 'profile') {
             $lastreplydate = $core->printGmDate($adjStamp);
             $lastreplytime = gmdate($vars->timecode, $adjStamp);
             $template->lastpost = $lang['lastreply1'].' '.$lastreplydate.' '.$lang['textat'].' '.$lastreplytime.' '.$lang['textby'].' '.$lastpostname;
-            $fav['subject'] = $core->rawHTMLsubject(stripslashes($fav['subject']));
+            $fav['subject'] = $core->rawHTMLsubject($fav['subject']);
 
             if ($fav['icon'] != '') {
                 $fav['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $fav['icon'] . '" alt="" border="0" />';
@@ -514,6 +514,7 @@ if ($action == 'profile') {
     if ($favnum == 0) {
         $favs = $template->process('memcp_home_favs_none.php');
     }
+    $template->customstatus = rawHTML($member['customstatus']);
     $template->favs = $favs;
     $template->member = $member;
     $template->hUsername = $vars->self['username'];

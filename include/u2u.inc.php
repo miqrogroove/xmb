@@ -138,8 +138,6 @@ class U2U
     public function send_single(string $msgto, string $subject, string $message): string
     {
         $errors = '';
-        $message = addslashes($message); //Messages are historically double-slashed.
-        $subject = addslashes($subject);
 
         $rcpt = $this->sql->getMemberByName($msgto);
         if (! empty($rcpt)) {
@@ -279,7 +277,7 @@ class U2U
                 if (noSubmit('previewsubmit')) {
                     $prefixes = array($this->vars->lang['textre'].' ', $this->vars->lang['textfwd'].' ');
                     $subject = str_replace($prefixes, '', $quote['subject']);
-                    $message = $this->core->rawHTMLmessage(stripslashes($quote['message']));  //message and subject were historically double-slashed
+                    $message = $this->core->rawHTMLmessage($quote['message']);
                     if ($forward) {
                         $subject = $this->vars->lang['textfwd'].' '.$subject;
                         $message = '[quote][i]'.$this->vars->lang['origpostedby'].' '.$quote['msgfrom']."[/i]\n".$message.'[/quote]';
@@ -370,8 +368,8 @@ class U2U
         $u2udate = $this->core->printGmDate($adjTime);
         $u2utime = gmdate($this->vars->timecode, $adjTime);
         $subTemplate->u2udateline = "$u2udate " . $this->vars->lang['textat'] . " $u2utime";
-        $subTemplate->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject'])); //message and subject were historically double-slashed
-        $subTemplate->u2umessage = $this->core->postify(stripslashes($u2u['message']));
+        $subTemplate->u2usubject = $this->core->rawHTMLsubject($u2u['subject']);
+        $subTemplate->u2umessage = $this->core->postify($u2u['message']);
         $subTemplate->u2ufolder = $u2u['folder'];
         $subTemplate->u2ufrom = '<a href="' . $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($u2u['msgfrom']) . '" target="mainwindow">' . $u2u['msgfrom'] . '</a>';
         $subTemplate->u2uto = ($u2u['type'] == 'draft') ? $this->vars->lang['textu2unotsent'] : '<a href="' . $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($u2u['msgto']) . '" target="mainwindow">' . $u2u['msgto'] . '</a>';
@@ -430,8 +428,8 @@ class U2U
         $u2udate = $this->core->printGmDate($adjTime);
         $u2utime = gmdate($this->vars->timecode, $adjTime);
         $this->template->u2udateline = $u2udate . ' ' . $this->vars->lang['textat'] . ' ' . $u2utime;
-        $this->template->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject']));  // Message and subject were historically double-slashed
-        $this->template->u2umessage = $this->core->postify(stripslashes($u2u['message']));
+        $this->template->u2usubject = $this->core->rawHTMLsubject($u2u['subject']);
+        $this->template->u2umessage = $this->core->postify($u2u['message']);
         $this->template->u2ufolder = $u2u['folder'];
         $this->template->u2ufrom = $u2u['msgfrom'];
         $this->template->u2uto = ($u2u['type'] == 'draft') ? $this->vars->lang['textu2unotsent'] : $u2u['msgto'];
@@ -750,7 +748,7 @@ class U2U
                 $u2u['subject'] = '&laquo;' . $this->vars->lang['textnosub'] . '&raquo;';
             }
 
-            $subTemplate->u2usubject = $this->core->rawHTMLsubject(stripslashes($u2u['subject']));  //message and subject were historically double-slashed
+            $subTemplate->u2usubject = $this->core->rawHTMLsubject($u2u['subject']);
 
             if ($u2u['type'] == 'incoming' || $u2u['type'] == 'outgoing') {
 
