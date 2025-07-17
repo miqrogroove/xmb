@@ -8,5 +8,16 @@
         "ext-mysqli": "*",
         "php": ">=8.2",
         "symfony/mailer": "7.3.*"
+    },
+    "scripts": {
+        "xmb:build": [
+            "rm -Rf xmb/",
+            "git archive --prefix=xmb/ HEAD --format=tar | tar -x",
+            "cp -R vendor/ xmb/vendor/",
+            "zip --quiet --recurse-paths --move -9 xmb-`git describe`.zip xmb"
+        ],
+    },
+    "scripts-descriptions": {
+        "xmb:build": "Create a release package ZIP"
     }
 }

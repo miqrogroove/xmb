@@ -2,19 +2,19 @@
 
 Our code moved to GitHub on 1 January 2025.
 
-Branch 1.9.12 is the latest stable version.
-
-The Master branch is currently unstable.  It is a future version under development.
+The Master branch is now XMB 1.10 Beta.
 
 Visit [xmbforum2.com](https://www.xmbforum2.com) for more resources.
 
-## Getting Started (stable)
+## Getting Started (ZIP)
 
-Copy the XMB files to your web server.  Keep the "install" or "upgrade" folder as needed and delete the other one.
+Copy and unpack the XMB files to your web server.  Visit the `/install/` path to complete the setup.
 
 You will need a MySQL database and connection details to get started.
 
-## Getting Started (master branch)
+## Getting Started (Clone)
+
+The clone method enables you to pull future updates from the master branch on demand.
 
 Composer is required.  Install it according to the [instructions](https://getcomposer.org/doc/00-intro.md).
 
@@ -22,11 +22,11 @@ Create a directory for the site.  Make sure it's not owned by the root user.
 
 Clone XMB into the current directory using `git clone https://github.com/miqrogroove/xmb.git ./`
 
-Install the XMB dependencies using `composer install` in the same directory.
+Install the XMB dependencies using `composer install` in the same directory.  This should be repeated after each pull.
 
 If attempting to upgrade an existing site, remember to copy any customizations of config and images (themes and smilies).
 
-Visit the /install/ path on the website to complete the setup.
+Visit the `/install/` path on the website to complete the setup.
 
 ## Getting Involved
 

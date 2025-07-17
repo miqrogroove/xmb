@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00-alpha
+ * XMB 1.10.00-beta-1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -207,7 +207,7 @@ if ($db->num_rows($querytop) == 0) {
 
 while ($thread = $db->fetch_array($querytop)) {
     null_string($thread['icon']);
-    if ($thread['icon'] !== '' && file_exists($vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'])) {
+    if ($thread['icon'] !== '' && file_exists(ROOT . $vars->theme['smdir'] . '/' . $thread['icon'])) {
         $thread['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $thread['icon'] . '" alt="' . $thread['icon'] . '" border="0" />';
     } else {
         $thread['icon'] = '';

@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00-alpha
+ * XMB 1.10.00-beta-1
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -200,7 +200,7 @@ if (! ini_get('file_uploads')) {
     $forum['attachstatus'] = 'off';
 }
 
-// TODO: Does this need to be set to $thread['posticon'] when $action == 'edit' and no edit submitted yet?
+// TODO: Icon logic is in a bad order for editing. This needs to be set to $orig['icon'] when $action == 'edit' and no edit submitted yet. https://bugs.xmbforum2.com/view.php?id=818
 $posticon = $validate->postedVar('posticon', 'javascript', dbescape: false);
 if ($posticon != '') {
     if (! isValidFilename($posticon)) {
@@ -701,11 +701,6 @@ switch ($action) {
                 unset($posts);
             }
 
-            // TODO: Why is this here?
-            if ($core->getOneForumPerm($forum, $vars::PERMS_RAWREPLY) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
-                $template->loggedin = '';
-            }
-
             $postpage = $template->process('post_reply.php');
         }
         break;
@@ -1068,11 +1063,6 @@ switch ($action) {
             } else {
                 $template->topoption = '';
                 $template->closeoption = '';
-            }
-
-            // TODO: Why is this here?
-            if ($core->getOneForumPerm($forum, $vars::PERMS_RAWTHREAD) == $vars->status_enum['Guest']) { // Member posting is not allowed, do not request credentials!
-                $template->loggedin = '';
             }
 
             if (isset($poll) && $poll == 'yes') {
