@@ -3,6 +3,7 @@
     "description": "XMB eXtreme Message Board, a forum system written in PHP.",
     "license": "GPL-3.0-or-later",
     "require": {
+        "ext-curl": "*",
         "ext-gd": "*",
         "ext-mysqli": "*",
         "php": ">=8.2",
