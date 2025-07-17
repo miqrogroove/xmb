@@ -24,6 +24,9 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use Exception;
+use RuntimeException;
+
 /**
  * Upgrade migration logic.
  *
@@ -2326,8 +2329,10 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
 
         $this->show->progress("Batching changes for the $table table");
-        set_time_limit(60);
-        $startTime = time();
+        $timeLimit = 60;
+        set_time_limit($timeLimit);
+        $firstTime = time();
+        $recentTime = $firstTime;
         $offset = 0;
         $recsFound = 0;
         $recsUpdated = 0;
@@ -2338,6 +2343,7 @@ class Upgrade
             $batchSize = $this->db->num_rows($result);
             $recsFound += $batchSize;
             while ($row = $this->db->fetch_array($result)) {
+                $aid = (int) $row['aid'];
                 $edits = [];
                 $new = htmlEsc($row['filename']);
                 if ($row['filename'] !== $new) {
@@ -2348,7 +2354,6 @@ class Upgrade
                     $edits['filetype'] = $new;
                 }
                 if (count($edits) > 0) {
-                    $aid = (int) $row['aid'];
                     $values = [];
                     foreach ($edits as $field => $value) {
                         $this->db->escape_fast($value);
@@ -2360,9 +2365,11 @@ class Upgrade
                 }
             }
             $this->db->free_result($result);
-            if (time() >= $startTime + 2) {
+            if (time() >= $firstTime + $timeLimit) {
+                throw new RuntimeException("Maximum execution time of $timeLimit seconds exceeded");
+            } elseif (time() >= $recentTime + 2) {
                 $this->show->progress("Checked $recsFound rows in the $table table");
-                $startTime = time();
+                $recentTime = time();
             }
         } while ($batchSize === 100);
         $this->show->progress("Found $recsFound rows and modified $recsUpdated rows in the $table table");
@@ -2391,8 +2398,10 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
 
         $this->show->progress("Batching changes for the $table table");
-        set_time_limit(60);
-        $startTime = time();
+        $timeLimit = 60;
+        set_time_limit($timeLimit);
+        $firstTime = time();
+        $recentTime = $firstTime;
         $offset = 0;
         $recsFound = 0;
         $recsUpdated = 0;
@@ -2403,6 +2412,7 @@ class Upgrade
             $batchSize = $this->db->num_rows($result);
             $recsFound += $batchSize;
             while ($row = $this->db->fetch_array($result)) {
+                $uid = (int) $row['uid'];
                 $edits = [];
                 null_string($row['avatar']);
                 if (substr($row['avatar'], 0, 2) == './') {
@@ -2415,7 +2425,6 @@ class Upgrade
                     }
                 }
                 if (count($edits) > 0) {
-                    $uid = (int) $row['uid'];
                     $values = [];
                     foreach ($edits as $field => $value) {
                         $this->db->escape_fast($value);
@@ -2427,7 +2436,9 @@ class Upgrade
                 }
             }
             $this->db->free_result($result);
-            if (time() >= $startTime + 2) {
+            if (time() >= $firstTime + $timeLimit) {
+                throw new RuntimeException("Maximum execution time of $timeLimit seconds exceeded");
+            } elseif (time() >= $recentTime + 2) {
                 $this->show->progress("Checked $recsFound rows in the $table table");
                 $startTime = time();
             }
@@ -2440,8 +2451,10 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
 
         $this->show->progress("Batching changes for the $table table");
-        set_time_limit(600);
-        $startTime = time();
+        $timeLimit = 600;
+        set_time_limit($timeLimit);
+        $firstTime = time();
+        $recentTime = $firstTime;
         $offset = 0;
         $recsFound = 0;
         $recsUpdated = 0;
@@ -2452,6 +2465,7 @@ class Upgrade
             $batchSize = $this->db->num_rows($result);
             $recsFound += $batchSize;
             while ($row = $this->db->fetch_array($result)) {
+                $pid = (int) $row['pid'];
                 $edits = [];
                 $new = htmlEsc(htmlspecialchars_decode(stripslashes($row['message']), ENT_NOQUOTES));
                 if ($row['message'] !== $new) {
@@ -2462,7 +2476,6 @@ class Upgrade
                     $edits['subject'] = $new;
                 }
                 if (count($edits) > 0) {
-                    $pid = (int) $row['pid'];
                     $values = [];
                     foreach ($edits as $field => $value) {
                         $this->db->escape_fast($value);
@@ -2474,7 +2487,9 @@ class Upgrade
                 }
             }
             $this->db->free_result($result);
-            if (time() >= $startTime + 2) {
+            if (time() >= $firstTime + $timeLimit) {
+                throw new RuntimeException("Maximum execution time of $timeLimit seconds exceeded");
+            } elseif (time() >= $recentTime + 2) {
                 $this->show->progress("Checked $recsFound rows in the $table table");
                 $startTime = time();
             }
@@ -2544,8 +2559,10 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
 
         $this->show->progress("Batching changes for the $table table");
-        set_time_limit(600);
-        $startTime = time();
+        $timeLimit = 300;
+        set_time_limit($timeLimit);
+        $firstTime = time();
+        $recentTime = $firstTime;
         $offset = 0;
         $recsFound = 0;
         $recsUpdated = 0;
@@ -2556,13 +2573,13 @@ class Upgrade
             $batchSize = $this->db->num_rows($result);
             $recsFound += $batchSize;
             while ($row = $this->db->fetch_array($result)) {
+                $tid = (int) $row['tid'];
                 $edits = [];
                 $new = stripslashes($row['subject']);
                 if ($row['subject'] !== $new) {
                     $edits['subject'] = $new;
                 }
                 if (count($edits) > 0) {
-                    $tid = (int) $row['tid'];
                     $values = [];
                     foreach ($edits as $field => $value) {
                         $this->db->escape_fast($value);
@@ -2574,7 +2591,9 @@ class Upgrade
                 }
             }
             $this->db->free_result($result);
-            if (time() >= $startTime + 2) {
+            if (time() >= $firstTime + $timeLimit) {
+                throw new RuntimeException("Maximum execution time of $timeLimit seconds exceeded");
+            } elseif (time() >= $recentTime + 2) {
                 $this->show->progress("Checked $recsFound rows in the $table table");
                 $startTime = time();
             }
@@ -2587,8 +2606,10 @@ class Upgrade
         $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table . " WRITE");
 
         $this->show->progress("Batching changes for the $table table");
-        set_time_limit(600);
-        $startTime = time();
+        $timeLimit = 600;
+        set_time_limit($timeLimit);
+        $firstTime = time();
+        $recentTime = $firstTime;
         $offset = 0;
         $recsFound = 0;
         $recsUpdated = 0;
@@ -2599,6 +2620,7 @@ class Upgrade
             $batchSize = $this->db->num_rows($result);
             $recsFound += $batchSize;
             while ($row = $this->db->fetch_array($result)) {
+                $u2uid = (int) $row['u2uid'];
                 $edits = [];
                 $new = htmlEsc(htmlspecialchars_decode(stripslashes($row['message']), ENT_NOQUOTES));
                 if ($row['message'] !== $new) {
@@ -2609,7 +2631,6 @@ class Upgrade
                     $edits['subject'] = $new;
                 }
                 if (count($edits) > 0) {
-                    $u2uid = (int) $row['u2uid'];
                     $values = [];
                     foreach ($edits as $field => $value) {
                         $this->db->escape_fast($value);
@@ -2621,7 +2642,9 @@ class Upgrade
                 }
             }
             $this->db->free_result($result);
-            if (time() >= $startTime + 2) {
+            if (time() >= $firstTime + $timeLimit) {
+                throw new RuntimeException("Maximum execution time of $timeLimit seconds exceeded");
+            } elseif (time() >= $recentTime + 2) {
                 $this->show->progress("Checked $recsFound rows in the $table table");
                 $startTime = time();
             }
