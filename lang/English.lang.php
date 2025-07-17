@@ -88,7 +88,6 @@ $lang['altpostnewthread'] = "Post new thread";
 $lang['altquote'] = "Reply With Quote";
 $lang['altredfolder'] = "Red Folder";
 $lang['altreportpost'] = "Report Post to Administrator";
-$lang['altrules'] = "Board Rules";
 $lang['altsearch'] = "Search the forums";
 $lang['altstats'] = "Forum Stats";
 $lang['alttodayposts'] = "Today's Posts";
