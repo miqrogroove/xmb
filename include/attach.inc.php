@@ -1015,7 +1015,7 @@ class Attach
             $string = $this->getSizeFormatted($filesize).' '.$imgSize;
             $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 80);
             imagefilledrectangle($thumb, 0, $thumbSize->getHeight() - 20, $thumbSize->getWidth(), $thumbSize->getHeight(), $grey);
-            imagefttext($thumb, 10, 0, 5, $thumbSize->getHeight() - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
+            imagefttext($thumb, 10, 0, 5, $thumbSize->getHeight() - 5, imagecolorexact($thumb, 255,255,255), ROOT . 'fonts/VeraMono.ttf', $string);
         }
 
         $filepath .= '-thumb.jpg';
