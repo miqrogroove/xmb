@@ -15,7 +15,7 @@
             "git archive --prefix=xmb/ HEAD --format=tar | tar -x",
             "cp -R vendor/ xmb/vendor/",
             "zip --quiet --recurse-paths --move -9 xmb-`git describe`.zip xmb"
-        ],
+        ]
     },
     "scripts-descriptions": {
         "xmb:build": "Create a release package ZIP"
