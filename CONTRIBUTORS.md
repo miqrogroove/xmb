@@ -140,7 +140,7 @@ as the list is far to long to define individually.
 * vanderaj [Andrew] - Server installation consultant.
 
 
-## Current Staff / Contributors February 2012 to Present
+## Staff / Contributors 2012 to 2019
 
 * miqrogroove [Robert Chapin] - Lead Developer April 2008 to present (1.9.8 SP3, 1.9.10, et seq)
 * lottos - Forum Administrator, purchaser of the xmbforum2.com domain name June 2002 to present
@@ -149,6 +149,13 @@ as the list is far to long to define individually.
 * crimsontears [Rochelle Stewart] - Forum Administrator
 * Daniel Gouveia - Forum Administrator April 2007 to January 2018
 * Mouser - Forum Administrator
+
+
+## Current Staff / Contributors February 2019 to Present
+
+* miqrogroove [Robert Chapin] - Lead Developer April 2008 to present (1.9.8 SP3, 1.9.10, et seq)
+* lottos - Forum Administrator, purchaser of the xmbforum2.com domain name June 2002 to present
+* flushedpancake - First 9 commits in 2025.
 
 
 ## Other
