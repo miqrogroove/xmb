@@ -117,7 +117,7 @@ if (noSubmit('membersubmit')) {
             $template->postban = '';
             $template->bothban = '';
 
-            switch($member['ban']) {
+            switch ($member['ban']) {
                 case 'u2u':
                     $template->u2uban = $vars::selHTML;
                     break;
@@ -204,7 +204,7 @@ if (noSubmit('membersubmit')) {
             }
 
             $cusstatus = $validate->postedVar('cusstatus' . $mem['uid'], dbescape: false);
-            if ($mem['customstatus'] !== $cusstatus)
+            if ($mem['customstatus'] !== $cusstatus) {
                 $edits['customstatus'] = $cusstatus;
             }
 

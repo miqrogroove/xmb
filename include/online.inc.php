@@ -62,7 +62,7 @@ class URL2Text
         }
 
         if (false !== strpos($url, '/viewthread.php')) {
-            $temp = explode('?', $url);
+            $temp = explode('?', rawHTML($url));
             if (count($temp) > 1) {
                 $tid = 0;
                 if (! empty($temp[1])) {
@@ -89,7 +89,7 @@ class URL2Text
                 $location = $lang['onlinenothread'];
             }
         } elseif (false !== strpos($url, '/forumdisplay.php')) {
-            $temp = explode('?', $url);
+            $temp = explode('?', rawHTML($url));
             if (count($temp) > 1) {
                 $fid = 0;
                 $urls = explode('&', $temp[1]);
@@ -127,7 +127,7 @@ class URL2Text
             } else {
                 $location = $lang['onlinememcp'];
             }
-        } elseif (false !== strpos($url, '/admin/') || false !== strpos($url, '/cp2.php')) {
+        } elseif (false !== strpos($url, '/admin/')) {
             $location = $lang['onlinecp'];
             if (! X_ADMIN) {
                 $url = 'index.php';
@@ -163,18 +163,16 @@ class URL2Text
             if (false !== strpos($url, 'action=reg')) {
                 $location = $lang['onlinereg'];
             } elseif (false !== strpos($url, 'action=viewpro')) {
-                $location = $lang['onlinenoprofile']; // initialize
-                $temp = explode('?', $url);
+                $location = $lang['onlinenoprofile'];
+                $temp = explode('?', rawHTML($url));
                 $urls = explode('&', $temp[1]);
-                if (isset($urls[1]) && !empty($urls[1]) && $urls[1] != 'member=') {
+                if (! empty($urls[1])) {
                     foreach ($urls as $argument) {
-                        if (strpos($argument, 'member=') !== false) {
-                            $member = str_replace('member=', '', $argument);
-                            $member = rawurldecode(str_replace('+', ' ', $member));
-                            $member = preg_replace('#[\]\'\x00-\x1F\x7F<>\\\\|"[,@]#', '', $member);
-                            // TODO: This needs to be validated or removed rather than censored.
-                            $member = htmlEsc($this->smile->censor($member));
-                            $location = str_replace('$member', $member, $lang['onlineviewpro']);
+                        if (strpos($argument, 'member=') === 0) {
+                            $member = substr($argument, 7);
+                            if (strlen($member) >= $this->vars::USERNAME_MIN_LENGTH) {
+                                $location = $lang['onlineviewpro'];
+                            }
                             break;
                         }
                     }

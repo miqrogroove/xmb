@@ -13,6 +13,6 @@
 <td><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textnewpassword'] ?></font></strong></td>
 <td><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textposts'] ?></font></strong></td>
 <td><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textstatus'] ?></font></strong></td>
-<td><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textcusstatus'] ?></font></strong></td>
+<td><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textcusstatus'] ?></font></strong> [<?= $lang['texthtmlis'] ?> <?= $lang['texton']?>]</td>
 <td><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textbanfrom'] ?></font></strong></td>
 </tr>
