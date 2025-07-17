@@ -453,7 +453,7 @@ if ('' === $serror) {
 $force_inv = false;
 if ((int) $SETTINGS['schema_version'] < 5) {
     $mode = 'disabled';
-} else if (X_SCRIPT == 'upgrade.php' && isset($_POST['xmbpw'])) {
+} else if (X_SCRIPT == 'upgrade.php' && isset($_POST['password'])) {
     $mode = 'login';
 } else if ($action == 'login' && onSubmit('loginsubmit') && X_SCRIPT == 'misc.php') {
     $mode = 'login';
