@@ -186,7 +186,7 @@ if ($file['img_size'] == '') {
     $dispositionType = 'inline';
 }
 
-$rawfilename = rawHTML($file['filename']):
+$rawfilename = rawHTML($file['filename']);
 
 header("Content-type: $type");
 header("Content-length: $size");
