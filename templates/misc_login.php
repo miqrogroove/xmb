@@ -9,15 +9,19 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textusername'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="username" size="25" maxlength="25" />&nbsp;<span class="smalltxt"><a href="<?= $full_url ?>member.php?action=reg"><?= $lang['regques'] ?></a></span></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="username" size="25" maxlength="<?= $nameSize ?>" minlength="<?= $nameMin ?>" pattern="[^\x00-\x1F\x7F\]'&lt;&gt;\|\\&quot;\[,@]+" required="required" autocomplete="username" />&nbsp;<span class="smalltxt"><a href="<?= $full_url ?>member.php?action=reg"><?= $lang['regques'] ?></a></span></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textpassword'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="password" size="25" />&nbsp;<span class="smalltxt"><a href="<?= $full_url ?>misc.php?action=lostpw"><?= $lang['forgotpw'] ?></a></span><br /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="password" size="25" required="required" autocomplete="current-password" />&nbsp;<span class="smalltxt"><a href="<?= $full_url ?>misc.php?action=lostpw"><?= $lang['forgotpw'] ?></a></span><br /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['login_trusted'] ?></td>
 <td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="trust" value="yes" /></td>
+</tr>
+<tr class="tablerow">
+<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['login_comment'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="comment" size="35" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textinvisible'] ?></td>

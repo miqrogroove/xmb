@@ -39,15 +39,16 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function saveSession(string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent): bool
+    public function saveSession(string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent, string $comment): bool
     {
-        $sqltoken = $this->db->escape($token);
-        $sqluser = $this->db->escape($username);
-        $sqlreplace = $this->db->escape($replace);
-        $sqlagent = $this->db->escape($agent);
+        $this->db->escape_fast($token);
+        $this->db->escape_fast($username);
+        $this->db->escape_fast($replace);
+        $this->db->escape_fast($agent);
+        $this->db->escape_fast($comment);
 
-        $this->db->query("INSERT IGNORE INTO " . $this->tablepre . "sessions SET token = '$sqltoken', username = '$sqluser', login_date = $date,
-            expire = $expire, regenerate = $regenerate, replaces = '$sqlreplace', agent = '$sqlagent'");
+        $this->db->query("INSERT IGNORE INTO " . $this->tablepre . "sessions SET token = '$token', username = '$username', login_date = $date,
+            expire = $expire, regenerate = $regenerate, replaces = '$replace', agent = '$agent', name = '$comment'");
 
         return ($this->db->affected_rows() == 1);
     }

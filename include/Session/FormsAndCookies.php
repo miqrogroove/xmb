@@ -84,6 +84,7 @@ class FormsAndCookies implements Mechanism
         unset($member['password'], $member['password2']);
         $data->member = &$member;
         $data->status = 'good';
+        $data->comment = $this->validate->postedVar('comment', dbescape: false);
         $data->permanent = formYesNo('trust') == 'yes';
         return $data;
     }
@@ -278,12 +279,12 @@ class FormsAndCookies implements Mechanism
             $agent = substr($_SERVER['HTTP_USER_AGENT'], 0, 255);
         }
 
-        $success = $this->sql->saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent);
+        $success = $this->sql->saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent, $data->comment);
 
         if (! $success) {
             // Retry once.
             $token = bin2hex(random_bytes(self::TOKEN_BYTES));
-            $success = $this->sql->saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent);
+            $success = $this->sql->saveSession($token, $data->member['username'], time(), $expires, $regenerate, $replaces, $agent, $data->comment);
         }
 
         if (! $success) {
@@ -317,12 +318,12 @@ class FormsAndCookies implements Mechanism
         }
 
         $token = bin2hex(random_bytes(self::TOKEN_BYTES));
-        $success = $this->sql->saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent);
+        $success = $this->sql->saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent, $oldsession['name']);
 
         if (! $success) {
             // Retry once.
             $token = bin2hex(random_bytes(self::TOKEN_BYTES));
-            $success = $this->sql->saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent);
+            $success = $this->sql->saveSession($token, $oldsession['username'], (int) $oldsession['login_date'], (int) $oldsession['expire'], $regenerate, $replaces, $agent, $oldsession['name']);
         }
 
         if (! $success) {

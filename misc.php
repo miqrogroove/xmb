@@ -93,10 +93,12 @@ switch ($action) {
             } else {
                 $template->token = $token->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
                 $session->preLogin($template->token);
+                $template->nameMin = $vars::USERNAME_MIN_LENGTH;
+                $template->nameSize = $vars::USERNAME_MAX_LENGTH;
                 $misc = $template->process('misc_login.php');
             }
         } else {
-            switch($session->getStatus()) {
+            switch ($session->getStatus()) {
                 case 'good':
                     // Set $invisible to true, false, or null.
                     $invisible = formInt('hide');

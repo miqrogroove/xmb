@@ -404,6 +404,7 @@ if ($action == 'profile') {
             $time = $core->timeKludge((int) $device['login_date']);
             $template->dlogin = $core->printGmDate($time) . ' ' . $lang['textat'] . ' ' . gmdate($vars->timecode, $time);
             $template->dagent = parse_user_agent($device['agent']);
+            $template->comment = $device['name'];
             if ($device['current']) {
                 $template->current .= $template->process('memcp_devices_firstrow.php');
             } else {
