@@ -248,13 +248,13 @@ class URL2Text
             }
         } elseif (false !== strpos($url, '/buddy.php')) {
             if (false !== strpos($url, 'action=add2u2u')) {
-                $location = $lang['onlinebuddyadd2u2u'];
+                $location = $lang['onlinebuddyedit'];
             } elseif (false !== strpos($url, 'action=add')) {
-                $location = $lang['onlinebuddyadd'];
+                $location = $lang['onlinebuddyedit'];
             } elseif (false !== strpos($url, 'action=edit')) {
                 $location = $lang['onlinebuddyedit'];
             } elseif (false !== strpos($url, 'action=delete')) {
-                $location = $lang['onlinebuddydelete'];
+                $location = $lang['onlinebuddyedit'];
             } else {
                 $location = $lang['onlinebuddy'];
             }

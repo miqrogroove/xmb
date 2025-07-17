@@ -324,7 +324,7 @@ switch ($action) {
         $core->nav($lang['textreply']);
 
         if ($SETTINGS['subject_in_title'] === 'on') {
-            $template->threadSubject = $threadname . ' - ';
+            $template->threadSubject = $lang['textreply'] . ' - ';
         }
 
         $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
@@ -615,9 +615,6 @@ switch ($action) {
             $template->message = $core->rawHTMLmessage($messageinput);
 
             if (onSubmit('previewpost')) {
-                if ($SETTINGS['subject_in_title'] === 'on' && $template->subject !== '') {
-                    $threadSubject = $template->subject . ' - ';
-                }
                 if ($posticon != '') {
                     $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/$posticon' />";
                 } else {
@@ -720,7 +717,9 @@ switch ($action) {
             $core->nav($lang['textpostnew']);
         }
 
-        $template->threadSubject = $lang['textpostnew'] . ' - ';
+        if ($SETTINGS['subject_in_title'] === 'on') {
+            $template->threadSubject = $lang['textpostnew'] . ' - ';
+        }
 
         $template->pollanswers = $validate->postedVar('pollanswers', dbescape: false);
         $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
@@ -1018,9 +1017,6 @@ switch ($action) {
             $template->message = $core->rawHTMLmessage($messageinput);
 
             if (onSubmit('previewpost')) {
-                if ($SETTINGS['subject_in_title'] === 'on' && $template->subject !== '') {
-                    $threadSubject = $template->subject . ' - ';
-                }
                 if ($posticon != '') {
                     $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/$posticon' />";
                 } else {
@@ -1092,7 +1088,7 @@ switch ($action) {
         $core->nav($lang['texteditpost']);
 
         if ($SETTINGS['subject_in_title'] === 'on') {
-            $threadSubject = $threadname . ' - ';
+            $template->threadSubject = $lang['texteditpost'] . ' - ';
         }
 
         $editvalid = true; // This new flag will indicate a message was submitted and successful.
@@ -1261,10 +1257,6 @@ switch ($action) {
                 $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $postinfo['bbcodeoff'] == 'no');
                 $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
                 $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $postinfo['smileyoff'] == 'no');
-            }
-
-            if ($SETTINGS['subject_in_title'] === 'on' && $postinfo['subject'] !== '') {
-                $template->threadSubject = $postinfo['subject'] . ' - ';
             }
 
             // Fill $attachment

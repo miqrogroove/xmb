@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
 <script type="text/javascript" src="<?= $full_url ?>js/buddy.js"></script>
-<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textbuddylist'] ?> - <?= $lang['textpowered'] ?></title>
+<title><?= $threadSubject ?><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
 </head>
 <body text="<?= $THEME['text'] ?>">
 <table cellspacing="0" cellpadding="0" border="0" width="95%" align="center">

@@ -43,7 +43,7 @@ class BuddyManager
     {
         if ($redirect != '') {
             // Add redirect header, don't die yet.
-            $core->redirect($redirect);
+            $this->core->redirect($redirect);
         }
 
         $this->template->message = $message;
@@ -55,7 +55,7 @@ class BuddyManager
     /**
      * Add a buddy.
      *
-     * @since 1.9.1 Formerly known as buddy_add().
+     * @since 1.9.1 Formerly buddy_add()
      * @since 1.10.00
      * @param array $buddys Usernames, must be HTML and DB escaped.
      */
@@ -95,7 +95,7 @@ class BuddyManager
     /**
      * Display the editing page.
      *
-     * @since 1.9.1 Formerly known as buddy_edit().
+     * @since 1.9.1 Formerly buddy_edit()
      * @since 1.10.00
      */
     public function edit()
@@ -121,7 +121,7 @@ class BuddyManager
     /**
      * Delete a buddy.
      *
-     * @since 1.9.1 Formerly known as buddy_delete().
+     * @since 1.9.1 Formerly buddy_delete()
      * @since 1.10.00
      * @param array $delete Usernames, must be HTML and DB escaped.
      */
@@ -138,7 +138,7 @@ class BuddyManager
     /**
     * buddy_addu2u() - Display a list of buddies with their online status
     *
-    * @since 1.9.1 Formerly known as buddy_addu2u().
+    * @since 1.9.1 Formerly buddy_addu2u()
     * @since 1.10.00
     */
     public function addu2u()
@@ -155,7 +155,7 @@ class BuddyManager
             foreach ($buddyList as $buddy) {
                 $this->template->buddyout = $buddy['buddyname'];
                 $this->template->recodename = recodeOut($buddy['buddyname']);
-                if ($this->vars->onlinetime - (int) $buddy['lastvisit'] <= X_ONLINE_TIMER) {
+                if ($this->vars->onlinetime - (int) $buddy['lastvisit'] <= $this->vars::ONLINE_TIMER) {
                     if ('1' === $buddy['invisible']) {
                         if (! X_ADMIN) {
                             $buddys['offline'] .= $this->template->process('buddy_u2u_off.php');
@@ -177,7 +177,7 @@ class BuddyManager
     /**
      * Display the buddy list for the current user.
      *
-     * @since 1.9.1 Formerly known as buddy_display().
+     * @since 1.9.1 Formerly buddy_display()
      * @since 1.10.00
      */
     public function display()

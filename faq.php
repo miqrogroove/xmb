@@ -49,11 +49,17 @@ switch ($page) {
     case 'usermaint':
         $core->setCanonicalLink("faq.php?page=$page");
         $core->nav($vars->lang['textuserman']);
+        if ($vars->settings['subject_in_title'] == 'on') {
+            $template->threadSubject = $vars->lang['textuserman'] . ' - ';
+        }
         $faq = $template->process('faq_usermaint.php');
         break;
     case 'using':
         $core->setCanonicalLink("faq.php?page=$page");
         $core->nav($vars->lang['textuseboa']);
+        if ($vars->settings['subject_in_title'] == 'on') {
+            $template->threadSubject = $vars->lang['textuseboa'] . ' - ';
+        }
         $template->stars = '';
         $template->rankrows = '';
         $ranks = $sql->getRanks(noStaff: true);
@@ -68,6 +74,9 @@ switch ($page) {
     case 'messages':
         $core->setCanonicalLink("faq.php?page=$page");
         $core->nav($vars->lang['textpostread']);
+        if ($vars->settings['subject_in_title'] == 'on') {
+            $template->threadSubject = $vars->lang['textpostread'] . ' - ';
+        }
         $template->smilierows = '';
         $smilies = $sql->getSmilies();
         foreach ($smilies as $smilie) {
@@ -80,6 +89,9 @@ switch ($page) {
         $core->setCanonicalLink("faq.php?page=$page");
         $core->nav();
         $core->nav($vars->lang['textbbrules']);
+        if ($vars->settings['subject_in_title'] == 'on') {
+            $template->threadSubject = $vars->lang['textbbrules'] . ' - ';
+        }
         if (empty($vars->settings['bbrulestxt'])) {
             $template->rules = $this->vars->lang['textnone'];
         } else {
@@ -89,6 +101,9 @@ switch ($page) {
         break;
     default:
         $core->setCanonicalLink('faq.php');
+        if ($vars->settings['subject_in_title'] == 'on') {
+            $template->threadSubject = $vars->lang['textfaq'] . ' - ';
+        }
         $faq = $template->process('faq.php');
         break;
 }

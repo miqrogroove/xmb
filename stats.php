@@ -35,6 +35,9 @@ $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
 $core->nav($lang['altstats']);
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang['altstats'] . ' - ';
+}
 
 if ($SETTINGS['stats'] == 'off') {
     header('HTTP/1.0 403 Forbidden');

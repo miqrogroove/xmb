@@ -40,6 +40,9 @@ $lang = &$vars->lang;
 
 $core->nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
 $core->nav($lang['texteditpro']);
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang['texteditpro'] . ' - ';
+}
 
 $header = $template->process('header.php');
 

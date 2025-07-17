@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <?= $css ?>
-<title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
+<title><?= $threadSubject ?><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
 <script type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
 </head>
 <body text="<?= $THEME['text'] ?>">

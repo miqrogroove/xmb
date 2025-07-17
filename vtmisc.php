@@ -86,15 +86,15 @@ if ($tid > 0) {
     unset($subject);
 }
 
-if ($vars->settings['subject_in_title'] == 'on') {
-    $threadSubject = $core->rawHTMLsubject($forum['subject']) . ' - ';
-}
-
 // Search-link
 $template->searchlink = $core->makeSearchLink((int) $forum['fid']);
 
 if ($action == 'report') {
     $core->nav($lang['textreportpost']);
+    if ($vars->settings['subject_in_title'] == 'on') {
+        $template->threadSubject = $vars->lang['textreportpost'] . ' - ';
+    }
+
     $header = $template->process('header.php');
 
     if ('off' == $vars->settings['reportpost'] || ('on' == $vars->settings['quarantine_new_users'] && (0 == (int) $vars->self['postnum'] || 'yes' == $vars->self['waiting_for_mod']) && ! X_STAFF)) {
@@ -128,6 +128,9 @@ if ($action == 'report') {
 
 } elseif ($action == 'votepoll') {
     $core->nav($lang['textvote']);
+    if ($vars->settings['subject_in_title'] == 'on') {
+        $template->threadSubject = $vars->lang['textvote'] . ' - ';
+    }
 
     // User voted in poll related to thread $tid. The vote option is contained in $postopnum
     $postopnum = formInt('postopnum');

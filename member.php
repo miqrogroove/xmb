@@ -50,9 +50,15 @@ $softErrors = '';
 switch ($action) {
     case 'reg':
         $core->nav($lang['textregister']);
+        if ($vars->settings['subject_in_title'] == 'on') {
+            $template->threadSubject = $vars->lang['textregister'] . ' - ';
+        }
         break;
     case 'viewpro':
         $core->nav($lang['textviewpro']);
+        if ($vars->settings['subject_in_title'] == 'on') {
+            $template->threadSubject = $vars->lang['textviewpro'] . ' - ';
+        }
         break;
     default:
         header('HTTP/1.0 404 Not Found');

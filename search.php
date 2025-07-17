@@ -36,6 +36,10 @@ $lang = &$vars->lang;
 
 $core->nav($lang['textsearch']);
 
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang['textsearch'] . ' - ';
+}
+
 $misc = '';
 $multipage = '';
 $template->nextlink = '';

@@ -46,35 +46,42 @@ $SETTINGS = &$vars->settings;
 $action = getPhpInput('action', 'g');
 switch ($action) {
     case 'login':
-        $core->nav($lang['textlogin']);
+        $pagename = 'textlogin';
         break;
     case 'logout':
-        $core->nav($lang['textlogout']);
+        $pagename = 'textlogout';
         break;
     case 'lostpw':
-        $core->nav($lang['textlostpw']);
+        $pagename = 'textlostpw';
         break;
     case 'online':
-        $core->nav($lang['whosonline']);
+        $pagename = 'whosonline';
         break;
     case 'list':
-        $core->nav($lang['textmemberlist']);
+        $pagename = 'textmemberlist';
         break;
     case 'onlinetoday':
-        $core->nav($lang['whosonlinetoday']);
+        $pagename = 'whosonlinetoday';
         break;
     case 'captchaimage':
-        $core->nav($lang['textregister']);
+        $pagename = 'textregister';
         break;
     case 'smilies':
-        $core->nav($lang['smilies']);
+        $pagename = 'smilies';
         break;
     default:
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnoaction']);
 }
 
-$misc = $multipage = $nextlink = '';
+$core->nav($lang[$pagename]);
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang[$pagename] . ' - ';
+}
+
+$misc = '';
+$multipage = '';
+$nextlink = '';
 
 switch ($action) {
     case 'login':

@@ -82,57 +82,58 @@ $kill = false;
 
 switch ($action) {
     case 'delete':
-        $core->nav($lang['textdeletethread']);
+        $pagename = 'textdeletethread';
         break;
     case 'top':
-        $core->nav($lang['texttopthread']);
+        $pagename = 'texttopthread';
         break;
     case 'close':
-        $core->nav($lang['textclosethread']);
+        $pagename = 'textclosethread';
         break;
     case 'copy':
-        $core->nav($lang['copythread']);
+        $pagename = 'copythread';
         break;
     case 'f_close':
-        $core->nav($lang['textclosethread']);
+        $pagename = 'textclosethread';
         break;
     case 'f_open':
-        $core->nav($lang['textopenthread']);
+        $pagename = 'textopenthread';
         break;
     case 'move':
-        $core->nav($lang['textmovemethod1']);
+        $pagename = 'textmovemethod1';
         break;
     case 'getip':
         $kill = ! X_ADMIN;
-        $core->nav($lang['textgetip']);
+        $pagename = 'textgetip';
         break;
     case 'bump':
-        $core->nav($lang['textbumpthread']);
+        $pagename = 'textbumpthread';
         break;
     case 'split':
-        $core->nav($lang['textsplitthread']);
+        $pagename = 'textsplitthread';
         break;
     case 'merge':
-        $core->nav($lang['textmergethread']);
+        $pagename = 'textmergethread';
         break;
     case 'threadprune':
-        $core->nav($lang['textprunethread']);
+        $pagename = 'textprunethread';
         break;
     case 'empty':
-        $core->nav($lang['textemptythread']);
+        $pagename = 'textemptythread';
         break;
     default:
         $kill = true;
+}
+
+$core->nav($lang[$pagename]);
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $lang[$pagename] . ' - ';
 }
 
 $kill = $kill || ! X_STAFF || ! $core->modcheckForum($fid);
 
 if ($kill) {
     $core->error($lang['notpermitted']);
-}
-
-if ($vars->settings['subject_in_title'] == 'on') {
-    $threadSubject = $threadname . ' - ';
 }
 
 // Search-link

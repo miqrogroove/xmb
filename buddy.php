@@ -40,6 +40,10 @@ if (X_GUEST) {
     exit;
 }
 
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang['textbuddylist'] . ' - ';
+}
+
 $buddy = new BuddyManager($core, $db, $sql, $template, $vars);
 
 $action = getPhpInput('action', 'g');

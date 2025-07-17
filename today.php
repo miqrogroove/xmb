@@ -36,6 +36,9 @@ $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 
 $core->nav($lang['navtodaysposts']);
+if ($vars->settings['subject_in_title'] == 'on') {
+    $template->threadSubject = $vars->lang['navtodaysposts'] . ' - ';
+}
 
 if ($SETTINGS['todaysposts'] == 'off') {
     header('HTTP/1.0 403 Forbidden');
