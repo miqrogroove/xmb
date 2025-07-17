@@ -215,7 +215,7 @@ if ($action == '' && onSubmit('attachsubmit')) {
     $query = $db->query("SELECT aid, pid, filename FROM " . $vars->tablepre . "attachments WHERE aid IN ($filelist)");
     while ($attachment = $db->fetch_array($query)) {
         $afilename = "filename" . $attachment['aid'];
-        $postedvalue = trim(postedVar($afilename, dbescape: false));
+        $postedvalue = trim($validate->postedVar($afilename, dbescape: false));
         if ($attachment['filename'] !== $postedvalue) {
             $attach->changeName((int) $attachment['aid'], (int) $attachment['pid'], $postedvalue);
         }
