@@ -64,7 +64,7 @@ switch ($page) {
         $template->rankrows = '';
         $ranks = $sql->getRanks(noStaff: true);
         foreach ($ranks as $rank) {
-            $ranks['title'] = rawHTML($ranks['title']);
+            $rank['title'] = rawHTML($rank['title']);
             $template->ranks = $rank;
             $template->stars = str_repeat('<img src="' . $vars->theme['imgdir'] . '/star.gif" alt="*" border="0" />', (int) $rank['stars']);
             $template->rankrows .= $template->process('faq_using_rankrow.php');
