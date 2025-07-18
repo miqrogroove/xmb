@@ -11,7 +11,7 @@
 <td bgcolor="<?= $THEME['altbg1'] ?>" colspan="3"><?= $lang['autoinsertsmilies'] ?> (<?= $THEME['smdir'] ?>)?</td>
 </tr>
 <tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="4" align="left"><img src="./images/pixel.gif" alt="" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="4" align="left"><img src="<?= $full_url ?>images/pixel.gif" alt="" /></td>
 </tr>
 <tr>
 <td colspan="4" class="header"><?= $lang['picons'] ?></td>

@@ -1,5 +1,5 @@
 <tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="4"><img src="./images/pixel.gif" alt="" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="4"><img src="<?= $full_url ?>images/pixel.gif" alt="" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="4" align="left">

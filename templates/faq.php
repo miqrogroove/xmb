@@ -3,7 +3,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
-<td class="category"><a href="./faq.php?page=usermaint"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textuserman'] ?></strong></font></a></td>
+<td class="category"><a href="<?= $full_url ?>faq.php?page=usermaint"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textuserman'] ?></strong></font></a></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>">
@@ -27,7 +27,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
-<td class="category"><a href="./faq.php?page=using"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textuseboa'] ?></strong></font></a></td>
+<td class="category"><a href="<?= $full_url ?>faq.php?page=using"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textuseboa'] ?></strong></font></a></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>">
@@ -52,7 +52,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr>
-<td class="category"><a href="./faq.php?page=messages"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textpostread'] ?></strong></font></a></td>
+<td class="category"><a href="<?= $full_url ?>faq.php?page=messages"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textpostread'] ?></strong></font></a></td>
 </tr>
 <tr>
 <td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>">

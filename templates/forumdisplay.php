@@ -36,12 +36,12 @@
 </table>
 <br />
 <table width="<?= $THEME['tablewidth'] ?>" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" align="center"><tr>
-<td class="tablerow"><img src="<?= $THEME['imgdir'] ?>/red_folder.gif" alt="<?= $lang['altredfolder'] ?>" />&nbsp;<?= $lang['opennew'] ?> (&nbsp;
-<img src="<?= $THEME['imgdir'] ?>/hot_red_folder.gif" alt="<?= $lang['althotredfolder'] ?>" />&nbsp;<?= $hottopic ?>&nbsp;)<br />
-<img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
-<img src="<?= $THEME['imgdir'] ?>/folder.gif" alt="<?= $lang['altfolder'] ?>" />&nbsp;<?= $lang['opentopic'] ?> (&nbsp;
-<img src="<?= $THEME['imgdir'] ?>/hot_folder.gif" alt="<?= $lang['althotfolder'] ?>" />&nbsp;<?= $hottopic ?>&nbsp;)<br />
-<img src="./images/pixel.gif" width="1" height="4" alt="*" /><br/>
-<img src="<?= $THEME['imgdir'] ?>/lock_folder.gif" alt="<?= $lang['altclosedtopic'] ?>" />&nbsp;<?= $lang['locktopic'] ?></td>
+<td class="tablerow"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/red_folder.gif" alt="<?= $lang['altredfolder'] ?>" />&nbsp;<?= $lang['opennew'] ?> (&nbsp;
+<img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/hot_red_folder.gif" alt="<?= $lang['althotredfolder'] ?>" />&nbsp;<?= $hottopic ?>&nbsp;)<br />
+<img src="<?= $full_url ?>images/pixel.gif" width="1" height="4" alt="*" /><br/>
+<img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/folder.gif" alt="<?= $lang['altfolder'] ?>" />&nbsp;<?= $lang['opentopic'] ?> (&nbsp;
+<img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/hot_folder.gif" alt="<?= $lang['althotfolder'] ?>" />&nbsp;<?= $hottopic ?>&nbsp;)<br />
+<img src="<?= $full_url ?>images/pixel.gif" width="1" height="4" alt="*" /><br/>
+<img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/lock_folder.gif" alt="<?= $lang['altclosedtopic'] ?>" />&nbsp;<?= $lang['locktopic'] ?></td>
 </tr>
 </table>
