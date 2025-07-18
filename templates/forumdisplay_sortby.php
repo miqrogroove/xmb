@@ -1,4 +1,4 @@
-<form method="post" action="forumdisplay.php?fid=<?= $fid ?>">
+<form method="post" action="<?= $full_url ?>forumdisplay.php?fid=<?= $fid ?>">
 <input type="hidden" name="token" value="" />
 <?= $lang['showtopics'] ?>
 &nbsp;&nbsp;

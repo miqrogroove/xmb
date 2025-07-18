@@ -7,7 +7,7 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="tablerow">
 <td align="left"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textpersonalfeat'] ?></strong></font></td>
-<td align="right"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textloggedinas'] ?> <?= $hUsername ?></strong></font> <a href="misc.php?action=logout"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['welcomelogout'] ?></strong></font></a></td>
+<td align="right"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textloggedinas'] ?> <?= $hUsername ?></strong></font> <a href="<?= $full_url ?>misc.php?action=logout"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['welcomelogout'] ?></strong></font></a></td>
 </tr>
 </table>
 </td>

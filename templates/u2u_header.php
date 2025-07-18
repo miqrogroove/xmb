@@ -16,11 +16,11 @@
 <td>
 <table border="0" cellspacing="0" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr class="mediumtxt">
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php"><img src="<?= $THEME['imgdir'] ?>/inbox.gif" alt="<?= $lang['textu2uinbox'] ?>" border="0" /><br /><?= $lang['textu2uinbox'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?folder=Outbox"><img src="<?= $THEME['imgdir'] ?>/outbox.gif" alt="<?= $lang['textu2uoutbox'] ?>" border="0" /><br /><?= $lang['textu2uoutbox'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?action=send"><img src="<?= $THEME['imgdir'] ?>/newu2u.gif"  alt="<?= $lang['textsendu2u'] ?>" border="0" /><br /><?= $lang['textsendu2u'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>buddy.php" onclick="javascript:aBook();return false;"><img src="<?= $THEME['imgdir'] ?>/address.gif"  alt="<?= $lang['textu2uaddressbook'] ?>" border="0" /><br /><?= $lang['textu2uaddressbook'] ?></a></td>
-<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?action=ignore"><img src="<?= $THEME['imgdir'] ?>/locku2u.gif"  alt="<?= $lang['ignorelist'] ?>" border="0" /><br /><?= $lang['ignorelist'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/inbox.gif" alt="<?= $lang['textu2uinbox'] ?>" border="0" /><br /><?= $lang['textu2uinbox'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?folder=Outbox"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/outbox.gif" alt="<?= $lang['textu2uoutbox'] ?>" border="0" /><br /><?= $lang['textu2uoutbox'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?action=send"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/newu2u.gif"  alt="<?= $lang['textsendu2u'] ?>" border="0" /><br /><?= $lang['textsendu2u'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>buddy.php" onclick="javascript:aBook();return false;"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/address.gif"  alt="<?= $lang['textu2uaddressbook'] ?>" border="0" /><br /><?= $lang['textu2uaddressbook'] ?></a></td>
+<td align="center" bgcolor="<?= $THEME['altbg1'] ?>" width="20%"><a href="<?= $full_url ?>u2u.php?action=ignore"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/locku2u.gif"  alt="<?= $lang['ignorelist'] ?>" border="0" /><br /><?= $lang['ignorelist'] ?></a></td>
 </tr>
 </table>
 </td>

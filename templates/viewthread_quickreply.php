@@ -1,6 +1,6 @@
 <br />
 <a name="qreply"></a>
-<form method="post" name="input" action="post.php?action=reply&amp;tid=<?= $tid ?>" onsubmit="return disableButton(this);">
+<form method="post" name="input" action="<?= $full_url ?>post.php?action=reply&amp;tid=<?= $tid ?>" onsubmit="return disableButton(this);">
  <input type="hidden" name="token" value="" />
  <table width="<?= $THEME['tablewidth'] ?>" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="<?= $THEME['bordercolor'] ?>">
   <tr>

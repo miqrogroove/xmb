@@ -8,7 +8,7 @@
 <table cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" border="0" width="100%" align="center">
 <tr>
 <td colspan="2" class="category">
-<a href="misc.php?action=online"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['whosonline'] ?></font></strong></a><font color="<?= $THEME['cattext'] ?>"> - <?= $memonmsg ?></font>
+<a href="<?= $full_url ?>misc.php?action=online"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['whosonline'] ?></font></strong></a><font color="<?= $THEME['cattext'] ?>"> - <?= $memonmsg ?></font>
 </td>
 </tr>
 <tr>
@@ -23,7 +23,7 @@
 </tr>
 <tr>
 <td bgcolor="<?= $THEME['altbg1'] ?>" align="center" width="4%">
-<img src="<?= $THEME['imgdir'] ?>/online.gif" alt="<?= $lang['whosonline'] ?>" border="0" />
+<img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/online.gif" alt="<?= $lang['whosonline'] ?>" border="0" />
 </td>
 <td bgcolor="<?= $THEME['altbg2'] ?>" class="mediumtxt">
 <?= $memtally ?>&nbsp;

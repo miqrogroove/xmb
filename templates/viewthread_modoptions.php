@@ -3,7 +3,7 @@
 <input type="hidden" name="token" value="" />
 <span class="mediumtxt"><strong><?= $lang['textadminoptions'] ?></strong>
 <br />
-<select name="action" id="action" onchange="if(this.options[this.selectedIndex].value != '') { window.location=('topicadmin.php?tid=<?= $tid ?>&amp;fid=<?= $fid ?>&amp;action='+this.options[this.selectedIndex].value) }">
+<select name="action" id="action" onchange="if(this.options[this.selectedIndex].value != '') { window.location=('<?= $full_url ?>topicadmin.php?tid=<?= $tid ?>&amp;fid=<?= $fid ?>&amp;action='+this.options[this.selectedIndex].value) }">
 <option value="" selected="selected"></option>
 <option value="delete"><?= $lang['textdeletethread'] ?></option>
 <option value="close"><?= $closeopen ?></option>

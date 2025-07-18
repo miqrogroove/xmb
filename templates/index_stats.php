@@ -9,7 +9,7 @@
 </tr>
 <tr class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>">
 <td width="50%" align="left" valign="top"><?= $indexstats ?><br /><?= $lang['stats4'] ?> <?= $memhtml ?></td>
-<td width="50%" align="left" valign="top"><img src="<?= $THEME['imgdir'] ?>/red_folder.gif" alt="<?= $lang['altredfolder'] ?>" /> = <?= $lang['newposts'] ?><br /><img src="<?= $THEME['imgdir'] ?>/folder.gif" alt="<?= $lang['altnormalfolder'] ?>" /> = <?= $lang['nonewposts'] ?></td>
+<td width="50%" align="left" valign="top"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/red_folder.gif" alt="<?= $lang['altredfolder'] ?>" /> = <?= $lang['newposts'] ?><br /><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/folder.gif" alt="<?= $lang['altnormalfolder'] ?>" /> = <?= $lang['nonewposts'] ?></td>
 </tr>
 </table>
 </td>

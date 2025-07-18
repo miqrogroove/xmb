@@ -1,4 +1,4 @@
-<form method="post" action="member.php?action=reg" onsubmit="return disableButton(this);">
+<form method="post" action="" onsubmit="return disableButton(this);">
 <input type="hidden" name="token" value="<?= $token ?>" />
 <input type="hidden" name="step" value="<?= $stepout ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">

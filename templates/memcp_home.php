@@ -80,7 +80,7 @@
 </td>
 </tr>
 <tr>
-<td class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>"><strong><a href="buddy.php" onclick="Popup(this.href, 'Window', 450, 400); return false;"><?= $lang['launchbuddylist'] ?></a></strong></td>
+<td class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>"><strong><a href="<?= $full_url ?>buddy.php" onclick="Popup(this.href, 'Window', 450, 400); return false;"><?= $lang['launchbuddylist'] ?></a></strong></td>
 </tr>
 </table>
 </td>
@@ -103,7 +103,7 @@
 </tr>
 <?= $messages ?>
 <tr>
-<td colspan="4" class="header" valign="top"><a href="u2u.php" onclick="Popup(this.href,'Window', 700, 450); return false;"><?= $lang['viewcompleteinbox'] ?></a></td>
+<td colspan="4" class="header" valign="top"><a href="<?= $full_url ?>u2u.php" onclick="Popup(this.href,'Window', 700, 450); return false;"><?= $lang['viewcompleteinbox'] ?></a></td>
 </tr>
 </table>
 </td>

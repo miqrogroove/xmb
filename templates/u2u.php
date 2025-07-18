@@ -11,7 +11,7 @@
 </tr>
 <?= $folderlist ?>
 <tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><strong><a href="u2u.php?action=folders"><?= $lang['textmanagefolders'] ?></a></strong></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><strong><a href="<?= $full_url ?>u2u.php?action=folders"><?= $lang['textmanagefolders'] ?></a></strong></td>
 </tr>
 </table>
 </td>

@@ -1,6 +1,6 @@
 <tr>
 <td colspan="2" class="category">
-<a href="misc.php?action=onlinetoday"><strong><font color="<?= $THEME['cattext'] ?>">[+] <?= $last50today ?></font></strong></a>
+<a href="<?= $full_url ?>misc.php?action=onlinetoday"><strong><font color="<?= $THEME['cattext'] ?>">[+] <?= $last50today ?></font></strong></a>
 </td>
 </tr>
 <tr>

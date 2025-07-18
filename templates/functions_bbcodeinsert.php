@@ -54,16 +54,16 @@
 <option value="LimeGreen" style="color:limegreen;">LimeGreen</option>
 </select>
 <br />
-<a href="javascript:bold()" accesskey="b" title="<?= $lang['cb_insert_bold'] ?>"><img src="<?= $THEME['imgdir'] ?>/bb_bold.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_bold'] ?>" /></a>
-<a href="javascript:italicize()" accesskey="i" title="<?= $lang['cb_insert_italics'] ?>"><img src="<?= $THEME['imgdir'] ?>/bb_italicize.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_italics'] ?>" /></a>
-<a href="javascript:underline()" accesskey="u" title="<?= $lang['cb_insert_underlined'] ?>"><img src="<?= $THEME['imgdir'] ?>/bb_underline.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_underlined'] ?>" /></a>
-<a href="javascript:center()" title="<?= $lang['cb_insert_centered'] ?>" ><img src="<?= $THEME['imgdir'] ?>/bb_center.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_centered'] ?>" /></a>
-<a href="javascript:hyperlink()" title="<?= $lang['cb_insert_hyperlink'] ?>" ><img src="<?= $THEME['imgdir'] ?>/bb_url.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_hyperlink'] ?>" /></a>
-<a href="javascript:email()" title="<?= $lang['cb_insert_email'] ?>" ><img src="<?= $THEME['imgdir'] ?>/bb_email.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_email'] ?>" /></a>
-<a href="javascript:image()" title="<?= $lang['cb_insert_image'] ?>" ><img src="<?= $THEME['imgdir'] ?>/bb_image.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_image'] ?>" /></a>
-<a href="javascript:code()" title="<?= $lang['cb_insert_code'] ?>" ><img src="<?= $THEME['imgdir'] ?>/bb_code.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_code'] ?>" /></a>
-<a href="javascript:quote()" title="<?= $lang['cb_insert_quote'] ?>" ><img src="<?= $THEME['imgdir'] ?>/bb_quote.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_quote'] ?>" /></a>
-<a href="javascript:list()" title="<?= $lang['cb_insert_list'] ?>" ><img src="<?= $THEME['imgdir'] ?>/bb_list.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_list'] ?>" /></a>
-<a href="javascript:youtube()" title="<?= $lang['cb_insert_youtube'] ?>"><img src="<?= $THEME['imgdir'] ?>/bb_youtube.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_youtube'] ?>" /></a>
+<a href="javascript:bold()" accesskey="b" title="<?= $lang['cb_insert_bold'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_bold.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_bold'] ?>" /></a>
+<a href="javascript:italicize()" accesskey="i" title="<?= $lang['cb_insert_italics'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_italicize.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_italics'] ?>" /></a>
+<a href="javascript:underline()" accesskey="u" title="<?= $lang['cb_insert_underlined'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_underline.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_underlined'] ?>" /></a>
+<a href="javascript:center()" title="<?= $lang['cb_insert_centered'] ?>" ><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_center.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_centered'] ?>" /></a>
+<a href="javascript:hyperlink()" title="<?= $lang['cb_insert_hyperlink'] ?>" ><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_url.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_hyperlink'] ?>" /></a>
+<a href="javascript:email()" title="<?= $lang['cb_insert_email'] ?>" ><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_email.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_email'] ?>" /></a>
+<a href="javascript:image()" title="<?= $lang['cb_insert_image'] ?>" ><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_image.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_image'] ?>" /></a>
+<a href="javascript:code()" title="<?= $lang['cb_insert_code'] ?>" ><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_code.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_code'] ?>" /></a>
+<a href="javascript:quote()" title="<?= $lang['cb_insert_quote'] ?>" ><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_quote.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_quote'] ?>" /></a>
+<a href="javascript:list()" title="<?= $lang['cb_insert_list'] ?>" ><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_list.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_list'] ?>" /></a>
+<a href="javascript:youtube()" title="<?= $lang['cb_insert_youtube'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/bb_youtube.gif" border="0" width="23" height="22" alt="<?= $lang['cb_insert_youtube'] ?>" /></a>
 </td>
 </tr>
