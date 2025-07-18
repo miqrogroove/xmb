@@ -28,6 +28,12 @@ If attempting to upgrade an existing site, remember to copy any customizations o
 
 Visit the `/install/` path on the website to complete the setup.
 
+## Translation
+
+There are two dozen languages with partial translations hosted at [xmb-translation](https://github.com/miqrogroove/xmb-translation).
+
+We need translators to help update the new version of XMB!  You may contribute changes directly on GitHub, or upload them to our main forum.
+
 ## Getting Involved
 
 Issues, requests, discussions, and reports are all welcome here.  Note that we have a primary forum and bug tracker on our website.
