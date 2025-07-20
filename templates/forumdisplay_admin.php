@@ -64,7 +64,7 @@
 </td>
 </tr>
 </table>
-<table width="<?= $THEME['tablewidth'] ?>" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" align="center" style="margin-top: 3px">
+<table width="<?= $THEME['tablewidth'] ?>" cellspacing="0" cellpadding="0" align="center" style="margin-top: 3px">
 <tr>
 <td class="post" align="right">&nbsp;<?= $newtopiclink ?><?= $newpolllink ?></td>
 </tr>

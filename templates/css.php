@@ -306,6 +306,11 @@ textarea, select, input, object {
     margin: 0;
     padding: 0;
 }
+
+table.subforums {
+    margin-bottom: 12px;    
+}
+
 .video {
     border: none;
     height: 344px;
