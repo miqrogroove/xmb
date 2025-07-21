@@ -74,16 +74,24 @@ class SQL
     }
 
     /**
-     * SQL command
+     * Retrieves all sessions stored for the specified user.
+     *
+     * Results are filtered to tokens that are not in a state of regeneration.
+     * This avoids duplicates for display purposes, but could omit a session if this query races the last update of the regeneration cycle.
      *
      * @since 1.9.12
-     * @return mysqli_result|bool
+     * @return array
      */
-    public function getSessionsByName(string $username)
+    public function getSessionsByName(string $username): array
     {
-        $sqluser = $this->db->escape($username);
+        $this->db->escape_fast($username);
 
-        return $this->db->query("SELECT * FROM " . $this->tablepre . "sessions WHERE username = '$sqluser'");
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "sessions WHERE username = '$username' AND replaces = ''");
+
+        $rows = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $rows;
     }
 
     /**

@@ -212,7 +212,7 @@ if ($posticon != '') {
 $sql_posticon = $db->escape($posticon);
 
 $listed_icons = 0;
-$icons = '<input type="radio" name="posticon" value="" /> <img src="' . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
+$icons = '<input type="radio" name="posticon" value="" /> <img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
 $querysmilie = $db->query("SELECT url, code FROM " . $vars->tablepre . "smilies WHERE type = 'picon'");
 while ($smilie = $db->fetch_array($querysmilie)) {
     $icons .= ' <input type="radio" name="posticon" value="' . $smilie['url'] . '" /><img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $smilie['url'] . '" alt="' . $smilie['code'] . '" border="0" />';
@@ -314,7 +314,7 @@ if ($bBBcodeInserterEnabled || $bSmilieInserterEnabled) {
     }
     if ($bSmilieInserterEnabled) {
         $template->smilieinsert = $core->smilieinsert();
-        $template->moresmilies = "<a href=\"misc.php?action=smilies\" onclick=\"Popup(this.href, 'Window', 175, 250); return false;\">[{$lang['moresmilies']}]</a>";
+        $template->moresmilies = "<a href='" . $vars->full_url . "misc.php?action=smilies' onclick=\"Popup(this.href, 'Window', 175, 250); return false;\">[{$lang['moresmilies']}]</a>";
     }
 }
 
@@ -414,7 +414,7 @@ switch ($action) {
                 $lastpost = explode('|', $forum['lastpost']);
                 $rightnow = $vars->onlinetime - (int) $SETTINGS['floodctrl'];
                 if ($rightnow <= (int) $lastpost[0] && $username === $lastpost[1]) {
-                    $floodlink = "<a href=\"viewthread.php?fid=$fid&tid=$tid\">Click here</a>";
+                    $floodlink = "<a href='" . $vars->full_url . "viewthread.php?fid=$fid&amp;tid=$tid'>Click here</a>";
                     $errmsg = $lang['floodprotect'].' '.$floodlink.' '.$lang['tocont'];
                     $errors .= $core->softerror($errmsg);
                     $replyvalid = false;

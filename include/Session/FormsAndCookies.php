@@ -381,22 +381,18 @@ class FormsAndCookies implements Mechanism
      */
     public function getSessionList(string $username): array
     {
-        global $db;
-
         $sessions = [];
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
 
-        $result = $this->sql->getSessionsByName($username);
-        while ($session = $db->fetch_array($result)) {
+        $rows = $this->sql->getSessionsByName($username);
+        foreach ($rows as $session) {
             if ((int) $session['expire'] < time()) {
                 continue;
             }
-            $session['current'] = ($pinput == $session['token'] || $pinput == $session['replaces']);
+            $session['current'] = ($pinput == $session['token']);
             $session['token'] = substr($session['token'], 0, 4);
-            unset($session['replaces']);
             $sessions[] = $session;
         }
-        $db->free_result($result);
 
         return $sessions;
     }
