@@ -1327,29 +1327,39 @@ class Attach
 
     public function uploadErrorMsg(UploadStatus $status): string
     {
-        global $lang;
-
-        $index = [
-            UploadStatus::Success         => '',
-            UploadStatus::EmptyUpload     => '',
-            UploadStatus::BadStoragePath  => 'fileuploaderror1',
-            UploadStatus::CountExceeded   => 'fileuploaderror2',
-            UploadStatus::InvalidURL      => 'fileuploaderror3',
-            UploadStatus::NotAnImage      => 'fileuploaderror4',
-            UploadStatus::DimsExceeded    => 'fileuploaderror5',
-            UploadStatus::SizeExceeded    => 'fileuploaderror6',
-            UploadStatus::NoTempFile      => 'fileuploaderror7',
-            UploadStatus::GenericError    => 'fileuploaderror8',
-            UploadStatus::InvalidFilename => 'invalidFilename',
-        ];
-
-        $key = $index[$status];
-        
-        if ($key === '') {
-            return '';
-        } else {
-            return $lang[$key];
+        switch ($status) {
+            case UploadStatus::Success:
+            case UploadStatus::EmptyUpload:
+                return '';
+            case UploadStatus::BadStoragePath:
+                $key = 'fileuploaderror1';
+                break;
+            case UploadStatus::CountExceeded:
+                $key = 'fileuploaderror2';
+                break;
+            case UploadStatus::InvalidURL:
+                $key = 'fileuploaderror3';
+                break;
+            case UploadStatus::NotAnImage:
+                $key = 'fileuploaderror4';
+                break;
+            case UploadStatus::DimsExceeded:
+                $key = 'fileuploaderror5';
+                break;
+            case UploadStatus::SizeExceeded:
+                $key = 'fileuploaderror6';
+                break;
+            case UploadStatus::NoTempFile:
+                $key = 'fileuploaderror7';
+                break;
+            case UploadStatus::GenericError:
+                $key = 'fileuploaderror8';
+                break;
+            case UploadStatus::InvalidFilename:
+                $key = 'invalidFilename';
         }
+
+        return $this->vars->lang[$key];
     }
 
     /**
