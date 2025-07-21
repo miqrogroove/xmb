@@ -158,6 +158,29 @@ class SQL
     }
 
     /**
+     * Same as calling all three methods: deleteSession() and clearSessionParent() and deleteSessionReplacements()
+     *
+     * This method will send the queries at the same time to reduce the chance of races with other requests.
+     *
+     * @since 1.10.00
+     */
+    public function deleteParentSession(string $oldToken, string $newToken)
+    {
+        $this->db->escape_fast($oldToken);
+        $this->db->escape_fast($newToken);
+
+        $sql = [
+            "DELETE FROM " . $this->tablepre . "sessions WHERE token = '$oldToken'", // Delete old token
+            "UPDATE " . $this->tablepre . "sessions SET replaces = '' WHERE token = '$newToken'", // Make replacement permanent
+            "DELETE FROM " . $this->tablepre . "sessions WHERE replaces = '$oldToken'", // Cleanup any orphans
+        ];
+
+        $this->db->multi_query($sql);
+        $this->db->next_query();
+        $this->db->next_query();
+    }
+
+    /**
      * SQL command
      *
      * @since 1.9.12 Formerly getSessionReplacement()

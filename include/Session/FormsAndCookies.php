@@ -161,9 +161,7 @@ class FormsAndCookies implements Mechanism
             $cookie2 = $this->get_cookie(self::REGEN_COOKIE);
             if ($cookie2 != '' && $cookie2 === $details['replaces']) {
                 // Normal: Client responded with both the new token and the old token. Ready to delete old token.
-                $this->sql->deleteSession($details['replaces']); // Delete old token
-                $this->sql->clearSessionParent($details['token']); // Make replacement permanent
-                $this->sql->deleteSessionReplacements($details['replaces']); // Cleanup any orphans
+                $this->sql->deleteParentSession($details['replaces'], $details['token']);
                 $details['replaces'] = '';
                 if (time() > (int) $details['regenerate']) {
                     // Much time has passed between client's requests. Start a new cycle.
