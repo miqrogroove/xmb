@@ -795,17 +795,21 @@ $files = []; // This will be used again later.
 if ($forum['attachstatus'] == 'on' && X_MEMBER) {
     // Quarantined members are allowed to attach files. Guests are not.
     $template->attachfile = '';
-    $files = $sql->getOrphanedAttachments($quarantine, (int) $vars->self['uid']);
+    if ($action == 'edit') {
+        $files = $sql->getAttachmentsByPIDs([$pid]);
+    } else {
+        $files = $sql->getOrphanedAttachments($quarantine, (int) $vars->self['uid']);
+    }
     $counter = 0;
     $prevsize = '';
     foreach ($files as $file) {
         if ($action == 'edit') {
             $subTemplate->aInfo = [
-                'aid' => $attach['aid'],
-                'downloads' => $attach['downloads'],
-                'filename' => $attach['filename'],
-                'filesize' => number_format((int) $attach['filesize'], 0, '.', ','),
-                'url' => $attachSvc->getURL((int) $attach['aid'], $pid, $attach['filename']),
+                'aid' => $file['aid'],
+                'downloads' => $file['downloads'],
+                'filename' => $file['filename'],
+                'filesize' => number_format((int) $file['filesize'], 0, '.', ','),
+                'url' => $attachSvc->getURL((int) $file['aid'], $pid, $file['filename']),
             ];
             $template->attachfile .= $subTemplate->process('post_edit_attachment.php');
         } else {
@@ -882,7 +886,8 @@ if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_st
 
 // Allow thread close
 if ($action != 'edit' && $isMod) {
-    $template->closeoption = '<label><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'</label>';
+    $phrase = ($action == 'reply') ? $lang['closemsgques'] : $lang['closenewthread'];
+    $template->closeoption = '<label><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$phrase.'</label>';
 } else {
     $template->closeoption = '';
 }
@@ -898,38 +903,31 @@ if ($action == 'newthread' && $isMod) {
 if ($action == 'reply') {
     $template->posts = '';
 
-    $replynum = $sql->countPosts(false, $tid);
-    if ($replynum >= $vars->ppp) {
-        $threadlink = $vars->full_url . "viewthread.php?fid=$fid&tid=$tid";
-        $subTemplate->trevltmsg = str_replace('$threadlink', $threadlink, $lang['evaltrevlt']);
-        $template->posts .= $subTemplate->process('post_reply_review_toolong.php');
-    } else {
-        $subTemplate->thisbg = $vars->theme['altbg1'];
-        $posts = $sql->getPostsByTID($tid, $vars->ppp, ascending: false);
-        foreach ($posts as $post) {
-            $currtime = $core->timeKludge((int) $post['dateline']);
-            $date = $core->printGmDate($currtime);
-            $time = gmdate($vars->timecode, $currtime);
-            $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
+    $subTemplate->thisbg = $vars->theme['altbg1'];
+    $posts = $sql->getPostsByTID($tid, $vars->ppp, ascending: false);
+    foreach ($posts as $post) {
+        $currtime = $core->timeKludge((int) $post['dateline']);
+        $date = $core->printGmDate($currtime);
+        $time = gmdate($vars->timecode, $currtime);
+        $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
 
-            if ($post['icon'] != '') {
-                $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $post['icon'] . '" alt="' . $lang['altpostmood'] . '" border="0" />';
-            } else {
-                $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
-            }
-
-            $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
-            $post['message'] = $core->postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
-            $subTemplate->post = $post;
-            $template->posts .= $subTemplate->process('post_reply_review_post.php');
-            if ($subTemplate->thisbg == $vars->theme['altbg2']) {
-                $subTemplate->thisbg = $vars->theme['altbg1'];
-            } else {
-                $subTemplate->thisbg = $vars->theme['altbg2'];
-            }
+        if ($post['icon'] != '') {
+            $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $post['icon'] . '" alt="' . $lang['altpostmood'] . '" border="0" />';
+        } else {
+            $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
         }
-        unset($posts);
+
+        $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
+        $post['message'] = $core->postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
+        $subTemplate->post = $post;
+        $template->posts .= $subTemplate->process('post_reply_review_post.php');
+        if ($subTemplate->thisbg == $vars->theme['altbg2']) {
+            $subTemplate->thisbg = $vars->theme['altbg1'];
+        } else {
+            $subTemplate->thisbg = $vars->theme['altbg2'];
+        }
     }
+    unset($posts);
 }
 
 // Set checkbox values.
