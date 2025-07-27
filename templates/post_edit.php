@@ -11,7 +11,7 @@
 <?= $loggedin ?>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsubject'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="subject" size="45" value="<?= $postinfo['subject'] ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="subject" size="45" value="<?= $subject ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['texticon'] ?></td>
@@ -27,21 +27,21 @@
 <table width="100%">
 <tr>
 <td width="70%" rowspan="2"><textarea rows="12" cols="65" name="message" id="message" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">
-<?= $postinfo['message'] ?></textarea></td>
+<?= $message ?></textarea></td>
 <?= $smilieinsert ?>
 </tr>
 <tr><td class="ctrtablerow smalltxt"><?= $moresmilies ?></td></tr>
 </table>
 <br />
 <div class="postOptions">
- <label><input type="checkbox" name="smileyoff" value="yes" <?= $offcheck2 ?> /> <?= $lang['textdissmileys'] ?></label>
- <label><input type="checkbox" name="usesig" value="yes" <?= $offcheck3 ?> /> <?= $lang['textusesig'] ?></label>
- <label><input type="checkbox" name="bbcodeoff" value="yes" <?= $offcheck1 ?> /> <?= $lang['bbcodeoff'] ?></label>
+ <label><input type="checkbox" name="smileyoff" value="yes" <?= $smileoffcheck ?> /> <?= $lang['textdissmileys'] ?></label>
+ <label><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?></label>
+ <label><input type="checkbox" name="bbcodeoff" value="yes" <?= $codeoffcheck ?> /> <?= $lang['bbcodeoff'] ?></label>
  <label><input type="checkbox" name="delete" value="yes" /> <strong><?= $lang['textdelete'] ?></strong></label>
 </div>
 </td>
 </tr>
-<?= $attachment ?>
+<?= $attachfile ?>
 <tr>
 <td colspan="2" class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>"><input type="submit" class="submit" name="editsubmit" value="<?= $lang['texteditpost'] ?>" />&nbsp;<input type="submit" class="submit" name="previewpost" value="<?= $lang['textpreview'] ?>" /></td>
 </tr>

@@ -102,6 +102,9 @@ class Upgrade
                 // No break
             case 12:
                 $this->upgrade_schema_to_v13();
+                // No break
+            case 13:
+                $this->upgrade_schema_to_v14();
 
                 // Break only before case default.
                 break;
@@ -2670,6 +2673,44 @@ class Upgrade
 
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '13' WHERE name = 'schema_version'");
+    }
+
+    /**
+     * Performs all tasks needed to raise the database schema_version number to 14.
+     *
+     * @since 1.10.00
+     */
+    function upgrade_schema_to_v14()
+    {
+        $table = 'members';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table." WRITE");
+        $this->show->progress("Gathering schema information from the $table table");
+
+        $sql = [];
+        $columns = [
+            'post_date' => "int unsigned NOT NULL DEFAULT 0",
+        ];
+        foreach ($columns as $colname => $coltype) {
+            $query = $this->upgrade_query('DESCRIBE ' . $this->vars->tablepre . $table.' '.$colname);
+            if ($this->db->num_rows($query) == 0) {
+                $sql[] = 'ADD COLUMN '.$colname.' '.$coltype;
+            }
+            $this->db->free_result($query);
+        }
+
+        if (count($sql) > 0) {
+            $this->show->progress("Adding/Deleting columns in the $table table");
+            $sql = 'ALTER TABLE ' . $this->vars->tablepre . $table.' ' . implode(', ', $sql);
+            $this->upgrade_query($sql);
+        }
+
+        $this->show->progress("Releasing the lock on the $table table");
+        $this->upgrade_query('UNLOCK TABLES');
+
+        $this->show->progress('Resetting the schema version number');
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '14' WHERE name = 'schema_version'");
     }
 
     /**

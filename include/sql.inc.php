@@ -598,6 +598,16 @@ class SQL
     }
 
     /**
+     * SQL command
+     *
+     * @since 1.10.00
+     */
+    public function setMemberPostDate(int $uid, int $timestamp)
+    {
+        $this->db->query("UPDATE " . $this->tablepre . "members SET post_date = $timestamp, lastvisit = $timestamp WHERE uid = $uid");
+    }
+
+    /**
      * Increments the user's post total.
      *
      * Also resets the user's lastvisit timestamp because otherwise elevateUser() allows it to be 60 seconds old.
@@ -606,7 +616,7 @@ class SQL
      */
     public function raisePostCount(int $uid, int $timestamp)
     {
-        $this->db->query("UPDATE " . $this->tablepre . "members SET postnum = postnum + 1, lastvisit = $timestamp WHERE uid = $uid");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET postnum = postnum + 1, lastvisit = $timestamp, post_date = $timestamp WHERE uid = $uid");
     }
 
     /**
@@ -851,16 +861,19 @@ class SQL
      * @param string $lastpost The new value for lastpost.
      * @param bool $quarantine Save this record in a private table for later review?
      * @param bool $newReply Need to increment the reply count?  Not intended for use with the quarantine system.
+     * @param bool $close Set the thread status to closed while updating.
      */
-    public function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false, bool $newReply = false)
+    public function setThreadLastpost(int $tid, string $lastpost, bool $quarantine = false, bool $newReply = false, bool $close = false)
     {
         $this->db->escape_fast($lastpost);
 
         $table = $quarantine ? $this->tablepre . 'hold_threads' : $this->tablepre . 'threads';
 
-        $replies = $newReply ? 'replies = replies + 1,' : '';
+        $more = '';
+        $more .= $newReply ? 'replies = replies + 1, ' : '';
+        $more .= $close ? 'closed = "yes", ' : '';
 
-        $this->db->query("UPDATE $table SET $replies lastpost = '$lastpost' WHERE tid = $tid");
+        $this->db->query("UPDATE $table SET $more lastpost = '$lastpost' WHERE tid = $tid");
     }
 
     /**
@@ -1364,6 +1377,20 @@ class SQL
         $yesno = $usesig ? 'yes' : 'no';
 
         $this->db->query("UPDATE " . $this->tablepre . "posts SET usesig = '$yesno' WHERE author = '$username'");
+    }
+
+    /**
+     * Gets the PID of the oldest post in the specified thread.
+     *
+     * @since 1.10.00
+     */
+    public function getFirstPostInThread(int $tid): int
+    {
+        $result = $this->db->query("SELECT pid FROM " . $this->tablepre . "posts WHERE tid = $tid ORDER BY dateline LIMIT 1");
+        $pid = (int) $this->db->result($result);
+        $this->db->free_result($result);
+
+        return $pid;
     }
 
     /**
@@ -2282,6 +2309,24 @@ class SQL
         $this->db->free_result($result);
 
         return $icons;
+    }
+
+    /**
+     * Check existence of a post icon record.
+     *
+     * @since 1.10.00
+     */
+    public function iconExists(string $url): bool
+    {
+        $this->db->escape_fast($url);
+
+        $result = $this->db->query("SELECT id FROM " . $this->tablepre . "smilies WHERE type = 'picon' AND url = '$url'");
+
+        $exists = $this->db->num_rows($result) !== 0;
+        $this->db->free_result($result);
+
+        return $exists;
+
     }
 
     /**

@@ -133,7 +133,7 @@ $forumdisplay_thread = 'forumdisplay_thread';
 
 $status1 = $core->modcheck($vars->self['username'], $forum['moderator']);
 
-if ($status1 == 'Moderator') {
+if ($status1) {
     $forumdisplay_thread = 'forumdisplay_thread_admin';
 }
 
@@ -184,7 +184,7 @@ $querytop = $db->query(
 );
 
 if ($db->num_rows($querytop) == 0) {
-    if ($status1 == 'Moderator') {
+    if ($status1) {
         $threadlist = $template->process('forumdisplay_nothreads_admin.php');
     } else {
         $threadlist = $template->process('forumdisplay_nothreads.php');
@@ -350,7 +350,7 @@ $template->mpage = $mpage['html'];
 $template->multipage = '';
 $template->multipage3 = '';
 if (strlen($template->mpage) != 0) {
-    if ($status1 == 'Moderator') {
+    if ($status1) {
         $template->multipage = $template->process('forumdisplay_multipage_admin.php');
         $template->multipage3 = $template->process('forumdisplay_multipage_admin3.php');
     } else {
@@ -358,7 +358,7 @@ if (strlen($template->mpage) != 0) {
     }
 }
 
-if ($status1 == 'Moderator') {
+if ($status1) {
     if (X_ADMIN) {
         $template->fadminlink = '<a href="' . $vars->full_url . 'cp.php?action=forum&amp;fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->full_url . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
     } else {

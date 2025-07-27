@@ -24,8 +24,6 @@ declare(strict_types=1);
 
 namespace XMB;
 
-use XMB\UploadStatus;
-
 require './header.php';
 
 $attachSvc = Services\attach();
@@ -147,26 +145,34 @@ if ($poll != 'yes') {
 $perms = $core->assertForumPermissions($forum);
 
 // check posting permissions specifically
-if ($action == 'newthread') {
-    if (($poll == '' && ! $perms[$vars::PERMS_THREAD]) || ($poll == 'yes' && ! $perms[$vars::PERMS_POLL])) {
-        if (X_GUEST) {
-            $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
-        } else {
-            $core->error($lang['textnoaction']);
+switch ($action) {
+    case 'newthread':
+        if (($poll == '' && ! $perms[$vars::PERMS_THREAD]) || ($poll == 'yes' && ! $perms[$vars::PERMS_POLL])) {
+            if (X_GUEST) {
+                $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
+            } else {
+                $core->error($lang['textnoaction']);
+            }
         }
-    }
-} elseif ($action == 'reply') {
-    if (! $perms[$vars::PERMS_REPLY]) {
-        if (X_GUEST) {
-            $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
-        } else {
-            $core->error($lang['textnoaction']);
+        break;
+    case 'reply':
+        if (! $perms[$vars::PERMS_REPLY]) {
+            if (X_GUEST) {
+                $core->redirect($vars->full_url . "misc.php?action=login", timeout: 0);
+            } else {
+                $core->error($lang['textnoaction']);
+            }
         }
-    }
-} elseif ($action == 'edit') {
-    // let's allow edits for now, we'll check for permissions later on in the script (due to need for $orig['author'])
-} else {
-    $core->error($lang['textnoaction']);
+        break;
+    case 'edit':
+        if (X_GUEST) {
+            $core->error($lang['noedit']);
+        } else {
+            // let's allow edits for now, we'll check for permissions later on in the script (due to need for $orig['author'])
+        }
+        break;
+    default:
+        $core->error($lang['textnoaction']);
 }
 unset($perms);
 
@@ -200,34 +206,17 @@ if (! ini_get('file_uploads')) {
     $forum['attachstatus'] = 'off';
 }
 
-// TODO: Icon logic is in a bad order for editing. This needs to be set to $orig['icon'] when $action == 'edit' and no edit submitted yet. https://bugs.xmbforum2.com/view.php?id=818
 $posticon = $validate->postedVar('posticon', 'javascript', dbescape: false);
 if ($posticon != '') {
     if (! isValidFilename($posticon)) {
         $posticon = '';
     } elseif (! file_exists(ROOT . $vars->theme['smdir'] . '/' . $posticon)) {
         $posticon = '';
+    } elseif (! $sql->iconExists($posticon)) {
+        $posticon = '';
     }
 }
 $sql_posticon = $db->escape($posticon);
-
-$listed_icons = 0;
-$icons = '<input type="radio" name="posticon" value="" /> <img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
-$querysmilie = $db->query("SELECT url, code FROM " . $vars->tablepre . "smilies WHERE type = 'picon'");
-while ($smilie = $db->fetch_array($querysmilie)) {
-    $icons .= ' <input type="radio" name="posticon" value="' . $smilie['url'] . '" /><img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $smilie['url'] . '" alt="' . $smilie['code'] . '" border="0" />';
-    $listed_icons++;
-    if ($listed_icons == 9) {
-        $icons .= '<br />';
-        $listed_icons = 0;
-    }
-}
-$db->free_result($querysmilie);
-
-if ($action != 'edit') {
-    $icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
-}
-$template->icons = $icons;
 
 $template->allowimgcode = ($forum['allowimgcode'] == 'yes' && $forum['allowbbcode'] == 'yes') ? $lang['texton'] : $lang['textoff'];
 $template->allowhtml = $lang['textoff'];
@@ -237,24 +226,19 @@ $template->allowbbcode = ($forum['allowbbcode'] == 'yes') ? $lang['texton'] : $l
 $bbcodeoff = formYesNo('bbcodeoff');
 $smileyoff = formYesNo('smileyoff');
 if (X_MEMBER) {
+    $delete = formYesNo('delete');
     $emailnotify = formYesNo('emailnotify');
     if ($emailnotify != 'yes') {
         $emailnotify = $vars->self['sub_each_post'];
     }
     $usesig = formYesNo('usesig');
 } else {
+    $delete = 'no';
     $emailnotify = 'no';
     $usesig = 'no';
 }
 
-$template->codeoffcheck = ($bbcodeoff == 'yes') ? $vars::cheHTML : '';
 $template->emailnotifycheck = ($emailnotify == 'yes') ? $vars::cheHTML : '';
-$template->smileoffcheck = ($smileyoff == 'yes') ? $vars::cheHTML : '';
-if (onSubmit('previewpost')) {
-    $template->usesigcheck = $usesig == 'yes' ? $vars::cheHTML : '';
-} else {
-    $template->usesigcheck = $vars->self['sig'] != '' ? $vars::cheHTML : '';
-}
 $template->disableguest = X_GUEST ? 'style="display:none;"' : '';
 
 // New bool vars to clear up the confusion about effective settings.
@@ -282,6 +266,7 @@ if (X_STAFF) {
 
 $messageinput = $validate->postedVar('message', dbescape: false);
 $subjectinput = $validate->postedVar('subject', dbescape: false);
+$messageinput = trim($messageinput);
 $subjectinput = trim($subjectinput);
 $subjectinput = str_replace(["\r", "\n"], ['', ''], $subjectinput);
 
@@ -296,7 +281,7 @@ if ($bBBcodeInserterEnabled || $bSmilieInserterEnabled) {
         $subTemplate->mode1check = '';
         $subTemplate->mode2check = '';
         $mode = isset($mode) ? formInt('mode') : 2;
-        switch($mode) {
+        switch ($mode) {
             case 0:
                 $subTemplate->mode0check = $vars::cheHTML;
                 $subTemplate->setbbcodemode = 'advmode=true;normalmode=false;';
@@ -318,896 +303,318 @@ if ($bBBcodeInserterEnabled || $bSmilieInserterEnabled) {
     }
 }
 
+// Breadcrumbs
 switch ($action) {
     case 'reply':
-        $core->nav('<a href="' . $vars->full_url . 'viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
+        $core->nav("<a href='" . $vars->full_url . "viewthread.php?tid=$tid'>$threadname</a>");
         $core->nav($lang['textreply']);
-
-        if ($SETTINGS['subject_in_title'] === 'on') {
-            $template->threadSubject = $lang['textreply'] . ' - ';
-        }
-
-        $replyvalid = onSubmit('replysubmit'); // This new flag will indicate a message was submitted and successful.
-
-        if ($forum['attachstatus'] == 'on' && X_MEMBER) {
-            for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
-                if (isset($_FILES['attach' . $i])) {
-                    $result = $attachSvc->uploadedFile('attach' . $i, 0, $quarantine);
-                    if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
-                        $errors .= $core->softerror($attachSvc->uploadErrorMsg($result->status));
-                        $replyvalid = false;
-                    }
-                }
-            }
-            $aid_list = $sql->getOrphanedAttachmentIDs((int) $vars->self['uid'], $quarantine);
-            $deletes = [];
-            $status = $attachSvc->doEdits($deletes, $aid_list, 0, $quarantine);
-            if ($status !== UploadStatus::Success) {
-                $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
-                $replyvalid = false;
-            }
-            foreach ($deletes as $aid) {
-                $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
-            }
-            if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $status = $attachSvc->remoteImages(0, $messageinput, $quarantine);
-                if ($status !== UploadStatus::Success) {
-                    $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
-                    $replyvalid = false;
-                }
-            }
-            $attachSkipped = false;
-        } else {
-            $attachSkipped = true;
-        }
-
-        //Check all replying permissions for this $tid.
-        if (! X_SADMIN && $thread['closed'] != '') {
-            if ($replyvalid) {
-                $errors .= $core->softerror($lang['closedmsg']);
-            } else {
-                $core->error($lang['closedmsg']);
-            }
-            $replyvalid = false;
-        }
-
-        if ($replyvalid) {
-            if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
-                $password = '';
-                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                    $Captcha = new Captcha($core, $vars);
-                    if ($Captcha->bCompatible !== false) {
-                        $imgcode = getPhpInput('imgcode');
-                        $imghash = getPhpInput('imghash');
-                        if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
-                            $errors .= $core->softerror($lang['captchaimageinvalid']);
-                            $replyvalid = false;
-                        }
-                    }
-                    unset($Captcha);
-                }
-            }
-        }
-
-        if ($replyvalid) {
-            if (strlen($subjectinput) == 0 && strlen($messageinput) == 0) {
-                $errors .= $core->softerror($lang['postnothing']);
-                $replyvalid = false;
-            }
-        }
-
-        if ($replyvalid) {
-            if ($posticon != '') {
-                $query = $db->query("SELECT id FROM " . $vars->tablepre . "smilies WHERE type='picon' AND url='$sql_posticon'");
-                if ($db->num_rows($query) == 0) {
-                    $sql_posticon = '';
-                    $posticon = '';
-                    $errors .= $core->softerror($lang['error']);
-                    $replyvalid = false;
-                }
-                $db->free_result($query);
-            }
-        }
-
-        if ($replyvalid) {
-            if ($forum['lastpost'] != '') {
-                $lastpost = explode('|', $forum['lastpost']);
-                $rightnow = $vars->onlinetime - (int) $SETTINGS['floodctrl'];
-                if ($rightnow <= (int) $lastpost[0] && $username === $lastpost[1]) {
-                    $floodlink = "<a href='" . $vars->full_url . "viewthread.php?fid=$fid&amp;tid=$tid'>Click here</a>";
-                    $errmsg = $lang['floodprotect'].' '.$floodlink.' '.$lang['tocont'];
-                    $errors .= $core->softerror($errmsg);
-                    $replyvalid = false;
-                }
-            }
-        }
-
-        if ($replyvalid) {
-            $thatime = $vars->onlinetime;
-            if ($bBBcodeOnForThisPost) {
-                $core->postLinkBBcode($messageinput);
-            }
-
-            $dbmessage = $messageinput;
-            $dbsubject = $subjectinput;
-
-            if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 255) {
-                // Inputs are suspiciously long.  Has the schema been customized?
-                $query = $db->query("SELECT message, subject FROM " . $vars->tablepre . "posts WHERE 1=0");
-                $msgmax = $db->field_len($query, 0);
-                $submax = $db->field_len($query, 1);
-                $db->free_result($query);
-                if (strlen($dbmessage) > $msgmax) {
-                    $dbmessage = substr($dbmessage, 0, $msgmax);
-                }
-                if (strlen($dbsubject) > $submax) {
-                    $dbsubject = substr($dbsubject, 0, $submax);
-                }
-            }
-
-            if (strlen($vars->onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($vars->onlineip) > 39)) {
-                $useip = '';
-            } else {
-                $useip = $vars->onlineip;
-            }
-
-            $values = [
-                'fid' => (int) $fid,
-                'tid' => (int) $tid,
-                'dateline' => $vars->onlinetime,
-                'author' => $username,
-                'message' => $dbmessage,
-                'subject' => $dbsubject,
-                'icon' => $posticon,
-                'usesig' => $usesig,
-                'useip' => $useip,
-                'bbcodeoff' => $bbcodeoff,
-                'smileyoff' => $smileyoff,
-            ];
-
-            $pid = $sql->addPost($values, $quarantine);
-
-            $moderator = ($core->modcheck($username, $forum['moderator']) == 'Moderator');
-            if ($moderator && $closetopic == 'yes') {
-                $db->query("UPDATE " . $vars->tablepre . "threads SET closed = 'yes' WHERE tid = $tid AND fid = $fid");
-            }
-
-            if (! $quarantine) {
-                // Update stats
-                $fupArg = $forum['type'] == 'sub' ? (int) $forum['fup'] : null;
-                $sql->setThreadLastpost($tid, "$thatime|$sql_username|$pid", newReply: true);
-                $sql->setForumCounts($fid, "$thatime|$sql_username|$pid", fup: $fupArg, newReply: true);
-
-                if (X_MEMBER) {
-                    $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
-                    $expire = $vars->onlinetime + $vars::ONLINE_TIMER;
-                    if (empty($oldtopics)) {
-                        $oldtopics = "|$pid|";
-                    } else {
-                        $oldtopics .= "$pid|";
-                    }
-                    $core->put_cookie('oldtopics', $oldtopics, $expire);
-                }
-
-                // Send subscription notifications
-                $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE pid <= $pid AND tid='$tid'");
-                $posts = (int) $db->result($query);
-                $db->free_result($query);
-
-                $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
-                $viewperm = $core->getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
-
-                $query = $db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
-                if ($db->num_rows($query) > 0) {
-                    $date = $db->result($query);
-                } else {
-                    // Replying to a thread that has zero posts.
-                    $date = '0';
-                }
-                $db->free_result($query);
-
-                $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
-                                     . "FROM " . $vars->tablepre . "favorites f "
-                                     . "INNER JOIN " . $vars->tablepre . "members m USING (username) "
-                                     . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
-                while ($subs = $db->fetch_array($subquery)) {
-                    if ($viewperm < $vars->status_enum[$subs['status']]) {
-                        continue;
-                    }
-
-                    if ($subs['ppp'] < 1) {
-                        $subs['ppp'] = $posts;
-                    }
-
-                    $translate = $lang2[$subs['langfile']];
-                    $topicpages = $core->quickpage($posts, (int) $subs['ppp']);
-                    $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-                    $threadurl = $vars->full_url . 'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
-                    $rawsubject = rawHTML($threadname);
-                    $rawusername = rawHTML($username);
-                    $rawemail = rawHTML($subs['email']);
-                    $title = "$rawsubject ({$translate['textsubsubject']})";
-                    $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
-                    $email->send($rawemail, $title, $body, $translate['charset']);
-                }
-                $db->free_result($subquery);
-            }
-
-            if ('yes' == $emailnotify) {
-                $sql->addFavoriteIfMissing((int) $tid, $username, 'subscription');
-            }
-
-            if ($forum['attachstatus'] == 'on') {
-                if ($attachSkipped) {
-                    for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
-                        if (isset($_FILES["attach$i"])) {
-                            $attachSvc->uploadedFile("attach$i", $pid, $quarantine);
-                        }
-                    }
-                    if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        $attachSvc->remoteImages($pid, $messageinput, $quarantine);
-                        $newdbmessage = $messageinput;
-                        if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            $sql->savePostBody($pid, $newdbmessage, $quarantine);
-                        }
-                    }
-                } elseif (X_MEMBER) {
-                    $sql->claimOrphanedAttachments($pid, (int) $vars->self['uid'], $quarantine);
-                }
-            }
-
-            if ($quarantine) {
-                $core->message($lang['moderation_hold']);
-            } else {
-                $topicpages = $core->quickpage($posts, $vars->ppp);
-                $topicpages = ($topicpages == 1) ? '' : '&page=' . $topicpages;
-                $core->message($lang['replymsg'], redirect: $vars->full_url . "viewthread.php?tid={$tid}{$topicpages}#pid{$pid}");
-            }
-        }
-
-        if (! $replyvalid) {
-            if ($repquote > 0) {
-                $query = $db->query("SELECT p.message, p.tid, p.fid, p.author FROM " . $vars->tablepre . "posts p WHERE p.pid = $repquote");
-                $thaquote = $db->fetch_array($query);
-                $db->free_result($query);
-                $quoteperms = $core->checkForumPermissions($forums->getForum((int) $thaquote['fid']));
-                if ($quoteperms[$vars::PERMS_VIEW] && $quoteperms[$vars::PERMS_PASSWORD]) {
-                    $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); // These codes will not work inside quotes.
-                    $quoteblock = $core->rawHTMLmessage($thaquote['message']);
-                    if ($bBBcodeOnForThisPost) {
-                        $messageinput = "[rquote=$repquote&amp;tid={$thaquote['tid']}&amp;author={$thaquote['author']}]{$quoteblock}[/rquote]";
-                    } else {
-                        $quotesep = '|| ';
-                        $quoteblock = $quotesep.str_replace("\n", "\n$quotesep", $quoteblock);
-                        $messageinput = "{$lang['textquote']} {$lang['origpostedby']} {$thaquote['author']}\r\n$quotesep\r\n$quoteblock\r\n\r\n";
-                    }
-                }
-            }
-
-            // Fill $attachfile
-            $files = [];
-            if ($forum['attachstatus'] == 'on' && X_MEMBER) {
-                $template->attachfile = '';
-                $files = $sql->getOrphanedAttachments($quarantine, (int) $vars->self['uid']);
-                $counter = 0;
-                $prevsize = '';
-                foreach ($files as $postinfo) {
-                    $postinfo['filesize'] = number_format((int) $postinfo['filesize'], 0, '.', ',');
-                    $subTemplate->postinfo = $postinfo;
-                    $template->attachfile .= $subTemplate->process('post_attachment_orphan.php');
-                    if ($bBBcodeOnForThisPost) {
-                        $bbcode = "[file]{$postinfo['aid']}[/file]";
-                        if (strpos($messageinput, $bbcode) === false) {
-                            if ($counter == 0 || $postinfo['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
-                                $messageinput .= "\n\n";
-                            }
-                            $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
-                            $counter++;
-                            $prevsize = $postinfo['img_size'];
-                        }
-                    }
-                }
-                $template->attachfile .= $core->makeAttachmentBox(count($files));
-            }
-
-            //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
-            $template->subject = $core->rawHTMLsubject($subjectinput);
-            $template->message = $core->rawHTMLmessage($messageinput);
-
-            if (onSubmit('previewpost')) {
-                if ($posticon != '') {
-                    $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/$posticon' />";
-                } else {
-                    $thread['icon'] = '';
-                }
-                $subTemplate->thread = $thread;
-                $currtime = $core->timeKludge($vars->onlinetime);
-                $date = $core->printGmDate($currtime);
-                $time = gmdate($vars->timecode, $currtime);
-                $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-                if (strlen($template->subject) > 0) {
-                    $subTemplate->dissubject = $template->subject.'<br />';
-                } else {
-                    $subTemplate->dissubject = '';
-                }
-                if ($bBBcodeOnForThisPost) {
-                    $core->postLinkBBcode($messageinput);
-                }
-                if (count($files) > 0) {
-                    $messageinput = $core->bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine);
-                }
-                $subTemplate->message1 = $core->postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
-
-                if ($usesig == 'yes') {
-                    $subTemplate->sig = $core->postify(
-                        message: $vars->self['sig'],
-                        allowsmilies: $forum['allowsmilies'],
-                        allowbbcode: $SETTINGS['sigbbcode'],
-                        allowimgcode: $forum['allowimgcode'],
-                    );
-                    $subTemplate->message1 .= $subTemplate->process('viewthread_post_sig.php');
-                }
-                $subTemplate->username = $username;
-                $template->preview = $subTemplate->process('post_preview.php');
-            }
-
-            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                $Captcha = new Captcha($core, $vars);
-                if ($Captcha->bCompatible !== false) {
-                    $subTemplate->imghash = $Captcha->GenerateCode();
-                    $template->captchapostcheck = $subTemplate->process('post_captcha.php');
-                }
-                unset($Captcha);
-            }
-
-            $template->posts = '';
-
-            if ($core->modcheck($username, $forum['moderator']) == 'Moderator') {
-                $template->closeoption = '<label><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'</label>';
-            } else {
-                $template->closeoption = '';
-            }
-
-            $replynum = $sql->countPosts(false, $tid);
-            if ($replynum >= $vars->ppp) {
-                $threadlink = $vars->full_url . "viewthread.php?fid=$fid&tid=$tid";
-                $subTemplate->trevltmsg = str_replace('$threadlink', $threadlink, $lang['evaltrevlt']);
-                $template->posts .= $subTemplate->process('post_reply_review_toolong.php');
-            } else {
-                $subTemplate->thisbg = $vars->theme['altbg1'];
-                $posts = $sql->getPostsByTID($tid, $vars->ppp, ascending: false);
-                foreach ($posts as $post) {
-                    $currtime = $core->timeKludge((int) $post['dateline']);
-                    $date = $core->printGmDate($currtime);
-                    $time = gmdate($vars->timecode, $currtime);
-                    $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-
-                    if ($post['icon'] != '') {
-                        $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $post['icon'] . '" alt="' . $lang['altpostmood'] . '" border="0" />';
-                    } else {
-                        $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
-                    }
-
-                    $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
-                    $post['message'] = $core->postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
-                    $subTemplate->post = $post;
-                    $template->posts .= $subTemplate->process('post_reply_review_post.php');
-                    if ($subTemplate->thisbg == $vars->theme['altbg2']) {
-                        $subTemplate->thisbg = $vars->theme['altbg1'];
-                    } else {
-                        $subTemplate->thisbg = $vars->theme['altbg2'];
-                    }
-                }
-                unset($posts);
-            }
-
-            $postpage = $template->process('post_reply.php');
-        }
         break;
-
     case 'newthread':
         if ($poll == 'yes') {
             $core->nav($lang['textnewpoll']);
         } else {
             $core->nav($lang['textpostnew']);
         }
+        break;
+    case 'edit':
+        $core->nav("<a href='" . $vars->full_url . "viewthread.php?tid=$tid'>$threadname</a>");
+        $core->nav($lang['texteditpost']);
+}
 
-        if ($SETTINGS['subject_in_title'] === 'on') {
+// Title
+if ($SETTINGS['subject_in_title'] === 'on') {
+    switch ($action) {
+        case 'reply':
+            $template->threadSubject = $lang['textreply'] . ' - ';
+            break;
+        case 'newthread':
             $template->threadSubject = $lang['textpostnew'] . ' - ';
+            break;
+        case 'edit':
+            $template->threadSubject = $lang['texteditpost'] . ' - ';
+    }
+}
+
+// Set initial validity of inputs (when other than preview POST or any GET)
+switch ($action) {
+    case 'reply':
+        $validForSave = onSubmit('replysubmit');
+        break;
+    case 'newthread':
+        $validForSave = onSubmit('topicsubmit');
+        break;
+    case 'edit':
+        $validForSave = onSubmit('editsubmit');
+}
+
+// Check permissions on action
+switch ($action) {
+    case 'reply':
+        if (! X_SADMIN && $thread['closed'] != '') {
+            if ($validForSave) {
+                $errors .= $core->softerror($lang['closedmsg']);
+            } else {
+                $core->error($lang['closedmsg']);
+            }
         }
+        $isMod = $core->modcheck($username, $forum['moderator']);
+        break;
+    case 'newthread':
+        $isMod = $core->modcheck($username, $forum['moderator']);
+        break;
+    case 'edit':
+        // Based on viewthread design, forum Moderators can always edit, $orig['author'] can edit open threads only.
+        $result = $db->query("SELECT p.*, m.status, m.sig FROM " . $vars->tablepre . "posts p LEFT JOIN " . $vars->tablepre . "members m ON p.author = m.username WHERE p.pid = $pid");
+        $orig = $db->fetch_array($result);
+        $db->free_result($result);
 
-        $template->pollanswers = $validate->postedVar('pollanswers', dbescape: false);
-        $topicvalid = onSubmit('topicsubmit'); // This new flag will indicate a message was submitted and successful.
+        $isMod = $core->modcheckPost($vars->self['username'], $forum['moderator'], $orig['status']);
 
-        if ($forum['attachstatus'] == 'on' && X_MEMBER) {
-            for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
-                if (isset($_FILES["attach$i"])) {
-                    $result = $attachSvc->uploadedFile("attach$i", 0, $quarantine);
-                    if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
-                        $errors .= $core->softerror($attachSvc->uploadErrorMsg($result->status));
-                        $topicvalid = false;
+        if (! $isMod) {
+            $delete = 'no';
+            if ($vars->self['username'] !== $orig['author'] || $thread['closed'] != '') {
+                $core->error($lang['noedit']);
+            }
+        }
+}
+
+// Attachment pre-processing
+if ($forum['attachstatus'] == 'on' && X_MEMBER) {
+    for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
+        if (isset($_FILES['attach' . $i])) {
+            $result = $attachSvc->uploadedFile('attach' . $i, 0, $quarantine);
+            if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
+                $errors .= $core->softerror($attachSvc->uploadErrorMsg($result->status));
+            }
+        }
+    }
+    if ($action == 'edit') {
+        $children = false;
+        $aid_list = $sql->getAttachmentIDsByPost($pid, $children);
+    } else {
+        $aid_list = $sql->getOrphanedAttachmentIDs((int) $vars->self['uid'], $quarantine);
+    }
+    $deletes = [];
+    $status = $attachSvc->doEdits($deletes, $aid_list, 0, $quarantine);
+    if ($status !== UploadStatus::Success) {
+        $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
+    }
+    foreach ($deletes as $aid) {
+        $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
+    }
+    if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
+        $status = $attachSvc->remoteImages(0, $messageinput, $quarantine);
+        if ($status !== UploadStatus::Success) {
+            $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
+        }
+    }
+    $attachSkipped = false;
+} else {
+    $attachSkipped = true;
+}
+
+// CAPTCHA input
+if ($validForSave && $action !== 'edit' && X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+    $captcha = new Captcha($core, $vars);
+    if ($captcha->bCompatible !== false) {
+        $imgcode = getPhpInput('imgcode');
+        $imghash = getPhpInput('imghash');
+        if ($captcha->ValidateCode($imgcode, $imghash) !== true) {
+            $errors .= $core->softerror($lang['captchaimageinvalid']);
+        }
+    }
+    unset($captcha);
+}
+
+// Check required fields
+if ($validForSave) {
+    switch ($action) {
+        case 'reply':
+        case 'edit':
+            $isFirstPost = $pid == $sql->getFirstPostInThread($tid);
+            if (strlen($subjectinput) == 0) {
+                if (strlen($messageinput) == 0) {
+                    $errors .= $core->softerror($lang['postnothing']);
+                } elseif ($delete != 'yes') {
+                    // Check if this is the first post in the thread.
+                    if ($isFirstPost) {
+                        $errors .= $core->softerror($lang['textnosubject']);
                     }
                 }
             }
-            $aid_list = $sql->getOrphanedAttachmentIDs((int) $vars->self['uid'], $quarantine);
-            $deletes = [];
-            $status = $attachSvc->doEdits($deletes, $aid_list, 0, $quarantine);
-            if ($status !== UploadStatus::Success) {
-                $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
-                $topicvalid = false;
-            }
-            foreach ($deletes as $aid) {
-                $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
-            }
-            if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                $status = $attachSvc->remoteImages(0, $messageinput, $quarantine);
-                if ($status !== UploadStatus::Success) {
-                    $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
-                    $topicvalid = false;
-                }
-            }
-            $attachSkipped = false;
-        } else {
-            $attachSkipped = true;
-        }
-
-        if ($topicvalid) {
-            if (X_GUEST) { // Anonymous posting is allowed, and was checked in forum perms at top of file.
-                $password = '';
-                if ($SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                    $Captcha = new Captcha($core, $vars);
-                    if ($Captcha->bCompatible !== false) {
-                        $imgcode = getPhpInput('imgcode');
-                        $imghash = getPhpInput('imghash');
-                        if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
-                            $errors .= $core->softerror($lang['captchaimageinvalid']);
-                            $topicvalid = false;
-                        }
-                    }
-                    unset($Captcha);
-                }
-            }
-        }
-
-        if ($topicvalid) {
+            break;
+        case 'newthread':
             if (strlen($subjectinput) == 0) {
                 $errors .= $core->softerror($lang['textnosubject']);
-                $topicvalid = false;
+            }
+    }
+}
+
+// Flood protection
+if ($validForSave && $action !== 'edit') {
+    if ((int) $vars->self['post_date'] >= $vars->onlinetime - (int) $vars->settings['floodctrl']) {
+        $errors .= $core->softerror($lang['floodprotect']);
+    }
+}
+
+// Generate pollopts array and check the count
+if ($action === 'newthread' && $poll === 'yes') {
+    $template->pollanswers = $validate->postedVar('pollanswers', dbescape: false);
+
+    if ($validForSave) {
+        $pollopts = [];
+        $pollopts2 = explode("\n", $template->pollanswers);
+        foreach ($pollopts2 as $value) {
+            $value = trim($value);
+            if ($value != '') {
+                $pollopts[] = $value;
+            }
+        }
+        unset($pollopts2);
+
+        if (count($pollopts) < 2) {
+            $errors .= $core->softerror($lang['too_few_pollopts']);
+        }
+    }
+}
+
+// Expand any [pid]1234[/pid] BBCodes
+if ($bBBcodeOnForThisPost) {
+    $core->postLinkBBcode($messageinput);
+}
+
+// All soft errors have been processed. If there were no errors, then let's save the inputs now.
+if ($validForSave && $errors == '') {
+    if ($action == 'edit' && $SETTINGS['editedby'] == 'on') {
+        $messageinput .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
+    }
+
+    // Assign tentative message & subject values, to be adjusted.  Leave the originals available for other needs.
+    $dbmessage = $messageinput;
+    $dbsubject = $subjectinput;
+
+    // Check for field overflow
+    if (strlen($dbmessage) > $vars::POST_MSG_MAX_LEN) {
+        $dbmessage = substr($dbmessage, 0, $vars::POST_MSG_MAX_LEN);
+    }
+    if (strlen($dbsubject) > $vars::THREAD_SUB_MAX_LEN) {
+        $dbsubject = substr($dbsubject, 0, $vars::THREAD_SUB_MAX_LEN);
+    }
+    if (strlen($vars->onlineip) > $vars::IP_ADDRESS_MAX_LENGTH) {
+        $useip = '';
+    } else {
+        $useip = $vars->onlineip;
+    }
+
+    // Create a thread record
+    $lastpost = $vars->onlinetime . '|' . $username;
+    if ($action == 'newthread') {
+        $closed = '';
+        $topped = 0;
+        $dbpollopts = ('yes' == $poll) ? 1 : 0;
+
+        if ($isMod) {
+            if ('yes' == $closetopic) {
+                // Be careful here; threads.closed is historically yes/moved/empty rather than yes/no.
+                $closed = 'yes';
+            }
+            if ($toptopic == 'yes') {
+                $topped = 1;
             }
         }
 
-        if ($topicvalid) {
-            if ($posticon != '') {
-                $query = $db->query("SELECT id FROM " . $vars->tablepre . "smilies WHERE type='picon' AND url='$sql_posticon'");
-                if ($db->num_rows($query) == 0) {
-                    $sql_posticon = '';
-                    $posticon = '';
-                    $errors .= $core->softerror($lang['error']);
-                    $topicvalid = false;
-                }
-                $db->free_result($query);
-            }
+        $values = [
+            'fid' => $fid,
+            'subject' => $dbsubject,
+            'icon' => $posticon,
+            'lastpost' => $lastpost,
+            'author' => $username,
+            'closed' => $closed,
+            'topped' => $topped,
+            'pollopts' => $dbpollopts,
+        ];
+
+        $tid = $sql->addThread($values, $quarantine);
+    }
+
+    // Create/modify/delete post record
+    if ($action != 'edit') {
+        if (X_MEMBER && ! $quarantine) {
+            $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
         }
 
-        if ($topicvalid) {
-            if ($forum['lastpost'] != '') {
-                $lastpost = explode('|', $forum['lastpost']);
-                $rightnow = $vars->onlinetime - (int) $SETTINGS['floodctrl'];
-                if ($rightnow <= (int) $lastpost[0] && $username === $lastpost[1]) {
-                    $errors .= $core->softerror($lang['floodprotect']);
-                    $topicvalid = false;
-                }
-            }
+        $values = [
+            'fid' => $fid,
+            'tid' => $tid,
+            'dateline' => $vars->onlinetime,
+            'author' => $username,
+            'message' => $dbmessage,
+            'subject' => $dbsubject,
+            'icon' => $posticon,
+            'usesig' => $usesig,
+            'useip' => $useip,
+            'bbcodeoff' => $bbcodeoff,
+            'smileyoff' => $smileyoff,
+        ];
+
+        $qthread = ($quarantine && $action == 'newthread'); // Signal that we don't want to associate this post with a non-quarantined TID.
+
+        $pid = $sql->addPost($values, $quarantine, $qthread);
+    } elseif ($delete != 'yes') {
+        // Post was edited
+        $sql_message = $db->escape($dbmessage);
+        $sql_subject = $db->escape($dbsubject);
+
+        $db->query("
+            UPDATE " . $vars->tablepre . "posts
+            SET message = '$sql_message', usesig = '$usesig', bbcodeoff = '$bbcodeoff', smileyoff = '$smileyoff', icon = '$sql_posticon', subject = '$sql_subject'
+            WHERE pid = $pid
+        ");
+    } else {
+        // Post was deleted.  Let's also figure out if the thread needs to be removed.
+        $db->query("DELETE FROM " . $vars->tablepre . "posts WHERE pid = $pid");
+        if ($orig['author'] != 'Anonymous') {
+            $sql->adjustPostCount($orig['author'], -1);
         }
+        $attachSvc->deleteByPost($pid);
 
-        if ($topicvalid) {
-            if ($poll == 'yes') {
-                $pollopts = [];
-                $pollopts2 = explode("\n", $template->pollanswers);
-                foreach ($pollopts2 as $value) {
-                    $value = trim($value);
-                    if ($value != '') {
-                        $pollopts[] = $value;
-                    }
-                }
-                $pnumnum = count($pollopts);
-
-                if ($pnumnum < 2) {
-                    $errors .= $core->softerror($lang['too_few_pollopts']);
-                    $topicvalid = false;
-                }
-            }
-        }
-
-        if ($topicvalid) {
-            $thatime = $vars->onlinetime;
-
-            if ($bBBcodeOnForThisPost) {
-                $core->postLinkBBcode($messageinput);
-            }
-            $dbmessage = $messageinput;
-            $dbsubject = $subjectinput;
-            $dbtsubject = $dbsubject;
-
-            if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 128) {
-                // Inputs are suspiciously long.  Has the schema been customized?
-                $query = $db->query("SELECT message, subject FROM " . $vars->tablepre . "posts WHERE 1=0");
-                $msgmax = $db->field_len($query, 0);
-                $submax = $db->field_len($query, 1);
-                $db->free_result($query);
-                if (strlen($dbmessage) > $msgmax) {
-                    $dbmessage = substr($dbmessage, 0, $msgmax);
-                }
-                if (strlen($dbsubject) > $submax) {
-                    $dbsubject = substr($dbsubject, 0, $submax);
-                }
-
-                $query = $db->query("SELECT subject FROM " . $vars->tablepre . "threads WHERE 1=0");
-                $tsubmax = $db->field_len($query, 0);
-                $db->free_result($query);
-                if (strlen($dbtsubject) > $tsubmax) {
-                    $dbtsubject = substr($dbtsubject, 0, $tsubmax);
-                }
-            }
-            
-            $lastpost = "$thatime|$username";
-            $closed = '';
-            $topped = 0;
-            $dbpollopts = ('yes' == $poll) ? 1 : 0;
-
-            if (X_MEMBER) {
-                $moderator = ($core->modcheck($username, $forum['moderator']) == 'Moderator');
-                if ($moderator) {
-                    if ('yes' == $closetopic) {
-                        // Be careful here; threads.closed is historically yes/moved/empty rather than yes/no.
-                        $closed = 'yes';
-                    }
-                    if ($toptopic == 'yes') {
-                        $topped = 1;
-                    }
-                }
-            }
-
-            $values = [
-                'fid' => (int) $fid,
-                'subject' => $dbtsubject,
-                'icon' => $posticon,
-                'lastpost' => $lastpost,
-                'author' => $username,
-                'closed' => $closed,
-                'topped' => $topped,
-                'pollopts' => $dbpollopts,
-            ];
-
-            $tid = $sql->addThread($values, $quarantine);
-
-            if (strlen($vars->onlineip) > 15 && ((int) $SETTINGS['schema_version'] < 9 || strlen($vars->onlineip) > 39)) {
-                $useip = '';
+        $threaddelete = 'no';
+        if ($isFirstPost) {
+            if ($sql->countPosts(tid: $tid) == 0) {
+                $threaddelete = 'yes';
             } else {
-                $useip = $vars->onlineip;
+                $db->query("UPDATE " . $vars->tablepre . "posts SET subject = '" . $db->escape($orig['subject']) . "' WHERE tid = $tid ORDER BY dateline LIMIT 1");
             }
+        }
+    }
 
-            $values = [
-                'fid' => (int) $fid,
-                'tid' => $tid,
-                'dateline' => $vars->onlinetime,
-                'author' => $username,
-                'message' => $dbmessage,
-                'subject' => $dbsubject,
-                'icon' => $posticon,
-                'usesig' => $usesig,
-                'useip' => $useip,
-                'bbcodeoff' => $bbcodeoff,
-                'smileyoff' => $smileyoff,
-            ];
-
-            $pid = $sql->addPost($values, $quarantine, $quarantine); // 3rd arg signals that this is not a reply.
-
-            $lastpost .= "|$pid";
-            $sql->setThreadLastpost($tid, $lastpost, $quarantine);
-
+    // Modify the thread
+    $lastpost .= "|$pid";
+    $fupArg = $forum['type'] == 'sub' ? (int) $forum['fup'] : null;
+    switch ($action) {
+        case 'reply':
             if (! $quarantine) {
-                $where = "WHERE fid=$fid";
-                if ($forum['type'] == 'sub') {
-                    $where .= " OR fid={$forum['fup']}";
-                }
-                $db->query("UPDATE " . $vars->tablepre . "forums SET lastpost='$thatime|$sql_username|$pid', threads=threads+1, posts=posts+1 $where");
-                unset($where);
+                $close = ($closetopic == 'yes' && $isMod);
+                $sql->setThreadLastpost($tid, $lastpost, newReply: true, close: $close);
+                $sql->setForumCounts($fid, $lastpost, fup: $fupArg, newReply: true);
             }
-
-            if ($poll == 'yes') {
-                // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
-                $dbsubject = $subjectinput;
-                $vote_id = $sql->addVoteDesc($tid, $quarantine);
-                
-                // Create poll options.  This is the part we care about.
-                $options = [];
-                $i = 1;
-                foreach ($pollopts as $p) {
-                    $options[] = [
-                        'vote_id' => $vote_id,
-                        'vote_option_id' => $i++,
-                        'vote_option_text' => $p,
-                    ];
-                }
-                $sql->addVoteOptions($options, $quarantine);
+            break;
+        case 'newthread':
+            $sql->setThreadLastpost($tid, $lastpost, $quarantine);
+            if (! $quarantine) {
+                $sql->setForumCounts($fid, $lastpost, fup: $fupArg, newReply: true);
             }
-
-            if (X_MEMBER) {
-                if ($emailnotify == 'yes') {
-                    $sql->addFavoriteIfMissing((int) $tid, $username, 'subscription', $quarantine);
-                }
-
-                if (! $quarantine) {
-                    $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
-                    $expire = $vars->onlinetime + $vars::ONLINE_TIMER;
-                    if (empty($oldtopics)) {
-                        $oldtopics = "|$pid|";
-                    } else {
-                        $oldtopics .= "$pid|";
-                    }
-                    $core->put_cookie('oldtopics', $oldtopics, $expire);
-                }
-            }
-
-            if ($forum['attachstatus'] == 'on') {
-                if ($attachSkipped) {
-                    for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
-                        if (isset($_FILES["attach$i"])) {
-                            $attachSvc->uploadedFile("attach$i", $pid, $quarantine);
-                        }
-                    }
-                    if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                        $attachSvc->remoteImages($pid, $messageinput, $quarantine);
-                        $newdbmessage = $messageinput;
-                        if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
-                            $sql->savePostBody($pid, $newdbmessage, $quarantine);
-                        }
-                    }
-                } elseif (X_MEMBER) {
-                    $sql->claimOrphanedAttachments($pid, (int) $vars->self['uid'], $quarantine);
-                }
-            }
-
-            if ($quarantine) {
-                $core->message($lang['moderation_hold']);
-            } else {
-                $posts = $sql->countPosts(tid: $tid);
-
-                $topicpages = $core->quickpage($posts, $vars->ppp);
-                $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
-                $core->message($lang['postmsg'], redirect: $vars->full_url . "viewthread.php?tid={$tid}{$topicpages}#pid{$pid}");
-            }
-        }
-
-        if (! $topicvalid) {
-            // Fill $attachfile
-            $files = [];
-            if ($forum['attachstatus'] == 'on' && X_MEMBER) {
-                $template->attachfile = '';
-                $files = $sql->getOrphanedAttachments($quarantine, (int) $vars->self['uid']);
-                $counter = 0;
-                $prevsize = '';
-                foreach ($files as $postinfo) {
-                    $postinfo['filesize'] = number_format((int) $postinfo['filesize'], 0, '.', ',');
-                    $subTemplate->postinfo = $postinfo;
-                    $template->attachfile .= $subTemplate->process('post_attachment_orphan.php');
-                    if ($bBBcodeOnForThisPost) {
-                        $bbcode = "[file]{$postinfo['aid']}[/file]";
-                        if (strpos($messageinput, $bbcode) === false) {
-                            if ($counter == 0 || $postinfo['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
-                                $messageinput .= "\n\n";
-                            }
-                            $messageinput .= ' '.$bbcode; // Use a leading space to prevent awkward line wraps.
-                            $counter++;
-                            $prevsize = $postinfo['img_size'];
-                        }
-                    }
-                }
-                $template->attachfile .= $core->makeAttachmentBox(count($files));
-            }
-
-            //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
-            $template->subject = $core->rawHTMLsubject($subjectinput);
-            $template->message = $core->rawHTMLmessage($messageinput);
-
-            if (onSubmit('previewpost')) {
-                if ($posticon != '') {
-                    $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/$posticon' />";
-                } else {
-                    $thread['icon'] = '';
-                }
-                $subTemplate->thread = $thread;
-                $currtime = $core->timeKludge($vars->onlinetime);
-                $date = $core->printGmDate($currtime);
-                $time = gmdate($vars->timecode, $currtime);
-                $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-                if (strlen($template->subject) > 0) {
-                    $subTemplate->dissubject = $template->subject.'<br />';
-                } else {
-                    $subTemplate->dissubject = '';
-                }
-                if ($bBBcodeOnForThisPost) {
-                    $core->postLinkBBcode($messageinput);
-                }
-                if (count($files) > 0) {
-                    $messageinput = $core->bbcodeFileTags($messageinput, $files, 0, $bBBcodeOnForThisPost, $quarantine);
-                }
-                $subTemplate->message1 = $core->postify($messageinput, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
-
-                if ($usesig == 'yes') {
-                    $subTemplate->sig = $core->postify(
-                        message: $vars->self['sig'],
-                        allowsmilies: $forum['allowsmilies'],
-                        allowbbcode: $SETTINGS['sigbbcode'],
-                        allowimgcode: $forum['allowimgcode'],
-                    );
-                    $subTemplate->message1 .= $subTemplate->process('viewthread_post_sig.php');
-                }
-
-                $template->preview = $subTemplate->process('post_preview.php');
-            }
-
-            if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
-                $Captcha = new Captcha($core, $vars);
-                if ($Captcha->bCompatible !== false) {
-                    $subTemplate->imghash = $Captcha->GenerateCode();
-                    $template->captchapostcheck = $subTemplate->process('post_captcha.php');
-                }
-                unset($Captcha);
-            }
-
-            if ($core->modcheck($username, $forum['moderator']) == 'Moderator') {
-                $template->topoption = '<label><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'] . '</label>';
-                $template->closeoption = '<label><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'</label>';
-            } else {
-                $template->topoption = '';
-                $template->closeoption = '';
-            }
-
-            if (isset($poll) && $poll == 'yes') {
-                $postpage = $template->process('post_newpoll.php');
-            } else {
-                $postpage = $template->process('post_newthread.php');
-            }
-        }
-        break;
-
-    case 'edit':
-        $core->nav('<a href="' . $vars->full_url . 'viewthread.php?tid='.$tid.'">'.$threadname.'</a>');
-        $core->nav($lang['texteditpost']);
-
-        if ($SETTINGS['subject_in_title'] === 'on') {
-            $template->threadSubject = $lang['texteditpost'] . ' - ';
-        }
-
-        $editvalid = true; // This new flag will indicate a message was submitted and successful.
-
-        // Check all editing permissions for this $pid.  Based on viewthread design, forum Moderators can always edit, $orig['author'] can edit open threads only.
-        $query = $db->query("SELECT p.*, m.status FROM " . $vars->tablepre . "posts p LEFT JOIN " . $vars->tablepre . "members m ON p.author=m.username WHERE p.pid=$pid");
-        $orig = $db->fetch_array($query);
-        $db->free_result($query);
-
-        $status1 = $core->modcheckPost($vars->self['username'], $forum['moderator'], $orig['status']);
-
-        if ($status1 != 'Moderator' && ($vars->self['username'] !== $orig['author'] || $thread['closed'] != '')) {
-            $core->error($lang['noedit']);
-        }
-
-        if ($editvalid) {
-            if ($forum['attachstatus'] == 'on') {
-                for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
-                    if (isset($_FILES["attach$i"])) {
-                        $result = $attachSvc->uploadedFile("attach$i", $pid);
-                        if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
-                            $errors .= $core->softerror($attachSvc->uploadErrorMsg($result->status));
-                            $editvalid = false;
-                        }
-                    }
-                }
-                $children = false;
-                $aid_list = $sql->getAttachmentIDsByPost($pid, $children);
-                $deletes = [];
-                $status = $attachSvc->doEdits($deletes, $aid_list, $pid);
-                if ($status !== UploadStatus::Success) {
-                    $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
-                    $editvalid = false;
-                }
-                foreach ($deletes as $aid) {
-                    $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
-                }
-                $temp = '';
-                if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
-                    $status = $attachSvc->remoteImages($pid, $messageinput);
-                    if ($status !== UploadStatus::Success) {
-                        $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
-                        $editvalid = false;
-                    }
-                }
-            }
-        }
-
-        $editvalid &= onSubmit('editsubmit');
-
-        if ($editvalid) {
-            if ($posticon != '') {
-                $query = $db->query("SELECT id FROM " . $vars->tablepre . "smilies WHERE type='picon' AND url='$sql_posticon'");
-                if ($db->num_rows($query) == 0) {
-                    $sql_posticon = '';
-                    $posticon = '';
-                    $errors .= $core->softerror($lang['error']);
-                    $editvalid = false;
-                }
-                $db->free_result($query);
-            }
-        }
-
-        if ($editvalid) {
-            $query = $db->query("SELECT pid FROM " . $vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline LIMIT 1");
-            $isfirstpost = $db->fetch_array($query);
-            $db->free_result($query);
-
-            if ((strlen($subjectinput) == 0 && $pid == (int) $isfirstpost['pid']) && ! (isset($delete) && $delete == 'yes')) {
-                $errors .= $core->softerror($lang['textnosubject']);
-                $editvalid = false;
-            }
-        }
-
-        if ($editvalid) {
-            $threaddelete = 'no';
-
-            if (!(isset($delete) && $delete == 'yes')) {
-                if ($SETTINGS['editedby'] == 'on') {
-                    $messageinput .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
-                }
-
-                if ($bBBcodeOnForThisPost) {
-                    $core->postLinkBBcode($messageinput);
-                }
-                $dbmessage = $messageinput;
-                $dbsubject = $subjectinput;
-
-                if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 255) {
-                    // Inputs are suspiciously long.  Has the schema been customized?
-                    $query = $db->query("SELECT message, subject FROM " . $vars->tablepre . "posts WHERE 1=0");
-                    $msgmax = $db->field_len($query, 0);
-                    $submax = $db->field_len($query, 1);
-                    $db->free_result($query);
-                    if (strlen($dbmessage) > $msgmax) {
-                        $dbmessage = substr($dbmessage, 0, $msgmax);
-                    }
-                    if (strlen($dbsubject) > $submax) {
-                        $dbsubject = substr($dbsubject, 0, $submax);
-                    }
-                }
-
-                $db->escape_fast($dbmessage);
-                $db->escape_fast($dbsubject);
-
-                if ((int) $isfirstpost['pid'] == $pid) {
-                    $db->query("UPDATE " . $vars->tablepre . "threads SET icon='$sql_posticon', subject='$dbsubject' WHERE tid=$tid");
-                }
-
-                $db->query("UPDATE " . $vars->tablepre . "posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$sql_posticon', subject='$dbsubject' WHERE pid=$pid");
-            } else {
-                $db->query("DELETE FROM " . $vars->tablepre . "posts WHERE pid=$pid");
-                if ($orig['author'] != 'Anonymous') {
-                    $db->query("UPDATE " . $vars->tablepre . "members SET postnum=postnum-1 WHERE username='".$db->escape($orig['author'])."'");
-                }
-                $attachSvc->deleteByPost($pid);
-
-                if ((int) $isfirstpost['pid'] == $pid) {
-                    $numrows = $sql->countPosts(tid: $tid);
-
-                    if ($numrows == 0) {
-                        $threaddelete = 'yes';
-                        $db->query("DELETE FROM " . $vars->tablepre . "favorites WHERE tid='$tid'");
-
+            break;
+        case 'edit':
+            if ($isFirstPost && $delete != 'yes') {
+                $db->query("UPDATE " . $vars->tablepre . "threads SET icon = '$sql_posticon', subject = '$sql_subject' WHERE tid = $tid");
+            } elseif ($delete == 'yes') {
+                if ($isFirstPost) {
+                    if ($threaddelete == 'yes') {
+                        $db->query("DELETE FROM " . $vars->tablepre . "favorites WHERE tid = '$tid'");
                         $sql->deleteVotesByTID([$tid]);
-
-                        $db->query("DELETE FROM " . $vars->tablepre . "threads WHERE tid=$tid OR closed='moved|$tid'");
+                        $db->query("DELETE FROM " . $vars->tablepre . "threads WHERE tid = $tid OR closed = 'moved|$tid'");
                     } else {
-                        $db->query("UPDATE " . $vars->tablepre . "posts SET subject='".$db->escape($orig['subject'])."' WHERE tid=$tid ORDER BY dateline LIMIT 1");
                         $core->updatethreadcount($tid);
                     }
                 } else {
@@ -1218,142 +625,367 @@ switch ($action) {
                 }
                 $core->updateforumcount($fid);
             }
+    }
 
+    // Attachment post-processing
+    if ($action != 'edit' && $forum['attachstatus'] == 'on') {
+        if ($attachSkipped) {
+            for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
+                if (isset($_FILES["attach$i"])) {
+                    $attachSvc->uploadedFile("attach$i", $pid, $quarantine);
+                }
+            }
+            if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
+                $attachSvc->remoteImages($pid, $messageinput, $quarantine);
+                $newdbmessage = $messageinput;
+                if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
+                    $sql->savePostBody($pid, $newdbmessage, $quarantine);
+                }
+            }
+        } elseif (X_MEMBER) {
+            $sql->claimOrphanedAttachments($pid, (int) $vars->self['uid'], $quarantine);
+        }
+    }
+
+    // Add a poll and related options
+    if ($action == 'newthread' && $poll == 'yes') {
+        // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
+        $vote_id = $sql->addVoteDesc($tid, $quarantine);
+        
+        // Create poll options.  This is the part we care about.
+        $options = [];
+        $i = 1;
+        foreach ($pollopts as $p) {
+            $options[] = [
+                'vote_id' => $vote_id,
+                'vote_option_id' => $i++,
+                'vote_option_text' => $p,
+            ];
+        }
+        $sql->addVoteOptions($options, $quarantine);
+    }
+
+    // Add Subscription
+    if ($action != 'edit' && 'yes' == $emailnotify) {
+        $sql->addFavoriteIfMissing((int) $tid, $username, 'subscription');
+    }
+
+    // Update cookies
+    if ($action != 'edit' && X_MEMBER && ! $quarantine) {
+        $expire = $vars->onlinetime + $vars::ONLINE_TIMER;
+        if ($vars->oldtopics == '') {
+            $vars->oldtopics = "|$pid|";
+        } else {
+            $vars->oldtopics .= "$pid|";
+        }
+        $core->put_cookie('oldtopics', $vars->oldtopics, $expire);
+    }
+
+    // Send subscription notifications
+    if ($action == 'reply' && ! $quarantine) {
+        $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE pid <= $pid AND tid = '$tid'");
+        $posts = (int) $db->result($query);
+        $db->free_result($query);
+
+        $lang2 = $tran->loadPhrases(['charset', 'textsubsubject', 'textsubbody']);
+        $viewperm = $core->getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
+
+        $query = $db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid = $tid AND pid < $pid ORDER BY dateline DESC LIMIT 1");
+        if ($db->num_rows($query) > 0) {
+            $date = $db->result($query);
+        } else {
+            // Replying to a thread that has zero posts.
+            $date = '0';
+        }
+        $db->free_result($query);
+
+        $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
+                             . "FROM " . $vars->tablepre . "favorites f "
+                             . "INNER JOIN " . $vars->tablepre . "members m USING (username) "
+                             . "WHERE f.type = 'subscription' AND f.tid = $tid AND m.username != '$sql_username' AND m.lastvisit >= $date");
+        while ($subs = $db->fetch_array($subquery)) {
+            if ($viewperm < $vars->status_enum[$subs['status']]) {
+                continue;
+            }
+
+            if ($subs['ppp'] < 1) {
+                $subs['ppp'] = $posts;
+            }
+
+            $translate = $lang2[$subs['langfile']];
+            $topicpages = $core->quickpage($posts, (int) $subs['ppp']);
+            $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+            $threadurl = $vars->full_url . 'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
+            $rawsubject = rawHTML($threadname);
+            $rawusername = rawHTML($username);
+            $rawemail = rawHTML($subs['email']);
+            $title = "$rawsubject ({$translate['textsubsubject']})";
+            $body = "$rawusername {$translate['textsubbody']} \n$threadurl";
+            $email->send($rawemail, $title, $body, $translate['charset']);
+        }
+        $db->free_result($subquery);
+    }
+
+
+    // Send response
+    if ($quarantine) $core->message($lang['moderation_hold']);
+    switch ($action) {
+        case 'reply':
+            $topicpages = $core->quickpage($posts, $vars->ppp);
+            $topicpages = ($topicpages == 1) ? '' : '&page=' . $topicpages;
+            $core->message($lang['replymsg'], redirect: $vars->full_url . "viewthread.php?tid={$tid}{$topicpages}#pid{$pid}");
+            break;
+        case 'newthread':
+            $core->message($lang['postmsg'], redirect: $vars->full_url . "viewthread.php?tid=$tid");
+            break;
+        case 'edit':
             if ($threaddelete == 'no') {
                 $posts = $sql->countPosts(tid: $tid, before: (int) $orig['dateline']);
                 $topicpages = $core->quickpage($posts, $vars->ppp);
-                $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
+                $topicpages = ($topicpages == 1) ? '' : '&page=' . $topicpages;
                 $core->message($lang['editpostmsg'], redirect: $vars->full_url . "viewthread.php?tid={$tid}{$topicpages}#pid{$pid}");
             } else {
-                $core->message($lang['editpostmsg'], redirect: $vars->full_url . 'forumdisplay.php?fid='.$fid);
+                $core->message($lang['editpostmsg'], redirect: $vars->full_url . "forumdisplay.php?fid=$fid");
+            }
+    }
+}
+
+// Nothing saved. Show preview if requested. Show the post editor.
+
+// Quote an existing post.
+if ($action == 'reply' && $repquote > 0) {
+    $query = $db->query("SELECT p.message, p.tid, p.fid, p.author FROM " . $vars->tablepre . "posts p WHERE p.pid = $repquote");
+    $thaquote = $db->fetch_array($query);
+    $db->free_result($query);
+    $quoteperms = $core->checkForumPermissions($forums->getForum((int) $thaquote['fid']));
+    if ($quoteperms[$vars::PERMS_VIEW] && $quoteperms[$vars::PERMS_PASSWORD]) {
+        $thaquote['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $thaquote['message']); // These codes will not work inside quotes.
+        $quoteblock = $core->rawHTMLmessage($thaquote['message']);
+        if ($bBBcodeOnForThisPost) {
+            $messageinput = "[rquote=$repquote&amp;tid={$thaquote['tid']}&amp;author={$thaquote['author']}]{$quoteblock}[/rquote]";
+        } else {
+            $quotesep = '|| ';
+            $quoteblock = $quotesep.str_replace("\n", "\n$quotesep", $quoteblock);
+            $messageinput = "{$lang['textquote']} {$lang['origpostedby']} {$thaquote['author']}\r\n$quotesep\r\n$quoteblock\r\n\r\n";
+        }
+    }
+}
+
+// Abstract the latest values into $postinfo.  For post editing, these values might come from the database rather than the request.  For preview, always use request values.
+if ($action == 'edit' && noSubmit('editsubmit') && noSubmit('previewpost')) {
+    $postinfo = $orig;
+    $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $postinfo['bbcodeoff'] == 'no');
+    $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
+    $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $postinfo['smileyoff'] == 'no');
+} else {
+    $postinfo = [
+        'usesig' => $usesig,
+        'bbcodeoff' => $bbcodeoff,
+        'smileyoff' => $smileyoff,
+        'message' => $messageinput,
+        'subject' => $subjectinput,
+        'icon' => $posticon,
+        'dateline' => ($action == 'edit' ? (int) $orig['dateline'] : $vars->onlinetime),
+    ];
+}
+unset($usesig, $bbcodeoff, $smileyoff, $messageinput, $subjectinput, $posticon);
+
+// Generate the attachment input elements
+$files = []; // This will be used again later.
+if ($forum['attachstatus'] == 'on' && X_MEMBER) {
+    // Quarantined members are allowed to attach files. Guests are not.
+    $template->attachfile = '';
+    $files = $sql->getOrphanedAttachments($quarantine, (int) $vars->self['uid']);
+    $counter = 0;
+    $prevsize = '';
+    foreach ($files as $file) {
+        if ($action == 'edit') {
+            $subTemplate->aInfo = [
+                'aid' => $attach['aid'],
+                'downloads' => $attach['downloads'],
+                'filename' => $attach['filename'],
+                'filesize' => number_format((int) $attach['filesize'], 0, '.', ','),
+                'url' => $attachSvc->getURL((int) $attach['aid'], $pid, $attach['filename']),
+            ];
+            $template->attachfile .= $subTemplate->process('post_edit_attachment.php');
+        } else {
+            $file['filesize'] = number_format((int) $file['filesize'], 0, '.', ',');
+            $subTemplate->file = $file;
+            $template->attachfile .= $subTemplate->process('post_attachment_orphan.php');
+        }
+        if ($bBBcodeOnForThisPost) {
+            $bbcode = "[file]{$file['aid']}[/file]";
+            if (strpos($postinfo['message'], $bbcode) === false) {
+                if ($counter == 0 || $file['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
+                    $postinfo['message'] .= "\n\n";
+                }
+                $postinfo['message'] .= ' ' . $bbcode; // Use a leading space to prevent awkward line wraps.
+                $counter++;
+                $prevsize = $file['img_size'];
             }
         }
+    }
+    $template->attachfile .= $core->makeAttachmentBox(count($files));
+}
 
-        if (! $editvalid) {
-            // Fill $postinfo
-            if (onSubmit('editsubmit') || onSubmit('previewpost')) {
-                // For post_edit template.
-                $postinfo = [
-                    'usesig' => $usesig,
-                    'bbcodeoff' => $bbcodeoff,
-                    'smileyoff' => $smileyoff,
-                    'message' => $messageinput,
-                    'subject' => $subjectinput,
-                    'icon' => $sql_posticon,
-                    'dateline' => $orig['dateline'],
-                ];
+// Generate the preview, if requested.
+if (onSubmit('previewpost')) {
+    if ($postinfo['icon'] != '') {
+        $subTemplate->icon = "<img src='" . $vars->full_url . $vars->theme['smdir'] . '/' . $postinfo['icon'] . "' />";
+    } else {
+        $subTemplate->icon = '';
+    }
+    $currtime = $core->timeKludge($postinfo['dateline']);
+    $date = $core->printGmDate($currtime);
+    $time = gmdate($vars->timecode, $currtime);
+    $subTemplate->poston = "{$lang['textposton']} $date {$lang['textat']} $time";
+    if (strlen($postinfo['subject']) > 0) {
+        $subTemplate->dissubject = $core->rawHTMLsubject($postinfo['subject']) . '<br />';
+    } else {
+        $subTemplate->dissubject = '';
+    }
+    $message1 = $core->rawHTMLmessage($postinfo['message']);
+    if ($action == 'edit' && $SETTINGS['editedby'] == 'on') {
+        $message1 .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
+    }
+    if (count($files) > 0) {
+        $message1 = $core->bbcodeFileTags($message1, $files, 0, $bBBcodeOnForThisPost, $quarantine);
+    }
+    $subTemplate->message1 = $core->postify($message1, $postinfo['smileyoff'], $postinfo['bbcodeoff'], $forum['allowsmilies'], allowbbcode: $forum['allowbbcode'], allowimgcode: $forum['allowimgcode']);
+    if ($postinfo['usesig'] == 'yes') {
+        $sigText = ($action == 'edit') ? $orig['sig'] : $vars->self['sig'];
+        $subTemplate->sig = $core->postify(
+            message: $sigText,
+            allowsmilies: $forum['allowsmilies'],
+            allowbbcode: $SETTINGS['sigbbcode'],
+            allowimgcode: $forum['allowimgcode'],
+        );
+        $subTemplate->message1 .= $subTemplate->process('viewthread_post_sig.php');
+    }
+    if ($action == 'edit') {
+        $subTemplate->username = $orig['author'];
+    } else {
+        $subTemplate->username = $username;
+    }
+    $template->preview = $subTemplate->process('post_preview.php');
+}
+
+// CAPTCHA output
+if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+    $Captcha = new Captcha($core, $vars);
+    if ($Captcha->bCompatible !== false) {
+        $subTemplate->imghash = $Captcha->GenerateCode();
+        $template->captchapostcheck = $subTemplate->process('post_captcha.php');
+    }
+    unset($Captcha);
+}
+
+// Allow thread close
+if ($action != 'edit' && $isMod) {
+    $template->closeoption = '<label><input type="checkbox" name="closetopic" value="yes" '.$closecheck.' /> '.$lang['closemsgques'].'</label>';
+} else {
+    $template->closeoption = '';
+}
+
+// Allow thread topping
+if ($action == 'newthread' && $isMod) {
+    $template->topoption = '<label><input type="checkbox" name="toptopic" value="yes" '.$topcheck.' /> '.$lang['topmsgques'] . '</label>';
+} else {
+    $template->topoption = '';
+}
+
+// Add the thread review
+if ($action == 'reply') {
+    $template->posts = '';
+
+    $replynum = $sql->countPosts(false, $tid);
+    if ($replynum >= $vars->ppp) {
+        $threadlink = $vars->full_url . "viewthread.php?fid=$fid&tid=$tid";
+        $subTemplate->trevltmsg = str_replace('$threadlink', $threadlink, $lang['evaltrevlt']);
+        $template->posts .= $subTemplate->process('post_reply_review_toolong.php');
+    } else {
+        $subTemplate->thisbg = $vars->theme['altbg1'];
+        $posts = $sql->getPostsByTID($tid, $vars->ppp, ascending: false);
+        foreach ($posts as $post) {
+            $currtime = $core->timeKludge((int) $post['dateline']);
+            $date = $core->printGmDate($currtime);
+            $time = gmdate($vars->timecode, $currtime);
+            $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
+
+            if ($post['icon'] != '') {
+                $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $post['icon'] . '" alt="' . $lang['altpostmood'] . '" border="0" />';
             } else {
-                $postinfo = $orig;
-                $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $postinfo['bbcodeoff'] == 'no');
-                $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
-                $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $postinfo['smileyoff'] == 'no');
+                $post['icon'] = '<img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
             }
 
-            // Fill $attachment
-            $template->attachment = '';
-            $files = [];
-            if ($forum['attachstatus'] == 'on') {
-                $files = $sql->getAttachmentsByPIDs([$pid]);
-                $counter = 0;
-                $prevsize = '';
-                foreach ($files as $attach) {
-                    $subTemplate->aInfo = [
-                        'aid' => $attach['aid'],
-                        'downloads' => $attach['downloads'],
-                        'filename' => $attach['filename'],
-                        'filesize' => number_format((int) $attach['filesize'], 0, '.', ','),
-                        'url' => $attachSvc->getURL((int) $attach['aid'], $pid, $attach['filename']),
-                    ];
-                    $template->attachment .= $subTemplate->process('post_edit_attachment.php');
-                    if ($bBBcodeOnForThisPost) {
-                        $bbcode = "[file]{$attach['aid']}[/file]";
-                        if (strpos($postinfo['message'], $bbcode) === false) {
-                            if ($counter == 0 || $attach['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
-                                $postinfo['message'] .= "\n\n";
-                            }
-                            $postinfo['message'] .= ' ' . $bbcode; // Use a leading space to prevent awkward line wraps.
-                            $counter++;
-                            $prevsize = $attach['img_size'];
-                        }
-                    }
-                }
-                $template->attachment .= $core->makeAttachmentBox(count($files));
-            }
-
-            //Allow sanitized message to pass-through to template in case of: #1 preview, #2 post error
-            $subject = $core->rawHTMLsubject($postinfo['subject']);  // This variable used only to set $dissubject.
-            // $message = $core->rawHTMLmessage($postinfo['message']);  // This variable unused here in favor of $postinfo['message'].
-
-            if (onSubmit('previewpost')) {
-                null_string($postinfo['icon']);
-                if ($postinfo['icon'] !== '') {
-                    $thread['icon'] = "<img src='" . $vars->full_url . $vars->theme['smdir'] . "/{$postinfo['icon']}' />";
-                }
-                $subTemplate->thread = $thread;
-                $currtime = $core->timeKludge((int) $postinfo['dateline']);
-                $date = $core->printGmDate($currtime);
-                $time = gmdate($vars->timecode, $currtime);
-                $subTemplate->poston = $lang['textposton'].' '.$date.' '.$lang['textat'].' '.$time;
-                if (strlen($subject) > 0) {
-                    $subTemplate->dissubject = $subject.'<br />';
-                } else {
-                    $subTemplate->dissubject = '';
-                }
-                $message1 = $postinfo['message'];
-                if ($SETTINGS['editedby'] == 'on') {
-                    $message1 .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
-                }
-                if ($bBBcodeOnForThisPost) {
-                    $core->postLinkBBcode($message1);
-                }
-                if (count($files) > 0) {
-                    $message1 = $core->bbcodeFileTags($message1, $files, $pid, $bBBcodeOnForThisPost);
-                }
-                $message1 = $core->postify($message1, $smileyoff, $bbcodeoff, $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
-
-                if ($usesig == 'yes') {
-                    $subTemplate->sig = $core->postify(
-                        message: $vars->self['sig'],
-                        allowsmilies: $forum['allowsmilies'],
-                        allowbbcode: $SETTINGS['sigbbcode'],
-                        allowimgcode: $forum['allowimgcode'],
-                    );
-                    $message1 .= $subTemplate->process('viewthread_post_sig.php');
-                }
-                $subTemplate->message1 = $message1;
-                $template->preview = $subTemplate->process('post_preview.php');
-            }
-
-            if ($postinfo['bbcodeoff'] == 'yes') {
-                $template->offcheck1 = $vars::cheHTML;
+            $post['message'] = preg_replace('@\\[file\\]\\d*\\[/file\\]@', '', $post['message']); //These codes do not work in postify()
+            $post['message'] = $core->postify($post['message'], $post['smileyoff'], $post['bbcodeoff'], $forum['allowsmilies'], 'no', $forum['allowbbcode'], $forum['allowimgcode']);
+            $subTemplate->post = $post;
+            $template->posts .= $subTemplate->process('post_reply_review_post.php');
+            if ($subTemplate->thisbg == $vars->theme['altbg2']) {
+                $subTemplate->thisbg = $vars->theme['altbg1'];
             } else {
-                $template->offcheck1 = '';
+                $subTemplate->thisbg = $vars->theme['altbg2'];
             }
+        }
+        unset($posts);
+    }
+}
 
-            if ($postinfo['smileyoff'] == 'yes') {
-                $template->offcheck2 = $vars::cheHTML;
-            } else {
-                $template->offcheck2 = '';
-            }
+// Set checkbox values.
+$template->codeoffcheck = ($postinfo['bbcodeoff'] == 'yes') ? $vars::cheHTML : '';
+$template->smileoffcheck = ($postinfo['smileyoff'] == 'yes') ? $vars::cheHTML : '';
+$template->usesigcheck = ($postinfo['usesig'] == 'yes') ? $vars::cheHTML : '';
 
-            if ($postinfo['usesig'] == 'yes') {
-                $template->offcheck3 = $vars::cheHTML;
-            } else {
-                $template->offcheck3 = '';
-            }
+// Generate icon input elements
+$posticon = $postinfo['icon'];
+if ($posticon != '') {
+    if (! isValidFilename($posticon)) {
+        $posticon = '';
+    } elseif (! file_exists(ROOT . $vars->theme['smdir'] . '/' . $posticon)) {
+        $posticon = '';
+    } elseif (! $sql->iconExists($posticon)) {
+        $posticon = '';
+    }
+}
 
-            $icons = str_replace('<input type="radio" name="posticon" value="'.$postinfo['icon'].'" />', '<input type="radio" name="posticon" value="'.$postinfo['icon'].'" checked="checked" />', $icons);
+$listed_icons = 0;
+$icons = '<input type="radio" name="posticon" value="" /> <img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
+$querysmilie = $db->query("SELECT url, code FROM " . $vars->tablepre . "smilies WHERE type = 'picon'");
+while ($smilie = $db->fetch_array($querysmilie)) {
+    $icons .= ' <input type="radio" name="posticon" value="' . $smilie['url'] . '" /><img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $smilie['url'] . '" alt="' . $smilie['code'] . '" border="0" />';
+    $listed_icons++;
+    if ($listed_icons == 9) {
+        $icons .= '<br />';
+        $listed_icons = 0;
+    }
+}
+$db->free_result($querysmilie);
 
-            $postinfo['message'] = $core->rawHTMLmessage($postinfo['message']);
-            $postinfo['subject'] = $core->rawHTMLsubject($postinfo['subject']);
-            $template->postinfo = $postinfo;
-            $postpage = $template->process('post_edit.php');
+$icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
+$template->icons = $icons;
+
+// Subject and message values for the post editor.
+$template->subject = $core->rawHTMLsubject($postinfo['subject']);
+$template->message = $core->rawHTMLmessage($postinfo['message']);
+
+// Process the templates.
+switch ($action) {
+    case 'reply':
+        $postpage = $template->process('post_reply.php');
+        break;
+    case 'newthread':
+        if ($poll == 'yes') {
+            $postpage = $template->process('post_newpoll.php');
+        } else {
+            $postpage = $template->process('post_newthread.php');
         }
         break;
-
+    case 'edit':
+        $postpage = $template->process('post_edit.php');
+        break;
     default:
         $core->error($lang['textnoaction']);
-        break;
 }
 
 $header = $template->process('header.php');

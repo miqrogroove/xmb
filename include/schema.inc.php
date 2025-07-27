@@ -33,8 +33,8 @@ use InvalidArgumentException;
  */
 class Schema
 {
-    public const VER = 13;
-    
+    public const VER = 14;
+
     public function __construct(private DBStuff $db, private Variables $vars)
     {
         // Property promotion.
@@ -329,6 +329,7 @@ class Schema
                   `sub_each_post` varchar(3) NOT NULL DEFAULT 'no',
                   `waiting_for_mod` varchar(3) NOT NULL DEFAULT 'no',
                   `password2` varchar(255) NOT NULL DEFAULT '',
+                  `post_date` int unsigned NOT NULL DEFAULT 0,
                   PRIMARY KEY  (`uid`),
                   UNIQUE KEY `userunique` (`username`),
                   KEY `status` (`status`),

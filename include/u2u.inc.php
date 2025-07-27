@@ -253,8 +253,10 @@ class U2U
                 $this->error($this->vars->lang['u2umsgempty']);
             }
 
-            if ((int) $this->db->result($this->db->query("SELECT count(u2uid) FROM " . $this->vars->tablepre . "u2u WHERE msgfrom = '" . $this->vars->xmbuser . "' AND dateline > " . (time() - $this->vars->settings['floodctrl']))) > 0) {
+            if ((int) $this->vars->self['post_date'] >= $this->vars->onlinetime - (int) $this->vars->settings['floodctrl']) {
                 $this->error($this->vars->lang['floodprotect_u2u']);
+            } else {
+                $this->sql->setMemberPostDate((int) $this->vars->self['uid'], $this->vars->onlinetime);
             }
 
             if (strstr($msgto, ',') && X_STAFF) {

@@ -459,7 +459,7 @@ if ($action == '') {
             $subTemplate->repquote = '';
         }
 
-        if ($core->modcheckPost($vars->self['username'], $forum['moderator'], $post['status']) == 'Moderator' || ($thread['closed'] != 'yes' && $post['author'] == $vars->xmbuser)) {
+        if ($core->modcheckPost($vars->self['username'], $forum['moderator'], $post['status']) || ($thread['closed'] != 'yes' && $post['author'] == $vars->xmbuser)) {
             // Already set
         } else {
             $subTemplate->edit = '';
@@ -488,7 +488,7 @@ if ($action == '') {
     unset($posts);
 
     $template->modoptions = '';
-    if ('Moderator' == $status1) {
+    if ($status1) {
         $template->modoptions = $subTemplate->process('viewthread_modoptions.php');
     }
     $template->thread = $thread;

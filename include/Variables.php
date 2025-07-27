@@ -27,6 +27,7 @@ namespace XMB;
 class Variables
 {
     public const FILENAME_MAX_LENGTH = 120; // Size of attachments.filename.
+    public const IP_ADDRESS_MAX_LENGTH = 39; // Size of members.regip and posts.useip.
     public const NONCE_AYS_EXP = 300; // Yes/no prompt expiration, in seconds.
     public const NONCE_FORM_EXP = 3600; // Form expiration, in seconds.
     public const NONCE_MAX_AGE = 43200; // CAPTCHA expiration, in seconds.
@@ -36,10 +37,12 @@ class Variables
     public const PAGING_MIN = 5; // $this->tpp and $this->ppp may not be less than this value.
     public const PASS_MIN_LENGTH = 8; // New passwords may not be shorter than this.
     public const PASS_MAX_LENGTH = 72; // Hash input maximum to avoid truncation.
+    public const POST_MSG_MAX_LEN = 65535; // Size of posts.message.
+    public const THREAD_SUB_MAX_LEN = 128; // Size of threads.subject.
     public const USERNAME_MIN_LENGTH = 3; // New usernames may not be shorter than this.
     public const USERNAME_MAX_LENGTH = 32; // Size of members.username.
     // permissions constants
-    public const PERMS_COUNT = 4; //Number of raw bit sets stored in postperm setting.
+    public const PERMS_COUNT = 4; // Number of raw bit sets stored in postperm setting.
     // indexes used in permissions arrays
     public const PERMS_RAWPOLL = 0;
     public const PERMS_RAWTHREAD = 1;
@@ -48,7 +51,7 @@ class Variables
     public const PERMS_POLL = 40;
     public const PERMS_THREAD = 41;
     public const PERMS_REPLY = 42;
-    public const PERMS_VIEW = 43; //View is now = Rawview || Userlist
+    public const PERMS_VIEW = 43; // View is now = Rawview || Userlist
     public const PERMS_USERLIST = 44;
     public const PERMS_PASSWORD = 45;
 

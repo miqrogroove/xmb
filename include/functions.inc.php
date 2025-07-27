@@ -429,20 +429,20 @@ class Core
      * @since 1.0
      * @param string $username The username for the moderator of the post.
      * @param string $mods The forums.moderator value of the forum being moderated.
-     * @param bool $override Whether to just return 'Moderator', for example by passing a boolean user level.
-     * @return string Either 'Moderator' or an empty string.
+     * @param bool $override Whether to just return true, for example by passing a boolean user level.
+     * @return bool
      */
-    public function modcheck(string $username, string $mods, bool $override = X_SMOD): string
+    public function modcheck(string $username, string $mods, bool $override = X_SMOD): bool
     {
-        $retval = '';
+        $retval = false;
         if ($override) {
-            $retval = 'Moderator';
+            $retval = true;
         } elseif (X_MOD) {
             $username = strtoupper($username);
             $mods = explode(',', $mods);
             foreach ($mods as $moderator) {
                 if (strtoupper(trim($moderator)) === $username) {
-                    $retval = 'Moderator';
+                    $retval = true;
                     break;
                 }
             }
@@ -460,27 +460,26 @@ class Core
      * @param ?string $origstatus The members.status value for the author of the post.  Nullable for anonymous posting.
      * @return string Either 'Moderator' or an empty string.
      */
-    public function modcheckPost(string $username, string $mods, ?string $origstatus): string
+    public function modcheckPost(string $username, string $mods, ?string $origstatus): bool
     {
         $retval = $this->modcheck($username, $mods);
 
-        if ($retval != '' && $this->vars->settings['allowrankedit'] != 'off') {
+        if ($retval && $this->vars->settings['allowrankedit'] != 'off') {
             switch ($origstatus) {
                 case 'Super Administrator':
-                    if (!X_SADMIN) {
-                        $retval = '';
+                    if (! X_SADMIN) {
+                        $retval = false;
                     }
                     break;
                 case 'Administrator':
-                    if (!X_ADMIN) {
-                        $retval = '';
+                    if (! X_ADMIN) {
+                        $retval = false;
                     }
                     break;
                 case 'Super Moderator':
-                    if (!X_SMOD) {
-                        $retval = '';
+                    if (! X_SMOD) {
+                        $retval = false;
                     }
-                    break;
                 //If member does not have X_MOD then modcheck() returned an empty string.  No reason to continue testing.
             }
         }
@@ -502,7 +501,7 @@ class Core
             return false;
         }
 
-        return ($this->modcheck($this->vars->self['username'], $forum['moderator']) == 'Moderator');
+        return $this->modcheck($this->vars->self['username'], $forum['moderator']);
     }
 
     /**
@@ -1583,7 +1582,7 @@ class Core
         if (is_null($user_status_in)) {
             $userlist = $forum['userlist'];
 
-            if ($this->modcheck($this->vars->self['username'], $forum['moderator'], false) == "Moderator") {
+            if ($this->modcheck($this->vars->self['username'], $forum['moderator'], override: false)) {
                 $ret[$this->vars::PERMS_USERLIST] = true;
                 $ret[$this->vars::PERMS_VIEW] = true;
             } elseif (! X_GUEST) {
