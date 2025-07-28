@@ -29,6 +29,7 @@ require './header.php';
 $core = Services\core();
 $db = Services\db();
 $forumcache = Services\forums();
+$settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
 $vars = Services\vars();
@@ -295,10 +296,9 @@ if ($gid == 0) {
 
 $fquery = $core->getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
 
-if ($SETTINGS['catsonly'] == 'on' && $gid == 0 && count($fquery) == 0) {
+if ($settings->get('catsonly') == 'on' && $gid == 0 && count($fquery) == 0) {
     // The admin has chosen to show categories only, but no existing categories are turned on.  Let's avoid this.
-    $sql->updateSetting('catsonly', 'off');
-    $SETTINGS['catsonly'] = 'off';
+    $settings->put('catsonly', 'off');
     $fquery = $core->getIndexForums($forums, $cat, catsonly: false);
 }
 

@@ -29,6 +29,7 @@ require ROOT . 'header.php';
 
 $core = Services\core();
 $db = Services\db();
+$settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
 $token = Services\token();
@@ -42,7 +43,7 @@ $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>'
 $core->nav($lang['textipban']);
 $core->setCanonicalLink('admin/ipban.php');
 
-if ($vars->settings['subject_in_title'] == 'on') {
+if ($settings->get('subject_in_title') == 'on') {
     $template->threadSubject = $vars->lang['textipban'] . ' - ';
 }
 
@@ -55,7 +56,7 @@ $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
-if ($vars->settings['ip_banning'] == 'on') {
+if ($settings->get('ip_banning') == 'on') {
     if (noSubmit('ipbansubmit') && noSubmit('ipbandisable')) {
         $template->token = $token->create('Control Panel/IP Banning', 'mass-edit', $vars::NONCE_FORM_EXP);
         
@@ -92,7 +93,7 @@ if ($vars->settings['ip_banning'] == 'on') {
         $body .= $template->process('admin_ipban_end.php');
     } elseif (onSubmit('ipbandisable')) {
         $core->request_secure('Control Panel/IP Banning', 'mass-edit');
-        $sql->updateSetting('ip_banning', 'off');
+        $settings->put('ip_banning', 'off');
         $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '"><td class="ctrtablerow">' . $lang['textipupdate'] . '</td></tr>';
     } else {
         $core->request_secure('Control Panel/IP Banning', 'mass-edit');
@@ -156,7 +157,7 @@ if ($vars->settings['ip_banning'] == 'on') {
         $body = $template->process('admin_ipban_enable.php');
     } else {
         $core->request_secure('Control Panel/IP Banning', 'enable');
-        $sql->updateSetting('ip_banning', 'on');
+        $settings->put('ip_banning', 'on');
         $link = '</p><p><a href="' . $vars->full_url . 'admin/ipban.php">' . $lang['textipbanlink'] . '</a>';
         $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textipupdate'] . $link . '</p></td></tr>';
     }

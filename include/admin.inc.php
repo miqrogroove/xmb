@@ -37,6 +37,7 @@ class admin
         private Core $core,
         private DBStuff $db,
         private SessionMgr $session,
+        private Settings $settings,
         private SQL $sql,
         private Validation $validate,
         private Variables $vars
@@ -253,7 +254,7 @@ class admin
         $template->description = $description;
         $template->htmlName = $htmlName;
 
-        switch ($this->vars->settings[$xmbName]) {
+        switch ($this->settings->get($xmbName)) {
             case 'on':
                 $template->check1 = $this->vars::selHTML;
                 break;
@@ -317,12 +318,7 @@ class admin
      */
     public function input_custom_setting(string $dbname, string $value)
     {
-        if (! isset($this->vars->settings[$dbname])) {
-            $this->sql->addSetting($dbname, $value);
-        } elseif ($this->vars->settings[$dbname] !== $value) {
-            $this->sql->updateSetting($dbname, $value);
-        }
-        $this->vars->settings[$dbname] = $value;
+        $this->settings->put($dbname, $value);
     }
 
     /**

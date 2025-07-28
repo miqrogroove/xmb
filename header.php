@@ -74,7 +74,7 @@ require ROOT . 'include/services.php';
 require ROOT . 'include/Session/Data.php';
 require ROOT . 'include/Session/FormsAndCookies.php';
 require ROOT . 'include/Session/Manager.php';
-require ROOT . 'include/SettingsLoader.php';
+require ROOT . 'include/Settings.php';
 require ROOT . 'include/SmileAndCensor.php';
 require ROOT . 'include/sql.inc.php';
 require ROOT . 'include/Template.php';
@@ -151,17 +151,18 @@ db($boot->connectDB());
 
 unset($boot);
 
-(new \XMB\SettingsLoader(db(), vars()))->readToVars();
-
 debug(new \XMB\Debug(db()));
 sql(new \XMB\SQL(db(), vars()->tablepre));
 validate(new \XMB\Validation(db()));
+
+settings(new \XMB\Settings(db(), sql(), vars()));
+settings()->readToVars();
 
 forums(new \XMB\Forums(sql()));
 smile(new \XMB\SmileAndCensor(sql()));
 token(new \XMB\Token(sql(), vars()));
 
-theme(new \XMB\ThemeManager(forums(), sql(), template(), vars()));
+theme(new \XMB\ThemeManager(forums(), settings(), sql(), template(), vars()));
 
 bbcode(new \XMB\BBCode(theme(), vars()));
 

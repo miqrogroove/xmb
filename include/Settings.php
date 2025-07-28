@@ -25,13 +25,13 @@ declare(strict_types=1);
 namespace XMB;
 
 /**
- * Provides some of the procedural logic formerly in header.php.
+ * Provides some of the procedural logic formerly in header.php, plus getters and setters.
  *
  * @since 1.10.00
  */
-class SettingsLoader
+class Settings
 {
-    public function __construct(private DBStuff $db, private Variables $vars)
+    public function __construct(private DBStuff $db, private SQL $sql, private Variables $vars)
     {
         // Property promotion.
     }
@@ -115,5 +115,28 @@ class SettingsLoader
         if (empty($this->vars->settings['maxattachsize']) || $inimax < (int) $this->vars->settings['maxattachsize']) {
             $this->vars->settings['maxattachsize'] = $inimax;
         }
+    }
+
+    /**
+     * Retrieve a setting
+     */
+    public function get(string $name): string
+    {
+        return $this->vars->settings[$name] ?? '';
+    }
+
+    /**
+     * Set a setting
+     */
+    public function put(string $name, string $value)
+    {
+        if (! isset($this->vars->settings[$name])) {
+            $this->sql->addSetting($name, $value);
+        } elseif ($this->vars->settings[$name] === $value) {
+            return;
+        } else {
+            $this->sql->updateSetting($name, $value);
+        }
+        $this->vars->settings[$name] = $value;
     }
 }

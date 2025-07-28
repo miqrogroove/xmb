@@ -35,6 +35,7 @@ use XMB\{
     Login,
     Observer,
     Session\Manager as SessionMgr,
+    Settings,
     SmileAndCensor,
     SQL,
     Template,
@@ -201,6 +202,22 @@ function session(?SessionMgr $session = null): SessionMgr
     static $cache;
     
     if ($session !== null) $cache = $session;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared settings service.
+ *
+ * @since 1.10.00
+ * @param Settings $settings Required on first call, otherwise optional. Acts as the setter.
+ * @return Settings
+ */
+function settings(?Settings $settings = null): Settings
+{
+    static $cache;
+    
+    if ($settings !== null) $cache = $settings;
     
     return $cache;
 }

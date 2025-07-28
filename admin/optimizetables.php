@@ -30,6 +30,7 @@ require ROOT . 'header.php';
 $core = Services\core();
 $db = Services\db();
 $session = Services\session();
+$settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
 $token = Services\token();
@@ -37,7 +38,7 @@ $validate = Services\validate();
 $vars = Services\vars();
 $lang = &$vars->lang;
 
-$admin = new admin($core, $db, $session, $sql, $validate, $vars);
+$admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 $schema = new Schema($db, $vars);
 
 header('X-Robots-Tag: noindex');

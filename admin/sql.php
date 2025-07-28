@@ -31,6 +31,7 @@ $attach = Services\attach();
 $core = Services\core();
 $db = Services\db();
 $session = Services\session();
+$settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
 $token = Services\token();
@@ -63,7 +64,7 @@ $table = $template->process('admin_table.php');
 if (onSubmit('upgradesubmit')) {
     $core->request_secure('Control Panel/Insert Raw SQL', id: '');
 
-    $admin = new admin($core, $db, $session, $sql, $validate, $vars);
+    $admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
     $upgrade = getPhpInput('upgrade');
     if (isset($_FILES['sql_file'])) {

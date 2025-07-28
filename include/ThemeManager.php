@@ -26,7 +26,7 @@ namespace XMB;
 
 class ThemeManager
 {
-    public function __construct(private Forums $forums, private SQL $sql, private Template $template, private Variables $vars)
+    public function __construct(private Forums $forums, private Settings $settings, private SQL $sql, private Template $template, private Variables $vars)
     {
         // Property promotion.
     }
@@ -79,15 +79,14 @@ class ThemeManager
             }
         }
         if (! $validtheme) {
-            $theme = (int) $this->vars->settings['theme'];
+            $theme = (int) $this->settings->get('theme');
             $row = $this->sql->getThemeByID($theme);
             $validtheme = (! empty($row));
         }
         if (! $validtheme) {
             $row = $this->sql->getFirstTheme();
             if ($validtheme = (count($row) > 0)) {
-                $this->vars->settings['theme'] = $row['themeid'];
-                $this->sql->updateSetting('theme', $row['themeid']);
+                $this->settings->put('theme', $row['themeid']);
             }
         }
         if (! $validtheme) {
@@ -102,7 +101,7 @@ class ThemeManager
         $this->more_theme_vars();
 
         $this->template->css = '';
-        if ((int) $this->vars->settings['schema_version'] >= 6) {
+        if ((int) $this->settings->get('schema_version') >= 6) {
             $this->template->css = "<link rel='stylesheet' type='text/css' href='"
                 . $this->vars->full_url . "css.php"
                 . "?id=" . $this->vars->theme['themeid']
@@ -151,7 +150,7 @@ class ThemeManager
         if (! isset($l['scheme'])) {
             $this->vars->theme['boardimg'] = $this->vars->full_url . $this->vars->theme['imgdir'].'/'.$this->vars->theme['boardimg'];
         }
-        $this->vars->theme['logo'] = "<a href='" . $this->vars->full_url . "'><img src='" . $this->vars->theme['boardimg'] . "' alt='" . $this->vars->settings['bbname'] . "' border='0' /></a>";
+        $this->vars->theme['logo'] = "<a href='" . $this->vars->full_url . "'><img src='" . $this->vars->theme['boardimg'] . "' alt='" . $this->settings->get('bbname') . "' border='0' /></a>";
 
         // Font stuff...
         $this->vars->theme['font1'] = $this->fontSize(-1);

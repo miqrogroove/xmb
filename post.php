@@ -31,13 +31,13 @@ $core = Services\core();
 $db = Services\db();
 $email = Services\email();
 $forums = Services\forums();
+$settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
 $tran = Services\translation();
 $validate = Services\validate();
 $vars = Services\vars();
 $lang = &$vars->lang;
-$SETTINGS = &$vars->settings;
 
 header('X-Robots-Tag: noindex');
 
@@ -182,7 +182,7 @@ $core->forumBreadcrumbs($forum);
 $template->searchlink = $core->makeSearchLink((int) $forum['fid']);
 
 // Moderation of new users
-if (X_STAFF || 'off' == $SETTINGS['quarantine_new_users']) {
+if (X_STAFF || 'off' == $settings->get('quarantine_new_users')) {
     // Default immunity
     $quarantine = false;
 } else {
@@ -241,10 +241,10 @@ if (X_MEMBER) {
 $template->emailnotifycheck = ($emailnotify == 'yes') ? $vars::cheHTML : '';
 
 // New bool vars to clear up the confusion about effective settings.
-$bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' && $forum['allowbbcode'] == 'yes');
+$bBBcodeInserterEnabled = ($settings->get('bbinsert') == 'on' && $forum['allowbbcode'] == 'yes');
 $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $bbcodeoff == 'no');
 $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
-$bSmilieInserterEnabled = ($SETTINGS['smileyinsert'] == 'on' && $forum['allowsmilies'] == 'yes');
+$bSmilieInserterEnabled = ($settings->get('smileyinsert') == 'on' && $forum['allowsmilies'] == 'yes');
 $bSmiliesOnForThisPost = ($forum['allowsmilies'] == 'yes' && $smileyoff == 'no');
 
 $topcheck = '';
@@ -321,7 +321,7 @@ switch ($action) {
 }
 
 // Title
-if ($SETTINGS['subject_in_title'] === 'on') {
+if ($settings->get('subject_in_title') === 'on') {
     switch ($action) {
         case 'reply':
             $template->threadSubject = $lang['textreply'] . ' - ';
@@ -381,7 +381,7 @@ switch ($action) {
 
 // Attachment pre-processing
 if ($forum['attachstatus'] == 'on' && X_MEMBER) {
-    for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
+    for ($i = 1; $i <= $settings->get('filesperpost'); $i++) {
         if (isset($_FILES['attach' . $i])) {
             $result = $attachSvc->uploadedFile('attach' . $i, 0, $quarantine);
             if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
@@ -403,7 +403,7 @@ if ($forum['attachstatus'] == 'on' && X_MEMBER) {
     foreach ($deletes as $aid) {
         $messageinput = str_replace("[file]{$aid}[/file]", '', $messageinput);
     }
-    if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
+    if ($settings->get('attach_remote_images') == 'on' && $bIMGcodeOnForThisPost) {
         $status = $attachSvc->remoteImages(0, $messageinput, $quarantine);
         if ($status !== UploadStatus::Success) {
             $errors .= $core->softerror($attachSvc->uploadErrorMsg($status));
@@ -415,7 +415,7 @@ if ($forum['attachstatus'] == 'on' && X_MEMBER) {
 }
 
 // CAPTCHA input
-if ($validForSave && $action !== 'edit' && X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+if ($validForSave && $action !== 'edit' && X_GUEST && $settings->get('captcha_status') == 'on' && $settings->get('captcha_post_status') == 'on') {
     $captcha = new Captcha($core, $vars);
     if ($captcha->bCompatible !== false) {
         $imgcode = getPhpInput('imgcode');
@@ -453,11 +453,12 @@ if ($validForSave) {
 
 // Flood protection
 if ($validForSave && $action !== 'edit') {
+    $floodLimit = $vars->onlinetime - (int) $settings->get('floodctrl');
     if (X_GUEST) {
-        if ((int) ($vars->settings['anon_post_date'] ?? 0) >= $vars->onlinetime - (int) $vars->settings['floodctrl']) {
+        if ((int) $settings->get('anon_post_date') >= $floodLimit) {
             $errors .= $core->softerror($lang['floodprotect']);
         }
-    } elseif ((int) $vars->self['post_date'] >= $vars->onlinetime - (int) $vars->settings['floodctrl']) {
+    } elseif ((int) $vars->self['post_date'] >= $floodLimit) {
         $errors .= $core->softerror($lang['floodprotect']);
     }
 }
@@ -490,7 +491,7 @@ if ($bBBcodeOnForThisPost) {
 
 // All soft errors have been processed. If there were no errors, then let's save the inputs now.
 if ($validForSave && $errors == '') {
-    if ($action == 'edit' && $SETTINGS['editedby'] == 'on') {
+    if ($action == 'edit' && $settings->get('editedby') == 'on') {
         $messageinput .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
     }
 
@@ -547,11 +548,7 @@ if ($validForSave && $errors == '') {
         if (X_MEMBER && ! $quarantine) {
             $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
         } elseif (X_GUEST) {
-            if ((int) ($vars->settings['anon_post_date'] ?? 0) > 0) {
-                $sql->updateSetting('anon_post_date', $vars->onlinetime);
-            } else {
-                $sql->addSetting('anon_post_date', $vars->onlinetime);                
-            }
+            $settings->put('anon_post_date', $vars->onlinetime);
         }
 
         $values = [
@@ -641,12 +638,12 @@ if ($validForSave && $errors == '') {
     // Attachment post-processing
     if ($action != 'edit' && $forum['attachstatus'] == 'on') {
         if ($attachSkipped) {
-            for ($i = 1; $i <= $SETTINGS['filesperpost']; $i++) {
+            for ($i = 1; $i <= $settings->get('filesperpost'); $i++) {
                 if (isset($_FILES["attach$i"])) {
                     $attachSvc->uploadedFile("attach$i", $pid, $quarantine);
                 }
             }
-            if ($SETTINGS['attach_remote_images'] == 'on' && $bIMGcodeOnForThisPost) {
+            if ($settings->get('attach_remote_images') == 'on' && $bIMGcodeOnForThisPost) {
                 $attachSvc->remoteImages($pid, $messageinput, $quarantine);
                 $newdbmessage = $messageinput;
                 if ($newdbmessage !== $dbmessage) { // Anonymous message was modified after save, in order to use the pid.
@@ -831,7 +828,7 @@ if ($forum['attachstatus'] == 'on' && X_MEMBER) {
         if ($bBBcodeOnForThisPost) {
             $bbcode = "[file]{$file['aid']}[/file]";
             if (strpos($postinfo['message'], $bbcode) === false) {
-                if ($counter == 0 || $file['img_size'] == '' || $prevsize == '' || $SETTINGS['attachimgpost'] == 'off') {
+                if ($counter == 0 || $file['img_size'] == '' || $prevsize == '' || $settings->get('attachimgpost') == 'off') {
                     $postinfo['message'] .= "\n\n";
                 }
                 $postinfo['message'] .= ' ' . $bbcode; // Use a leading space to prevent awkward line wraps.
@@ -860,7 +857,7 @@ if (onSubmit('previewpost')) {
         $subTemplate->dissubject = '';
     }
     $message1 = $core->rawHTMLmessage($postinfo['message']);
-    if ($action == 'edit' && $SETTINGS['editedby'] == 'on') {
+    if ($action == 'edit' && $settings->get('editedby') == 'on') {
         $message1 .= "\n\n[{$lang['textediton']} " . $core->printGmDate(time()) . " {$lang['textby']} $username]";
     }
     if (count($files) > 0) {
@@ -872,7 +869,7 @@ if (onSubmit('previewpost')) {
         $subTemplate->sig = $core->postify(
             message: $sigText,
             allowsmilies: $forum['allowsmilies'],
-            allowbbcode: $SETTINGS['sigbbcode'],
+            allowbbcode: $settings->get('sigbbcode'),
             allowimgcode: $forum['allowimgcode'],
         );
         $subTemplate->message1 .= $subTemplate->process('viewthread_post_sig.php');
@@ -886,7 +883,7 @@ if (onSubmit('previewpost')) {
 }
 
 // CAPTCHA output
-if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_post_status'] == 'on') {
+if (X_GUEST && $settings->get('captcha_status') == 'on' && $settings->get('captcha_post_status') == 'on') {
     $Captcha = new Captcha($core, $vars);
     if ($Captcha->bCompatible !== false) {
         $subTemplate->imghash = $Captcha->GenerateCode();

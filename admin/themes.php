@@ -30,6 +30,7 @@ require ROOT . 'header.php';
 $core = Services\core();
 $db = Services\db();
 $session = Services\session();
+$settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
 $token = Services\token();
@@ -73,7 +74,7 @@ $header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
-$admin = new admin($core, $db, $session, $sql, $validate, $vars);
+$admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
 $single = '';
 $single_str = getPhpInput('single', 'g');

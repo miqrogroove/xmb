@@ -33,6 +33,7 @@ $core = Services\core();
 $db = Services\db();
 $email = Services\email();
 $session = Services\session();
+$settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
 $token = Services\token();
@@ -61,7 +62,7 @@ $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');
 
-$admin = new admin($core, $db, $session, $sql, $validate, $vars);
+$admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
 if (noSubmit('settingsubmit')) {
     $template->admin = $admin;
