@@ -9,7 +9,7 @@ namespace XMB;
 <table cellspacing="0" cellpadding="0" border="0" width="98%" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
+<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%" class="admin-panel">
 <tr class="ctrcategory">
 <td valign="top" width="20%"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['general'] ?></font></strong></td>
 <td valign="top" width="20%"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textforums'] ?></font></strong></td>

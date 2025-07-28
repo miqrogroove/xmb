@@ -451,3 +451,7 @@ table.subforums {
 table.fdetails {
     max-width: 1024px;
 }
+
+table.admin-panel {
+    text-size-adjust: none;
+}
