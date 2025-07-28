@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00-beta-1
+ * XMB 1.10.00-beta-2
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
