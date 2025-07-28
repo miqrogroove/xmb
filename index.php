@@ -34,15 +34,18 @@ $sql = Services\sql();
 $template = Services\template();
 $vars = Services\vars();
 $lang = &$vars->lang;
-$SETTINGS = &$vars->settings;
 
 $forums = $core->getStructuredForums(usePerms: true);
 
+$local_index_stats = $settings->get('index_stats');
+$local_tickerstatus = $settings->get('tickerstatus');
+$local_whosonlinestatus = $settings->get('whosonlinestatus');
+
 if (onSubmit('gid')) {
     $gid = getInt('gid');
-    $SETTINGS['tickerstatus'] = 'off';
-    $SETTINGS['whosonlinestatus'] = 'off';
-    $SETTINGS['index_stats'] = 'off';
+    $local_index_stats = 'off';
+    $local_tickerstatus = 'off';
+    $local_whosonlinestatus = 'off';
     $cat = $forumcache->getForum($gid);
 
     if ($cat === null) {
@@ -66,7 +69,7 @@ if (onSubmit('gid')) {
 
     $core->setCanonicalLink("index.php?gid=$gid");
     $core->nav(fnameOut($cat['name']));
-    if ($SETTINGS['subject_in_title'] == 'on') {
+    if ($settings->get('subject_in_title') == 'on') {
         $template->threadSubject = fnameOut($cat['name']) . ' - ';
     }
 } else {
@@ -81,17 +84,17 @@ $body = new Template($vars);
 $body->addRefs();
 
 $body->ticker = '';
-if ($SETTINGS['tickerstatus'] == 'on' && $gid == 0) {
+if ($local_tickerstatus == 'on' && $gid == 0) {
     $template->contents = '';
-    $news = explode("\n", str_replace(["\r\n", "\r"], ["\n"], $SETTINGS['tickercontents']));
+    $news = explode("\n", str_replace(["\r\n", "\r"], ["\n"], $settings->get('tickercontents')));
     $counter = 0;
     foreach ($news as $item) {
         if (strlen(trim($item)) == 0) {
             continue;
         }
-        if ('bbcode' == $SETTINGS['tickercode']) {
+        if ('bbcode' == $settings->get('tickercode')) {
             $item = $core->postify($item, 'no', 'no', 'yes', 'no', 'yes', 'yes', false, 'no', 'no');
-        } elseif ('html' == $SETTINGS['tickercode']) {
+        } elseif ('html' == $settings->get('tickercode')) {
             $item = rawHTML($item);
         }
         $item = str_replace('\"', '"', addslashes($item));
@@ -128,9 +131,9 @@ if (X_SMOD && $gid == 0) {
 }
 
 $body->statsbar = '';
-if ($SETTINGS['index_stats'] == 'on' && $gid == 0) {
+if ($local_index_stats == 'on' && $gid == 0) {
     $where = '';
-    if ('on' == $SETTINGS['hide_banned']) {
+    if ('on' == $settings->get('hide_banned')) {
         $where = "AND status != 'Banned'";
     }
     $query1 = $db->query("SELECT username FROM " . $vars->tablepre . "members WHERE lastvisit != 0 $where ORDER BY regdate DESC LIMIT 1");
@@ -162,13 +165,13 @@ if ($gid == 0) {
         $body->welcome = $template->process('index_welcome_guest.php');
     }
 
-    if ($SETTINGS['whosonlinestatus'] == 'on') {
+    if ($local_whosonlinestatus == 'on') {
         $hiddencount = 0;
         $membercount = 0;
         $guestcount = (int) $db->result($db->query("SELECT COUNT(DISTINCT ip) AS guestcount FROM " . $vars->tablepre . "whosonline WHERE username = 'xguest123'"), 0);
         $member = array();
         $where = '';
-        if ('on' == $SETTINGS['hide_banned']) {
+        if ('on' == $settings->get('hide_banned')) {
             $where = "WHERE m.status != 'Banned'";
         }
         $query = $db->query("SELECT m.username, MAX(m.status) AS status, MAX(m.invisible) AS invisible FROM " . $vars->tablepre . "members AS m INNER JOIN " . $vars->tablepre . "whosonline USING (username) $where GROUP BY m.username ORDER BY m.username");
@@ -206,7 +209,7 @@ if ($gid == 0) {
         }
 
         $search  = [ '$guestn', '$membern', '$hiddenn', '$bbname' ];
-        $replace = [  $guestn,   $membern,   $hiddenn,   $vars->settings['bbname']  ];
+        $replace = [  $guestn,   $membern,   $hiddenn,   $settings->get('bbname')  ];
         $whosonmsg = str_replace($search, $replace, $lang['whosoneval']);
         $template->memonmsg = "<span class='smalltxt'>$whosonmsg</span>";
 
@@ -252,10 +255,10 @@ if ($gid == 0) {
         }
 
         $template->whosonlinetoday = '';
-        if ($SETTINGS['onlinetoday_status'] == 'on') {
+        if ($settings->get('onlinetoday_status') == 'on') {
             $datecut = $vars->onlinetime - (3600 * 24);
             $where = '';
-            if ('on' == $SETTINGS['hide_banned']) {
+            if ('on' == $settings->get('hide_banned')) {
                 $where = "AND status != 'Banned'";
             }
             if (X_ADMIN) {
@@ -269,7 +272,7 @@ if ($gid == 0) {
             $pre = $suff = '';
             $x = 0;
             while ($memberstoday = $db->fetch_array($query)) {
-                if ($x <= $SETTINGS['onlinetodaycount']) {
+                if ($x <= $settings->get('onlinetodaycount')) {
                     $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
                     $suff = '</span>';
                     $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
@@ -286,7 +289,7 @@ if ($gid == 0) {
             } else {
                 $template->memontoday = $todaymembersnum.$lang['textmemberstoday'];
             }
-            $template->last50today = str_replace('$onlinetodaycount', $SETTINGS['onlinetodaycount'], $lang['last50todayeval']);
+            $template->last50today = str_replace('$onlinetodaycount', $settings->get('onlinetodaycount'), $lang['last50todayeval']);
             $template->whosonlinetoday = $template->process('index_whosonline_today.php');
         }
 
@@ -294,7 +297,7 @@ if ($gid == 0) {
     }
 }
 
-$fquery = $core->getIndexForums($forums, $cat, $SETTINGS['catsonly'] == 'on');
+$fquery = $core->getIndexForums($forums, $cat, $settings->get('catsonly') == 'on');
 
 if ($settings->get('catsonly') == 'on' && $gid == 0 && count($fquery) == 0) {
     // The admin has chosen to show categories only, but no existing categories are turned on.  Let's avoid this.
@@ -307,17 +310,17 @@ $indexBar = $forumlist = $spacer = '';
 $forumarray = [];
 $catLessForums = 0;
 
-if ($SETTINGS['space_cats'] == 'on') {
+if ($settings->get('space_cats') == 'on') {
     $spacer = $template->process('index_category_spacer.php');
 }
 
-if ($SETTINGS['catsonly'] != 'on') {
-    if ($SETTINGS['indexshowbar'] == 1) {
+if ($settings->get('catsonly') != 'on') {
+    if ($settings->get('indexshowbar') == 1) {
         $indexBar = $template->process('index_category_hr.php');
         $body->indexBarTop = $indexBar;
     }
 
-    if ($SETTINGS['indexshowbar'] == 2) {
+    if ($settings->get('indexshowbar') == 2) {
         $body->indexBarTop = $template->process('index_category_hr.php');
     }
 } elseif ($gid > 0) {
@@ -326,8 +329,8 @@ if ($SETTINGS['catsonly'] != 'on') {
 
 // Collect Subforums ordered by fup, displayorder
 $index_subforums = [];
-if ($SETTINGS['showsubforums'] == 'on') {
-    if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
+if ($settings->get('showsubforums') == 'on') {
+    if ($settings->get('catsonly') != 'on' || $gid > 0) {
         foreach ($forums['sub'] as $subForumsByFUP) {
             foreach ($subForumsByFUP as $forum) {
                 $index_subforums[] = $forum;
@@ -338,7 +341,7 @@ if ($SETTINGS['showsubforums'] == 'on') {
 
 $lastcat = '0';
 foreach ($fquery as $thing) {
-    if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
+    if ($settings->get('catsonly') != 'on' || $gid > 0) {
         $cforum = $core->forum($thing, "index_forum", $index_subforums);
     } else {
         $cforum = '';
@@ -348,7 +351,7 @@ foreach ($fquery as $thing) {
         $catLessForums++;
     }
 
-    if ($lastcat !== $thing['cat_fid'] && ($SETTINGS['catsonly'] == 'on' || ! empty($cforum))) {
+    if ($lastcat !== $thing['cat_fid'] && ($settings->get('catsonly') == 'on' || ! empty($cforum))) {
         if ($forumlist != '') {
             $forumarray[] = $forumlist;
             $forumlist = '';
@@ -357,7 +360,7 @@ foreach ($fquery as $thing) {
         $thing['cat_name'] = fnameOut($thing['cat_name']);
         $template->thing = $thing;
         $forumlist .= $template->process('index_category.php');
-        if ($SETTINGS['catsonly'] != 'on' || $gid > 0) {
+        if ($settings->get('catsonly') != 'on' || $gid > 0) {
             $forumlist .= $indexBar;
         }
     }
@@ -380,7 +383,7 @@ if ($body->forumlist == '') {
 }
 unset($fquery);
 
-if ($catLessForums == 0 && $SETTINGS['indexshowbar'] == 1) {
+if ($catLessForums == 0 && $settings->get('indexshowbar') == 1) {
     $body->indexBarTop = '';
 }
 
