@@ -239,7 +239,6 @@ if (X_MEMBER) {
 }
 
 $template->emailnotifycheck = ($emailnotify == 'yes') ? $vars::cheHTML : '';
-$template->disableguest = X_GUEST ? 'style="display:none;"' : '';
 
 // New bool vars to clear up the confusion about effective settings.
 $bBBcodeInserterEnabled = ($SETTINGS['bbinsert'] == 'on' && $forum['allowbbcode'] == 'yes');
@@ -367,6 +366,8 @@ switch ($action) {
         $result = $db->query("SELECT p.*, m.status, m.sig FROM " . $vars->tablepre . "posts p LEFT JOIN " . $vars->tablepre . "members m ON p.author = m.username WHERE p.pid = $pid");
         $orig = $db->fetch_array($result);
         $db->free_result($result);
+        $orig['sig'] ??= '';
+        $orig['status'] ??= '';
 
         $isMod = $core->modcheckPost($vars->self['username'], $forum['moderator'], $orig['status']);
 
@@ -452,7 +453,11 @@ if ($validForSave) {
 
 // Flood protection
 if ($validForSave && $action !== 'edit') {
-    if ((int) $vars->self['post_date'] >= $vars->onlinetime - (int) $vars->settings['floodctrl']) {
+    if (X_GUEST) {
+        if ((int) ($vars->settings['anon_post_date'] ?? 0) >= $vars->onlinetime - (int) $vars->settings['floodctrl']) {
+            $errors .= $core->softerror($lang['floodprotect']);
+        }
+    } elseif ((int) $vars->self['post_date'] >= $vars->onlinetime - (int) $vars->settings['floodctrl']) {
         $errors .= $core->softerror($lang['floodprotect']);
     }
 }
@@ -541,6 +546,12 @@ if ($validForSave && $errors == '') {
     if ($action != 'edit') {
         if (X_MEMBER && ! $quarantine) {
             $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
+        } elseif (X_GUEST) {
+            if ((int) ($vars->settings['anon_post_date'] ?? 0) > 0) {
+                $sql->updateSetting('anon_post_date', $vars->onlinetime);
+            } else {
+                $sql->addSetting('anon_post_date', $vars->onlinetime);                
+            }
         }
 
         $values = [
@@ -933,7 +944,17 @@ if ($action == 'reply') {
 // Set checkbox values.
 $template->codeoffcheck = ($postinfo['bbcodeoff'] == 'yes') ? $vars::cheHTML : '';
 $template->smileoffcheck = ($postinfo['smileyoff'] == 'yes') ? $vars::cheHTML : '';
-$template->usesigcheck = ($postinfo['usesig'] == 'yes') ? $vars::cheHTML : '';
+// Usesigcheck is different because it is based on the stored post record for initializing edits, the request value for saves and previews, and self['sig'] for new posts.
+if ($validForSave || onSubmit('previewpost') || $action == 'edit') {
+    $template->usesigcheck = $postinfo['usesig'] == 'yes' ? $vars::cheHTML : '';
+} else {
+    $template->usesigcheck = $vars->self['sig'] != '' ? $vars::cheHTML : '';
+}
+if ($action == 'edit' && $orig['author'] == 'Anonymous') {
+    $template->disableguest = 'style="display:none;"';
+} else {
+    $template->disableguest = X_GUEST ? 'style="display:none;"' : '';
+}
 
 // Generate icon input elements
 $posticon = $postinfo['icon'];

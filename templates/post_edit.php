@@ -35,7 +35,7 @@
 <br />
 <div class="postOptions">
  <label><input type="checkbox" name="smileyoff" value="yes" <?= $smileoffcheck ?> /> <?= $lang['textdissmileys'] ?></label>
- <label><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?></label>
+ <label <?= $disableguest ?>><input type="checkbox" name="usesig" value="yes" <?= $usesigcheck ?> /> <?= $lang['textusesig'] ?></label>
  <label><input type="checkbox" name="bbcodeoff" value="yes" <?= $codeoffcheck ?> /> <?= $lang['bbcodeoff'] ?></label>
  <label><input type="checkbox" name="delete" value="yes" /> <strong><?= $lang['textdelete'] ?></strong></label>
 </div>
