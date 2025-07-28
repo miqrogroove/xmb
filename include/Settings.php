@@ -33,10 +33,10 @@ class Settings
 {
     public function __construct(private DBStuff $db, private SQL $sql, private Variables $vars)
     {
-        // Property promotion.
+        $this->readToVars();
     }
 
-    public function readToVars()
+    private function readToVars()
     {
         // This is normally the first query on the connection, so do not panic unless query logging is enabled.
         $panic = $this->vars->debug && $this->vars->log_mysql_errors;

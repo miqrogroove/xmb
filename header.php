@@ -98,7 +98,6 @@ require ROOT . 'vendor/autoload.php';
 
 vars(new \XMB\Variables());
 
-email(new \XMB\Email(vars()));
 observer(new \XMB\Observer(vars()));
 template(new \XMB\Template(vars()));
 translation(new \XMB\Translation(vars()));
@@ -155,13 +154,12 @@ debug(new \XMB\Debug(db()));
 sql(new \XMB\SQL(db(), vars()->tablepre));
 validate(new \XMB\Validation(db()));
 
-settings(new \XMB\Settings(db(), sql(), vars()));
-settings()->readToVars();
-
 forums(new \XMB\Forums(sql()));
+settings(new \XMB\Settings(db(), sql(), vars()));
 smile(new \XMB\SmileAndCensor(sql()));
 token(new \XMB\Token(sql(), vars()));
 
+email(new \XMB\Email(vars())); // Depends on settings and will likely use it in the future.
 theme(new \XMB\ThemeManager(forums(), settings(), sql(), template(), vars()));
 
 bbcode(new \XMB\BBCode(theme(), vars()));

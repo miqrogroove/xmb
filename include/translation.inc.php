@@ -161,12 +161,7 @@ class Translation
         if ($this->loadLang()) {
             return;
         }
-        if ($this->vars->settings['bbstatus'] == 'off') { // Possible upgrade in progress
-            header('HTTP/1.0 503 Service Unavailable');
-            header('Retry-After: 3600');
-        } else {
-            header('HTTP/1.0 500 Internal Server Error');
-        }
+        header('HTTP/1.0 500 Internal Server Error');
         echo 'Error: XMB failed to start because the default language is missing.  Please place English.lang.php in the lang subfolder to correct this.';
         throw new RuntimeException('The English.lang.php file is missing or unreadable.');
     }
