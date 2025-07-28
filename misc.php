@@ -85,6 +85,8 @@ $nextlink = '';
 
 switch ($action) {
     case 'login':
+        $template->nameMin = $vars::USERNAME_MIN_LENGTH;
+        $template->nameSize = $vars::USERNAME_MAX_LENGTH;
         if (! $core->coppa_check()) {
             $core->message($lang['coppa_fail']);
         } elseif (noSubmit('loginsubmit')) {
@@ -93,8 +95,6 @@ switch ($action) {
             } else {
                 $template->token = $token->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
                 $session->preLogin($template->token);
-                $template->nameMin = $vars::USERNAME_MIN_LENGTH;
-                $template->nameSize = $vars::USERNAME_MAX_LENGTH;
                 $misc = $template->process('misc_login.php');
             }
         } else {
