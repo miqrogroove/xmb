@@ -370,7 +370,7 @@ switch ($action) {
                         }
 
                         if ($SETTINGS['emailcheck'] == 'on') {
-                            $translate = $lang2[$langfilenew];
+                            $translate = $lang2[$self['langfile']];
                             $username = trim(getPhpInput('username'));
                             $rawbbname = rawHTML($SETTINGS['bbname']);
                             $subject = "[$rawbbname] {$translate['textyourpw']}";
