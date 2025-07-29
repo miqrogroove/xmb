@@ -544,6 +544,7 @@ if ($validForSave && $errors == '') {
     }
 
     // Create/modify/delete post record
+    $threaddelete = 'no';
     if ($action != 'edit') {
         if (X_MEMBER && ! $quarantine) {
             $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
@@ -586,7 +587,6 @@ if ($validForSave && $errors == '') {
         }
         $attachSvc->deleteByPost($pid);
 
-        $threaddelete = 'no';
         if ($isFirstPost) {
             if ($sql->countPosts(tid: $tid) == 0) {
                 $threaddelete = 'yes';
