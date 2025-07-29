@@ -38,8 +38,8 @@ class XMBVersion
     {
         $data = array(
             'version' => '1.10.00',
-            'versionStage' => 'beta-1',
-            'versionDate' => '20250717',
+            'versionStage' => 'beta-2',
+            'versionDate' => '20250728',
             'mysqlMinVer' => '5.5.8',
             'phpMinVer' => '8.2.0',
             'copyright' => '2001-2025',
