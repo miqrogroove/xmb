@@ -2308,6 +2308,14 @@ class Core
     /**
      * @since 1.10.00
      */
+    public function schemaHasSessionNames(): bool
+    {
+        return (int) $this->vars->settings['schema_version'] >= 13;
+    }
+
+    /**
+     * @since 1.10.00
+     */
     public function schemaHasTokens(): bool
     {
         return (int) $this->vars->settings['schema_version'] >= 5;

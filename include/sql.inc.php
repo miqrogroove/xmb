@@ -39,16 +39,20 @@ class SQL
      *
      * @since 1.9.12
      */
-    public function saveSession(string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent, string $comment): bool
+    public function saveSession(string $token, string $username, int $date, int $expire, int $regenerate, string $replace, string $agent, ?string $comment = null): bool
     {
         $this->db->escape_fast($token);
         $this->db->escape_fast($username);
         $this->db->escape_fast($replace);
         $this->db->escape_fast($agent);
-        $this->db->escape_fast($comment);
+        $extra = '';
+        if (! is_null($comment)) {
+            $this->db->escape_fast($comment);
+            $extra .= ", name = '$comment'";
+        }
 
         $this->db->query("INSERT IGNORE INTO " . $this->tablepre . "sessions SET token = '$token', username = '$username', login_date = $date,
-            expire = $expire, regenerate = $regenerate, replaces = '$replace', agent = '$agent', name = '$comment'");
+            expire = $expire, regenerate = $regenerate, replaces = '$replace', agent = '$agent' $extra");
 
         return ($this->db->affected_rows() == 1);
     }
