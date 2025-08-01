@@ -631,8 +631,7 @@ class SQL
     public function adjustPostCount(string $username, int $change)
     {
         $this->db->escape_fast($username);
-        $op = $change > 0 ? '+' : '-';
-        $this->db->query("UPDATE " . $this->tablepre . "members SET postnum = postnum $op $change WHERE username = '$username'");
+        $this->db->query("UPDATE " . $this->tablepre . "members SET postnum = postnum + $change WHERE username = '$username'");
     }
 
     /**
