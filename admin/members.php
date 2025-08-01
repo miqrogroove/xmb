@@ -82,11 +82,14 @@ if ($srchip != '') {
 switch ($srchstatus) {
     case '':
         break;
+    case 'Inactive':
+        $where[] = 'postnum = 0 AND lastvisit <= regdate + 86400 AND status = "Member"';
+        break;
+    case 'Lurking':
+        $where[] = 'postnum = 0 AND lastvisit > regdate + 86400 AND status = "Member"';
+        break;
     case 'Pending':
         $where[] = 'lastvisit = 0';
-        break;
-    case 'Inactive':
-        $where[] = 'postnum = 0 AND lastvisit < regdate + 20000 AND status = "Member"';
         break;
     default:
         $where[] = "status = '$srchstatus'";

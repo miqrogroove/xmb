@@ -525,6 +525,7 @@ $lang['lostpw_body_eval'] = "Hello \$name,\n\nA password reset request was recei
 $lang['lostpw_in24hrs'] = "You have already requested a new password within the last 24 hours.<br />You may not request it again in the same 24-hour period.";
 $lang['lostpw_success'] = "Your new password is ready to use. You may proceed to the login page.";
 $lang['lpoststats'] = "last post";
+$lang['lurking'] = 'Lurking';
 $lang['mailerDkimDomain'] = "DKIM domain name.";
 $lang['mailerDkimIntro'] = "DKIM message signing is an advanced anti-spam technology recognized by major e-mail services. If your e-mail server doesn't sign outgoing mail by default, you can have XMB sign each message before it is sent. This feature is optional. When all three fields are set, the feature is enabled. You will need to provide your own key pair from a 3rd-party tool. The public key must be saved in your DNS. The private key must be saved in a separate file, and you must specify the full path and filename below. The domain name normally should match everything after the @ in the Administrator E-Mail address. The selector is part of the name you created in DNS. To disable this feature, clear at least one of the fields.";
 $lang['mailerDkimKey'] = "DKIM private key file path.";
