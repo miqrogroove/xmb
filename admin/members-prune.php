@@ -71,9 +71,9 @@ if (onSubmit('nosubmit')) {
     $dirty = [];
     $rawuser = $member;
     $member = $db->escape($rawuser);
-    $countquery = $db->query("SELECT tid FROM " . $this->vars->tablepre . "posts WHERE author='$member' GROUP BY tid");
+    $countquery = $db->query("SELECT tid FROM " . $vars->tablepre . "posts WHERE author='$member' GROUP BY tid");
     while ($post = $db->fetch_array($countquery)) {
-        $dirty[] = $post['tid'];
+        $dirty[] = (int) $post['tid'];
     }
     $db->free_result($countquery);
 
@@ -81,7 +81,7 @@ if (onSubmit('nosubmit')) {
     $fids = [];
     if (count($dirty) > 0) {
         $csv = implode(',', $dirty);
-        $countquery = $db->query("SELECT fid FROM " . $this->vars->tablepre . "threads WHERE tid IN ($csv) GROUP BY fid");
+        $countquery = $db->query("SELECT fid FROM " . $vars->tablepre . "threads WHERE tid IN ($csv) GROUP BY fid");
         while ($thread = $db->fetch_array($countquery)) {
             $fids[] = (int) $thread['fid'];
         }
@@ -90,24 +90,24 @@ if (onSubmit('nosubmit')) {
 
     // Delete Member's Posts
     $attach->deleteByUser($rawuser);
-    $db->query("DELETE FROM " . $this->vars->tablepre . "posts WHERE author='$member'");
-    $db->query("UPDATE " . $this->vars->tablepre . "members SET postnum = 0 WHERE username='$member'");
+    $db->query("DELETE FROM " . $vars->tablepre . "posts WHERE author='$member'");
+    $db->query("UPDATE " . $vars->tablepre . "members SET postnum = 0 WHERE username='$member'");
 
     // Delete Empty Threads
     // This will also delete thread redirectors where the redirect's author is $member
     $tids = [];
     $movedids = [];
-    $countquery = $db->query("SELECT t.tid FROM " . $this->vars->tablepre . "threads AS t LEFT JOIN " . $this->vars->tablepre . "posts AS p USING (tid) WHERE t.closed NOT LIKE 'moved%' GROUP BY t.tid HAVING COUNT(p.pid) = 0");
+    $countquery = $db->query("SELECT t.tid FROM " . $vars->tablepre . "threads AS t LEFT JOIN " . $vars->tablepre . "posts AS p USING (tid) WHERE t.closed NOT LIKE 'moved%' GROUP BY t.tid HAVING COUNT(p.pid) = 0");
     while ($threads = $db->fetch_array($countquery)) {
-        $tids[] = $threads['tid'];
+        $tids[] = (int) $threads['tid'];
         $movedids[] = 'moved|'.$threads['tid'];
     }
     $db->free_result($countquery);
     if (count($tids) > 0) {
         $csv = implode(',', $tids);
         $movedids = implode("', '", $movedids);
-        $db->query("DELETE FROM " . $this->vars->tablepre . "threads WHERE tid IN ($csv) OR closed IN ('$movedids')");
-        $db->query("DELETE FROM " . $this->vars->tablepre . "favorites WHERE tid IN ($csv)");
+        $db->query("DELETE FROM " . $vars->tablepre . "threads WHERE tid IN ($csv) OR closed IN ('$movedids')");
+        $db->query("DELETE FROM " . $vars->tablepre . "favorites WHERE tid IN ($csv)");
         $sql->deleteVotesByTID($tids);
     }
 
