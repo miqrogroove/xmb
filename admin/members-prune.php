@@ -63,6 +63,7 @@ if (onSubmit('nosubmit')) {
 } elseif (noSubmit('yessubmit')) {
     $template->token = $token->create('Control Panel/Members/Del Posts', $member, $vars::NONCE_AYS_EXP);
     $template->memberLink = recodeOut($member);
+    $template->message = str_replace('$member', $member, $lang['confirmDeletePosts']);
     $body = $template->process('admin_members_prune_ays.php');
 } else {
     $core->request_secure('Control Panel/Members/Del Posts', $member);

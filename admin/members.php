@@ -71,26 +71,31 @@ $dblikeip = $db->like_escape($srchip);
 $where = [];
 
 if ($srchmem != '') {
-    $where[] = "username LIKE '%$dblikemem%' ";
+    $where[] = "username LIKE '%$dblikemem%'";
 }
 if ($srchemail != '') {
-    $where[] = "email LIKE '%$dblikeemail%' ";
+    $where[] = "email LIKE '%$dblikeemail%'";
 }
 if ($srchip != '') {
-    $where[] = "regip LIKE '%$dblikeip%' ";
+    $where[] = "regip LIKE '%$dblikeip%'";
 }
-if ($srchstatus != '') {
-    if ($srchstatus == 'Pending') {
-        $where[] = "lastvisit = 0 ";
-    } else {
-        $where[] = "status = '$srchstatus' ";
-    }
+switch ($srchstatus) {
+    case '':
+        break;
+    case 'Pending':
+        $where[] = 'lastvisit = 0';
+        break;
+    case 'Inactive':
+        $where[] = 'postnum = 0 AND lastvisit < regdate + 20000 AND status = "Member"';
+        break;
+    default:
+        $where[] = "status = '$srchstatus'";
 }
 
 if (count($where) == 0) {
     $where = '';
 } else {
-    $where = 'WHERE '.implode('AND ', $where);
+    $where = 'WHERE ' . implode(' AND ', $where);
 }
 
 $members = getPhpInput('members', 'g');

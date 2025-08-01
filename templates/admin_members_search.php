@@ -30,6 +30,7 @@
 <option value="Super Moderator"><?= $lang['textsupermod']?></option>
 <option value="Moderator"><?= $lang['textmod']?></option>
 <option value="Member"><?= $lang['textmem']?></option>
+<option value="Inactive"><?= $lang['inactiveUser'] ?></option>
 <option value="Banned"><?= $lang['textbanned']?></option>
 <option value="Pending"><?= $lang['textpendinglogin']?></option>
 </select>
