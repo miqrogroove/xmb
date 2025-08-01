@@ -130,12 +130,12 @@ class URL2Text
         } elseif (false !== strpos($url, '/admin/')) {
             $location = $lang['onlinecp'];
             if (! X_ADMIN) {
-                $url = 'index.php';
+                $url = '/index.php';
             }
         } elseif (false !== strpos($url, '/editprofile.php')) {
             $location = $lang['onlinecp'];
             if (! X_SADMIN) {
-                $url = 'index.php';
+                $url = '/index.php';
             }
         } elseif (false !== strpos($url, '/faq.php')) {
             $location = $lang['onlinefaq'];
@@ -157,7 +157,7 @@ class URL2Text
         } elseif (false !== strpos($url, '/lost.php')) {
             $location = $lang['onlinelostpw'];
             if (! X_SADMIN) {
-                $url = 'lost.php';
+                $url = '/lost.php';
             }
         } elseif (false !== strpos($url, '/member.php')) {
             if (false !== strpos($url, 'action=reg')) {
