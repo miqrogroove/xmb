@@ -610,7 +610,7 @@ if ($validForSave && $errors == '') {
         case 'newthread':
             $sql->setThreadLastpost($tid, $lastpost, $quarantine);
             if (! $quarantine) {
-                $sql->setForumCounts($fid, $lastpost, fup: $fupArg, newReply: true);
+                $sql->setForumCounts($fid, $lastpost, fup: $fupArg, newReply: true, newThread: true);
             }
             break;
         case 'edit':

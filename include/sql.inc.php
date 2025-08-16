@@ -944,6 +944,7 @@ class SQL
      * @param int $oldThreadCount Optional.  Specify the last-seen value of forums.threads to help avoid update races.
      * @param int $fup Optional.  Specify a 2nd fid value, usually when the forum's parent needs to be updated at the same time.
      * @param bool $newReply Optional.  Need to increment the posts count?  Ignored if postcount arg supplied.
+     * @param bool $newThread Optional.  Need to increment the threads count?  Ignored if threadcount arg supplied.
      */
     public function setForumCounts(
         int $fid,
@@ -953,6 +954,7 @@ class SQL
         ?int $oldThreadCount = null,
         ?int $fup = null,
         ?bool $newReply = false,
+        ?bool $newThread = false,
     ) {
         $this->db->escape_fast($lastpost);
 
@@ -964,7 +966,11 @@ class SQL
         } else {
             $counts .= "posts = $postcount, ";
         }
-        if (! is_null($threadcount)) $counts .= "threads = $threadcount, ";
+        if (is_null($threadcount)) {
+            if ($newThread) $counts .= 'threads = threads + 1, ';
+        } else {
+            $counts .= "threads = $threadcount, ";
+        }
         if (! is_null($oldThreadCount)) $where .= " AND threads = $oldThreadCount";
         if (! is_null($fup)) $where .= " OR fid = $fup";
 
