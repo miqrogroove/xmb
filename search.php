@@ -54,28 +54,34 @@ if ($vars->settings['searchstatus'] != 'on') {
     exit;
 }
 
+$getUserName = getPhpInput('srchuname', 'g');
+$captchaEnabled = X_GUEST && $vars->settings['captcha_status'] == 'on' && $vars->settings['captcha_search_status'] == 'on';
+
 $searchsubmit = getPhpInput('searchsubmit', 'r');
 $page = formInt('page');
 $ppp = $vars->ppp;
 
-if (empty($searchsubmit) && empty($page)) {
+if (empty($searchsubmit) && empty($page) || $getUserName != '' && $captchaEnabled) {
     $core->setCanonicalLink('search.php');
 
     // Users won't be able to see results without thread view permission, so also restrict the forum selector to the thread permission level.
     $template->forumselect = $core->forumList('f', multiple: true, currentfid: getInt('fid'), permLevel: 'thread');
     $template->selected = $vars::selHTML;
+    $template->usernameAttr = $validate->postedVar(
+        varname: 'srchuname',
+        dbescape: false,
+        sourcearray: 'g',
+    );
 
     $template->captchasearchcheck = '';
-    if (X_GUEST) {
-        if ($vars->settings['captcha_status'] == 'on' && $vars->settings['captcha_search_status'] == 'on') {
-            $Captcha = new Captcha($core, $vars);
-            if ($Captcha->bCompatible !== false) {
-                $template->imghash = $Captcha->GenerateCode();
-                if ($vars->settings['captcha_code_casesensitive'] == 'off') {
-                    $lang['captchacaseon'] = '';
-                }
-                $template->captchasearchcheck = $template->process('search_captcha.php');
+    if ($captchaEnabled) {
+        $Captcha = new Captcha($core, $vars);
+        if ($Captcha->bCompatible !== false) {
+            $template->imghash = $Captcha->GenerateCode();
+            if ($vars->settings['captcha_code_casesensitive'] == 'off') {
+                $lang['captchacaseon'] = '';
             }
+            $template->captchasearchcheck = $template->process('search_captcha.php');
         }
     }
 
@@ -86,7 +92,7 @@ if (empty($searchsubmit) && empty($page)) {
     if (empty(getPhpInput('searchsubmit'))) {
         // Allow limited input from GET method
         $srchuname = $validate->postedVar('srchuname', sourcearray: 'g');
-        $rawsrchuname = getPhpInput('srchuname', 'g');
+        $rawsrchuname = $getUserName;
         $srchtxt = '';
         $distinct = '';
         $srchfid = [0];
@@ -116,21 +122,19 @@ if (empty($searchsubmit) && empty($page)) {
         $srchuname = '';
     }
 
-    if (X_GUEST) {
-        if ($vars->settings['captcha_status'] == 'on' && $vars->settings['captcha_search_status'] == 'on') {
-            if ($page > 1) {
-                $core->error($lang['searchguesterror']);
-            }
-            $Captcha = new Captcha($core, $vars);
-            if ($Captcha->bCompatible !== false) {
-                $imgcode = getPhpInput('imgcode', 'g');
-                $imghash = $validate->postedVar('imghash', sourcearray: 'g');
-                if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
-                    $core->error($lang['captchaimageinvalid']);
-                }
-            }
-            unset($Captcha);
+    if ($captchaEnabled) {
+        if ($page > 1) {
+            $core->error($lang['searchguesterror']);
         }
+        $Captcha = new Captcha($core, $vars);
+        if ($Captcha->bCompatible !== false) {
+            $imgcode = getPhpInput('imgcode');
+            $imghash = getPhpInput('imghash');
+            if ($Captcha->ValidateCode($imgcode, $imghash) !== true) {
+                $core->error($lang['captchaimageinvalid']);
+            }
+        }
+        unset($Captcha);
     }
 
     $template->searchresults = '';

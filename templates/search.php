@@ -17,7 +17,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsrchuname'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="srchuname" size="30" maxlength="40" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="srchuname" size="30" maxlength="40" value="<?= $usernameAttr ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['srchbyforum'] ?></td>

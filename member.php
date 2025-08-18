@@ -779,12 +779,8 @@ switch ($action) {
             $template->lastpost = $lang['textnopostsyet'];
         }
 
-        if (X_GUEST && $SETTINGS['captcha_status'] == 'on' && $SETTINGS['captcha_search_status'] == 'on') {
-            $template->postSearchLink = '';
-        } else {
-            $url = $vars->full_url . 'search.php?srchuname=' . recodeOut($memberinfo['username']) . '&amp;searchsubmit=a';
-            $template->postSearchLink = str_replace('$url', $url, $lang['searchusermsg']);
-        }
+        $url = $vars->full_url . 'search.php?srchuname=' . recodeOut($memberinfo['username']) . '&amp;searchsubmit=a';
+        $template->postSearchLink = str_replace('$url', $url, $lang['searchusermsg']);
         
         $memberpage = $template->process('member_profile.php');
         break;
