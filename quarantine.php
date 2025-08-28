@@ -411,7 +411,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
                 }
 
                 $translate = $lang2[$subs['langfile']];
-                $topicpages = quickpage($posts, $subs['ppp']);
+                $topicpages = $core->quickpage($posts, $subs['ppp']);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
                 $rawsubject = rawHTML($threadname);
@@ -584,7 +584,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
         }
 
         $translate = $lang2[$subs['langfile']];
-        $topicpages = quickpage($posts, $subs['ppp']);
+        $topicpages = $core->quickpage($posts, $subs['ppp']);
         $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
         $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
         $rawsubject = rawHTML($threadname);
