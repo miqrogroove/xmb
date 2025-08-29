@@ -92,21 +92,34 @@ class SmileAndCensor
      * Replaces all Smilie codes with images.
      *
      * @since 1.9.1
-     * @param string $txt Variable required. Input and output text.
+     * @param string $txt Variable required.  Input and output text.  Treated as HTML.
      * @param string $smiliesURL The full URL for the smilies directory.
      */
     public function smile(string &$txt, string $smiliesURL)
     {
         if (! $this->isAnySmilieInstalled()) return;
 
-        // Parse the input for HTML tags
-        $pattern = "/(<[^>]*+>)/";
-        $parts = preg_split($pattern, $txt, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        // Parse the input for HTML elements and entity references.
+        $pattern =
+            "/(" . // Capture the split delimiters.  This is required for the PREG flag to work, regardless of pattern type.
+                "<[^>]*+>" . // Find HTML elements.
+                "|" .
+                "&[^<;]*+;" . // Find entity references that do not contain HTML elements.
+            ")/";
+        $parts = preg_split($pattern, $txt, flags: PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-        // Loop through the parts and avoid the HTML tags
+        // Loop through the parts.
         foreach ($parts as &$part) {
-            if (substr($part, 0, 1) == '<') continue;
+            switch ($part[0]) {
+                case '<':
+                    // Skip all HTML elements, including BBCode output.
+                    continue;
+                case '&':
+                    // Skip all HTML entity references.
+                    continue;
+            }
             
+            // Add smilies to the text.
             foreach ($this->smiliecache as $code => $filename) {
                 // Most $part values won't contain any smilies, so optimize by writing new strings only when necessary.
                 if (false === strpos($part, $code)) continue;
@@ -117,7 +130,7 @@ class SmileAndCensor
         }
         
         // Put the parts back together
-        $txt = implode("", $parts);
+        $txt = implode('', $parts);
     }
 
     /**
