@@ -113,10 +113,10 @@ class SmileAndCensor
             switch ($part[0]) {
                 case '<':
                     // Skip all HTML elements, including BBCode output.
-                    continue;
+                    continue 2;
                 case '&':
                     // Skip all HTML entity references.
-                    continue;
+                    continue 2;
             }
             
             // Add smilies to the text.
