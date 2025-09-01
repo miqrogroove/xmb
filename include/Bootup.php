@@ -134,9 +134,11 @@ class Bootup
         }
 
         // Common XSS Protection: XMB disallows '<' and unencoded ':/' in all URLs.
-        $url_check = ['%3c', '<', ':/'];
+        // XMB also disallows any bots emitting unencoded ';'.
+        $url_check = ['%3c', '<', ':/', ';'];
+        $iurl = strtolower($this->vars->url);
         foreach ($url_check as $name) {
-            if (strpos(strtolower($this->vars->url), $name) !== false) {
+            if (strpos($iurl, $name) !== false) {
                 header('HTTP/1.0 403 Forbidden');
                 exit('403 Forbidden - URL rejected by XMB');
             }
