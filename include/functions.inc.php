@@ -40,6 +40,7 @@ class Core
         private Debug $debug,
         private Email $email,
         private Forums $forums,
+        private Password $password,
         private SmileAndCensor $smile,
         private SQL $sql,
         private Template $template,
@@ -2144,43 +2145,30 @@ class Core
      * @since 1.10.00
      * @param string $passInputName
      * @param string $passConfirmName
-     * @return string The raw text of the new password.
+     * @param bool $softError When true, it returns the error message instead of displaying it immediately.
+     * @return array of strings: 'password' contains the new password, otherwise 'error' contains the soft error HTML.
      */
-    public function assertPasswordPolicy(string $passInputName, string $passConfirmName): string
+    public function assertPasswordPolicy(string $passInputName, string $passConfirmName, bool $softError = false): array
     {
         $password1 = getRawString($passInputName);
         $password2 = getRawString($passConfirmName);
 
-        $error = $this->checkPasswordPolicy($password1, $password2);
-        if ($error !== '') {
-            $this->error($error);
+        $errCode = $this->password->checkPolicy($password1, $password2);
+        if ($errCode == '') {
+            $data = [
+                'password' => $password1,
+                'error' => '',
+            ];
+        } elseif ($softError) {
+            $data = [
+                'password' => '',
+                'error' => $this->softerror($this->vars->lang[$errCode]),
+            ];
+        } else {
+            $this->error($this->vars->lang[$errCode]);
         }
 
-        return $password1;
-    }
-
-    /**
-     * Checks a new password against requirements and always returns an error or an empty string.
-     *
-     * @since 1.10.00
-     * @param string $password1
-     * @param string $password2
-     * @return string Error message, or empty string on success.
-     */
-    public function checkPasswordPolicy(string $password1, string $password2): string
-    {
-        $error = '';
-        if ('' == $password1) {
-            $error = $this->vars->lang['textnopassword'];
-        } elseif (strlen($password1) < $this->vars::PASS_MIN_LENGTH) {
-            $error = $this->vars->lang['pwtooshort'];
-        } elseif (strlen($password1) > $this->vars::PASS_MAX_LENGTH) {
-            $error = $this->vars->lang['pwtoolong'];
-        } elseif ($password1 !== $password2) {
-            $error = $this->vars->lang['pwnomatch'];
-        }
-
-        return $error;
+        return $data;
     }
 
     /**

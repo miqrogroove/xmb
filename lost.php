@@ -27,6 +27,7 @@ namespace XMB;
 require './header.php';
 
 $core = Services\core();
+$passMan = Services\password();
 $session = Services\session();
 $sql = Services\sql();
 $template = Services\template();
@@ -57,16 +58,15 @@ if (X_MEMBER) {
         $core->error($lang['username_length_invalid']);
     }
 
-    $newPass = $core->assertPasswordPolicy('password1', 'password2');
+    $result = $core->assertPasswordPolicy('password1', 'password2');
 
     // Inputs look reasonable.  Check the token.
     if (! $token->consume($token2, 'Lost Password', $username)) {
         $core->error($lang['lostpw_bad_token']);
     }
 
-    $passMan = new Password($sql);
-    $passMan->changePassword($username, $newPass);
-    unset($newPass, $passMan);
+    $passMan->change($username, $result['password']);
+    unset($result);
 
     $sql->deleteWhosonline($username);
     $session->logoutAll($username);

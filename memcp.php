@@ -29,6 +29,7 @@ require './header.php';
 $core = Services\core();
 $db = Services\db();
 $forums = Services\forums();
+$passMan = Services\password();
 $session = Services\session();
 $sql = Services\sql();
 $template = Services\template();
@@ -123,6 +124,8 @@ if ($action == 'profile') {
 
         $subTemplate->hUsername = $vars->self['username'];
         $subTemplate->email = $vars->self['email'];
+        $subTemplate->pwmin = $passMan::MIN_LENGTH;
+        $subTemplate->pwmax = $passMan::MAX_LENGTH;
         $subTemplate->token = $token->create('User Control Panel/Edit Profile', $vars->self['uid'], $vars::NONCE_FORM_EXP);
 
         $mempage = $subTemplate->process('memcp_profile.php');
@@ -131,21 +134,23 @@ if ($action == 'profile') {
     if (onSubmit('editsubmit')) {
         $core->request_secure('User Control Panel/Edit Profile', $vars->self['uid']);
 
+        $pwChange = false;
         if (getRawString('newpassword') != '') {
             // Current password is not available in session data, so it needs to be fetched again.
             $storedPass = $sql->getMemberPassword((int) $vars->self['uid']);
-            $passMan = new Password($sql);
             $oldPass = getRawString('oldpassword');
             if ($oldPass == '') {
                 $core->error($lang['textnopassword']);
             }
-            if (! $passMan->checkInput($oldPass, $storedPass, $vars->self['username'], $core->schemaHasPasswordV2())) {
+            $result = $passMan->checkLogin($oldPass, $storedPass, $vars->self['username'], $core->schemaHasPasswordV2());
+            if ($result == 'bad') {
                 $core->auditBadLogin($vars->self);
                 $core->error($lang['textpwincorrect']);
             }
-            $newPass = $core->assertPasswordPolicy('newpassword', 'newpasswordcf');
-            $passMan->changePassword($vars->self['username'], $newPass);
-            unset($newPass, $passMan, $oldPass, $storedPass);
+            $result = $core->assertPasswordPolicy('newpassword', 'newpasswordcf');
+            $passMan->change($vars->self['username'], $result['password']);
+            unset($oldPass, $result, $storedPass);
+            $pwChange = true;
 
             // Force logout and delete cookies.
             $sql->deleteWhosonline($vars->self['username']);
@@ -194,7 +199,8 @@ if ($action == 'profile') {
             $sql->updateMember((int) $vars->self['uid'], $edits);
         }
 
-        $core->message($lang['usercpeditpromsg'], redirect: $vars->full_url . 'memcp.php');
+        $message = $pwChange ? $lang['force_new_pw_success'] : $lang['usercpeditpromsg'];
+        $core->message($message, redirect: $vars->full_url . 'memcp.php');
     }
 } elseif ($action == 'favorites') {
     $header = $template->process('header.php');

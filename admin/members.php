@@ -29,6 +29,7 @@ require ROOT . 'header.php';
 
 $core = Services\core();
 $db = Services\db();
+$passMan = Services\password();
 $session = Services\session();
 $sql = Services\sql();
 $template = Services\template();
@@ -221,10 +222,9 @@ if (noSubmit('membersubmit')) {
             }
 
             if (getRawString('pw' . $mem['uid']) != '') {
-                $newPass = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);
-                $passMan = new Password($sql);
-                $passMan->changePassword($mem['username'], $newPass);
-                unset($newPass, $passMan);
+                $result = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);
+                $passMan->change($mem['username'], $result['password']);
+                unset($result);
 
                 // Force logout and delete cookies.
                 $sql->deleteWhosonline($mem['username']);

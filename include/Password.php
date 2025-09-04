@@ -28,29 +28,26 @@ use InvalidArgumentException;
 use SensitiveParameter;
 
 /**
- * User password handler and abstraction.
+ * User password handler and abstractions.
  *
  * @since 1.10.00
  */
 class Password
 {
-    public const MAX_LENGTH = 72;
+    public const DEFAULT_LENGTH = 20; // For password generation.
+    public const MIN_LENGTH = 8; // New passwords may not be shorter than this.
+    public const MAX_LENGTH = 72; // Hash input maximum to avoid truncation.
 
     private const ALGO = PASSWORD_DEFAULT;
 
-    /**
-     * When creating a Password object, the stored credentials are required.
-     *
-     * The $storedHash value may be empty for the sake of new users and lost password situations only.
-     *
-     * @param string $storedHash Must be the members.password value.
-     * @param SQL $sql
-     */
     public function __construct(private SQL $sql)
     {
         // Property promotion
     }
 
+    /**
+     * Determine if the provided hash is not of the type currently produced by the hashPassword() method.
+     */
     private function isObsolete(string $storedHash): bool
     {
         return password_needs_rehash($storedHash, $this::ALGO);
@@ -63,15 +60,18 @@ class Password
      * This method is binary-safe.
      *
      * @param string $rawPass Must be the raw input.
-     * @return bool
+     * @param string $storedHash Must be the members.password or members.password2 value.
+     * @param string $username Must be the members.username value.
+     * @param bool $changeCapable Whether the schema is ready for the change() method.
+     * @return string Values 'good', 'bad', or 'must-change'.
      */
-    public function checkInput(
+    public function checkLogin(
         #[\SensitiveParameter]
         string $rawPass,
         string $storedHash,
         string $username,
         bool $changeCapable,
-    ): bool {
+    ): string {
         if (strlen($rawPass) == 0) throw new InvalidArgumentException('The XMB Password class does not accept empty inputs.');
 
         if ($this->isObsolete($storedHash)) {
@@ -84,15 +84,21 @@ class Password
             }
             if ($result && strlen($rawPass) <= $this::MAX_LENGTH && $changeCapable) {
                 // Automatically regenerate the hash when the hash is obsolete and the schema is not obsolete.
-                $this->changePassword($username, $rawPass);
+                $this->change($username, $rawPass);
             }
         } else {
             $result = password_verify($rawPass, $storedHash);
         }
-        if ($result && strlen($rawPass) > $this::MAX_LENGTH) {
-            // TODO: Force a manual password change.
+        if ($result) {
+            if ($changeCapable && (strlen($rawPass) < $this::MIN_LENGTH || strlen($rawPass) > $this::MAX_LENGTH)) {
+                $status = 'must-change';
+            } else {
+                $status = 'good';
+            }
+        } else {
+            $status = 'bad';
         }
-        return $result;
+        return $status;
     }
     
     /**
@@ -104,7 +110,7 @@ class Password
      * @param string $username Must be HTMl encoded, as in members.username.
      * @param string $rawPass Must be the raw input.
      */
-    public function changePassword(
+    public function change(
         string $username,
         #[\SensitiveParameter]
         string $rawPass,
@@ -114,7 +120,7 @@ class Password
         if (strlen($rawPass) > $this::MAX_LENGTH) throw new InvalidArgumentException('The password input was invalid due to excessive length.');
 
         // Save modern hash.
-        $newHash = $this->hashPassword($rawPass);
+        $newHash = $this->hash($rawPass);
         $this->sql->setNewPassword($username, $newHash);
     }
 
@@ -126,7 +132,7 @@ class Password
      * @param string $rawPass Must be the raw input.
      * @return string The hash, expected to be 60 to 128 chars in length.
      */
-    public function hashPassword(
+    public function hash(
         #[\SensitiveParameter]
         string $rawPass,
     ): string {
@@ -135,5 +141,48 @@ class Password
 
         // Compute modern hash and return.
         return password_hash($rawPass, $this::ALGO);
+    }
+
+    /**
+     * Checks a new password against requirements and returns an error code or an empty string.
+     *
+     * @since 1.10.00
+     * @param string $password1
+     * @param string $password2
+     * @return string Error code, or empty string on success.
+     */
+    public function checkPolicy(
+        #[\SensitiveParameter]
+        string $password1,
+        #[\SensitiveParameter]
+        string $password2,
+    ): string {
+        $error = '';
+        if ('' == $password1) {
+            $error = 'textnopassword';
+        } elseif (strlen($password1) < $this::MIN_LENGTH) {
+            $error = 'pwtooshort';
+        } elseif (strlen($password1) > $this::MAX_LENGTH) {
+            $error = 'pwtoolong';
+        } elseif ($password1 !== $password2) {
+            $error = 'pwnomatch';
+        }
+
+        return $error;
+    }
+
+    /**
+     * Generates a random password.
+     */
+    public function generate(): string
+    {
+        $newPass = '';
+        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz~!@#$%^&*()+";
+        $maxIndex = strlen($chars) - 1;
+        for ($i = 0; $i < $this::DEFAULT_LENGTH; $i++) {
+            $newPass .= $chars[random_int(0, $maxIndex)];
+        }
+
+        return $newPass;
     }
 }

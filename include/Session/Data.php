@@ -33,6 +33,7 @@ class Data
 {
     public array $member = [];      // Must be the member record array from the database, or an empty array, but without any password.
     public string $password = '';   // The member password hash from the database, or an empty string. Used during a new login only.
+    public bool $pwReset = false;   // True if the user is required to set a different password to comply with password policy.
     public string $comment = '';    // The session name provided by the user. Used during a new login only.
     public bool $permanent = false; // True if the session should be saved by the client, otherwise false.
     public string $status = 'none'; // Session input level.  Must be 'good', 'bad', or 'none'.

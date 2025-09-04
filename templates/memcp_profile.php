@@ -24,11 +24,11 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textnewpassword'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="newpassword" size="25" /> <?= $lang['pwnote'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="newpassword" maxlength="<?= $pwmax ?>" minlength="<?= $pwmin ?>" size="25" /> <?= $lang['pwnote'] ?></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textpasswordcf'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="newpasswordcf" size="25" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="newpasswordcf" maxlength="<?= $pwmax ?>" minlength="<?= $pwmin ?>" size="25" /></td>
 </tr>
 <?= $optional ?>
 <tr>

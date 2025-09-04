@@ -430,7 +430,10 @@ switch ($vStep) {
         $schema = new Schema($db, $vars);
         $sql = new SQL($db, $vars->tablepre);
         $validate = new Validation($db);
-        $lib = new Install($db, $schema, $sql, $show, $validate, $vars);
+
+        $password = new Password($sql);
+
+        $lib = new Install($db, $password, $schema, $sql, $show, $validate, $vars);
 
         $lib->go();
 

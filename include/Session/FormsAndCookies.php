@@ -59,7 +59,7 @@ class FormsAndCookies implements Mechanism
     const TEST_COOKIE = 'test';
     const USER_COOKIE = 'xmbuser';
 
-    public function __construct(private Core $core, private SQL $sql, private Token $token, private Validation $validate)
+    public function __construct(private Core $core, private Password $password, private SQL $sql, private Token $token, private Validation $validate)
     {
         // Property promotion.
     }
@@ -97,13 +97,15 @@ class FormsAndCookies implements Mechanism
             return new Data();
         }
 
-        $passMan = new Password($this->sql);
-
-        if (! $passMan->checkInput($pinput, $data->password, $data->member['username'], $this->core->schemaHasPasswordV2())) {
-            $this->core->auditBadLogin($data->member);
-            $data = new Data();
-            $data->status = 'bad';
-            return $data;
+        $result = $this->password->checkLogin($pinput, $data->password, $data->member['username'], $this->core->schemaHasPasswordV2());
+        switch ($result) {
+            case 'bad':
+                $this->core->auditBadLogin($data->member);
+                $data = new Data();
+                $data->status = 'bad';
+                break;
+            case 'must-change':
+                $data->pwReset = true;
         }
 
         return $data;

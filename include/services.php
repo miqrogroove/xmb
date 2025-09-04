@@ -34,6 +34,7 @@ use XMB\{
     Forums,
     Login,
     Observer,
+    Password,
     Session\Manager as SessionMgr,
     Settings,
     SmileAndCensor,
@@ -186,6 +187,22 @@ function observer(?Observer $observer = null): Observer
     static $cache;
     
     if ($observer !== null) $cache = $observer;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared password service.
+ *
+ * @since 1.10.00
+ * @param Password $password Required on first call, otherwise optional. Acts as the setter.
+ * @return Password
+ */
+function password(?Password $password = null): Password
+{
+    static $cache;
+    
+    if ($password !== null) $cache = $password;
     
     return $cache;
 }

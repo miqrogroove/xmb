@@ -32,6 +32,7 @@ $emailSvc = Services\email();
 $forums = Services\forums();
 $login = Services\login();
 $observer = Services\observer();
+$password = Services\password();
 $session = Services\session();
 $smile = Services\smile();
 $sql = Services\sql();
@@ -53,6 +54,9 @@ switch ($action) {
         break;
     case 'lostpw':
         $pagename = 'textlostpw';
+        break;
+    case 'pwchange':
+        $pagename = 'pwchange';
         break;
     case 'online':
         $pagename = 'whosonline';
@@ -127,6 +131,20 @@ switch ($action) {
                 case 'origin-check-fail':
                     $core->error($lang['bad_token']);
                     break;
+                case 'user-must-change-password':
+                    // Create a token for semi-anonymous password change.  We don't want random access to this feature.
+                    $member = $session->getMember();
+                    $template->token = $token->create('Forced PW Change', $member['uid'], $vars::NONCE_FORM_EXP, anonymous: true);
+                    $template->uid = $member['uid'];
+                    $template->username = $member['username'];
+                    $template->pwmin = $password::MIN_LENGTH;
+                    $template->pwmax = $password::MAX_LENGTH;
+                    $template->comment = $validate->postedVar('comment', dbescape: false);
+                    if (strlen($template->comment) > 80) $template->comment = '';
+                    $template->hide = '1' == getPhpInput('hide');
+                    $template->trust = 'yes' == getPhpInput('trust');
+                    $misc = $template->process('misc_password_change.php');
+                    break;
                 case 'login-no-input':
                 case 'bad-password':
                 case 'bad-username':
@@ -194,6 +212,27 @@ switch ($action) {
             $emailSvc->send($emailaddy, $subject, $body, $translate['charset']);
 
             $core->message($lang['emailpw']);
+        }
+        break;
+
+    case 'pwchange':
+        if (X_MEMBER) {
+            $misc = $template->process('misc_feature_not_while_loggedin.php');
+        } else {
+            $uid = formInt('uid');
+            if ($uid === 0) $core->error($lang['bad_request']);
+            $core->request_secure('Forced PW Change', (string) $uid);
+            $member = $sql->getMemberByID($uid);
+            
+            $result = $core->assertPasswordPolicy('password', 'password2');
+            $password->change($member['username'], $result['password']);
+            unset($result);
+
+            // Force logout and delete cookies.
+            $sql->deleteWhosonline($vars->self['username']);
+            $session->logoutAll();
+
+            $core->message($lang['force_new_pw_success']);
         }
         break;
 

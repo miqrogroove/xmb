@@ -26,7 +26,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textnewpassword'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="newpassword" size="25" />&nbsp;<?= $lang['pwnote'] ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="newpassword" autocomplete="new-password" size="25" maxlength="<?= $pwmax ?>" minlength="<?= $pwmin ?>" />&nbsp;<?= $lang['pwnote'] ?></td>
 </tr>
 <tr>
 <td colspan="2" class="category"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['texteditpro'] ?> - <?= $lang['optional'] ?></strong></font></td>

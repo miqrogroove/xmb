@@ -155,6 +155,7 @@ sql(new \XMB\SQL(db(), vars()->tablepre));
 validate(new \XMB\Validation(db()));
 
 forums(new \XMB\Forums(sql()));
+password(new \XMB\Password(sql()));
 settings(new \XMB\Settings(db(), sql(), vars()));
 smile(new \XMB\SmileAndCensor(sql()));
 token(new \XMB\Token(sql(), vars()));
@@ -166,7 +167,7 @@ bbcode(new \XMB\BBCode(theme(), vars()));
 
 attach(new \XMB\Attach(bbcode(), db(), sql(), vars()));
 
-core(new \XMB\Core(attach(), bbcode(), db(), debug(), email(), forums(), smile(), sql(), template(), token(), translation(), vars()));
+core(new \XMB\Core(attach(), bbcode(), db(), debug(), email(), forums(), password(), smile(), sql(), template(), token(), translation(), vars()));
 
 
 /* Start 2nd Phase of Bootup */
@@ -194,7 +195,7 @@ if (! core()->schemaHasSessions()) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $params = $loader->prepareSession();
-session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), sql(), token(), validate()));
+session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), password(), sql(), token(), validate()));
 login(new \XMB\Login(core(), db(), session(), sql(), template(), translation(), vars()));
 login()->elevateUser($params['force_inv']);
 unset($params);

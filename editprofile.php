@@ -28,6 +28,7 @@ require './header.php';
 
 $core = Services\core();
 $db = Services\db();
+$passMan = Services\password();
 $session = Services\session();
 $sql = Services\sql();
 $template = Services\template();
@@ -140,6 +141,9 @@ if (noSubmit('editsubmit')) {
     $subTemplate->userrecode = recodeOut($member['username']);
     $subTemplate->userStatus = $core->userStatusControl('status', $member['status']);
 
+    $subTemplate->pwmin = $passMan::MIN_LENGTH;
+    $subTemplate->pwmax = $passMan::MAX_LENGTH;
+
     $subTemplate->token = $token->create('Edit User Account', $member['uid'], $vars::NONCE_FORM_EXP);
     $editpage = $subTemplate->process('admintool_editprofile.php');
 } else {
@@ -187,10 +191,9 @@ if (noSubmit('editsubmit')) {
     }
 
     if (getRawString('newpassword') != '') {
-        $newPass = $core->assertPasswordPolicy('newpassword', 'newpassword');
-        $passMan = new Password($sql);
-        $passMan->changePassword($rawuser, $newPass);
-        unset($newPass, $passMan);
+        $result = $core->assertPasswordPolicy('newpassword', 'newpassword');
+        $passMan->change($rawuser, $result['password']);
+        unset($result);
 
         // Force logout and delete cookies.
         $sql->deleteWhosonline($rawuser);

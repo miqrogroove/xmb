@@ -32,6 +32,7 @@ $core = Services\core();
 $db = Services\db();
 $email = Services\email();
 $forums = Services\forums();
+$passMan = Services\password();
 $session = Services\session();
 $smile = Services\smile();
 $sql = Services\sql();
@@ -290,25 +291,15 @@ switch ($action) {
                     }
 
                     if ($SETTINGS['emailcheck'] == 'on') {
-                        $newPass = '';
-                        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-                        $get = strlen($chars) - 1;
-                        for ($i = 0; $i < 10; $i++) {
-                            $newPass .= $chars[random_int(0, $get)];
-                        }
+                        $newPass = $passMan->generate();
                     } else {
-                        $newPass = getRawString('password');
-                        $password2 = getRawString('password2');
-                        $error = $core->checkPasswordPolicy($newPass, $password2);
-                        if ($error !== '' ) {
-                            $softErrors .= $core->softerror($error);
-                            $newPass = '';
-                        }
+                        $result = assertPasswordPolicy('password', 'password2', softError: true);
+                        $newPass = $result['password'];
+                        $softErrors .= $result['error'];
+                        unset($result);
                     }
                     if ($newPass !== '') {
-                        $passMan = new Password($sql);
-                        $self['password2'] = $passMan->hashPassword($newPass);
-                        unset($passMan);
+                        $self['password2'] = $passMan->hash($newPass);
                     }
 
                     if (! $core->checkNameRestrictions(rawHTML($self['email']))) {
@@ -514,6 +505,8 @@ switch ($action) {
                 }
 
                 if ($SETTINGS['emailcheck'] == 'off') {
+                    $subTemplate->pwmin = $passMan::MIN_LENGTH;
+                    $subTemplate->pwmax = $passMan::MAX_LENGTH;
                     $subTemplate->pwtd = $subTemplate->process('member_reg_password.php');
                 } else {
                     $subTemplate->pwtd = '';

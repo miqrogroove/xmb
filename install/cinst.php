@@ -31,8 +31,15 @@ namespace XMB;
  */
 class Install
 {
-    public function __construct(private DBStuff $db, private Schema $schema, private SQL $sql, private UpgradeOutput $show, private Validation $validate, private Variables $vars)
-    {
+    public function __construct(
+        private DBStuff $db,
+        private Password $password,
+        private Schema $schema,
+        private SQL $sql,
+        private UpgradeOutput $show,
+        private Validation $validate,
+        private Variables $vars
+    ) {
         // Property promotion.
     }
 
@@ -65,11 +72,11 @@ class Install
             $this->show->error('The passwords do not match. Please press back and try again.');
         }
 
-        if (strlen($frmPassword) < $this->vars::PASS_MIN_LENGTH) {
+        if (strlen($frmPassword) < $this->password::MIN_LENGTH) {
             $this->show->error($this->vars->lang['pwtooshort']);
         }
 
-        if (strlen($frmPassword) > $this->vars::PASS_MAX_LENGTH) {
+        if (strlen($frmPassword) > $this->password::MAX_LENGTH) {
             $this->show->error($this->vars->lang['pwtoolong']);
         }
 
@@ -82,8 +89,7 @@ class Install
         }
 
         // these two are used waaaaay down below.
-        $passMan = new Password($this->sql);
-        $vPassword = $passMan->hashPassword($frmPassword);
+        $vPassword = $this->password->hash($frmPassword);
         $myDate = time();
         $this->show->okay();
 

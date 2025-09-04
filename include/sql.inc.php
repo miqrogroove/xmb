@@ -367,6 +367,29 @@ class SQL
     /**
      * SQL command
      *
+     * @since 1.10.00
+     * @param int $uid
+     * @param bool $includePassword Optional. Passwords are not returned unless set to true.
+     * @return array Member record or empty array.
+     */
+    public function getMemberByID(int $uid, bool $includePassword = false): array
+    {
+        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "members WHERE uid = $uid");
+        $member = $this->db->fetch_array($query);
+        $this->db->free_result($query);
+
+        if (is_null($member)) {
+            $member = [];
+        } elseif (! $includePassword) {
+            unset($member['password'], $member['password2']);
+        }
+
+        return $member;
+    }
+
+    /**
+     * SQL command
+     *
      * @since 1.9.12.06
      * @param int $uid
      * @param string $invisible Should be '0' for no or '1' for yes.

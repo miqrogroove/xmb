@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace XMB\Session;
 
 use XMB\Core;
+use XMB\Password;
 use XMB\SQL;
 use XMB\Token;
 use XMB\Validation;
@@ -48,25 +49,33 @@ class Manager
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      * @param string $serror Condition prior to authentication.
      */
-    public function __construct(string $mode, private string $serror, private Core $core, SQL $sql, private Token $token, private Validation $validate)
-    {
-        $this->mechanisms = [new FormsAndCookies($core, $sql, $token, $validate)];
+    public function __construct(
+        string $mode,
+        private string $serror,
+        private Core $core,
+        private Password $password,
+        private SQL $sql,
+        private Token $token,
+        private Validation $validate
+    ) {
+        $this->mechanisms = [
+            new FormsAndCookies($core, $password, $sql, $token, $validate),
+        ];
 
         switch ($mode) {
-        case 'login':
-            $this->login();
-            break;
-        case 'logout':
-            $this->logout();
-            break;
-        case 'disabled':
-            $this->status = 'session-no-input';
-            $this->saved = new Data();
-            break;
-        case 'resume':
-        default:
-            $this->resume();
-            break;
+            case 'login':
+                $this->login();
+                break;
+            case 'logout':
+                $this->logout();
+                break;
+            case 'disabled':
+                $this->status = 'session-no-input';
+                $this->saved = new Data();
+                break;
+            case 'resume':
+            default:
+                $this->resume();
         }
     }
 
@@ -229,10 +238,20 @@ class Manager
                 }
             }
 
+            // Unset the password member, which is no longer needed for this session.
+            $data->password = '';
+
             // Update the Mechanism
             if ('good' == $data->status) {
-                $session->saveClientData($data);
-                $session->collectGarbage();
+                if ($data->pwReset) {
+                    // User record will remain available for this request, but session will not be saved.
+                    $this->status = 'user-must-change-password';
+                    $session->deleteClientData();
+                } else {
+                    // Login and session are both valid once saved.
+                    $session->saveClientData($data);
+                    $session->collectGarbage();
+                }
                 break;
             } elseif ('bad' == $data->status) {
                 $session->deleteClientData();
