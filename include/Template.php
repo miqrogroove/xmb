@@ -82,7 +82,6 @@ class Template
     public function init()
     {
         $list = [
-            'baseelement',
             'bbcodescript',
             'browser',
             'canonical_link',

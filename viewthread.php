@@ -508,11 +508,11 @@ if ($action == '') {
 
     $normal_page = intval(floor($mpage['start'] / $vars->ppp)) + 1;
 
-    $threadlink = $vars->full_url . "viewthread.php?tid=$tid";
-    if ($normal_page != 1) $threadlink .= "&amp;page=$normal_page";
+    $relpath = "viewthread.php?tid=$tid";
+    if ($normal_page != 1) $relpath .= "&amp;page=$normal_page";
 
-    $core->setCanonicalLink($threadlink);
-    $template->threadlink = $threadlink;
+    $core->setCanonicalLink($relpath);
+    $template->threadlink = $vars->full_url . $relpath;
 
     // This first query does not access any table data if the new thread_optimize index is available.  :)
     $criteria = '';

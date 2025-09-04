@@ -214,7 +214,6 @@ if (defined('XMB\UPGRADE')) {
 /* Set Up HTML Templates and Themes */
 
 $loader->setCharset();
-$loader->setBaseElement();
 $loader->setVisit();
 theme()->setTheme();
 

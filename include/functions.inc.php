@@ -609,7 +609,7 @@ class Core
      * @param int $num Total number of items in the collection.
      * @param int $perpage Number of items to display on each page.
      * @param string $baseurl Relative URL of the first page in the collection.
-     * @param mixed $canonical Optional. Specify FALSE if the $baseurl param is not a canonical URL. Specify a Relative URL string to override $baseurl.
+     * @param mixed $canonical Optional. Use false if the $baseurl param is not a canonical URL. Specify a Relative URL string to override $baseurl.
      * @return array Associative indexes: 'html' the link bar string, 'start' the LIMIT int used in queries.
      */
     public function multipage(int $num, int $perpage, string $baseurl, bool|string $canonical = true): array
@@ -618,7 +618,12 @@ class Core
         $return = [];
         $page = getInt('page');
         $max_page = $this->quickpage(intval($num), intval($perpage));
-        if ($canonical === true) $canonical = $baseurl;
+        $baseurl = $this->resolveRelativeURL($baseurl);
+        if ($canonical === true) {
+            $canonical = $this->makeRelativeURL($baseurl);
+        } elseif (is_string($canonical)) {
+            $canonical = $this->makeRelativeURL($canonical);
+        }
 
         // Calculate the LIMIT start number for queries
         if ($page > 1 && $page <= $max_page) {
@@ -655,11 +660,11 @@ class Core
      * @since 1.5.0
      * @param int $page Current page number, must be >= 1.
      * @param int $lastpage Total number of pages in the collection.
-     * @param string $mpurl Read-Only Variable. Relative URL of the first page in the collection.
+     * @param string $mpurl Relative URL of the first page in the collection.
      * @param bool $isself FALSE indicates the page bar will be displayed on a page that is not part of the collection.
      * @return string HTML links. Empty string if the $lastpage parameter was <= 1 or $page was invalid.
      */
-    public function multi(int $page, int $lastpage, string &$mpurl, bool $isself = true): string
+    public function multi(int $page, int $lastpage, string $mpurl, bool $isself = true): string
     {
         $multipage = $this->vars->lang['textpages'];
 
@@ -1731,6 +1736,44 @@ class Core
     }
 
     /**
+     * Takes a full URL like https://example.com/forum/admin/attachments.php and coverts it to a relative path like admin/attachments.php
+     *
+     * @since 1.10.00
+     */
+    public function makeRelativeURL(string $full): string
+    {
+        $baseLen = strlen($this->vars->full_url);
+
+        if (substr($full, 0, $baseLen) == $this->vars->full_url) {
+            // The supplied string is a full URL.
+            $rel = substr($full, $baseLen);
+        } else {
+            // The supplied string is expected to be a relative URL and won't be modified.
+            $rel = $full;
+        }
+
+        return $rel;
+    }
+
+    /**
+     * Takes a relative path like admin/attachments.php and coverts it to a full URL like https://example.com/forum/admin/attachments.php
+     *
+     * @since 1.10.00
+     */
+    public function resolveRelativeURL(string $rel): string
+    {
+        if (substr($rel, 0, strlen($this->vars->full_url)) == $this->vars->full_url) {
+            // The supplied string is already a full URL.
+            $full = $rel;
+        } else {
+            // The supplied string is expected to be a relative URL and will be resolved.
+            $full = $this->vars->full_url . $rel;
+        }
+
+        return $full;
+    }
+
+    /**
      * Displays a forum-specific password prompt, and accepts password input.
      *
      * Should be called when checkForumPermissions() shows X_PERMS_PASSWORD == false and the user is trying to access the forum.
@@ -1829,15 +1872,14 @@ class Core
      * @since 1.9.11
      * @param string $relURI Path to the current page, relative to the base href (see header.php).
      */
-    public function setCanonicalLink($relURI)
+    public function setCanonicalLink(string $relURI)
     {
-        $testurl = $this->vars->cookiepath;
-        if ($relURI != './') {
-            $testurl .= str_replace('&amp;', '&', $relURI);
-        }
+        if ($relURI == './') $relURI = '';
+        $testurl = $this->vars->cookiepath . str_replace('&amp;', '&', $relURI);
+
         if ($this->vars->url !== $testurl) {
-            $relURI = $this->vars->full_url . $relURI;
-            $this->template->canonical_link = "<link rel='canonical' href='$relURI' />\n";
+            $canonical = $this->vars->full_url . $relURI;
+            $this->template->canonical_link = "<link rel='canonical' href='$canonical' />\n";
         }
     }
 

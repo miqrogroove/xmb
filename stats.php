@@ -44,7 +44,7 @@ if ($SETTINGS['stats'] == 'off') {
     $core->error($lang['fnasorry3']);
 }
 
-$core->setCanonicalLink($vars->full_url . 'stats.php');
+$core->setCanonicalLink('stats.php');
 $header = $template->process('header.php');
 
 $fids = implode(',', $core->permittedFIDsForThreadView());

@@ -124,7 +124,7 @@ class BootupLoader
             'serror' => $serror,
         ];
     }
-    
+
     public function setCharset()
     {
         // Specify all charset variables as early as possible.
@@ -159,7 +159,8 @@ class BootupLoader
         }
         ini_set('default_charset', $newcharset);
     }
-    
+
+    #[\Deprecated(message: "base elements and relative links are no longer used by default and this method will be removed in a future version", since: "1.10.00")]
     public function setBaseElement()
     {
         // Create a base element so that links aren't broken if scripts are accessed using unexpected paths.
@@ -175,7 +176,7 @@ class BootupLoader
             $this->template->baseelement = '<base href="' . $this->vars->full_url . basename($_SERVER['SCRIPT_NAME']) . attrOut($querystring) . '" />' . "\n";
         }
     }
-    
+
     public function setVisit()
     {
         // Read last visit cookies
@@ -256,7 +257,7 @@ class BootupLoader
         }
         $this->template->newu2umsg = $newu2umsg;
     }
-    
+
     public function createNavbarLinks()
     {
         $links = [];
@@ -311,7 +312,7 @@ class BootupLoader
                 }
             }
         }
-        
+
         $this->template->pluglink = implode('', $pluglinks);
     }
 
@@ -322,7 +323,7 @@ class BootupLoader
             $this->template->quickjump = $this->core->forumJump();
         }
     }
-    
+
     public function startCompression()
     {
         $action = getPhpInput('action', 'g');
@@ -349,7 +350,7 @@ class BootupLoader
             }
         }
     }
-    
+
     public function adminFirewall()
     {
         if (strtolower(substr($this->vars->url, 0, 6)) == '/admin') {
