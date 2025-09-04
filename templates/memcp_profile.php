@@ -36,15 +36,20 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['texttheme'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $themelist ?> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>">
+<?= $themelist ?>
+</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textlanguage'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $langfileselect ?> </td>
+<td bgcolor="<?= $THEME['altbg2'] ?>">
+<?= $langfileselect ?>
+</td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textbday'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><select name="month">
+<td bgcolor="<?= $THEME['altbg2'] ?>">
+<select name="month">
 <option value="" <?= $sel[0] ?>>&nbsp;</option>
 <option value="1" <?= $sel[1] ?>><?= $lang['textjan'] ?></option>
 <option value="2" <?= $sel[2] ?>><?= $lang['textfeb'] ?></option>

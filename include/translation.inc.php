@@ -75,7 +75,7 @@ class Translation
     public function loadPhrases(array $langkeys = []): array
     {
         // Guarantee inclusion of the 'charset' and 'language' keys, which tend to be useful internally.
-        $langkeys = array_unique(array_merge($langkeys, ['charset', 'language']));
+        $langkeys = array_unique(array_merge($langkeys, ['charset', 'language', 'iso639']));
 
         // First, cache the file list.
         if (! $this->dirCacheStatus) $this->initDirCache();
@@ -180,12 +180,12 @@ class Translation
         $lfs = [];
         foreach ($phrases as $devname => $row) {
             if ($devname === $currentLangFile) {
-                $lfs[] = "<option value='$devname' selected='selected'>{$row['language']}</option>";
+                $lfs[] = "<option lang='{$row['iso639']}' value='$devname' selected='selected'>{$row['language']}</option>";
             } else {
-                $lfs[] = "<option value='$devname'>{$row['language']}</option>";
+                $lfs[] = "<option lang='{$row['iso639']}' value='$devname'>{$row['language']}</option>";
             }
         }
-        return '<select name="langfilenew">' . implode("\n", $lfs) . '</select>';
+        return "<select name='langfilenew'>\n" . implode("\n", $lfs) . "\n</select>";
     }
 
     /**
