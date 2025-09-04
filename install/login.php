@@ -56,7 +56,7 @@ if (strlen($username) == 0) {
     </form>
     <?php
 } else {
-    if ((int) $vars->settings['schema_version'] >= 5) {
+    if ($core->schemaHasSessions()) {
         // Already logged in by Session\Manager
         if (! X_SADMIN) {
             echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "install/login.php'>Try Again</a>.<br />";

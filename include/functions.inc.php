@@ -67,14 +67,17 @@ class Core
         
         if ($serror == 'ip' && $member['status'] != 'Super Administrator' && $member['status'] != 'Administrator') {
             return 'ip-banned';
-        } else if ($member['status'] == 'Banned') {
+        } elseif ($member['status'] == 'Banned') {
             return 'member-banned';
-        } else if ((int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer) {
+        } elseif (defined('XMB\UPGRADE') && $member['status'] != 'Super Administrator') {
+            // Restrict logins that originated from the upgrade page.
+            return 'upgrade-not-permitted';
+        } elseif ((int) $member['bad_login_count'] >= $guess_limit && time() < (int) $member['bad_login_date'] + $lockout_timer) {
             $this->auditBadLogin($member);
             if ($member['status'] != 'Super Administrator') {
                 // This special code could help implement old session vs. new login policy, but the session system currently lacks a public logout method for use with auditing.
                 return 'password-locked';
-            } else if ((int) $member['bad_login_count'] >= $admin_limit) {
+            } elseif ((int) $member['bad_login_count'] >= $admin_limit) {
                 return 'password-locked';
             } else {
                 // Super Admin has partial immunity to mitigate denial of service.
@@ -713,7 +716,7 @@ class Core
                     if ($isself) {
                         if ($i == $page - 1) {
                             $extra = ' rel="prev"';
-                        } else if ($i == $page + 1) {
+                        } elseif ($i == $page + 1) {
                             $extra = ' rel="next"';
                         }
                         if ($page == 1) {
