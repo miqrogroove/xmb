@@ -97,7 +97,8 @@ class FormsAndCookies implements Mechanism
             return new Data();
         }
 
-        $result = $this->password->checkLogin($pinput, $data->password, $data->member['username'], $this->core->schemaHasPasswordV2());
+        $allowChanges = $this->core->schemaHasPasswordV2() && ! defined('XMB\UPGRADE');
+        $result = $this->password->checkLogin($pinput, $data->password, $data->member['username'], $allowChanges);
         switch ($result) {
             case 'bad':
                 $this->core->auditBadLogin($data->member);
