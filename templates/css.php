@@ -131,16 +131,16 @@ textarea, select, input, object {
 .header {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
     font-weight: bold;
     table-layout: fixed;
 }
 
 .header2 {
     background-color: <?= $THEME['altbg1'] ?>;
-    font-family: Verdana;
-    font-size: 11px;
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
     font-weight: bold;
     table-layout: fixed;
 }
@@ -155,7 +155,7 @@ textarea, select, input, object {
 
 .multi {
     font-family: <?= $THEME['font'] ?>;
-    font-size: 11px;
+    font-size: <?= $THEME['fontsize'] ?>;
     table-layout: fixed;
 }
 
@@ -170,7 +170,7 @@ textarea, select, input, object {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
     font-family: <?= $THEME['font'] ?>;
-    font-size: 11px;
+    font-size: <?= $THEME['fontsize'] ?>;
     table-layout: fixed;
     text-decoration: none;
 }
@@ -253,8 +253,8 @@ textarea, select, input, object {
     text-decoration: underline;
     font-weight: bold;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
     font-style: italic;
 }
 
@@ -262,16 +262,16 @@ textarea, select, input, object {
     text-decoration: underline;
     font-weight: bold;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
 }
 
 .status_Super_Moderator {
     text-decoration: none;
     font-weight: bold;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
     font-style: italic;
 }
 
@@ -279,16 +279,16 @@ textarea, select, input, object {
     text-decoration: none;
     font-weight: bold;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
 }
 
 .status_Member, .status_Banned {
     text-decoration: none;
     font-weight: normal;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
 }
 
 .tablelinks td {
@@ -454,4 +454,12 @@ table.fdetails {
 
 table.admin-panel {
     text-size-adjust: none;
+}
+
+.altbg1 {
+    background-color: <?= $THEME['altbg1'] ?>;
+}
+
+.altbg2 {
+    background-color: <?= $THEME['altbg2'] ?>;
 }
