@@ -452,7 +452,7 @@ class U2U
             $body = $this->template->process('u2u_email.php');
             $rawemail = rawHTML($this->vars->self['email']);
             $result = $this->email->send($rawemail, $title, $body, $this->vars->lang['charset'], html: true);
-            $this->msg($this->vars->lang['textu2utoemailsent'], $this->vars->full_url . "u2u.php?action=view&amp;u2uid=$u2uid");
+            $this->msg($this->vars->lang['textu2utoemailsent'], $this->vars->full_url . "u2u.php?action=view&u2uid=$u2uid");
         } else {
             $this->template->process('u2u_printable.php', echo: true);
             exit;
