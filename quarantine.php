@@ -415,6 +415,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
                 $rawsubject = rawHTML($threadname);
+                $rawsubject = $core->rawTextSubject($thread['subject']);
                 $rawusername = rawHTML($member);
                 $rawemail = rawHTML($subs['email']);
                 $title = "$rawsubject ({$translate['textsubsubject']})";
@@ -587,7 +588,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
         $topicpages = $core->quickpage($posts, $subs['ppp']);
         $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
         $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
-        $rawsubject = rawHTML($threadname);
+        $rawsubject = $core->rawTextSubject($thread['subject']);
         $rawusername = rawHTML($member);
         $rawemail = rawHTML($subs['email']);
         $title = "$rawsubject ({$translate['textsubsubject']})";

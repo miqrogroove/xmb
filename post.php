@@ -724,7 +724,7 @@ if ($validForSave && $errors == '') {
             $topicpages = $core->quickpage($posts, (int) $subs['ppp']);
             $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
             $threadurl = $vars->full_url . 'viewthread.php?tid='.$tid.$topicpages.'#pid'.$pid;
-            $rawsubject = rawHTML($threadname);
+            $rawsubject = $core->rawTextSubject($thread['subject']);
             $rawusername = rawHTML($username);
             $rawemail = rawHTML($subs['email']);
             $title = "$rawsubject ({$translate['textsubsubject']})";

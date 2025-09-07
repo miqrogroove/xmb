@@ -448,7 +448,7 @@ class U2U
             $this->template->css = "<style type='text/css'>\n$css\n</style>";
             $this->template->mailHeader = $this->template->process('email_html_header.php');
             $this->template->mailFooter = $this->template->process('email_html_footer.php');
-            $title = $this->vars->lang['textu2utoemail'] . ' ' . $this->template->u2usubject;
+            $title = $this->vars->lang['textu2utoemail'] . ' ' . $this->core->rawTextSubject($u2u['subject']);
             $body = $this->template->process('u2u_email.php');
             $rawemail = rawHTML($this->vars->self['email']);
             $result = $this->email->send($rawemail, $title, $body, $this->vars->lang['charset'], html: true);

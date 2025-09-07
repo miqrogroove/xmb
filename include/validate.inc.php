@@ -183,6 +183,29 @@ function rawHTML(string $encodedText) {
 }
 
 /**
+ * Takes an HTML encoded value, converts to raw HTML, then strips any HTML character entity references.
+ *
+ * This is an alternative to decimalEntityDecode() for use in plaintext where HTML will not render correctly.
+ *
+ * @since 1.10.00
+ */
+function rawValueWithoutDecimalEntities(string $encodedText) {
+    $html = rawHTML($encodedText);
+    $html = decimalEntityStrip($html);
+
+    return $html;
+}
+
+/**
+ * Strips any HTML character entity references containing 3 to 6 digits.
+ *
+ * @since 1.10.00
+ */
+function decimalEntityStrip(string $encodedText) {
+    return preg_replace('/&#\d{3,6};/', ' ', $encodedText);
+}
+
+/**
  * Decode any double-encoded &amp; in front of any decimal entity reference.
  *
  * This will undo the double encoding that results after a browser processes input from mismatched character sets.

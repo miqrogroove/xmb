@@ -364,7 +364,7 @@ switch ($action) {
                             $translate = $lang2[$self['langfile']];
                             $username = trim(getPhpInput('username'));
                             $rawbbname = rawHTML($SETTINGS['bbname']);
-                            $subject = "[$rawbbname] {$translate['textyourpw']}";
+                            $subject = decimalEntityStrip("[$rawbbname] {$translate['textyourpw']}");
                             $body = "{$translate['textyourpwis']} \n\n{$translate['textusername']} $username\n{$translate['textpassword']} $newPass\n\n" . $vars->full_url;
                             $email->send($rawemail, $subject, $body, $translate['charset']);
                         } else {

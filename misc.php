@@ -205,7 +205,7 @@ switch ($action) {
             $name = rawHTML($member['username']);
             $emailaddy = rawHTML($member['email']);
             $rawbbname = rawHTML($SETTINGS['bbname']);
-            $subject = "[$rawbbname] {$translate['textyourpw']}";
+            $subject = decimalEntityStrip("[$rawbbname] {$translate['textyourpw']}");
             $search  = ['$name', '$link'];
             $replace = [$name, $link];
             $body = str_replace($search, $replace, $lang['lostpw_body_eval']);

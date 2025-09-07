@@ -205,6 +205,16 @@ class Core
     }
 
     /**
+     * Decode the HTML content of a subject field and strip any decimal entity references.
+     *
+     * @since 1.10.00
+     */
+    public function rawTextSubject(string $subject): string
+    {
+        return $this->smile->censor(rawValueWithoutDecimalEntities($subject));
+    }
+
+    /**
      * Perform BBCode, Smilie, and Word Wrapping for a single post body.
      *
      * @since 1.0

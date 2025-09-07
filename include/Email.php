@@ -32,6 +32,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Crypto\DkimSigner;
 use Symfony\Component\Mime\Email as Message;
 use Symfony\Component\Mime\Header\Headers;
+use Symfony\Component\Mime\Header\UnstructuredHeader;
 
 /**
  * E-mail Provider Abstraction
@@ -181,7 +182,11 @@ class Email
             } else {
                 $email->text($message, $charset);
             }
+            // Important: The Symfony\Component\Mime\Header\AbstractHeader definition has 'utf-8' hard coded in its charset property initialization.
             $headers = $email->getHeaders();
+            $headers->get('From')->setCharset($charset);
+            $headers->get('To')->setCharset($charset);
+            $headers->get('Subject')->setCharset($charset);
             foreach ($additional_headers->all() as $header) {
                 $headers->add($header);
             }
@@ -220,9 +225,10 @@ class Email
      */
     public function send(string $to, string $subject, string $message, string $charset, bool $html = false, bool $debug = false): bool
     {
-        $rawbbname = rawHTML($this->vars->settings['bbname']);
+        $rawbbname = rawValueWithoutDecimalEntities($this->vars->settings['bbname']);
         $rawusername = rawHTML($this->vars->self['username'] ?? '');
         $rawfrom = rawHTML($this->vars->settings['adminemail']);
+        $antiAbuseData = "Board servername - " . $this->vars->cookiedomain . ", Username - $rawusername";
 
         if (PHP_OS_FAMILY == 'Windows') {  // Official XMB hack for PHP bug #45305 a.k.a. #28038
             ini_set('sendmail_from', $rawfrom);
@@ -233,7 +239,10 @@ class Email
 
         $headers = new Headers();
         $headers->addTextHeader('X-Mailer', 'PHP');
-        $headers->addTextHeader('X-AntiAbuse', 'Board servername - ' . $this->vars->cookiedomain . ", Username - $rawusername");
+
+        $abuse = new UnstructuredHeader('X-AntiAbuse', $antiAbuseData);
+        $abuse->setCharset($charset);
+        $headers->add($abuse);
 
         return $this->altMail($toAddress, $subject, $message, $headers, $from, $html, $charset, $debug);
     }

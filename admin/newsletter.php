@@ -93,7 +93,7 @@ if (noSubmit('newslettersubmit')) {
         }
         $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='tablerow'><td align='center'>{$lang['newslettersubmit']}</td></tr>";
     } else {
-        $rawnewssubject = getPhpInput('newssubject');
+        $rawnewssubject = decimalEntityStrip(getPhpInput('newssubject'));
         $rawnewsmessage = getPhpInput('newsmessage');
         $rawuser = rawHTML($vars->self['username']);
         $rawbbname = rawHTML($vars->settings['bbname']);
