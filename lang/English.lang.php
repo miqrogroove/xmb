@@ -425,6 +425,7 @@ $lang['folderlist'] = "Manage Folders";
 $lang['foldermsg'] = "Separate all folders by commas (i.e. &quot;Folder 1, Folder 2&quot;).";
 $lang['foldersupdate'] = "Folders list successfully updated.";
 $lang['foldersupdateerror'] = 'The following folders were not deleted because they still contained U2Us:';
+$lang['font_size'] = 'Font Size';
 $lang['footer_options'] = 'Footer Options:';
 $lang['force_new_pw_detail'] = 'You must change your password to complete the login.  Your current password does not meet the password length requirement of the security policy.';
 $lang['force_new_pw_success'] = 'Your password change was successful.  You are now being forwarded to the front page.';

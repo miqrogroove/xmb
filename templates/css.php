@@ -104,6 +104,11 @@ textarea, select, input, object {
     table-layout: fixed;
 }
 
+input[readonly] {
+    background: none;
+    border: none;
+}
+
 .category {
     <?= $THEME['catcss'] ?>
     font-family: <?= $THEME['font'] ?>;
@@ -333,6 +338,10 @@ table.subforums {
     margin-left: 8px;
 }
 
+.medium-width-box {
+    min-width: 50%;
+}
+
 @media screen and (min-width: 1200px) {
     .codemessage code {
         width: 800px;
@@ -346,6 +355,10 @@ table.subforums {
 @media screen and (min-width: 1850px) {
     .codemessage code {
         width: 1400px;
+    }
+    .medium-width-box {
+        min-width: 925px;
+        max-width: 1000px;
     }
 }
 @media screen and (max-width: 850px) {

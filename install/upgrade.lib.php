@@ -2668,9 +2668,6 @@ class Upgrade
         $this->show->progress('Emptying the whosonline table');
         $this->upgrade_query('TRUNCATE TABLE ' . $this->vars->tablepre . "whosonline");
 
-        $this->show->progress('Resetting the theme version numbers');
-        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "themes SET version = version + 1");
-
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '13' WHERE name = 'schema_version'");
     }
@@ -2708,6 +2705,9 @@ class Upgrade
 
         $this->show->progress("Releasing the lock on the $table table");
         $this->upgrade_query('UNLOCK TABLES');
+
+        $this->show->progress('Resetting the theme version numbers');
+        $this->upgrade_query("UPDATE " . $this->vars->tablepre . "themes SET version = version + 1");
 
         $this->show->progress('Resetting the schema version number');
         $this->upgrade_query("UPDATE " . $this->vars->tablepre . "settings SET value = '14' WHERE name = 'schema_version'");

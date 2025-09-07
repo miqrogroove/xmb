@@ -2,10 +2,13 @@
 <td>
 <form method="post" action="<?= $full_url ?>admin/themes.php?single=submit">
 <input type="hidden" name="token" value="<?= $token ?>" />
-<table cellspacing="0" cellpadding="0" border="0" width="93%" align="center">
+<table cellspacing="0" cellpadding="0" border="0" class="medium-width-box" align="center">
 <tr>
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
+<tr class="category">
+<th colspan="3" align="center"><?= $themestuff['name'] ?></th>
+</tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['texthemename'] ?></td>
 <td colspan="2"><input type="text" name="namenew" value="<?= $themestuff['name'] ?>" /></td>
@@ -87,7 +90,7 @@
 <td colspan="2"><input type="text" name="fnew" value="<?= htmlspecialchars($themestuff['font']) ?>" /></td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
-<td><?= $lang['textbigsize'] ?></td>
+<td><?= $lang['font_size'] ?></td>
 <td colspan="2"><input type="text" name="fsizenew" value="<?= $themestuff['fontsize'] ?>" size="4" /></td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">

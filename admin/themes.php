@@ -41,7 +41,7 @@ $lang = &$vars->lang;
 header('X-Robots-Tag: noindex');
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
-$core->nav($lang['themes']);
+$core->nav('<a href="' . $vars->full_url . 'admin/themes.php">' . $lang['themes'] . '</a>');
 $core->setCanonicalLink('admin/themes.php');
 
 if ($vars->settings['subject_in_title'] == 'on') {
@@ -69,8 +69,6 @@ if ($getThemeId) {
     echo implode("\r\n", $contents);
     exit();
 }
-
-$header = $template->process('header.php');
 
 $table = $template->process('admin_table.php');
 
@@ -182,6 +180,8 @@ if ($single_int > 0) {
     $template->themestuff = $db->fetch_array($query);
     $db->free_result($query);
 
+    $core->nav($template->themestuff['name']);
+
     $body = $template->process('admin_themes_single.php');
 } elseif ($single_str == "bump") {
     $sql->raiseThemeVersions();
@@ -250,6 +250,8 @@ if ($single_int > 0) {
 
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['themeupdate'] . '</td></tr>';
 }
+
+$header = $template->process('header.php');
 
 $endTable = $template->process('admin_table_end.php');
 
