@@ -132,8 +132,12 @@ switch ($action) {
                     $core->error($lang['bad_token']);
                     break;
                 case 'user-must-change-password':
-                    // Create a token for semi-anonymous password change.  We don't want random access to this feature.
+                    // Force logout of any other sessions.
                     $member = $session->getMember();
+                    $session->logoutAll();
+                    $sql->deleteWhosonline($member['username']);
+
+                    // Create a token for semi-anonymous password change.  We don't want random access to this feature.
                     $template->token = $token->create('Forced PW Change', $member['uid'], $vars::NONCE_FORM_EXP, anonymous: true);
                     $template->uid = $member['uid'];
                     $template->username = $member['username'];
@@ -226,13 +230,11 @@ switch ($action) {
             
             $result = $core->assertPasswordPolicy('password', 'password2');
             $password->change($member['username'], $result['password']);
-            unset($result);
 
-            // Force logout and delete cookies.
-            $sql->deleteWhosonline($vars->self['username']);
-            $session->logoutAll();
+            $session->newUser($member);
+            unset($member, $result);
 
-            $core->message($lang['force_new_pw_success']);
+            $core->message($lang['force_new_pw_success'], redirect: $vars->full_url);
         }
         break;
 

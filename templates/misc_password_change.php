@@ -16,15 +16,15 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textusername'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="username" size="25" readonly="readonly" value="<?= $username ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" autocomplete="username" name="username" size="25" readonly="readonly" value="<?= $username ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textnewpassword'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="password" size="25" required="required" maxlength="<?= $pwmax ?>" minlength="<?= $pwmin ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" autocomplete="new-password" name="password" size="25" required="required" maxlength="<?= $pwmax ?>" minlength="<?= $pwmin ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textretypepw'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" name="password2" size="25" required="required" maxlength="<?= $pwmax ?>" minlength="<?= $pwmin ?>" /></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="password" autocomplete="new-password" name="password2" size="25" required="required" maxlength="<?= $pwmax ?>" minlength="<?= $pwmin ?>" /></td>
 </tr>
 <tr class="ctrtablerow">
 <td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><input type="submit" class="submit" name="loginsubmit" value="<?= $lang['textlogin'] ?>" /></td>

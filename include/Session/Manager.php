@@ -159,10 +159,17 @@ class Manager
     public function logoutAll(string $username = '', bool $isSelf = true)
     {
         if ('' == $username) {
-            if ('good' == $this->status) {
-                $username = $this->saved->member['username'];
-            } else {
-                return;
+            switch ($this->status) {
+                case 'good':
+                    $username = $this->saved->member['username'];
+                    break;
+                case 'user-must-change-password':
+                    // In this case, the client data were already deleted by $this->login(), so we override the value of $isSelf.
+                    $isSelf = false;
+                    $username = $this->saved->member['username'];
+                    break;
+                default:
+                    return;
             }
         }
         foreach ($this->mechanisms as $session) {
@@ -172,9 +179,13 @@ class Manager
 
     /**
      * Forces creation of a session for a guest user who just completed registration.
+     *
+     * This is also suitable for a user who just completed a forced password change.
      */
     public function newUser(array $member)
     {
+        unset($member['password'], $member['password2']);
+
         $data = new Data();
         $data->member =& $member;
         foreach ($this->mechanisms as $session) {

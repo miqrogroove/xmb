@@ -9,7 +9,7 @@
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textusername'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $hUsername ?></td>
+<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" autocomplete="username" size="25" readonly="readonly" value="<?= $hUsername ?>" /></td>
 </tr>
 <tr class="tablerow">
 <td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textemail'] ?></td>
