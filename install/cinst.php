@@ -35,10 +35,10 @@ class Install
         private DBStuff $db,
         private Password $password,
         private Schema $schema,
+        private SiteData $site,
         private SQL $sql,
         private UpgradeOutput $show,
-        private Validation $validate,
-        private Variables $vars
+        private Variables $vars,
     ) {
         // Property promotion.
     }
@@ -51,16 +51,13 @@ class Install
         ob_implicit_flush(true);
 
         $this->show->progress("Checking Super Administrator Account");
-        $vUsername = trim($this->validate->postedVar('frmUsername', dbescape: false));
-        $iUsername = strtolower($vUsername);
-        $frmPassword = getRawString('frmPassword');
-        $vEmail = trim($this->validate->postedVar('frmEmail', dbescape: false));
+        $iUsername = strtolower($this->site->adminUser);
 
-        if ($vUsername == '' || $frmPassword == '' || $vEmail == '') {
-            $this->show->error('The username, password or e-mail address cannot be blank or malformed. Please press back and try again.');
+        if ($this->site->adminEmail == '' || $this->site->adminPass == '' || $this->site->adminUser == '') {
+            $this->show->error('The username, password or e-mail address cannot be blank or malformed. Please go back and try again.');
         }
 
-        if (strlen($vUsername) < $this->vars::USERNAME_MIN_LENGTH || strlen($vUsername) > $this->vars::USERNAME_MAX_LENGTH) {
+        if (strlen($this->site->adminUser) < $this->vars::USERNAME_MIN_LENGTH || strlen($this->site->adminUser) > $this->vars::USERNAME_MAX_LENGTH) {
             $this->show->error($this->vars->lang['username_length_invalid']);
         }
 
@@ -68,15 +65,11 @@ class Install
             $this->show->error('The username you provided is not valid for XMB. Please press back and create a different username.');
         }
 
-        if ($frmPassword !== getRawString('frmPasswordCfm')) {
-            $this->show->error('The passwords do not match. Please press back and try again.');
-        }
-
-        if (strlen($frmPassword) < $this->password::MIN_LENGTH) {
+        if (strlen($this->site->adminPass) < $this->password::MIN_LENGTH) {
             $this->show->error($this->vars->lang['pwtooshort']);
         }
 
-        if (strlen($frmPassword) > $this->password::MAX_LENGTH) {
+        if (strlen($this->site->adminPass) > $this->password::MAX_LENGTH) {
             $this->show->error($this->vars->lang['pwtoolong']);
         }
 
@@ -84,12 +77,12 @@ class Install
         $nonprinting = '\\x00-\\x1F\\x7F-\\x9F\\xAD';
         $specials = '\\]\'<>\\\\|"[,@';  //Other universal chars disallowed by XMB: []'"<>\|,@
         $sequences = '|  ';  //Phrases disallowed, each separated by '|'
-        if ($vUsername !== preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $vUsername)) {
+        if ($this->site->adminUser !== preg_replace("#[{$nonprinting}{$specials}]{$sequences}#", '', $this->site->adminUser)) {
             $this->show->error('The username may not contain special characters. Please press back and try again.');
         }
 
         // these two are used waaaaay down below.
-        $vPassword = $this->password->hash($frmPassword);
+        $vPassword = $this->password->hash($this->site->adminPass);
         $myDate = time();
         $this->show->okay();
 
@@ -346,12 +339,12 @@ class Install
 
         $this->show->progress("Creating Super Administrator Account");
         $this->sql->addMember([
-            'username'   => $vUsername,
+            'username'   => $this->site->adminUser,
             'password2'  => $vPassword,
             'pwdate'     => $myDate,
             'regdate'    => $myDate,
-            'regip'      => $_SERVER['REMOTE_ADDR'],
-            'email'      => $vEmail,
+            'regip'      => $_SERVER['REMOTE_ADDR'] ?? '',
+            'email'      => $this->site->adminEmail,
             'status'     => 'Super Administrator',
             'langfile'   => 'English',
             'timeformat' => 12,

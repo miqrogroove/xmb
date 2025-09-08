@@ -41,7 +41,15 @@ class ShellOutput implements UpgradeOutput
      */
     public function progress(string $text)
     {
-        echo $text, "...\n";
+        echo $text, "...";
+    }
+
+    /**
+     * Output success of previously specified progress.
+     */
+    public function okay()
+    {
+        echo "OK\n";
     }
 
     /**
@@ -60,6 +68,16 @@ class ShellOutput implements UpgradeOutput
      * @param string $text Description of current progress.
      */
     public function error(string $text)
+    {
+        echo $text, "\n";
+    }
+
+    /**
+     * Output final instructions to the user.
+     *
+     * @param string $text Description of current progress.
+     */
+    public function finished(string $text)
     {
         echo $text, "\n";
     }

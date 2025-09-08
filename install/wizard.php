@@ -36,6 +36,7 @@ if (! defined('XMB\ROOT')) {
 if (
     ! is_readable('./HttpOutput.php') ||
     ! is_readable('./LoggedOutput.php') ||
+    ! is_readable('./SiteData.php') ||
     ! is_readable('./UpgradeOutput.php') ||
     ! is_readable('./upgrade.lib.php') ||
     ! is_readable('./WizFunctions.php') ||
@@ -48,6 +49,7 @@ if (
 require './UpgradeOutput.php';
 
 require './HttpOutput.php';
+require './SiteData.php';
 require './WizFunctions.php';
 
 // Check the status of the config.php file, if any
@@ -199,8 +201,11 @@ if ($status == 'installed') {
 
 ini_set('display_errors', '1');
 
+$show = new HttpOutput($template, $vars);
+$site = new SiteData();
+
 if (! empty($full_url) && $full_url != 'FULLURL') {
-    $template->full_url = $full_url;
+    $site->fullURL = $full_url;
 } else {
     // Assumed Full URL
     if (! empty($_SERVER['HTTPS']) && 'on' === $_SERVER['HTTPS']) {
@@ -209,10 +214,10 @@ if (! empty($full_url) && $full_url != 'FULLURL') {
         $scheme = 'http';
     }
     // SCRIPT_NAME is expected to end with 'install/index.php'.  Anything before that is part of the forum's web path.
-    $template->full_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') - strlen('install'));
+    $site->fullURL = $scheme . '://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/') - strlen('install'));
 }
 
-$show = new HttpOutput($template, $vars);
+$template->full_url = $site->fullURL;
 
 switch ($vStep) {
     case 1: // welcome
@@ -238,7 +243,18 @@ switch ($vStep) {
                     $configuration = '';
                 }
 
-                // Now, replace the main text values with those given by user
+                // Get config values provided by the user
+                $site->showVersion = isset($_REQUEST['showfullinfo']);
+                $site->dbName = getPhpInput('db_name');
+                $site->dbUser = getPhpInput('db_user');
+                $site->dbPass = getPhpInput('db_pw');
+                $site->dbHost = getPhpInput('db_host');
+                $site->dbTablePrefix = getPhpInput('table_pre');
+                $site->fullURL = getPhpInput('fullurl');
+
+                $template->full_url = $site->fullURL;
+
+                // Now, replace the configuration text values with those given by user
                 $find = [
                     "'DB/NAME'",
                     "'DB/USER'",
@@ -248,12 +264,12 @@ switch ($vStep) {
                     "'FULLURL'",
                 ];
                 $replace = [
-                    input_to_literal(getPhpInput('db_name')),
-                    input_to_literal(getPhpInput('db_user')),
-                    input_to_literal(getPhpInput('db_pw')),
-                    input_to_literal(getPhpInput('db_host')),
-                    input_to_literal(getPhpInput('table_pre')),
-                    input_to_literal(getPhpInput('fullurl')),
+                    input_to_literal($site->dbName),
+                    input_to_literal($site->dbUser),
+                    input_to_literal($site->dbPass),
+                    input_to_literal($site->dbHost),
+                    input_to_literal($site->dbTablePrefix),
+                    input_to_literal($site->fullURL),
                 ];
                 foreach ($find as $phrase) {
                     if (strpos($configuration, $phrase) === false) {
@@ -285,7 +301,7 @@ switch ($vStep) {
                 $configuration = str_replace($find, $replace, $configuration);
 
                 // Show Full Footer Info
-                if (! isset($_REQUEST['showfullinfo'])) {
+                if (! $site->showVersion) {
                     $configuration = str_ireplace('show_full_info = true;', 'show_full_info = false;', $configuration);
                 }
 
@@ -433,7 +449,16 @@ switch ($vStep) {
 
         $password = new Password($sql);
 
-        $lib = new Install($db, $password, $schema, $sql, $show, $validate, $vars);
+        // Gather user inputs from this step
+        $site->adminEmail = trim($this->validate->postedVar('frmEmail', dbescape: false));
+        $site->adminPass = getRawString('frmPassword');
+        $site->adminUser = trim($this->validate->postedVar('frmUsername', dbescape: false));
+
+        if ($site->adminPass !== getRawString('frmPasswordCfm')) {
+            $show->error('The passwords do not match. Please press back and try again.');
+        }
+
+        $lib = new Install($db, $password, $schema, $site, $sql, $show, $validate, $vars);
 
         $lib->go();
 
@@ -441,7 +466,7 @@ switch ($vStep) {
         $template->process('install_footer.php', echo: true);
         exit;
     default:
-        header('Location: ' . $template->full_url . 'install/step=1');
+        header('Location: ' . $site->fullURL . 'install/step=1');
         exit;
 }
     

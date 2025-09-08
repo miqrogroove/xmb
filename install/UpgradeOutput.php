@@ -41,6 +41,11 @@ interface UpgradeOutput
     public function progress(string $text);
 
     /**
+     * Output success of previously specified progress.
+     */
+    public function okay();
+
+    /**
      * Output a warning message to the user.
      *
      * @param string $text
