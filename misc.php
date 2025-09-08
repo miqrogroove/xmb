@@ -382,19 +382,36 @@ switch ($action) {
             $desc = 'asc';
         }
 
-        if ($order != 'username' && $order != 'postnum' && $order != 'status' && $order != 'location') {
-            $order = '';
-            $orderby = 'regdate';
-        } elseif ($order == 'status') {
-            $orderby = "if (status='Super Administrator', 1, if (status='Administrator', 2, if (status='Super Moderator', 3, if (status='Moderator', 4, if (status='Member', 5, if (status='Banned',6,7))))))";
-        } else {
-            $orderby = $order;
+        $where = [];
+        $ext = [];
+
+        switch ($order) {
+            case 'status':
+                $orderby = "
+                    if (status='Super Administrator', 1,
+                     if (status='Administrator', 2,
+                      if (status='Super Moderator', 3,
+                       if (status='Moderator', 4,
+                        if (status='Member', 5, 6)
+                       )
+                      )
+                     )
+                    ) $desc,
+                    regdate $desc";
+                break;
+            case 'location':
+                $orderby = "location $desc";
+                $where[] = "location != ''";
+            case 'username':
+            case 'postnum':
+                $orderby = "$order $desc";
+                break;
+            default:
+                $order = '';
+                $orderby = "regdate $desc";
         }
 
         $misc_mlist_template = X_ADMIN ? 'misc_mlist_admin.php' : 'misc_mlist.php';
-
-        $where = [];
-        $ext = [];
 
         if ($desc != 'asc') {
             $ext[] = "desc=$desc";
@@ -484,7 +501,7 @@ switch ($action) {
 
         /* Generate Output */
 
-        $querymem = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE $q ORDER BY $orderby $desc LIMIT {$mpage['start']}, $memberperpage");
+        $querymem = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE $q ORDER BY $orderby LIMIT {$mpage['start']}, $memberperpage");
 
         $template->members = '';
         $oldst = '';
