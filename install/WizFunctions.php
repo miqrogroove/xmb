@@ -88,3 +88,88 @@ function already_installed(
         return 'no-db-table';
     }
 }
+
+/**
+ * Get the config file with all template values filled by specified data.
+ *
+ * @since 1.10.00
+ * @param SiteData $site
+ * @return string
+ */
+function generate_config(SiteData $site): string
+{
+    // Open config.php
+    if (is_readable(ROOT . 'config-dist.php')) {
+        $configuration = file_get_contents(ROOT . 'config-dist.php');
+    } else {
+        $configuration = '';
+    }
+
+    // Now, replace the configuration text values with those given by user
+    $find = [
+        "'DB/NAME'",
+        "'DB/USER'",
+        "'DB/PW'",
+        "'localhost'",
+        "'TABLE/PRE'",
+        "'FULLURL'",
+    ];
+    $replace = [
+        input_to_literal($site->dbName),
+        input_to_literal($site->dbUser),
+        input_to_literal($site->dbPass),
+        input_to_literal($site->dbHost),
+        input_to_literal($site->dbTablePrefix),
+        input_to_literal($site->fullURL),
+    ];
+    foreach ($find as $phrase) {
+        if (strpos($configuration, $phrase) === false) {
+            $configuration = "<?php\n"
+                . "\$dbname   = 'DB/NAME';\n"
+                . "\$dbuser   = 'DB/USER';\n"
+                . "\$dbpw     = 'DB/PW';\n"
+                . "\$dbhost   = 'localhost';\n"
+                . "\$database = 'mysql';\n"
+                . "\$pconnect = false;\n"
+                . "\$tablepre = 'TABLE/PRE';\n"
+                . "\$full_url = 'FULLURL';\n"
+                . "\$comment_output = false;\n"
+                . "\$i = 1;\n"
+                . "\$plugname[\$i]  = '';\n"
+                . "\$plugurl[\$i]   = '';\n"
+                . "\$plugadmin[\$i] = false;\n"
+                . "\$plugimg[\$i]   = '';\n"
+                . "\$i++;\n"
+                . "\$allow_spec_q     = false;\n"
+                . "\$show_full_info   = true;\n\n"
+                . "\$debug            = true;\n"
+                . "\$log_mysql_errors = false;\n\n"
+                . "\n// Do not edit below this line.\nreturn;\n";
+            break;
+        }
+    }
+
+    $configuration = str_replace($find, $replace, $configuration);
+
+    // Show Full Footer Info
+    if (! $site->showVersion) {
+        $configuration = str_ireplace('show_full_info = true;', 'show_full_info = false;', $configuration);
+    }
+
+    return $configuration;
+}
+
+/**
+ * Gather the required dependencies and create an Install service.
+ *
+ * @since 1.10.00 
+ */
+function installer_factory(DBStuff $db, SiteData $site, UpgradeOutput $show, Variables $vars): Install
+{
+    $schema = new Schema($db, $vars);
+    $sql = new SQL($db, $vars->tablepre);
+
+    $password = new Password($sql);
+
+    $lib = new Install($db, $password, $schema, $site, $sql, $show, $vars);
+}

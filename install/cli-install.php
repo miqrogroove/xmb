@@ -33,7 +33,11 @@ use XMB\ShellOutput;
 use XMB\SiteData;
 use XMB\SQL;
 
-use function XMB\intput_to_literal;
+use const XMB\ROOT;
+
+use function XMB\generate_config;
+use function XMB\installer_factory;
+use function XMB\input_to_literal;
 
 // Delete me.
 header('HTTP/1.0 403 Forbidden');
@@ -48,12 +52,13 @@ define('XMB\ROOT', '../'); // Location of XMB files relative to this script.
 define('XMB\INSTALL', true);
 
 // Run XMB's header.php file and add installer dependencies.
-require \XMB\ROOT . 'header.php';
+require ROOT . 'header.php';
+require ROOT . 'db/mysqli.php';
 require './UpgradeOutput.php'; // Interface must go before implementation.
 require './cinst.php';
 require './ShellOutput.php';
 require './SiteData.php';
-require_once \XMB\ROOT . 'db/mysqli.php';
+require './WizFunctions.php';
 
 // Create an output implementation for the install library.  You may also customize this one or supply your own.
 $show = new ShellOutput();
@@ -72,28 +77,8 @@ $site->dbUser = 'xmbweb';
 $site->fullURL = 'https://example.com/forums/';
 
 // Load the config template, fill it with some of the SiteData, and create config.php.
-$configuration = file_get_contents(\XMB\ROOT . 'config-dist.php');
-$find = [
-    "'DB/NAME'",
-    "'DB/USER'",
-    "'DB/PW'",
-    "'localhost'",
-    "'TABLE/PRE'",
-    "'FULLURL'",
-];
-$replace = [
-    input_to_literal($site->dbName),
-    input_to_literal($site->dbUser),
-    input_to_literal($site->dbPass),
-    input_to_literal($site->dbHost),
-    input_to_literal($site->dbTablePrefix),
-    input_to_literal($site->fullURL),
-];
-$configuration = str_replace($find, $replace, $configuration);
-if (! $site->showVersion) {
-    $configuration = str_ireplace('show_full_info = true;', 'show_full_info = false;', $configuration);
-}
-file_put_contents(\XMB\ROOT . 'config.php', $configuration);
+$configuration = generate_config($site);
+file_put_contents(ROOT . 'config.php', $configuration);
 
 // Manage XMB services
 $vars = Services\vars();
@@ -109,14 +94,11 @@ if (! $result) {
     $show->error($vars->lang['install_db_connect'], str_replace('$msg', $db->getTestError(), $vars->lang['install_db_connect_error']));
 }
 
-$schema = new Schema($db, $vars);
-$sql = new SQL($db, $vars->tablepre);
+$lib = installer_factory($db, $site, $show, $vars);
 
-$password = new Password($sql);
-
-$lib = new Install($db, $password, $schema, $site, $sql, $show, $vars);
-
+// Make it happen!
 $lib->go();
+$show->finished($vars->lang['install_done']);
 
 // Cleanup Notes
 // 1. The Super Admin password has not been provided to the user yet.

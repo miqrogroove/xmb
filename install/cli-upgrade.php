@@ -29,6 +29,8 @@ use XMB\Services;
 use XMB\ShellOutput;
 use XMB\Upgrade;
 
+use const XMB\ROOT;
+
 // Delete me.
 header('HTTP/1.0 403 Forbidden');
 exit('This file is provided to illustrate customized XMB upgrade techniques.');
@@ -41,7 +43,7 @@ define('XMB\ROOT', '../'); // Location of XMB files relative to this script.
 define('XMB\UPGRADE', true);
 
 // Run XMB's header.php file and add upgrade dependencies.
-require \XMB\ROOT . 'header.php';
+require ROOT . 'header.php';
 require './UpgradeOutput.php'; // Interface must go before implementation.
 require './ShellOutput.php';
 require './upgrade.lib.php';

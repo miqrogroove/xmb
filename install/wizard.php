@@ -236,13 +236,6 @@ switch ($vStep) {
         $vSubStep = isset($_REQUEST['substep']) ? trim($_REQUEST['substep']) : '';
         switch ($vSubStep) {
             case 'create':
-                // Open config.php
-                if (is_readable(ROOT . 'config-dist.php')) {
-                    $configuration = file_get_contents(ROOT . 'config-dist.php');
-                } else {
-                    $configuration = '';
-                }
-
                 // Get config values provided by the user
                 $site->showVersion = isset($_REQUEST['showfullinfo']);
                 $site->dbName = getPhpInput('db_name');
@@ -255,55 +248,7 @@ switch ($vStep) {
                 $template->full_url = $site->fullURL;
 
                 // Now, replace the configuration text values with those given by user
-                $find = [
-                    "'DB/NAME'",
-                    "'DB/USER'",
-                    "'DB/PW'",
-                    "'localhost'",
-                    "'TABLE/PRE'",
-                    "'FULLURL'",
-                ];
-                $replace = [
-                    input_to_literal($site->dbName),
-                    input_to_literal($site->dbUser),
-                    input_to_literal($site->dbPass),
-                    input_to_literal($site->dbHost),
-                    input_to_literal($site->dbTablePrefix),
-                    input_to_literal($site->fullURL),
-                ];
-                foreach ($find as $phrase) {
-                    if (strpos($configuration, $phrase) === false) {
-                        $configuration = "<?php\n"
-                            . "\$dbname   = 'DB/NAME';\n"
-                            . "\$dbuser   = 'DB/USER';\n"
-                            . "\$dbpw     = 'DB/PW';\n"
-                            . "\$dbhost   = 'localhost';\n"
-                            . "\$database = 'mysql';\n"
-                            . "\$pconnect = false;\n"
-                            . "\$tablepre = 'TABLE/PRE';\n"
-                            . "\$full_url = 'FULLURL';\n"
-                            . "\$comment_output = false;\n"
-                            . "\$i = 1;\n"
-                            . "\$plugname[\$i]  = '';\n"
-                            . "\$plugurl[\$i]   = '';\n"
-                            . "\$plugadmin[\$i] = false;\n"
-                            . "\$plugimg[\$i]   = '';\n"
-                            . "\$i++;\n"
-                            . "\$allow_spec_q     = false;\n"
-                            . "\$show_full_info   = true;\n\n"
-                            . "\$debug            = true;\n"
-                            . "\$log_mysql_errors = false;\n\n"
-                            . "\n// Do not edit below this line.\nreturn;\n";
-                        break;
-                    }
-                }
-
-                $configuration = str_replace($find, $replace, $configuration);
-
-                // Show Full Footer Info
-                if (! $site->showVersion) {
-                    $configuration = str_ireplace('show_full_info = true;', 'show_full_info = false;', $configuration);
-                }
+                $configuration = generate_config($site);
 
                 switch ($_REQUEST['method']) {
                     case 1: // Show configuration on screen
@@ -443,11 +388,7 @@ switch ($vStep) {
 
         require './cinst.php';
 
-        $schema = new Schema($db, $vars);
-        $sql = new SQL($db, $vars->tablepre);
         $validate = new Validation($db);
-
-        $password = new Password($sql);
 
         // Gather user inputs from this step
         $site->adminEmail = trim($this->validate->postedVar('frmEmail', dbescape: false));
@@ -458,7 +399,7 @@ switch ($vStep) {
             $show->error('The passwords do not match. Please press back and try again.');
         }
 
-        $lib = new Install($db, $password, $schema, $site, $sql, $show, $validate, $vars);
+        $lib = installer_factory($db, $site, $show, $vars);
 
         $lib->go();
 
