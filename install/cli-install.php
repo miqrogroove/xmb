@@ -24,20 +24,15 @@ declare(strict_types=1);
 
 namespace SampleCode;
 
-use XMB\Install;
 use XMB\MySQLiDatabase;
-use XMB\Password;
-use XMB\Schema;
 use XMB\Services;
 use XMB\ShellOutput;
 use XMB\SiteData;
-use XMB\SQL;
 
 use const XMB\ROOT;
 
 use function XMB\generate_config;
 use function XMB\installer_factory;
-use function XMB\input_to_literal;
 
 // Delete me.
 header('HTTP/1.0 403 Forbidden');
