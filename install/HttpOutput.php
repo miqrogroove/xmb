@@ -41,9 +41,6 @@ class HttpOutput implements UpgradeOutput
     /**
      * Output the upgrade progress at each step.
      *
-     * This function is intended to be overridden by other upgrade scripts
-     * that don't use this exact file, to support various output streams.
-     *
      * @since 1.9.11.11 formerly show_progress()
      * @param string $text Description of current progress.
      */

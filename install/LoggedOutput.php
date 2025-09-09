@@ -38,10 +38,7 @@ class LoggedOutput implements UpgradeOutput
     /**
      * Output the upgrade progress at each step.
      *
-     * This function is intended to be overridden by other upgrade scripts
-     * that don't use this exact file, to support various output streams.
-     *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 formerly show_progress()
      * @param string $text Description of current progress.
      */
     public function progress(string $text)
@@ -54,9 +51,17 @@ class LoggedOutput implements UpgradeOutput
     }
 
     /**
+     * Output success of previously specified progress.
+     */
+    public function okay()
+    {
+        // Currently unused.
+    }
+
+    /**
      * Output a warning message to the user.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 formerly show_warning()
      * @param string $text
      */
     public function warning(string $text)
@@ -71,7 +76,7 @@ class LoggedOutput implements UpgradeOutput
     /**
      * Output an error message to the user.
      *
-     * @since 1.9.11.11
+     * @since 1.9.11.11 formerly show_error()
      * @param string $text Description of current progress.
      */
     public function error(string $text)
@@ -96,7 +101,7 @@ class LoggedOutput implements UpgradeOutput
     /**
      * Output final instructions to the user.
      *
-     * @since 1.9.12
+     * @since 1.9.12 formerly show_finished()
      * @param string $text Description of current progress.
      */
     public function finished(string $text)
