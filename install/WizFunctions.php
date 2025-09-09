@@ -171,5 +171,5 @@ function installer_factory(DBStuff $db, SiteData $site, UpgradeOutput $show, Var
 
     $password = new Password($sql);
 
-    $lib = new Install($db, $password, $schema, $site, $sql, $show, $vars);
+    return new Install($db, $password, $schema, $site, $sql, $show, $vars);
 }

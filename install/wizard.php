@@ -391,9 +391,9 @@ switch ($vStep) {
         $validate = new Validation($db);
 
         // Gather user inputs from this step
-        $site->adminEmail = trim($this->validate->postedVar('frmEmail', dbescape: false));
+        $site->adminEmail = trim($validate->postedVar('frmEmail', dbescape: false));
         $site->adminPass = getRawString('frmPassword');
-        $site->adminUser = trim($this->validate->postedVar('frmUsername', dbescape: false));
+        $site->adminUser = trim($validate->postedVar('frmUsername', dbescape: false));
 
         if ($site->adminPass !== getRawString('frmPasswordCfm')) {
             $show->error('The passwords do not match. Please press back and try again.');
