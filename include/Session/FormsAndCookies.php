@@ -43,21 +43,21 @@ use function XMB\getRawString;
 class FormsAndCookies implements Mechanism
 {
     // Mechanism configuration.
-    const FORM_EXP = 3600;
-    const REGEN_AFTER = 3600;
-    const REGEN_ENABLED = true;
-    const SESSION_LIFE_LONG = 86400 * 30;
-    const SESSION_LIFE_SHORT = 3600 * 12;
-    const TEST_DATA = 'xmb';
-    const TOKEN_BYTES = 16;
-    const USER_MIN_LEN = 3;
+    private const FORM_EXP = 3600;
+    private const REGEN_AFTER = 3600;
+    private const REGEN_ENABLED = true;
+    private const SESSION_LIFE_LONG = 86400 * 30;
+    private const SESSION_LIFE_SHORT = 3600 * 12;
+    private const TEST_DATA = 'xmb';
+    private const TOKEN_BYTES = 16;
+    private const USER_MIN_LEN = 3;
 
     // Cookie names.
-    const FORM_COOKIE = 'login';
-    const REGEN_COOKIE = 'id2';
-    const SESSION_COOKIE = 'xmbpw';
-    const TEST_COOKIE = 'test';
-    const USER_COOKIE = 'xmbuser';
+    private const FORM_COOKIE = 'login';
+    private const REGEN_COOKIE = 'id2';
+    private const SESSION_COOKIE = 'xmbpw';
+    private const TEST_COOKIE = 'test';
+    private const USER_COOKIE = 'xmbuser';
 
     public function __construct(private Core $core, private Password $password, private SQL $sql, private Token $token, private Validation $validate)
     {

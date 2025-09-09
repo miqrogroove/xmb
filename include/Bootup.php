@@ -33,6 +33,8 @@ use XMBVersion;
  */
 class Bootup
 {
+    private const LocationMaxLength = 150;
+
     public function __construct(private Template $template, private Variables $vars)
     {
         // Property promotion.
@@ -113,9 +115,14 @@ class Bootup
 
     public function setURL()
     {
-        // Validate URL Configuration
+        // Set the URL, and prevent overflow of the location column.
         $this->vars->url = $_SERVER['REQUEST_URI'] ?? '';
+        if (strlen($this->vars->url) > self::LocationMaxLength) {
+            header('HTTP/1.0 403 Forbidden');
+            exit('403 Forbidden - URL rejected by XMB');
+        }
 
+        // Validate URL Configuration
         if (empty($this->vars->full_url)) {
             header('HTTP/1.0 500 Internal Server Error');
             exit('<b>ERROR: </b><i>Please fill the $full_url variable in your config.php!</i>');
