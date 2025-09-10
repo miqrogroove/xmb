@@ -257,8 +257,8 @@ table.subforums {
 
 .video {
     border: none;
-    height: 512px;
-    width: 478px;
+    width: 512px;
+    height: 478px;
 }
 
 .postOptions label {
@@ -293,18 +293,14 @@ table.subforums {
     }
 }
 @media screen and (max-width: 850px) {
-    .video {
-        height: 300px;
-        width: 425px;
-    }
     .codemessage code {
         width: 425px;
     }
 }
 @media screen and (max-width: 600px) {
     .video {
-        height: 256px;
-        width: 239px;
+        width: 256px;
+        height: 239px;
     }
     .codemessage code {
         width: 350px;
