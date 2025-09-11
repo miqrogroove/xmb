@@ -8,6 +8,10 @@ body {
     font-size: <?= $THEME['fontsize'] ?>;
 }
 
+body > br {
+    line-height: 18px;
+}
+
 a {
     color: <?= $THEME['link'] ?>;
     text-decoration: none;
