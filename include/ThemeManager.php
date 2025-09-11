@@ -153,8 +153,14 @@ class ThemeManager
         $this->vars->theme['logo'] = "<a href='" . $this->vars->full_url . "'><img src='" . $this->vars->theme['boardimg'] . "' alt='" . $this->settings->get('bbname') . "' border='0' /></a>";
 
         // Font stuff...
-        $this->vars->theme['font1'] = $this->fontSize(-1);
-        $this->vars->theme['font3'] = $this->fontSize(2);
+        $this->vars->theme['font-smaller-2'] = $this->fontSize(-2);
+        $this->vars->theme['font-smaller-1'] = $this->fontSize(-1);
+        $this->vars->theme['font-larger-1'] = $this->fontSize(1);
+        $this->vars->theme['font-larger-2'] = $this->fontSize(2);
+
+        // Legacy variable names
+        $this->vars->theme['font1'] = $this->vars->theme['font-smaller-1'];
+        $this->vars->theme['font3'] = $this->vars->theme['font-larger-2'];
     }
 
     /**

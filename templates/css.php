@@ -31,7 +31,7 @@ form {
 }
 
 hr {
-    color:  <?= $THEME['bordercolor'] ?>;
+    color: <?= $THEME['bordercolor'] ?>;
     background-color: <?= $THEME['bordercolor'] ?>;
     border: 0px;
     height: 1px;
@@ -98,7 +98,7 @@ textarea, select, input, object {
     border: 1px solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['tabletext'] ?>;
     font-family: Verdana, arial, helvetica, sans-serif;
-    font-size: 12px;
+    font-size: <?= $THEME['font-larger-1'] ?>;
     font-weight: normal;
     table-layout: fixed;
 }
@@ -129,7 +129,7 @@ input[readonly] {
 .header {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-size: <?= $THEME['font1'] ?>;
+    font-size: <?= $THEME['font-smaller-1'] ?>;
     font-weight: bold;
     table-layout: fixed;
 }
@@ -169,13 +169,13 @@ input[readonly] {
 .navtd2 {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-size: 9px;
+    font-size: <?= $THEME['font-smaller-2'] ?>;
     table-layout: fixed;
     text-decoration: none;
 }
 
 .post {
-    font-size: <?= $THEME['font3'] ?>;
+    font-size: <?= $THEME['font-larger-2'] ?>;
     font-weight: normal;
 }
 
@@ -208,7 +208,7 @@ input[readonly] {
 }
 
 .smalltxt {
-    font-size: <?= $THEME['font1'] ?>;
+    font-size: <?= $THEME['font-smaller-1'] ?>;
     table-layout: fixed;
 }
 
@@ -227,7 +227,7 @@ input[readonly] {
 
 span[class^="status_"] {
     color: <?= $THEME['tabletext'] ?>;
-    font-size: <?= $THEME['font1'] ?>;
+    font-size: <?= $THEME['font-smaller-1'] ?>;
 }
 
 .status_Super_Administrator {
