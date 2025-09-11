@@ -219,7 +219,7 @@ textarea, select, input, object {
     table-layout: fixed;
 }
 
-class[^="status_"] {
+span[class^="status_"] {
     color: <?= $THEME['tabletext'] ?>;
     font-size: <?= $THEME['font1'] ?>;
 }
