@@ -93,7 +93,7 @@ textarea, select, input, object {
     background-color: <?= $THEME['altbg1'] ?>;
     border: 1px solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
+    font-family: Verdana, arial, helvetica, sans-serif;
     font-size: 12px;
     font-weight: normal;
     table-layout: fixed;
@@ -166,7 +166,6 @@ textarea, select, input, object {
 }
 
 .post {
-    font-family: <?= $THEME['font'] ?>;
     font-size: <?= $THEME['font3'] ?>;
     font-weight: normal;
 }
@@ -197,7 +196,6 @@ textarea, select, input, object {
 .sig {
     border-top: 1px dashed <?= $THEME['bordercolor'] ?>;
     padding: 13px 0 0 3px;
-    font-size: <?= $THEME['fontsize'] ?>;
 }
 
 .smalltxt {
@@ -206,7 +204,6 @@ textarea, select, input, object {
 }
 
 .subject {
-    font-size: <?= $THEME['fontsize'] ?>;
     font-weight: bold;
 }
 
