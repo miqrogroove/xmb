@@ -4,6 +4,8 @@ body {
     scrollbar-base-color: <?= $THEME['altbg1'] ?>;
     text-align: left;
     <?= $THEME['bgcode'], "\n" ?>
+    font-family: <?= $THEME['font'] ?>;
+    font-size: <?= $THEME['fontsize'] ?>;
 }
 
 a {
@@ -44,8 +46,6 @@ td.code {
     background-color: <?= $THEME['header'] ?>;
     border-bottom: 1px solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     font-weight: bold;
     height: 20px;
     padding-left: 5px;
@@ -59,7 +59,6 @@ code {
 .codemessage code {
     background-color: <?= $THEME['altbg2'] ?>;
     color: <?= $THEME['tabletext'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     padding: 10px 5px 10px 5px;
     white-space: pre;
     display: block;
@@ -79,8 +78,6 @@ td.quote {
     background-color: <?= $THEME['header'] ?>;
     border-bottom: 1px solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     font-weight: bold;
     height: 20px;
     padding-left: 5px;
@@ -89,8 +86,6 @@ td.quote {
 td.quotemessage {
     background-color: <?= $THEME['altbg2'] ?>;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     padding: 10px 0 20px 5px;
 }
 
@@ -98,7 +93,7 @@ textarea, select, input, object {
     background-color: <?= $THEME['altbg1'] ?>;
     border: 1px solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana, arial, helvetica, sans-serif;
+    font-family: <?= $THEME['font'] ?>;
     font-size: 12px;
     font-weight: normal;
     table-layout: fixed;
@@ -106,24 +101,18 @@ textarea, select, input, object {
 
 .category {
     <?= $THEME['catcss'] ?>
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     table-layout: fixed;
     text-align: left;
 }
 
 .ctrcategory {
     <?= $THEME['catcss'] ?>
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     table-layout: fixed;
     text-align: center;
 }
 
 .ctrtablerow {
     color: <?= $THEME['tabletext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     table-layout: fixed;
     text-align: center;
 }
@@ -131,37 +120,28 @@ textarea, select, input, object {
 .header {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
+    font-size: <?= $THEME['font1'] ?>;
     font-weight: bold;
     table-layout: fixed;
 }
 
 .header2 {
     background-color: <?= $THEME['altbg1'] ?>;
-    font-family: Verdana;
-    font-size: 11px;
     font-weight: bold;
     table-layout: fixed;
 }
 
 .mediumtxt {
     color: <?= $THEME['tabletext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     font-weight: normal;
     table-layout: fixed;
 }
 
 .multi {
-    font-family: <?= $THEME['font'] ?>;
-    font-size: 11px;
     table-layout: fixed;
 }
 
 .nav {
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     font-weight: bold;
     table-layout: fixed;
 }
@@ -169,8 +149,6 @@ textarea, select, input, object {
 .navtd {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: 11px;
     table-layout: fixed;
     text-decoration: none;
 }
@@ -182,7 +160,6 @@ textarea, select, input, object {
 .navtd2 {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
     font-size: 9px;
     table-layout: fixed;
     text-decoration: none;
@@ -196,8 +173,6 @@ textarea, select, input, object {
 
 .rghttablerow {
     color: <?= $THEME['tabletext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     table-layout: fixed;
     text-align: right;
 }
@@ -222,18 +197,15 @@ textarea, select, input, object {
 .sig {
     border-top: 1px dashed <?= $THEME['bordercolor'] ?>;
     padding: 13px 0 0 3px;
-    font-family: <?= $THEME['font'] ?>;
     font-size: <?= $THEME['fontsize'] ?>;
 }
 
 .smalltxt {
-    font-family: <?= $THEME['font'] ?>;
     font-size: <?= $THEME['font1'] ?>;
     table-layout: fixed;
 }
 
 .subject {
-    font-family: <?= $THEME['font'] ?>;
     font-size: <?= $THEME['fontsize'] ?>;
     font-weight: bold;
 }
@@ -244,51 +216,39 @@ textarea, select, input, object {
 
 .tablerow {
     color: <?= $THEME['tabletext'] ?>;
-    font-family: <?= $THEME['font'] ?>;
-    font-size: <?= $THEME['fontsize'] ?>;
     table-layout: fixed;
+}
+
+class[^="status_"] {
+    color: <?= $THEME['tabletext'] ?>;
+    font-size: <?= $THEME['font1'] ?>;
 }
 
 .status_Super_Administrator {
     text-decoration: underline;
     font-weight: bold;
-    color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
     font-style: italic;
 }
 
 .status_Administrator {
     text-decoration: underline;
     font-weight: bold;
-    color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
 }
 
 .status_Super_Moderator {
     text-decoration: none;
     font-weight: bold;
-    color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
     font-style: italic;
 }
 
 .status_Moderator {
     text-decoration: none;
     font-weight: bold;
-    color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
 }
 
 .status_Member, .status_Banned {
     text-decoration: none;
     font-weight: normal;
-    color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana;
-    font-size: 10px;
 }
 
 .tablelinks td {
