@@ -406,9 +406,12 @@ switch ($action) {
             case 'postnum':
                 $orderby = "$order $desc";
                 break;
-            default:
-                $order = '';
+            case '':
                 $orderby = "regdate $desc";
+                break;
+            default:
+                header('HTTP/1.0 404 Not Found');
+                $core->error($vars->lang['generic_missing']);
         }
 
         $misc_mlist_template = X_ADMIN ? 'misc_mlist_admin.php' : 'misc_mlist.php';

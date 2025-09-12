@@ -35,7 +35,7 @@ $vars->comment_output = false; // If true, CSS would be invalid.
 $vars->theme = $sql->getThemeByID(getInt('id'));
 if (empty($vars->theme)) {
     header('HTTP/1.0 404 Not Found');
-    exit('Not Found');
+    exit($vars->lang['generic_missing']);
 }
 $themeMgr->more_theme_vars();
 

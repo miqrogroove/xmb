@@ -83,7 +83,6 @@ class Captcha
     private int $iMaxFontSize;
     private bool $bUseColor;
     private string $sFileType;
-    private string $sCode = '';
     // XMB Members
     public readonly bool $bCompatible;
     public bool $bPoison;
@@ -270,30 +269,30 @@ class Captcha
     public function GenerateCode()
     {
         // reset code
-        $this->sCode = '';
+        $sCode = '';
 
         // loop through and generate the code letter by letter
         for ($i = 0; $i < $this->iNumChars; $i++) {
             if (count($this->aCharSet) >= $this->iNumChars) {
                 // select random character and add to code string
-                $this->sCode .= $this->aCharSet[array_rand($this->aCharSet)];
+                $sCode .= $this->aCharSet[array_rand($this->aCharSet)];
             } else {
                 // select random character and add to code string
-                $this->sCode .= chr(rand(65, 90));
+                $sCode .= chr(rand(65, 90));
             }
         }
 
         if ($this->bCaseInsensitive) {
-            $this->sCode = strtoupper($this->sCode);
+            $sCode = strtoupper($sCode);
         }
 
         // XMB saves code in DB and returns hashed code.
         $this->bPoison = TRUE;
 
-        return $this->core->nonce_create($this->sCode);
+        return $this->core->nonce_create($sCode);
     }
 
-    private function DrawCharacters($bg_lum, $colors)
+    private function DrawCharacters($bg_lum, $colors, string $sCode)
     {
         // XMB chooses a lightness range that will never conflict with the background color.
         if ($bg_lum > 127) {
@@ -305,7 +304,7 @@ class Captcha
         }
 
         // loop through and write out selected number of characters
-        for ($i = 0; $i < strlen($this->sCode); $i++) {
+        for ($i = 0; $i < strlen($sCode); $i++) {
             // select random font
             $sCurrentFont = $this->aFonts[array_rand($this->aFonts)];
 
@@ -342,7 +341,7 @@ class Captcha
             $iAngle = rand(-30, 30);
 
             // get dimensions of character in selected font and text size
-            $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $this->sCode[$i], array());
+            $aCharDetails = imageftbbox($iFontSize, $iAngle, $sCurrentFont, $sCode[$i], array());
 
             // calculate character starting coordinates
             $iX = intval($this->iSpacing / 4) + $i * $this->iSpacing;
@@ -350,7 +349,7 @@ class Captcha
             $iY = intval($this->iHeight / 2 + $iCharHeight / 4);
 
             // write text to image
-            imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $this->sCode[$i]);
+            imagefttext($this->oImage, $iFontSize, $iAngle, $iX, $iY, $iTextColor, $sCurrentFont, $sCode[$i]);
             
             if ($this->bCharShadow) {
                 $iOffsetAngle = rand(-30, 30);
@@ -358,7 +357,7 @@ class Captcha
                 $iRandOffsetX = rand(-5, 5);
                 $iRandOffsetY = rand(-5, 5);
                 
-                imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColor, $sCurrentFont, $this->sCode[$i]);
+                imagefttext($this->oImage, $iFontSize, $iOffsetAngle, $iX + $iRandOffsetX, $iY + $iRandOffsetY, $iShadowColor, $sCurrentFont, $sCode[$i]);
             }
         }
     }
@@ -436,8 +435,12 @@ class Captcha
 
         $this->DrawLines($bg_lum, $colors);
         $this->DrawDots($colors);
-        $this->RetrieveCode($imghash);
-        $this->DrawCharacters($bg_lum, $colors);
+        $sCode = $this->RetrieveCode($imghash);
+        if ($sCode === '') {
+            header('HTTP/1.0 404 Not Found');
+            $this->core->error($this->vars->lang['generic_missing']);
+        }
+        $this->DrawCharacters($bg_lum, $colors, $sCode);
 
         // write out image to file or browser
         $this->WriteFile($observer);
@@ -588,14 +591,16 @@ class Captcha
         }
     }
 
-    private function RetrieveCode(string $imghash)
+    private function RetrieveCode(string $imghash): string
     {
         if ($imghash == 'test') {
             $this->bPoison = true;
-            $this->sCode = 'CaPtChA';
+            $sCode = 'CaPtChA';
         } else {
-            $this->sCode = $this->core->nonce_peek($imghash, $this->iNumChars);
+            $sCode = $this->core->nonce_peek($imghash, $this->iNumChars);
         }
+
+        return $sCode;
     }
 
     private function CheckCompatibility()

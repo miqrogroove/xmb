@@ -99,13 +99,16 @@ switch ($page) {
         }
         $faq = $template->process('faq_forumrules.php');
         break;
-    default:
+    case '':
         $core->setCanonicalLink('faq.php');
         if ($vars->settings['subject_in_title'] == 'on') {
             $template->threadSubject = $vars->lang['textfaq'] . ' - ';
         }
         $faq = $template->process('faq.php');
         break;
+    default:
+        header('HTTP/1.0 404 Not Found');
+        $core->error($vars->lang['generic_missing']);
 }
 
 $header = $template->process('header.php');

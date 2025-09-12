@@ -131,6 +131,9 @@ if ($goto == 'lastpost') {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnothread']);
     }
+} else {
+    header('HTTP/1.0 404 Not Found');
+    $core->error($vars->lang['generic_missing']);
 }
 
 $query = $db->query("SELECT t.*, COUNT(*) AS postcount FROM " . $vars->tablepre . "threads AS t LEFT JOIN " . $vars->tablepre . "posts USING (tid) WHERE t.tid = $tid GROUP BY t.tid");
