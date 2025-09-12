@@ -131,7 +131,7 @@ if ($goto == 'lastpost') {
         header('HTTP/1.0 404 Not Found');
         $core->error($lang['textnothread']);
     }
-} else {
+} elseif ($goto !== '') {
     header('HTTP/1.0 404 Not Found');
     $core->error($vars->lang['generic_missing']);
 }
