@@ -117,7 +117,7 @@ class Bootup
     {
         // Set the URL, and prevent overflow of the location column.
         $this->vars->url = $_SERVER['REQUEST_URI'] ?? '';
-        if (strlen($this->vars->url) > self::LocationMaxLength) {
+        if (strlen(htmlEsc($this->vars->url)) > self::LocationMaxLength) {
             header('HTTP/1.0 403 Forbidden');
             exit('403 Forbidden - URL rejected by XMB');
         }
