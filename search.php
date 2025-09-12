@@ -124,7 +124,7 @@ if (empty($searchsubmit) && empty($page) || $getUserName != '' && $captchaEnable
 
     if ($captchaEnabled) {
         if ($page > 1) {
-            $core->error($lang['searchguesterror']);
+            $core->message($lang['searchguesterror']);
         }
         $Captcha = new Captcha($core, $vars);
         if ($Captcha->bCompatible !== false) {
