@@ -137,9 +137,11 @@ if (vars()->debug) {
 } else {
     error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
-$boot->setBrowser();
-$boot->setIP();
-$boot->setURL();
+if (! defined('XMB\UPGRADE_CLI')) {
+    $boot->setBrowser();
+    $boot->setIP();
+    $boot->setURL();
+}
 $boot->setVersion();
 observer()->assertEmptyOutputStream('version.php');
 

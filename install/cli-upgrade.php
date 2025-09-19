@@ -41,6 +41,7 @@ ignore_user_abort(true);
 // Script constants.
 define('XMB\ROOT', '../'); // Location of XMB files relative to this script.
 define('XMB\UPGRADE', true);
+define('XMB\UPGRADE_CLI', true);
 
 // Run XMB's header.php file and add upgrade dependencies.
 require ROOT . 'header.php';
