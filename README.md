@@ -2,7 +2,7 @@
 
 Our code moved to GitHub on 1 January 2025.
 
-The Master branch is now XMB 1.10 Beta.
+The Master branch is currently XMB 1.10.
 
 Visit [xmbforum2.com](https://www.xmbforum2.com) for more resources.
 
