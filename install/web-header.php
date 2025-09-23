@@ -20,7 +20,7 @@
  * If not, see https://www.gnu.org/licenses/
  */
 
-// This file has been tested against PHP v4.4.6 for backward-compatible error reporting.
+// This file has been tested against PHP v4.3.0 for backward-compatible error reporting.
 
 if (count(get_included_files()) <= 1) {
     header('HTTP/1.0 403 Forbidden');
