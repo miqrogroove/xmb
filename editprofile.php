@@ -39,7 +39,7 @@ $validate = Services\validate();
 $vars = Services\vars();
 $lang = &$vars->lang;
 
-$core->nav('<a href="./cp.php">'.$lang['textcp'].'</a>');
+$core->nav('<a href="' . $vars->full_url . 'admin/">'.$lang['textcp'].'</a>');
 $core->nav($lang['texteditpro']);
 if ($vars->settings['subject_in_title'] == 'on') {
     $template->threadSubject = $vars->lang['texteditpro'] . ' - ';
