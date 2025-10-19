@@ -594,7 +594,7 @@ switch ($action) {
 
             if ($db->num_rows($queryadd1) == 0) {
                 $db->free_result($queryadd1);
-                $core->error($lang['invalidtid'], false);
+                $core->error($lang['invalidtid']);
             }
             $otherthread = $db->fetch_array($queryadd1);
             $db->free_result($queryadd1);
