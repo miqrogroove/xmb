@@ -51,7 +51,7 @@ if ($vars->settings['subject_in_title'] == 'on') {
 }
 
 if (! X_SADMIN) {
-    error($lang['superadminonly']);
+    $core->error($lang['superadminonly']);
 }
 
 $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
@@ -82,7 +82,7 @@ if (onSubmit('upgradesubmit')) {
     foreach ($explode as $command) {
         if ($vars->allow_spec_q !== true) {
             if (strtoupper(substr(trim($command), 0, 3)) == 'USE' || strtoupper(substr(trim($command), 0, 14)) == 'SHOW DATABASES') {
-                error($lang['textillegalquery']);
+                $core->error($lang['textillegalquery']);
             }
         }
 

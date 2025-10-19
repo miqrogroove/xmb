@@ -60,7 +60,7 @@ class Attach
                     $usedb = false;
                 } else {
                     header('HTTP/1.0 500 Internal Server Error');
-                    exit(uploadErrorMsg(UploadResult::BadStoragePath));
+                    exit($this->uploadErrorMsg(UploadResult::BadStoragePath));
                 }
             }
         }

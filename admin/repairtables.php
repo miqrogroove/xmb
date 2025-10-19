@@ -55,7 +55,7 @@ if ($vars->settings['subject_in_title'] == 'on') {
 }
 
 if (! X_SADMIN) {
-    error($lang['superadminonly']);
+    $core->error($lang['superadminonly']);
 }
 
 $header = $template->process('header.php');
