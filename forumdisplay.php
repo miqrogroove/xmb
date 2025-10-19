@@ -362,7 +362,7 @@ if (strlen($template->mpage) != 0) {
 
 if ($status1) {
     if (X_ADMIN) {
-        $template->fadminlink = '<a href="' . $vars->full_url . 'cp.php?action=forum&amp;fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->full_url . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
+        $template->fadminlink = '<a href="' . $vars->full_url . 'admin/forums.php?fdetails=' . $forum['fid'] . '" title="' . $lang['alteditsettings'] . '"><img src="' . $vars->full_url . $vars->theme['admdir'] . '/editforumsets.gif" border="0" alt="" /></a>';
     } else {
         $template->fadminlink = '';
     }

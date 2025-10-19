@@ -1254,7 +1254,7 @@ $lang['texttext'] = "Text Color:";
 $lang['texttheme'] = "Theme:";
 $lang['textthemefile'] = "Theme File:<br /><span class=\"smalltxt\">(must be valid!)</span>";
 $lang['textthemeimportfail'] = "The theme could not be imported.";
-$lang['textthemeimportsuccess'] = "The theme has been been imported successfully.";
+$lang['textthemeimportsuccess'] = "The theme has been imported successfully.";
 $lang['textthemename'] = "Theme Name:";
 $lang['texttime'] = "Time:";
 $lang['texttimeformat'] = "Time Format:";

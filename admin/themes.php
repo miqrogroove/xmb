@@ -114,7 +114,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
     if (! is_uploaded_file($_FILES['themefile']['tmp_name'])) {
         $core->error($lang['textthemeimportfail']);
     }
-    $themebits = readFileAsINI($_FILES['themefile']['tmp_name']);
+    $themebits = $admin->readFileAsINI($_FILES['themefile']['tmp_name']);
     $start = "INSERT INTO " . $vars->tablepre . "themes";
 
     $keysql = [];

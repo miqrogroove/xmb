@@ -35,7 +35,7 @@
 </table>
 </form>
 <br />
-<form method="post" action="themes.php" enctype="multipart/form-data">
+<form method="post" action="<?= $full_url ?>admin/themes.php" enctype="multipart/form-data">
 <input type="hidden" name="token" value="<?= $themenonce ?>" />
 <table cellspacing="0" cellpadding="0" border="0" width="500" align="center">
 <tr>
