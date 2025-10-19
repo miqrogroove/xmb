@@ -293,7 +293,7 @@ switch ($action) {
                     if ($SETTINGS['emailcheck'] == 'on') {
                         $newPass = $passMan->generate();
                     } else {
-                        $result = assertPasswordPolicy('password', 'password2', softError: true);
+                        $result = $core->assertPasswordPolicy('password', 'password2', softError: true);
                         $newPass = $result['password'];
                         $softErrors .= $result['error'];
                         unset($result);
