@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -2961,14 +2961,14 @@ class Upgrade
             $pp = trim($forum['postperm']);
             if (strlen($pp) > 0 && strpos($pp, '|') === false) {
                 $update = true;
-                $forum['postperm'] = $pp . '|' . $pp;	// make the postperm the same for thread and reply
+                $forum['postperm'] = $pp . '|' . $pp; // make the postperm the same for thread and reply
             }
             if ($forum['guestposting'] != 'on' && $forum['guestposting'] != 'off') {
                 $forum['guestposting'] = 'off';
                 $update = true;
             }
             if ($forum['private'] == '') {
-                $forum['private'] = '1';	// by default, forums are not private.
+                $forum['private'] = '1'; // by default, forums are not private.
                 $update = true;
             }
             if ($update) {
