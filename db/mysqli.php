@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -272,7 +272,7 @@ class MySQLiDatabase implements DBStuff
         }
         return true;
     }
-	
+
     /**
      * Fetch an array representing the next row of a result.
      *
@@ -369,7 +369,7 @@ class MySQLiDatabase implements DBStuff
             $log_advice = "Please set LOG_MYSQL_ERRORS to true in config.php.<br />\n";
         }
 
-    	if ($this->debug && (! defined('XMB\X_SADMIN') || X_SADMIN)) {
+        if ($this->debug && (! defined('XMB\X_SADMIN') || X_SADMIN)) {
             // If an error was found in already_installed() then the header hasn't been included yet.
             require_once ROOT . 'include/validate.inc.php';
 
@@ -394,7 +394,7 @@ class MySQLiDatabase implements DBStuff
             if (defined('XMB\X_SADMIN') && X_SADMIN && ! $this->debug) {
                 echo "To display details, please set DEBUG to true in config.php.<br />\n";
             }
-    	}
+        }
         if ($this->logErrors) {
             $log = "MySQL encountered the following error:\n$error\n(errno = $errno)\n";
             if ($sql != '') {
@@ -523,7 +523,7 @@ class MySQLiDatabase implements DBStuff
         }
         $this->querytimes[] = $this->stop_timer();
         $this->querynum++;
-    	if ($this->debug) {
+        if ($this->debug) {
             if ($this->logErrors) {
                 $this->log_warnings($sql);
             }
@@ -563,7 +563,10 @@ class MySQLiDatabase implements DBStuff
     }
 
     /**
-     * Experimental method for sending more than one query.
+     * Send more than one query at the same time.
+     *
+     * This allows the server to process queries more efficiently.
+     * All results from this command must be retrieved via next_query(), which is not optional.
      *
      * @since 1.10.00
      * @param array $statements List of queries to execute.
@@ -576,7 +579,7 @@ class MySQLiDatabase implements DBStuff
 
         $this->multi_list = &$statements;
 
-    	if ($this->debug) {
+        if ($this->debug) {
             $weave = [];
             foreach ($statements as $stmt) {
                 if ($this->logErrors) {
@@ -606,7 +609,7 @@ class MySQLiDatabase implements DBStuff
         $this->querynum += $count;
         unset($sql);
 
-    	if ($this->debug && $this->logErrors) {
+        if ($this->debug && $this->logErrors) {
             $this->log_warnings($firstQuery, multiMode: true);
         }
 
@@ -614,9 +617,10 @@ class MySQLiDatabase implements DBStuff
     }
 
     /**
-     * Experimental method for fetching a result from the next query after a multi_query().
+     * Fetch a result from the next query after a multi_query().
      *
      * @since 1.10.00
+     * @return mysqli_result|bool The result if any, true for no result, false for no more queries.
      */
     public function next_query(): mysqli_result|bool
     {
@@ -635,7 +639,7 @@ class MySQLiDatabase implements DBStuff
         
         if ($result === false) $result = true; // Inform the caller we haven't exhausted the results yet.
 
-    	if ($this->debug && $this->logErrors) {
+        if ($this->debug && $this->logErrors) {
             $this->log_warnings($thisQuery, multiMode: true);
         }
 

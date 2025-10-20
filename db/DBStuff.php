@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -190,7 +190,7 @@ interface DBStuff
      *
      * @param string $sql Unique query (multiple queries are not supported). The query string should not end with a semicolon.
      * @param bool $panic XMB will die and use dbstuff::panic() in case of any error unless this param is set to FALSE.
-     * @return mixed Returns a resource or a bool, depending on the query type and error status.
+     * @return mixed Returns an object or a bool, depending on the query type and error status.
      */
     public function query(string $sql, bool $panic = true);
 
@@ -206,6 +206,24 @@ interface DBStuff
      * @return mixed Returns a resource or a bool, depending on the query type and error status.
      */
     public function unbuffered_query(string $sql, $panic = true);
+
+    /**
+     * Send more than one query at the same time.
+     *
+     * This allows the server to process queries more efficiently.
+     * All results from this command must be retrieved via next_query(), which is not optional.
+     *
+     * @param array $statements List of queries to execute.
+     * @return mixed An object if the first query returned a result, otherwise false.
+     */
+    public function multi_query(array $statements);
+
+    /**
+     * Fetch a result from the next query after a multi_query().
+     *
+     * @return mixed The result object if any, true for no result, false for no more queries.
+     */
+    public function next_query();
 
     /**
      * Fetch the list of tables in a database.
@@ -290,4 +308,9 @@ interface DBStuff
      * @return array
      */
     public function getQueryTimes(): array;
+
+    /**
+     * Signals the query methods to stop caching the text of every query.
+     */
+    public function stopQueryLogging();
 }
