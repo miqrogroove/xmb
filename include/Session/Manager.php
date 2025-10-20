@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -282,7 +282,7 @@ class Manager
      */
     private function logout()
     {
-		$this->saved = new Data();
+        $this->saved = new Data();
         foreach ($this->mechanisms as $session) {
             $data = $session->logout();
             if ($data->status == 'none') {

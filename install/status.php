@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -52,7 +52,7 @@ $error = '<!-- error -->' == $check;
 $lines = explode("\r\n", $log);
 $counter = count($lines);
 while (count($lines) > 0) {
-	echo $counter--, ". ", array_pop($lines), "<br>\n";
+    echo $counter--, ". ", array_pop($lines), "<br>\n";
 }
 ?>
 </body>
@@ -60,5 +60,5 @@ while (count($lines) > 0) {
 <?php
 
 if ($done) {
-	@unlink(dirname(__FILE__) . '/' . $logfileName);
+    @unlink(dirname(__FILE__) . '/' . $logfileName);
 }

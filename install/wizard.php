@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -66,7 +66,7 @@ if (is_readable(ROOT . 'config.php')) {
     }
 } else {
     $status = 'no-config-file';
-	$config_success = false;
+    $config_success = false;
 }
 if ($config_success) {    
     if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {

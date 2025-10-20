@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -38,7 +38,7 @@ const UPGRADE = true;
 //Check configuration
 error_reporting(-1);
 if (ini_get('display_errors')) {
-	ini_set('display_errors', '0');
+    ini_set('display_errors', '0');
 }
 
 //Authenticate Browser
