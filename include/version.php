@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.00
+ * XMB 1.10.01
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -37,9 +37,9 @@ class XMBVersion
     function get()
     {
         $data = array(
-            'version' => '1.10.00',
+            'version' => '1.10.01',
             'versionStage' => '',
-            'versionDate' => '20250919',
+            'versionDate' => '20251030',
             'mysqlMinVer' => '5.5.8',
             'phpMinVer' => '8.2.0',
             'copyright' => '2001-2025',
