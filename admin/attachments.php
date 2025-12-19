@@ -38,9 +38,12 @@ $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');
 
+$relpath = 'admin/attachments.php';
+$title = $lang['textattachman'];
+
 $core->nav('<a href="' . $vars->full_url . 'admin/">' . $lang['textcp'] . '</a>');
-$core->nav($lang['textattachman']);
-$core->setCanonicalLink('admin/attachments.php');
+$core->nav('<a href="' . $vars->full_url . $relpath . '">' . $title . '</a>');
+$core->setCanonicalLink($relpath);
 
 if ($vars->settings['subject_in_title'] == 'on') {
     $template->threadSubject = $vars->lang['textattachman'] . ' - ';
@@ -61,8 +64,6 @@ if ($aapos !== false) {
 $auditaction = $vars->onlineip . '|#|' . $auditaction;
 $core->audit($vars->self['username'], $auditaction);
 
-$header = $template->process('header.php');
-
 $table = $template->process('admin_table.php');
 
 $action = getPhpInput('action', 'g');
@@ -73,6 +74,7 @@ if ($action == '' && noSubmit('attachsubmit') && noSubmit('searchsubmit')) {
 }
 
 if ($action == '' && onSubmit('searchsubmit')) {
+    $core->nav($lang['textattachsearchresults']);
     $template->token = $token->create('Control Panel/Attachments', 'mass-edit', $vars::NONCE_FORM_EXP);
     $dblikefilename = $db->like_escape($validate->postedVar('filename', dbescape: false));
     $author = $validate->postedVar('author');
@@ -154,12 +156,12 @@ if ($action == '' && onSubmit('searchsubmit')) {
         if ($attachment['subdir'] == '') {
             $attachment['subdir'] = 'DB';
             if ($diskpath) {
-                $template->movelink = "<a href='" . $vars->full_url . "admin/attachments.php?action=movetodisk&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['movetodisk']}</a>";
+                $template->movelink = "<a href='" . $vars->full_url . $relpath . "?action=movetodisk&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['movetodisk']}</a>";
             }
         } else {
             $attachment['subdir'] = '/'.$attachment['subdir'].'/';
             if ($diskpath) {
-                $template->movelink = "<a href='" . $vars->full_url . "admin/attachments.php?action=movetodb&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['movetodb']}</a>";
+                $template->movelink = "<a href='" . $vars->full_url . $relpath . "?action=movetodb&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['movetodb']}</a>";
             }
         }
         if ('0' === $attachment['pid']) {
@@ -168,10 +170,10 @@ if ($action == '' && onSubmit('searchsubmit')) {
         } else {
             $template->downloadlink = "<a href='" . $attach->getURL((int) $attachment['aid'], (int) $attachment['pid'], $attachment['filename']) . "' target='_blank'>{$lang['textdownload']}</a>";
             if (function_exists('imagecreatetruecolor')) {
-                $template->newthumblink = "<a href='" . $vars->full_url . "admin/attachments.php?action=regeneratethumbnail&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['regeneratethumbnail']}</a>";
+                $template->newthumblink = "<a href='" . $vars->full_url . $relpath . "?action=regeneratethumbnail&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['regeneratethumbnail']}</a>";
             }
         }
-        $template->deletelink = "<a href='" . $vars->full_url . "admin/attachments.php?action=delete&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['deletebutton']}</a>";
+        $template->deletelink = "<a href='" . $vars->full_url . $relpath . "?action=delete&amp;aid={$attachment['aid']}&amp;pid={$attachment['pid']}'>{$lang['deletebutton']}</a>";
 
         $template->attachment = $attachment;
         $body .= $template->process('admin_attachments_result_row.php');
@@ -186,12 +188,12 @@ if ($action == '' && onSubmit('searchsubmit')) {
                 if ($child['subdir'] == '') {
                     $child['subdir'] = 'DB';
                     if ($diskpath) {
-                        $template->movelink = "<a href='" . $vars->full_url . "admin/attachments.php?action=movetodisk&amp;aid={$child['aid']}&amp;pid={$child['pid']}'>{$lang['movetodisk']}</a>";
+                        $template->movelink = "<a href='" . $vars->full_url . $relpath . "?action=movetodisk&amp;aid={$child['aid']}&amp;pid={$child['pid']}'>{$lang['movetodisk']}</a>";
                     }
                 } else {
                     $child['subdir'] = '/'.$child['subdir'].'/';
                     if ($diskpath) {
-                        $template->movelink = "<a href='" . $vars->full_url . "admin/attachments.php?action=movetodb&amp;aid={$child['aid']}&amp;pid={$child['pid']}'>{$lang['movetodb']}</a>";
+                        $template->movelink = "<a href='" . $vars->full_url . $relpath . "?action=movetodb&amp;aid={$child['aid']}&amp;pid={$child['pid']}'>{$lang['movetodb']}</a>";
                     }
                 }
                 if ('0' === $child['pid']) {
@@ -230,20 +232,18 @@ if ($action == '' && onSubmit('attachsubmit')) {
 
 if ($action == "delete") {
     $aid = getInt('aid');
-    if (noSubmit('yessubmit')) {
-        $template->token = $token->create('Control Panel/Attachments/Delete', (string) $aid, $vars::NONCE_AYS_EXP);
-        ?>
-        <tr bgcolor="<?= $altbg2; ?>" class="ctrtablerow"><td><?= $lang['attach_delete_ays']; ?><br />
-        <form action="<?= $full_url ?>admin/attachments.php?action=delete&amp;aid=<?= $aid; ?>" method="post">
-          <input type="hidden" name="token" value="<?= $token ?>" />
-          <input type="submit" name="yessubmit" value="<?= $lang['textyes']; ?>" /> -
-          <input type="submit" name="yessubmit" value="<?= $lang['textno']; ?>" />
-        </form></td></tr>
-        <?php
-    } elseif ($lang['textyes'] === $yessubmit) {
+    if (onSubmit('nosubmit')) {
+        $core->request_secure('Control Panel/Attachments/Delete', (string) $aid);
+        $core->redirect($vars->full_url . $relpath, timeout: 0);
+    } elseif (onSubmit('yessubmit')) {
         $core->request_secure('Control Panel/Attachments/Delete', (string) $aid);
         $attach->deleteByID($aid);
         $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='ctrtablerow'><td>{$lang['attach_delete_done']}</td></tr>";
+    } else {
+        $template->token = $token->create('Control Panel/Attachments/Delete', (string) $aid, $vars::NONCE_AYS_EXP);
+        $template->prompt = $lang['attach_delete_ays'];
+        $template->formURL = $vars->full_url . $relpath . '?action=delete&amp;aid=' . $aid;
+        $body = $template->process('admin_ays.php');
     }
 }
 
@@ -273,6 +273,8 @@ if ($action == "regeneratethumbnail") {
 
     $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='ctrtablerow'><td>$msg</td></tr>";
 }
+
+$header = $template->process('header.php');
 
 $endTable = $template->process('admin_table_end.php');
 
