@@ -1012,16 +1012,17 @@ class Attach
 
         $thumb = $this->load_and_resize_image($filepath, $thumbSize);
 
-        if (FALSE === $thumb) {
+        if (false === $thumb) {
             return false;
         }
 
         // Write full size and dimensions on thumbnail
         if (function_exists('imagefttext')) {
             $string = $this->getSizeFormatted($filesize).' '.$imgSize;
+            $fontpath = realpath(ROOT . 'fonts/VeraMono.ttf');
             $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 80);
             imagefilledrectangle($thumb, 0, $thumbSize->getHeight() - 20, $thumbSize->getWidth(), $thumbSize->getHeight(), $grey);
-            imagefttext($thumb, 10, 0, 5, $thumbSize->getHeight() - 5, imagecolorexact($thumb, 255,255,255), ROOT . 'fonts/VeraMono.ttf', $string);
+            imagefttext($thumb, 10, 0, 5, $thumbSize->getHeight() - 5, imagecolorexact($thumb, 255,255,255), $fontpath, $string);
         }
 
         $filepath .= '-thumb.jpg';
@@ -1029,7 +1030,7 @@ class Attach
 
         // Write to Disk
         imagejpeg($thumb, $filepath, 85);
-        imagedestroy($thumb);
+        unset($thumb);
 
         // Gather metadata
         $filesize = intval(filesize($filepath));
@@ -1166,8 +1167,6 @@ class Attach
         if (! imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->getWidth(), $thumbSize->getHeight(), $imgSize->getWidth(), $imgSize->getHeight())) {
             return false;
         }
-
-        imagedestroy($img);
 
         $thumbMaxSize = $thumbSize;
         return $thumb;
