@@ -417,7 +417,7 @@ class Captcha
             imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
 
             // free memory used to create background image
-            imagedestroy($oBackgroundImage);
+            unset($oBackgroundImage);
         } elseif ($this->bUseColor) {
             // XMB forces true color mode to prevent palette overflow.
             $this->oImage = imagecreatetruecolor($this->iWidth, $this->iHeight);
@@ -446,7 +446,7 @@ class Captcha
         $this->WriteFile($observer);
 
         // free memory used in creating image
-        imagedestroy($this->oImage);
+        $this->oImage = null;
     }
 
 
