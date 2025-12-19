@@ -383,7 +383,12 @@ switch ($action) {
 if ($forum['attachstatus'] == 'on' && X_MEMBER) {
     for ($i = 1; $i <= $settings->get('filesperpost'); $i++) {
         if (isset($_FILES['attach' . $i])) {
-            $result = $attachSvc->uploadedFile('attach' . $i, 0, $quarantine);
+            if ($action == 'edit') {
+                // We don't do any post-processing for edits, so save the relationship to the existing post now instead.
+                $result = $attachSvc->uploadedFile('attach' . $i, $pid);
+            } else {
+                $result = $attachSvc->uploadedFile('attach' . $i, 0, $quarantine);
+            }
             if ($result->status !== UploadStatus::Success && $result->status !== UploadStatus::EmptyUpload) {
                 $errors .= $core->softerror($attachSvc->uploadErrorMsg($result->status));
             }
