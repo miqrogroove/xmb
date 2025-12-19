@@ -148,7 +148,7 @@ if ($action == '' && onSubmit('searchsubmit')) {
     while ($attachment = $db->fetch_array($query)) {
         $template->attachsize = $attach->getSizeFormatted($attachment['filesize']);
 
-        $attachment['fname'] = fnameOut($attachment['fname']);
+        $attachment['fname'] = fnameOut($attachment['fname'] ?? '');
         $template->movelink = '';
         $template->newthumblink = '';
         if ($attachment['subdir'] == '') {
