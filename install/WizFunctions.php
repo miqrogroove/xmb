@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.01
+ * XMB 1.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -23,6 +23,8 @@
 declare(strict_types=1);
 
 namespace XMB;
+
+use RuntimeException;
 
 /**
  * Check if XMB is already installed.
@@ -160,9 +162,88 @@ function generate_config(SiteData $site): string
 }
 
 /**
+ * Attempt to remove any incompatible code from the config.php file.
+ *
+ * @since 1.10.02
+ */
+function upgrade_config()
+{
+    $dirty = false;
+    $phrase1 = [
+        'old' => "defined('IN_CODE')",
+        'new' => "defined('XMB\ROOT')",
+    ];
+    $phrase2 = [
+        'old' => "define('DEBUG'",
+        'new' => '$debug = ',
+    ];
+    $phrase3 = [
+        'old' => "define('DEBUG_ALL'",
+        'new' => '',
+    ];
+    $phrase4 = [
+        'old' => "define('LOG_MYSQL_ERRORS'",
+        'new' => '$log_mysql_errors = ',
+    ];
+    $config = file_get_contents(ROOT . 'config.php');
+
+    if (strpos($config, $phrase1['old']) !== false) {
+        // The IN_CODE constant was introduced in v1.9.8 and replaced with the XMB\ROOT constant in v1.10.
+        $config = str_replace($phrase1['old'], $phrase1['new'], $config);
+        $dirty = true;
+    }
+    $start = strpos($config, $phrase2['old']);
+    while ($start !== false) {
+        // The DEBUG constant was introduced in v.1.9.8 and replaced with the $debug variable in v1.10.
+        $end = strpos($config, ';', $start);
+        $end++;
+        $phrase = substr($config, $start, $end - $start);
+        $value = stripos($phrase, 'true') !== false;
+        $value = $value ? 'true' : 'false';
+        $config = substr($config, 0, $start) . $phrase2['new'] . $value . ';' . substr($config, $end);
+        $end = 0; // $end is no longer a valid offset because the semi-colon has moved.
+        $dirty = true;
+        $start = strpos($config, $phrase2['old']);
+    }
+    $start = strpos($config, $phrase3['old']);
+    while ($start !== false) {
+        // The DEBUG_ALL constant was introduced in v.1.9.9 and eliminated in v1.9.11.
+        $end = strpos($config, ';', $start);
+        $end++;
+        $config = substr($config, 0, $start) . substr($config, $end);
+        $end = 0; // $end is no longer a valid offset because the semi-colon has moved.
+        $dirty = true;
+        $start = strpos($config, $phrase3['old']);
+    }
+    $start = strpos($config, $phrase4['old']);
+    while ($start !== false) {
+        // The LOG_MYSQL_ERRORS constant was introduced in v.1.9.11 and replaced with the $log_mysql_errors variable in v1.10.
+        $end = strpos($config, ';', $start);
+        $end++;
+        $phrase = substr($config, $start, $end - $start);
+        $value = stripos($phrase, 'true') !== false;
+        $value = $value ? 'true' : 'false';
+        $config = substr($config, 0, $start) . $phrase4['new'] . $value . ';' . substr($config, $end);
+        $end = 0; // $end is no longer a valid offset because the semi-colon has moved.
+        $dirty = true;
+        $start = strpos($config, $phrase4['old']);
+    }
+    if ($dirty) {
+        $result = file_put_contents(ROOT . 'config.php', $config);
+        if ($result === false) {
+            throw new RuntimeException(
+                'An old config.php file is present and appears to be read-only.
+                Please change the file permissions.
+                Otherwise, you will need to manually migrate the configuration into config-dist.php and use it to replace the old config.php file.'
+            );
+        }
+    }
+}
+
+/**
  * Gather the required dependencies and create an Install service.
  *
- * @since 1.10.00 
+ * @since 1.10.00
  */
 function installer_factory(DBStuff $db, SiteData $site, UpgradeOutput $show, Variables $vars): Install
 {

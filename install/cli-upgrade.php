@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.01
+ * XMB 1.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -42,6 +42,10 @@ ignore_user_abort(true);
 define('XMB\ROOT', '../'); // Location of XMB files relative to this script.
 define('XMB\UPGRADE', true);
 define('XMB\UPGRADE_CLI', true);
+
+// Upgrade the existing config.php file if it's from the v1.9 series.
+require './WizFunctions.php';
+upgrade_config();
 
 // Run XMB's header.php file and add upgrade dependencies.
 require ROOT . 'header.php';

@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.01
+ * XMB 1.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace XMB;
 
 use Exception;
+use Throwable;
 use XMBVersion;
 
 ignore_user_abort(true);

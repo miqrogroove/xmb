@@ -2,7 +2,7 @@
 
 /**
  * eXtreme Message Board
- * XMB 1.10.01
+ * XMB 1.10
  *
  * Developed And Maintained By The XMB Group
  * Copyright (c) 2001-2025, The XMB Group
@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace XMB;
 
 use Exception;
+use Throwable;
 use XMBVersion;
 
 if (! defined('XMB\ROOT')) {
@@ -58,6 +59,12 @@ $config_error = '';
 $status = '';
 if (is_readable(ROOT . 'config.php')) {
     try {
+        upgrade_config();
+    } catch (Throwable $e) {
+        echo $e->getMessage();
+        throw $e;
+    }
+    try {
         include ROOT . 'config.php';
     } catch (Throwable $e) {
         $status = 'bad-config-file';
@@ -70,6 +77,8 @@ if (is_readable(ROOT . 'config.php')) {
 }
 if ($config_success) {    
     if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {
+        $pconnect = (bool) $pconnect;
+        $log_mysql_errors = (bool) $log_mysql_errors;
         $status = already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre);
         switch ($status) {
             case 'no-db-config':
