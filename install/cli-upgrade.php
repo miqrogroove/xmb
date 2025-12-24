@@ -31,6 +31,8 @@ use XMB\Upgrade;
 
 use const XMB\ROOT;
 
+use function XMB\upgrade_config;
+
 // Delete me.
 header('HTTP/1.0 403 Forbidden');
 exit('This file is provided to illustrate customized XMB upgrade techniques.');
