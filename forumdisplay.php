@@ -5,7 +5,7 @@
  * XMB 1.10
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2025, The XMB Group
+ * Copyright (c) 2001-2026, The XMB Group
  * https://www.xmbforum2.com/
  *
  * XMB is free software: you can redistribute it and/or modify it under the terms
