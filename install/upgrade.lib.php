@@ -2479,6 +2479,10 @@ class Upgrade
                 $pid = (int) $row['pid'];
                 $edits = [];
                 $new = htmlEsc(htmlspecialchars_decode(stripslashes($row['message']), ENT_NOQUOTES));
+                // Check for field overflow due to entity reference expansion.
+                if (strlen($new) > $this->vars::POST_MSG_MAX_LEN) {
+                    $new = substr($new, 0, $this->vars::POST_MSG_MAX_LEN);
+                }
                 if ($row['message'] !== $new) {
                     $edits['message'] = $new;
                 }
