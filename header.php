@@ -31,6 +31,8 @@ use const XMB\X_ADMIN;
 use const XMB\X_MEMBER;
 use const XMB\X_SADMIN;
 
+use function XMB\getPhpInput;
+
 /* Front Matter */
 
 if (count(get_included_files()) === 1) {
@@ -179,6 +181,7 @@ $loader = new \XMB\BootupLoader(core(), db(), template(), vars());
 $loader->setHeaders();
 
 if (! core()->schemaHasSessions()) {
+    core()->loadLangWithoutSession();
     if (defined('XMB\UPGRADE')) {
         $xmbuser = validate()->postedVar(
             varname: 'xmbuser',

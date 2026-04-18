@@ -32,7 +32,6 @@ const UPGRADE = true;
 require ROOT . 'header.php';
 
 $core = Services\core();
-$session = Services\session();
 $sql = Services\sql();
 $tokenSvc = Services\token();
 $validate = Services\validate();
@@ -45,7 +44,10 @@ if (strlen($username) == 0) {
     $token = '';
     if ($core->schemaHasTokens()) {
         $token = $tokenSvc->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
-        $session->preLogin($token);
+        if ($core->schemaHasSessions()) {
+            $session = Services\session();
+            $session->preLogin($token);
+        }
     }
     ?>
     <form method="post" action="">

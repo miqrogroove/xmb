@@ -1108,17 +1108,29 @@ class Core
                 // message() should kill the script.
             case 'upgrade':
                 // An upgrade is pending.
-                if (empty($this->vars->lang)) {
-                    $success = false;
-                    if (! empty($vars->settings['langfile'])) {
-                        $success = $this->tran->loadLang($vars->settings['langfile']);
-                    }
-                    if (! $success) {
-                        $this->tran->langPanic();
-                    }
-                }
                 exit($this->vars->lang['upgrade_maintenance']);
         }
+    }
+
+    /**
+     * Populate the translation system using the forum Default Settings in the database.
+     *
+     * This method is needed when the session service can't be initialized.
+     *
+     * @since 1.10.03
+     */
+    public function loadLangWithoutSession()
+    {
+        if (! empty($this->vars->lang)) return;
+
+        $success = false;
+        if (! empty($vars->settings['langfile'])) {
+            $success = $this->tran->loadLang($vars->settings['langfile']);
+        }
+        if (! $success) {
+            $this->tran->langPanic();
+        }
+        $this->template->addRefs();
     }
 
     /**
