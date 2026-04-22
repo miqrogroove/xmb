@@ -78,7 +78,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
         }
 
         echo "<h2>" . fnameOut($forum['name']) . "</h2>\n";
-        
+
         $token = $tokenSvc->create('Quarantine Panel/Anonymous Queue', 'Approve or Delete', $vars::NONCE_AYS_EXP);
     }
 
@@ -87,7 +87,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     if ('viewuser' == $action) {
         $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE author = '$dbuser'");
     } else {
-        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE fid = $fid AND author = 'Anonymous' ORDER BY lastpost ASC");        
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_threads WHERE fid = $fid AND author = 'Anonymous' ORDER BY lastpost ASC");
     }
 
     $threadcount = $db->num_rows($result);
@@ -164,7 +164,8 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             if ($post['subject'] == '') {
                 $template->linktitle = $thread['subject'];
             }
-            
+            $template->postURL = "{$full_url}forumdisplay.php?fid={$fid}"; // Generic forum link.  Thread is quarantined.
+
             $template->process('viewthread_post.php', echo: true);
             echo "</table></td></tr></table><br />\n";
         }
@@ -174,7 +175,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     if ('viewuser' == $action) {
         $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts WHERE author = '$dbuser' AND tid != 0");
     } else {
-        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts AS p LEFT JOIN " . $vars->tablepre . "members AS m ON m.username = p.author WHERE p.fid = $fid AND p.author = 'Anonymous' AND p.tid != 0 ORDER BY p.tid, p.dateline");        
+        $result = $db->query("SELECT * FROM " . $vars->tablepre . "hold_posts AS p LEFT JOIN " . $vars->tablepre . "members AS m ON m.username = p.author WHERE p.fid = $fid AND p.author = 'Anonymous' AND p.tid != 0 ORDER BY p.tid, p.dateline");
     }
 
     $replycount = $db->num_rows($result);
@@ -239,6 +240,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             if ($post['subject'] == '') {
                 $template->linktitle = $thread['subject'];
             }
+            $template->postURL = "{$full_url}viewthread.php?tid={$tid}"; // Generic thread link.  Post is quarantined.
 
             $template->process('viewthread_post.php', echo: true);
 
@@ -354,7 +356,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
                     $sql->deleteVotesByTID([$oldpoll], quarantine: true);
                 }
             }
-            $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
+            $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"));
             if ($count2 != 0) {
                 $db->query("INSERT INTO " . $vars->tablepre . "favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
                 $db->query("DELETE FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']}");
@@ -391,12 +393,12 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $threadname = $core->rawHTMLsubject($thread['subject']);
 
             $query = $db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "posts WHERE pid <= $newpid AND tid={$post['tid']}");
-            $posts = $db->result($query,0);
+            $posts = (int) $db->result($query);
             $db->free_result($query);
 
             $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
             $viewperm = $core->getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
-            $date = $db->result($db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
+            $date = $db->result($db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"));
             $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
                                  . "FROM " . $vars->tablepre . "favorites f "
                                  . "INNER JOIN " . $vars->tablepre . "members m USING (username) "
@@ -411,7 +413,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
                 }
 
                 $translate = $lang2[$subs['langfile']];
-                $topicpages = $core->quickpage($posts, $subs['ppp']);
+                $topicpages = $core->quickpage($posts, (int) $subs['ppp']);
                 $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
                 $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
                 $rawsubject = rawHTML($threadname);
@@ -519,7 +521,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             $sql->deleteVotesByTID([$oldpoll], quarantine: true);
         }
     }
-    $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"), 0);
+    $count2 = (int) $db->result($db->query("SELECT COUNT(*) FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']} AND username='$member' AND type='subscription'"));
     if ($count2 != 0) {
         $db->query("INSERT INTO " . $vars->tablepre . "favorites (tid, username, type) VALUES ($newtid, '$member', 'subscription')");
         $db->query("DELETE FROM " . $vars->tablepre . "hold_favorites WHERE tid={$thread['tid']}");
@@ -565,12 +567,12 @@ if ($action == 'viewforum' || $action == 'viewuser') {
     $threadname = $core->rawHTMLsubject($thread['subject']);
 
     $query = $db->query("SELECT COUNT(pid) FROM " . $vars->tablepre . "posts WHERE pid <= $newpid AND tid={$post['tid']}");
-    $posts = $db->result($query,0);
+    $posts = (int) $db->result($query);
     $db->free_result($query);
 
     $lang2 = $tran->loadPhrases(['charset','textsubsubject','textsubbody']);
     $viewperm = $core->getOneForumPerm($forum, $vars::PERMS_RAWVIEW);
-    $date = $db->result($db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"), 0);
+    $date = $db->result($db->query("SELECT dateline FROM " . $vars->tablepre . "posts WHERE tid={$post['tid']} AND pid < $newpid ORDER BY dateline DESC LIMIT 1"));
     $subquery = $db->query("SELECT m.email, m.lastvisit, m.ppp, m.status, m.langfile "
                          . "FROM " . $vars->tablepre . "favorites f "
                          . "INNER JOIN " . $vars->tablepre . "members m USING (username) "
@@ -585,7 +587,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
         }
 
         $translate = $lang2[$subs['langfile']];
-        $topicpages = $core->quickpage($posts, $subs['ppp']);
+        $topicpages = $core->quickpage($posts, (int) $subs['ppp']);
         $topicpages = ($topicpages == 1) ? '' : '&page='.$topicpages;
         $threadurl = $vars->full_url . 'viewthread.php?tid='.$post['tid'].$topicpages.'#pid'.$newpid;
         $rawsubject = $core->rawTextSubject($thread['subject']);
