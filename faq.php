@@ -93,7 +93,7 @@ switch ($page) {
             $template->threadSubject = $vars->lang['textbbrules'] . ' - ';
         }
         if (empty($vars->settings['bbrulestxt'])) {
-            $template->rules = $this->vars->lang['textnone'];
+            $template->rules = $vars->lang['textnone'];
         } else {
             $template->rules = nl2br(rawHTML($vars->settings['bbrulestxt']));
         }
