@@ -254,7 +254,7 @@ $closetopic = 'no';
 if (X_STAFF) {
     $toptopic = formYesNo('toptopic');
     $closetopic = formYesNo('closetopic');
-    
+
     if ('yes' == $toptopic) {
         $topcheck = $vars::cheHTML;
     }
@@ -554,7 +554,7 @@ if ($validForSave && $errors == '') {
         if (X_MEMBER && ! $quarantine) {
             $sql->raisePostCount((int) $vars->self['uid'], $vars->onlinetime);
         } elseif (X_GUEST) {
-            $settings->put('anon_post_date', $vars->onlinetime);
+            $settings->put('anon_post_date', (string) $vars->onlinetime);
         }
 
         $values = [
@@ -664,7 +664,7 @@ if ($validForSave && $errors == '') {
     if ($action == 'newthread' && $poll == 'yes') {
         // Create a poll ID.  Works like a junction table even though we only support one poll per thread.
         $vote_id = $sql->addVoteDesc($tid, $quarantine);
-        
+
         // Create poll options.  This is the part we care about.
         $options = [];
         $i = 1;
