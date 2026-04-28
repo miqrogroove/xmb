@@ -3,29 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
-<style type="text/css">
-p {
-font-size: 14px;
-font-family: Helvetica, Arial, sans-serif;
-}
-.16px {
-font-size: 16px;
-font-family: Helvetica, Arial, sans-serif;
-font-weight: bold;
-}
-.14px {
-font-size: 14px;
-font-family: Helvetica, Arial, sans-serif;
-font-weight: bold;
-}
-.13px {
-font-size: 14px;
-font-family: Helvetica, Arial, sans-serif;
-}
-code {
-white-space: pre;
-}
-</style>
+<?= $css_printable ?>
 <title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
 </head>
 <body>

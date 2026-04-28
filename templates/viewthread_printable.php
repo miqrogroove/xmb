@@ -8,32 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <title><?= $threadSubject ?><?= $SETTINGS['bbname'] ?> - <?= $versionlong ?></title>
-<style type="text/css">
-.mediumtxt {
-font-size: 14px;
-font-family: Helvetica, Arial, sans-serif;
-}
-
-h2, h3 {
-margin-bottom: 0px;
-margin-top: 0px;
-}
-
-.s14px {
-font-size: 14px;
-font-family: Helvetica, Arial, sans-serif;
-font-weight: bold;
-}
-
-.s13px {
-font-size: 14px;
-font-family: Helvetica, Arial, sans-serif;
-}
-
-code {
-white-space: pre-wrap;
-}
-</style>
+<?= $css_printable ?>
 </head>
 <body>
 <?= $THEME['logo'] ?>
