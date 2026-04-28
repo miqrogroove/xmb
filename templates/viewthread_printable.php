@@ -11,7 +11,7 @@
 <style type="text/css">
 .mediumtxt {
 font-size: 14px;
-font-family: arial, verdana;
+font-family: Helvetica, Arial, sans-serif;
 }
 
 h2, h3 {
@@ -21,13 +21,13 @@ margin-top: 0px;
 
 .s14px {
 font-size: 14px;
-font-family: arial, verdana;
+font-family: Helvetica, Arial, sans-serif;
 font-weight: bold;
 }
 
 .s13px {
 font-size: 14px;
-font-family: arial, verdana;
+font-family: Helvetica, Arial, sans-serif;
 }
 
 code {
