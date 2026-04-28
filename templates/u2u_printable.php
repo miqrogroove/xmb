@@ -1,10 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="<?= $lang['iso639'] ?>" xmlns="http://www.w3.org/1999/xhtml">
+<!-- <?= $versionlong ?>  -->
+<!-- Build: <?= $versionbuild ?> -->
+<!-- <?= $versioncompany ?> -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
-<?= $css_printable ?>
 <title><?= $SETTINGS['bbname'] ?> - <?= $lang['textpowered'] ?></title>
+<style type="text/css"><?= $css_printable ?></style>
 </head>
 <body>
 <?= $THEME['logo'] ?><br /><br />

@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=<?= $lang['charset'] ?>" />
 <meta name="viewport" content="width=500, initial-scale=1" />
 <title><?= $threadSubject ?><?= $SETTINGS['bbname'] ?> - <?= $versionlong ?></title>
-<?= $css_printable ?>
+<style type="text/css"><?= $css_printable ?></style>
 </head>
 <body>
 <?= $THEME['logo'] ?>
