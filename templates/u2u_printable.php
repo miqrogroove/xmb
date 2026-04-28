@@ -6,21 +6,21 @@
 <style type="text/css">
 p {
 font-size: 14px;
-font-family: arial, verdana;
+font-family: Helvetica, Arial, sans-serif;
 }
 .16px {
 font-size: 16px;
-font-family: arial, verdana;
+font-family: Helvetica, Arial, sans-serif;
 font-weight: bold;
 }
 .14px {
 font-size: 14px;
-font-family: arial, verdana;
+font-family: Helvetica, Arial, sans-serif;
 font-weight: bold;
 }
 .13px {
 font-size: 14px;
-font-family: arial, verdana;
+font-family: Helvetica, Arial, sans-serif;
 }
 code {
 white-space: pre;
