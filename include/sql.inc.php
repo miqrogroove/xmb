@@ -1354,7 +1354,7 @@ class SQL
         $all = $this->db->fetch_all($result);
         $this->db->free_result($result);
 
-        return $result;
+        return $all;
     }
 
     /**

@@ -104,7 +104,7 @@ class ThreadRender
         $date = $this->core->printGmDate($adjStamp);
         $time = gmdate($this->vars->timecode, $adjStamp);
 
-        return $this->vars->lang['textposton'] . " $date " . $this->vars->lang['textat'] . " $time";
+        return "$date {$this->vars->lang['textat']} $time";
     }
 
     /**
@@ -147,7 +147,7 @@ class ThreadRender
         $template->linktitle = $this->core->rawHTMLsubject($post['subject']);
         $template->onlinenow = $this->onlineNow((int) $post['lastvisit'], $post['invisible']);
         $template->pid = $post['pid'];
-        $template->poston = $this->postDate((int) $post['dateline']);
+        $template->poston = $this->vars->lang['textposton'] . ' ' . $this->postDate((int) $post['dateline']);
         $template->subject = wordwrap($template->linktitle, 150, '<br />', true) . '<br />';
         $template->tid = $post['tid'];
 
@@ -296,5 +296,25 @@ class ThreadRender
             );
             $template->message .= $template->process('viewthread_post_sig.php');
         }
+    }
+
+    /**
+     * Prepare the log entry body.
+     *
+     * @param array $post Results from the getPostsAndLogsForThreadPage query, including related members records.
+     * @param Template $template The template instance to populate.
+     *
+     * @since 1.10.03
+     */
+    public function prepareModLogBody(array $post, Template $template)
+    {
+        $stringName = 'modlog_' . $post['subject'];
+
+        // Sanity check on subject value.
+        if (empty($this->vars->lang[$stringName])) {
+            $stringName = 'onlineunknown';
+        }
+
+        $template->message = $this->vars->lang[$stringName] . '<br />' . $this->postDate((int) $post['dateline']);
     }
 }

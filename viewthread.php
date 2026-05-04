@@ -468,9 +468,9 @@ if ($action == '') {
             $subTemplate->edit = '';
         }
 
-        $render->preparePostBody($post, $forum, $attachments, $quarantine, $subTemplate);
-
         if ($post['type'] == 'post') {
+            $render->preparePostBody($post, $forum, $attachments, $quarantine, $subTemplate);
+
             if ($post['subject'] == '') {
                 $subTemplate->linktitle = $thread['subject'];
             }
@@ -478,7 +478,7 @@ if ($action == '') {
 
             $template->posts .= $subTemplate->process('viewthread_post.php');
         } else {
-            $subTemplate->message = $lang["modlog_{$post['subject']}"] . "<br />$date {$lang['textat']} $time";
+            $render->prepareModLogBody($post, $subTemplate);
 
             $template->posts .= $subTemplate->process('viewthread_modlog.php');
         }
