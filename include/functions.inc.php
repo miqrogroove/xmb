@@ -972,20 +972,20 @@ class Core
     }
 
     /**
+     * Retrieve an array of load average strings.
+     *
      * @since 1.9.1
      */
     public function ServerLoad(): array
     {
-        if ($stats = @exec('uptime')) {
-            $parts = explode(',', $stats);
-            $count = count($parts);
-            $first = explode(' ', $parts[$count-3]);
-            $c = count($first);
-            $first = $first[$c-1];
-            return [$first, $parts[$count - 2], $parts[$count - 1]];
-        } else {
-            return [];
-        }
+        $stats = sys_getloadavg();
+        if (false === $stats) return [];
+
+        return [
+            sprintf('%.2f', $stats[0]),
+            sprintf('%.2f', $stats[1]),
+            sprintf('%.2f', $stats[2]),
+        ];
     }
 
     /**
