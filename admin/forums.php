@@ -299,7 +299,13 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
                     $db->free_result($query);
                 }
             }
-            $db->query("UPDATE " . $vars->tablepre . "forums SET name = '$name', displayorder = $displayorder, status = '{$forum['status']}'$settype WHERE fid = '" . $forum['fid'] . "'");
+            // Update the name only when not empty.
+            if ('' == trim($name)) {
+                $namechange = '';
+            } else {
+                $namechange = "name = '$name',";
+            }
+            $db->query("UPDATE " . $vars->tablepre . "forums SET $namechange displayorder = $displayorder, status = '{$forum['status']}'$settype WHERE fid = '" . $forum['fid'] . "'");
         }
     }
 
@@ -326,7 +332,13 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
                 $db->query("DELETE FROM " . $vars->tablepre . "forums WHERE type = 'group' AND fid = $delete");
             }
         } else {
-            $db->query("UPDATE " . $vars->tablepre . "forums SET name = '$name', displayorder = $displayorder, status = '{$group['status']}' WHERE fid = {$group['fid']}");
+            // Update the name only when not empty.
+            if ('' == trim($name)) {
+                $namechange = '';
+            } else {
+                $namechange = "name = '$name',";
+            }
+            $db->query("UPDATE " . $vars->tablepre . "forums SET $namechange displayorder = $displayorder, status = '{$group['status']}' WHERE fid = {$group['fid']}");
         }
     }
 
@@ -342,15 +354,15 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
     $newffup = formInt('newffup');
     $newsubfup = formInt('newsubfup');
 
-    if ($newfname !== $lang['textnewforum'] && $newfname != '') {
+    if ($newfname !== $lang['textnewforum'] && trim($newfname) != '') {
         $db->query("INSERT INTO " . $vars->tablepre . "forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('forum', '$newfname', '$newfstatus', '', '', $newforder, '', 'yes', 'yes', '', 0, 0, 0, $newffup, '31,31,31,63', 'yes', 'on', '')");
     }
 
-    if ($newgname !== $lang['textnewgroup'] && $newgname != '') {
+    if ($newgname !== $lang['textnewgroup'] && trim($newgname) != '') {
         $db->query("INSERT INTO " . $vars->tablepre . "forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('group', '$newgname', '$newgstatus', '', '', $newgorder, '', '', '', '', 0, 0, 0, 0, '', '', '', '')");
     }
 
-    if ($newsubname !== $lang['textnewsubf'] && $newsubname != '') {
+    if ($newsubname !== $lang['textnewsubf'] && trim($newsubname) != '') {
         $db->query("INSERT INTO " . $vars->tablepre . "forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
     }
 

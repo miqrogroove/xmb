@@ -61,12 +61,17 @@ if (noSubmit('modsubmit')) {
 
     $body = $template->process('admin_moderators_start.php');
 
-    $oldfid = '0';
+    $oldfid = 'x';
     $query = $db->query("SELECT f.moderator, f.name, f.fid, c.name as cat_name, c.fid as cat_fid FROM " . $vars->tablepre . "forums f LEFT JOIN " . $vars->tablepre . "forums c ON (f.fup = c.fid) WHERE (c.type='group' AND f.type='forum') OR (f.type='forum' AND f.fup='') ORDER BY c.displayorder, f.displayorder");
     while ($forum = $db->fetch_array($query)) {
         if ($oldfid !== $forum['cat_fid']) {
+            // When each category is first touched, display the category name one time.
             $oldfid = $forum['cat_fid'];
-            $template->catName = fnameOut($forum['cat_name']);
+            if ((string) $forum['cat_name'] == '') {
+                $template->catName = $vars->lang['textnocat'];
+            } else {
+                $template->catName = fnameOut($forum['cat_name']);
+            }
             $body .= $template->process('admin_moderators_cat.php');
         }
         $template->name = fnameOut($forum['name']);

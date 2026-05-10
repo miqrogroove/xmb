@@ -19,7 +19,7 @@ namespace XMB;
 &nbsp; <?= $lang['textorder'] ?> <input type="text" name="newforder" size="2" />
 &nbsp; <select name="newfstatus">
 <option value="on"><?= $lang['texton'] ?></option><option value="off"><?= $lang['textoff'] ?></option></select>
-&nbsp; <select name="newffup"><option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
+&nbsp; <select name="newffup"><option value="" selected="selected"><?= $lang['textnocat'] ?></option>
 <?php
 foreach ($groups as $group) {
     echo "<option value='{$group['fid']}'>" . adminStripText($group['name']) . "</option>";
