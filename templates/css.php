@@ -97,7 +97,7 @@ textarea, select, input, object {
     background-color: <?= $THEME['altbg1'] ?>;
     border: 1px solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['tabletext'] ?>;
-    font-family: Verdana, arial, helvetica, sans-serif;
+    font-family: <?= $THEME['font'] ?>;
     font-size: <?= $THEME['font-larger-1'] ?>;
     font-weight: normal;
     table-layout: fixed;

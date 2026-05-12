@@ -6,7 +6,7 @@
 <td class="category" colspan="2"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['welcomeunregnotify'] ?></strong></font></td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
-<td><font size="1"><?= $lang['welcomeunreg'] ?></font></td>
+<td><span style="smalltxt"><?= $lang['welcomeunreg'] ?></span></td>
 <td align="right" width="25%">
 <form method="get" action="<?= $full_url ?>misc.php" onsubmit="return disableButton(this);">
 <input type="hidden" name="action" value="login" />
