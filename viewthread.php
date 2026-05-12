@@ -474,7 +474,7 @@ if ($action == '') {
             if ($post['subject'] == '') {
                 $subTemplate->linktitle = $thread['subject'];
             }
-            $subTemplate->postURL = "{$full_url}viewthread.php?tid={$tid}&amp;goto=search&amp;pid={$pid}";
+            $subTemplate->postURL = "{$full_url}viewthread.php?tid={$tid}&amp;goto=search&amp;pid={$post['pid']}";
 
             $template->posts .= $subTemplate->process('viewthread_post.php');
         } else {
