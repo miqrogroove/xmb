@@ -1015,9 +1015,10 @@ function createThumbnail(string $filename, string $filepath, int $filesize, Cart
     // Write full size and dimensions on thumbnail
     if (function_exists('imagefttext')) {
         $string = getSizeFormatted($filesize).' '.$imgSize;
+        $fontpath = realpath(ROOT . 'fonts/VeraMono.ttf');
         $grey = imagecolorallocatealpha($thumb, 64, 64, 64, 80);
         imagefilledrectangle($thumb, 0, $thumbSize->getHeight() - 20, $thumbSize->getWidth(), $thumbSize->getHeight(), $grey);
-        imagefttext($thumb, 10, 0, 5, $thumbSize->getHeight() - 5, imagecolorexact($thumb, 255,255,255), 'fonts/VeraMono.ttf', $string);
+        imagefttext($thumb, 10, 0, 5, $thumbSize->getHeight() - 5, imagecolorexact($thumb, 255,255,255), $fontpath, $string);
     }
 
     $filepath .= '-thumb.jpg';
@@ -1025,7 +1026,7 @@ function createThumbnail(string $filename, string $filepath, int $filesize, Cart
 
     // Write to Disk
     imagejpeg($thumb, $filepath, 85);
-    imagedestroy($thumb);
+    unset($thumb);
 
     // Gather metadata
     $filesize = intval(filesize($filepath));
@@ -1163,8 +1164,6 @@ function load_and_resize_image(string $path, CartesianSize &$thumbMaxSize, bool 
     if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->getWidth(), $thumbSize->getHeight(), $imgSize->getWidth(), $imgSize->getHeight())) {
         return FALSE;
     }
-
-    imagedestroy($img);
 
     $thumbMaxSize = $thumbSize;
     return $thumb;
