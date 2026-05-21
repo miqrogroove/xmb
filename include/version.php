@@ -4,7 +4,7 @@
  * XMB 1.9.12
  *
  * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2025, The XMB Group
+ * Copyright (c) 2001-2026, The XMB Group
  * https://www.xmbforum2.com/
  *
  * This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ define('X_VERSION_EXT', '1.9.12.09');
 define('X_VERSION_DATE', '20250625');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '7.0.0');
-define('COPY_YEAR', '2001-2025');
+define('COPY_YEAR', '2001-2026');
 
 $versioncompany = 'The XMB Group';
 $versionshort = X_VERSION;
