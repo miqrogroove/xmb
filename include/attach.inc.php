@@ -1026,6 +1026,9 @@ function createThumbnail(string $filename, string $filepath, int $filesize, Cart
 
     // Write to Disk
     imagejpeg($thumb, $filepath, 85);
+    if (version_compare(PHP_VERSION, '8.0', '<')) {
+        imagedestroy($thumb);
+    }
     unset($thumb);
 
     // Gather metadata
@@ -1163,6 +1166,10 @@ function load_and_resize_image(string $path, CartesianSize &$thumbMaxSize, bool 
     // Resize $img
     if (!imagecopyresampled($thumb, $img, 0, 0, 0, 0, $thumbSize->getWidth(), $thumbSize->getHeight(), $imgSize->getWidth(), $imgSize->getHeight())) {
         return FALSE;
+    }
+
+    if (version_compare(PHP_VERSION, '8.0', '<')) {
+        imagedestroy($img);
     }
 
     $thumbMaxSize = $thumbSize;

@@ -427,6 +427,9 @@ class Captcha {
             imagecopy($this->oImage, $oBackgroundImage, 0, 0, 0, 0, $this->iWidth, $this->iHeight);
 
             // free memory used to create background image
+            if (version_compare(PHP_VERSION, '8.0', '<')) {
+                imagedestroy($oBackgroundImage);
+            }
             unset($oBackgroundImage);
         } else if ($this->bUseColor) {
             // XMB forces true color mode to prevent palette overflow.
@@ -452,6 +455,9 @@ class Captcha {
         $this->WriteFile();
 
         // free memory used in creating image
+        if (version_compare(PHP_VERSION, '8.0', '<')) {
+            imagedestroy($this->oImage);
+        }
         unset($this->oImage);
         return true;
     }
