@@ -1305,8 +1305,9 @@ switch($action) {
                 }
                 $dbmessage = addslashes($messageinput); //The message column is historically double-quoted.
                 $dbsubject = addslashes($subjectinput);
+                $dbtsubject = $dbsubject;
 
-                if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 255) {
+                if (strlen($dbmessage) > 65535 || strlen($dbsubject) > 128) {
                     // Inputs are suspiciously long.  Has the schema been customized?
                     $query = $db->query("SELECT message, subject FROM ".X_PREFIX."posts WHERE 1=0");
                     $msgmax = $db->field_len($query, 0);
@@ -1318,13 +1319,23 @@ switch($action) {
                     if (strlen($dbsubject) > $submax) {
                         $dbsubject = substr($dbsubject, 0, $submax);
                     }
+
+                    if ((int) $isfirstpost['pid'] == $pid) {
+                        $query = $db->query("SELECT subject FROM ".X_PREFIX."threads WHERE 1=0");
+                        $tsubmax = $db->field_len($query, 0);
+                        $db->free_result($query);
+                        if (strlen($dbtsubject) > $tsubmax) {
+                            $dbtsubject = substr($dbtsubject, 0, $tsubmax);
+                        }
+                    }
                 }
 
                 $db->escape_fast($dbmessage);
                 $db->escape_fast($dbsubject);
+                $db->escape_fast($dbtsubject);
 
                 if ((int) $isfirstpost['pid'] == $pid) {
-                    $db->query("UPDATE ".X_PREFIX."threads SET icon='$sql_posticon', subject='$dbsubject' WHERE tid=$tid");
+                    $db->query("UPDATE ".X_PREFIX."threads SET icon='$sql_posticon', subject='$dbtsubject' WHERE tid=$tid");
                 }
 
                 $db->query("UPDATE ".X_PREFIX."posts SET message='$dbmessage', usesig='$usesig', bbcodeoff='$bbcodeoff', smileyoff='$smileyoff', icon='$sql_posticon', subject='$dbsubject' WHERE pid=$pid");
