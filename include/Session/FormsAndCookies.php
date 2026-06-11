@@ -71,6 +71,11 @@ class FormsAndCookies implements Mechanism
         // Property promotion.
     }
 
+    public function getServiceID(): string
+    {
+        return 'forms-and-cookies';
+    }
+
     public function checkUsername(): Data
     {
         $data = new Data();
@@ -243,6 +248,12 @@ class FormsAndCookies implements Mechanism
         }
     }
 
+    /**
+     * Delete tokens from client.
+     *
+     * This is called directly by the Session Manager for login and resume modes when authentication fails.
+     * Responsibility for calling this is delegated to the logout method for logout mode.
+     */
     public function deleteClientData()
     {
         $this->delete_cookie(self::REGEN_COOKIE);
@@ -258,8 +269,8 @@ class FormsAndCookies implements Mechanism
             }
         }
 
-        // Remember to check that these cookies will not be reset after initializing the session.
-        // Maybe poison the function put_cookie() itself.
+        // These cookies must not be reset by the Mechanism after clearing the session.
+        // They must be created by saveClientData() only when called by the Session Manager.
     }
 
     /**
