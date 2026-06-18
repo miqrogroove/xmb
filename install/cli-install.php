@@ -77,6 +77,7 @@ $configuration = generate_config($site);
 file_put_contents(ROOT . 'config.php', $configuration);
 
 // Manage XMB services
+// If you'd like to also assert that XMB isn't installed already, take a look in WizFunctions.php
 Services\bootup()->loadConfig();
 $vars = Services\vars();
 

@@ -130,6 +130,11 @@ switch ($status) {
         break;
     case 'no-connection':
         $config_error = $vars->lang['config_error_connect'];
+        break;
+    case 'no-db-table':
+        // config.php is ready for the installer, so use it normally.
+        $bootup->loadConfig();
+        $template->addRefs();
 }
 
 $vStep = intval($_REQUEST['step'] ?? 1);
@@ -310,9 +315,6 @@ switch ($vStep) {
         if (! $config_success) {
             $show->wizardError($vars->lang['config_error'], $config_error);
         }
-        if (! check_config_values($config)) {
-            $show->wizardError($vars->lang['config_error'], $vars->lang['config_error_defaults']);
-        }
         $vars->debug = $debug;
 
         $bootup->parseURL($full_url);
@@ -329,11 +331,6 @@ switch ($vStep) {
         }
 
         // Begin bootstrap for db service
-        $vars->debug = $debug;
-        $vars->full_url = $full_url;
-        $vars->tablepre = $tablepre;
-        $template->addRefs();
-
         $db = DBFactory::createFromFilename(
             $database,
             $vars->debug,
