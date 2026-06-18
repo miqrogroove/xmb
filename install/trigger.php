@@ -32,27 +32,25 @@ ignore_user_abort(true);
 header('Expires: 0');
 header('X-Frame-Options: sameorigin');
 
-//Script constants
+// Script constants
 const ROOT = '../';
 const UPGRADE = true;
 
-//Check configuration
+// Check configuration
 error_reporting(-1);
 if (ini_get('display_errors')) {
     ini_set('display_errors', '0');
 }
 
-//Authenticate Browser
+// Authenticate Browser
 require ROOT . 'header.php';
 require './UpgradeOutput.php';
 require './LoggedOutput.php';
-require './upgrade.lib.php';
 
 $db = Services\db();
 $vars = Services\vars();
-$schema = new Schema($db, $vars);
 $show = new LoggedOutput();
-$lib = new Upgrade($db, $show, $schema, $vars);
+$lib = Services\create_upgrader($show);
 
 if (! defined('XMB\X_SADMIN') || ! X_SADMIN) {
     header('HTTP/1.0 403 Forbidden');
@@ -62,7 +60,7 @@ if (! defined('XMB\X_SADMIN') || ! X_SADMIN) {
 
 $trigger_old_schema = (int) $vars->settings['schema_version'];
 
-if ($trigger_old_schema >= $schema::VER) {
+if ($trigger_old_schema >= Schema::VER) {
     header('HTTP/1.0 403 Forbidden');
     exit($vars->lang['already_installed']);
 }
@@ -76,7 +74,7 @@ set_error_handler([$show, 'error_handler']);
 
 $show->progress($vars->lang['upgrade_connect']);
 
-//Check Server Version
+// Check Server Version
 $version = new XMBVersion();
 $version->assertPHP();
 $data = $version->get();

@@ -24,7 +24,8 @@ declare(strict_types=1);
 
 namespace SampleCode;
 
-use XMB\MySQLiDatabase;
+use XMB\Bootup;
+use XMB\DBFactory;
 use XMB\Services;
 use XMB\ShellOutput;
 use XMB\SiteData;
@@ -32,7 +33,6 @@ use XMB\SiteData;
 use const XMB\ROOT;
 
 use function XMB\generate_config;
-use function XMB\installer_factory;
 
 // Delete me.
 header('HTTP/1.0 403 Forbidden');
@@ -40,7 +40,10 @@ exit('This file is provided to illustrate customized XMB install techniques.');
 
 // PHP configuration
 error_reporting(-1);
+ignore_user_abort(true);
 ini_set('display_errors', '1');
+ini_set('log_errors', true);
+ini_set('error_log', 'error_log');
 
 // Script constants.
 define('XMB\ROOT', '../'); // Location of XMB files relative to this script.
@@ -48,9 +51,7 @@ define('XMB\INSTALL', true);
 
 // Run XMB's header.php file and add installer dependencies.
 require ROOT . 'header.php';
-require ROOT . 'db/mysqli.php';
 require './UpgradeOutput.php'; // Interface must go before implementation.
-require './cinst.php';
 require './ShellOutput.php';
 require './SiteData.php';
 require './WizFunctions.php';
@@ -76,20 +77,23 @@ $configuration = generate_config($site);
 file_put_contents(ROOT . 'config.php', $configuration);
 
 // Manage XMB services
+Services\bootup()->loadConfig();
 $vars = Services\vars();
-$vars->debug = true;
-$vars->full_url = $site->fullURL;
-$vars->log_mysql_errors = false; // You may change this if appropriate for debugging.
-$vars->tablepre = $site->dbTablePrefix;
 
-$db = new MySQLiDatabase($vars->debug, $vars->log_mysql_errors);
+$db = DBFactory::createFromFilename(
+    $vars->database,
+    $vars->debug,
+    $vars->log_mysql_errors,
+);
 $db->stopQueryLogging();
 $result = $db->testConnect($site->dbHost, $site->dbUser, $site->dbPass, $site->dbName);
 if (! $result) {
     $show->error($vars->lang['install_db_connect'], str_replace('$msg', $db->getTestError(), $vars->lang['install_db_connect_error']));
 }
+Services\db($db);
 
-$lib = installer_factory($db, $site, $show, $vars);
+// Create an Install instance.
+$lib = Services\create_installer($site, $show);
 
 // Make it happen!
 $lib->go();

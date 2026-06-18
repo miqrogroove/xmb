@@ -41,7 +41,7 @@ class ShellOutput implements UpgradeOutput
      */
     public function progress(string $text)
     {
-        if (UPGRADE_CLI) {
+        if (defined('XMB\UPGRADE_CLI')) {
             // The upgrade script won't call the okay() method, so we need the line ending here.
             echo $text, "\n";
         } else {

@@ -31,9 +31,11 @@ namespace XMB;
  */
 class Settings
 {
-    public function __construct(private DBStuff $db, private SQL $sql, private Variables $vars)
+    public function __construct(private DBStuff $db, private SQL $sql, private Variables $vars, bool $installMode = false)
     {
-        $this->readToVars();
+        if (! $installMode) {
+            $this->readToVars();
+        }
     }
 
     private function readToVars()

@@ -24,10 +24,8 @@ declare(strict_types=1);
 
 namespace SampleCode;
 
-use XMB\Schema;
 use XMB\Services;
 use XMB\ShellOutput;
-use XMB\Upgrade;
 
 use const XMB\ROOT;
 
@@ -37,8 +35,12 @@ use function XMB\upgrade_config;
 header('HTTP/1.0 403 Forbidden');
 exit('This file is provided to illustrate customized XMB upgrade techniques.');
 
-// Allow script to continue if user goes away.
+// PHP configuration
+error_reporting(-1);
 ignore_user_abort(true);
+ini_set('display_errors', '1');
+ini_set('log_errors', true);
+ini_set('error_log', 'error_log');
 
 // Script constants.
 define('XMB\ROOT', '../'); // Location of XMB files relative to this script.
@@ -53,18 +55,12 @@ upgrade_config();
 require ROOT . 'header.php';
 require './UpgradeOutput.php'; // Interface must go before implementation.
 require './ShellOutput.php';
-require './upgrade.lib.php';
-
-// Retrieve XMB's shared services for ease of use.
-$db = Services\db();
-$vars = Services\vars();
 
 // Create an output implementation for the upgrade library.  You may also customize this one or supply your own.
 $show = new ShellOutput();
 
-// Create instances of Schema and Upgrade.
-$schema = new Schema($db, $vars);
-$lib = new Upgrade($db, $show, $schema, $vars);
+// Create an Upgrade instance.
+$lib = Services\create_upgrader($show);
 
 // Make it happen!
 $lib->xmb_upgrade();
@@ -72,6 +68,6 @@ $show->finished('Done');
 
 // Cleanup Notes
 // 1. The website is still in maintenance mode, which was forced during the upgrade.  Reset it now.
-$db->query("UPDATE " . $vars->tablepre . "settings SET value = 'on' WHERE name = 'bbstatus'");
+Services\settings()->put('bbstatus', 'on');
 
 // 2. This script did not self-destruct and should not be available for public use on a live site.

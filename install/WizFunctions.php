@@ -48,42 +48,26 @@ function already_installed(
     bool $pconnect,
     string $tablepre,
 ): string {
-    // When config.php has default values, XMB is not installed.
-    $config_array = [
-        'dbname' => 'DB/NAME',
-        'dbuser' => 'DB/USER',
-        'dbpw' => 'DB/PW',
-        'dbhost' => 'DB_HOST',
-        'tablepre' => 'TABLE/PRE',
-    ];
-    foreach ($config_array as $key => $value) {
-        if (${$key} === $value) {
-            return 'no-db-config';
-        }
-    }
-
-    // Force upgrade to mysqli
-    if ('mysql' === $database) $database = 'mysqli';
-
-    if (! is_readable(ROOT . "db/{$database}.php")) return false;
-    require_once ROOT . 'db/DBStuff.php';
-    require_once ROOT . "db/{$database}.php";
-
-    $db = new MySQLiDatabase(debug: true, logErrors: true);
+    $db = DBFactory::createFromFilename(
+        $database,
+        debug: true,
+        logErrors: true,
+    );
     $db->stopQueryLogging();
 
     if (! $db->isInstalled()) {
         return 'no-db-extension';
     }
-
-    $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
-    if (! $result) return 'no-connection';
+    if (! $db->testConnect($dbhost, $dbuser, $dbpw, $dbname)) {
+        return 'no-connection';
+    }
 
     $like_name = $db->like_escape($tablepre . 'settings');
     $result = $db->query("SHOW TABLES LIKE '$like_name'");
     $count = $db->num_rows($result);
     $db->free_result($result);
     $db->close();
+
     if (1 === $count) {
         return 'installed';
     } else {
@@ -241,16 +225,32 @@ function upgrade_config()
 }
 
 /**
- * Gather the required dependencies and create an Install service.
+ * Checks if needed variables are set to non-default values.
  *
- * @since 1.10.00
+ * @since 1.10.06
  */
-function installer_factory(DBStuff $db, SiteData $site, UpgradeOutput $show, Variables $vars): Install
+function check_config_values(array $config): bool
 {
-    $schema = new Schema($db, $vars);
-    $sql = new SQL($db, $vars->tablepre);
+    $config_array = [
+        'dbname' => 'DB/NAME',
+        'dbuser' => 'DB/USER',
+        'dbpw' => 'DB/PW',
+        'dbhost' => 'DB_HOST',
+        'database' => 'DB_TYPE',
+        'tablepre' => 'TABLE/PRE',
+        'full_url' => 'FULLURL',
+        'allow_spec_q' => 'SPECQ',
+        'show_full_info' => 'SHOWFULLINFO',
+        'comment_output' => 'COMMENTOUTPUT',
+    ];
+    $result = true;
 
-    $password = new Password($sql);
+    foreach ($config_array as $key => $value) {
+        if ($config[$key] === $value) {
+            $result = false;
+            break;
+        }
+    }
 
-    return new Install($db, $password, $schema, $site, $sql, $show, $vars);
+    return $result;
 }

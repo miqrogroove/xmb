@@ -53,6 +53,7 @@ require_once ROOT . 'db/DBStuff.php';
 require ROOT . 'include/Session/Mechanism.php';
 
 // Classes
+require_once ROOT . 'db/DBFactory.php';
 require ROOT . 'include/admin.inc.php';
 require ROOT . 'include/attach.inc.php';
 require ROOT . 'include/BBCode.php';
@@ -73,6 +74,7 @@ require ROOT . 'include/online.inc.php';
 require ROOT . 'include/Password.php';
 require ROOT . 'include/Ranks.php';
 require ROOT . 'include/schema.inc.php';
+require ROOT . 'include/service-recipes.php';
 require ROOT . 'include/services.php';
 require ROOT . 'include/Session/Data.php';
 require ROOT . 'include/Session/FormsAndCookies.php';
@@ -99,16 +101,9 @@ require ROOT . 'vendor/autoload.php';
 
 /* Create base services */
 
-vars(new \XMB\Variables());
-
-observer(new \XMB\Observer(vars()));
-template(new \XMB\Template(vars()));
-translation(new \XMB\Translation(vars()));
+create_bootup();
 
 template()->init();
-
-$boot = new \XMB\Bootup(template(), vars());
-
 observer()->testSuperGlobals();
 observer()->assertEmptyOutputStream('the include/* files', use_debug: false);
 
@@ -123,15 +118,14 @@ unset($mtime);
 
 if (defined('XMB\INSTALL') && ! defined('XMB\INSTALL_P2')) {
     vars()->show_full_info = true;
-    $boot->setVersion();
+    bootup()->setVersion();
     translation()->langPanic();
     template()->addRefs();
-    $boot->setCharset();
-    unset($boot);
+    bootup()->setCharset();
     return;
 }
 
-$boot->loadConfig();
+bootup()->loadConfig();
 observer()->assertEmptyOutputStream('config.php');
 if (vars()->debug) {
     if (error_reporting() !== -1) {
@@ -142,48 +136,28 @@ if (vars()->debug) {
     error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
 if (! defined('XMB\UPGRADE_CLI')) {
-    $boot->setBrowser();
-    $boot->setIP();
-    $boot->setURL();
+    bootup()->setBrowser();
+    bootup()->setIP();
+    bootup()->setURL();
 }
-$boot->setVersion();
+bootup()->setVersion();
 observer()->assertEmptyOutputStream('version.php');
 
 
 /* Create more services */
 
-db($boot->connectDB());
-
-debug(new \XMB\Debug(db()));
-sql(new \XMB\SQL(db(), vars()->tablepre));
-validate(new \XMB\Validation(db()));
-
-forums(new \XMB\Forums(sql()));
-settings(new \XMB\Settings(db(), sql(), vars()));
-smile(new \XMB\SmileAndCensor(sql()));
-token(new \XMB\Token(sql(), vars()));
-
-email(new \XMB\Email(vars())); // Depends on settings and will likely use it in the future.
-features(new \XMB\Features(settings()));
-theme(new \XMB\ThemeManager(forums(), settings(), sql(), template(), vars()));
-
-bbcode(new \XMB\BBCode(theme(), vars()));
-password(new \XMB\Password(features(), sql()));
-
-attach(new \XMB\Attach(bbcode(), db(), sql(), vars()));
-
-core(new \XMB\Core(attach(), bbcode(), db(), debug(), email(), forums(), password(), settings(), smile(), sql(), template(), token(), translation(), vars()));
+create_core(bootup()->connectDB());
 
 
 /* Start 2nd Phase of Bootup */
 
-$loader = new \XMB\BootupLoader(core(), db(), features(), template(), vars());
+$loader = create_loader();
 
 $loader->setHeaders();
 
 if (! features()->schemaHasSessions()) {
     core()->loadLangWithoutSession();
-    $boot->setCharset();
+    bootup()->setCharset();
     if (! defined('XMB\UPGRADE')) {
         core()->unavailable('upgrade');
     }
@@ -194,7 +168,7 @@ if (! features()->schemaHasSessions()) {
     );
     $xmbpw = getPhpInput('xmbpw', 'c');
     define('XMB\X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
-    unset($boot, $loader, $xmbuser, $xmbpw);
+    unset($loader, $xmbuser, $xmbpw);
     return;
 }
 
@@ -202,8 +176,7 @@ if (! features()->schemaHasSessions()) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $params = $loader->prepareSession();
-session(new \XMB\Session\Manager($params['mode'], $params['serror'], core(), features(), password(), sql(), token(), validate()));
-login(new \XMB\Login(core(), db(), features(), session(), sql(), template(), translation(), vars()));
+create_login($params['mode'], $params['serror']);
 login()->elevateUser($params['force_inv']);
 unset($params);
 
@@ -220,7 +193,7 @@ if (defined('XMB\UPGRADE')) {
 
 /* Set Up HTML Templates and Themes */
 
-$boot->setCharset();
+bootup()->setCharset();
 $loader->setVisit();
 theme()->setTheme();
 
@@ -249,6 +222,6 @@ $loader->startCompression();
 
 $loader->adminFirewall();
 
-unset($boot, $loader);
+unset($loader);
 
 observer()->assertEmptyOutputStream('header.php');
