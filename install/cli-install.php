@@ -36,7 +36,7 @@ use function XMB\generate_config;
 
 // Delete me.
 header('HTTP/1.0 403 Forbidden');
-exit('This file is provided to illustrate customized XMB install techniques.');
+exit("This file is provided to illustrate customized XMB install techniques.\n");
 
 // PHP configuration
 error_reporting(-1);
