@@ -195,7 +195,7 @@ class Bootup
      *
      * @since 1.9.11
      */
-    public function debugURLsettings($securesetting, $hostsetting, $pathsetting)
+    public function debugURLsettings(bool $securesetting, string $hostsetting, string $pathsetting)
     {
         if (! isset($_SERVER['REQUEST_URI'])) {
             if (! headers_sent()) header('HTTP/1.0 500 Internal Server Error');

@@ -247,7 +247,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             if ('viewuser' == $action) {
                 echo "</table></td></tr></table><br />\n";
             } else {
-                if ($template->thisbg == $vars->theme['altbg2']) {
+                if ($template->thisbg === $vars->theme['altbg2']) {
                     $template->thisbg = $vars->theme['altbg1'];
                 } else {
                     $template->thisbg = $vars->theme['altbg2'];

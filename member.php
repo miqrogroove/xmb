@@ -129,7 +129,7 @@ switch ($action) {
                     $cookieToken = getPhpInput('register', sourcearray: 'c');
                     $postToken = getPhpInput('token');
                     
-                    if ($cookieToken != $postToken) $core->error($lang['bad_token']);
+                    if ($cookieToken !== $postToken) $core->error($lang['bad_token']);
                     
                     $core->request_secure('Registration', (string) $stepin);
                     break;

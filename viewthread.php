@@ -299,7 +299,7 @@ if ($action == '') {
         $template->newpolllink = '';
     }
 
-    $subTemplate->topuntop = ($thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
+    $subTemplate->topuntop = ((int) $thread['topped'] == 1) ? $lang['textuntopthread'] : $lang['texttopthread'];
 
     $db->query("UPDATE " . $vars->tablepre . "threads SET views = views + 1 WHERE tid = $tid");
 
@@ -483,7 +483,7 @@ if ($action == '') {
             $template->posts .= $subTemplate->process('viewthread_modlog.php');
         }
 
-        if ($subTemplate->thisbg == $vars->theme['altbg2']) {
+        if ($subTemplate->thisbg === $vars->theme['altbg2']) {
             $subTemplate->thisbg = $vars->theme['altbg1'];
         } else {
             $subTemplate->thisbg = $vars->theme['altbg2'];

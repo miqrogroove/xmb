@@ -158,7 +158,7 @@ class ThreadRender
         }
 
         // Is reporting enabled for the viewing user?
-        if (X_MEMBER && $post['author'] != $this->vars->xmbuser && $this->vars->settings['reportpost'] == 'on') {
+        if (X_MEMBER && $post['author'] !== $this->vars->xmbuser && $this->vars->settings['reportpost'] == 'on') {
             // Is the viewing user quarantined?
             if ('on' == $this->vars->settings['quarantine_new_users'] && (0 == (int) $this->vars->self['postnum'] || 'yes' == $this->vars->self['waiting_for_mod']) && ! X_STAFF) {
                 $template->reportlink = '';
