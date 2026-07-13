@@ -170,7 +170,7 @@ class URL2Text
                     foreach ($urls as $argument) {
                         if (strpos($argument, 'member=') === 0) {
                             $member = substr($argument, 7);
-                            if (strlen($member) >= $this->vars::USERNAME_MIN_LENGTH) {
+                            if ($this->core->checkUsernameLength($member)) {
                                 $location = $lang['onlineviewpro'];
                             }
                             break;

@@ -2268,6 +2268,20 @@ class Core
     }
 
     /**
+     * Check username input length.
+     *
+     * @since 1.10.xx
+     * @param string $username The username to check, HTML encoded.
+     * @return bool
+     */
+    public function checkUsernameLength(string $username): bool
+    {
+        $length = strlen($username);
+
+        return $length >= $this->vars::USERNAME_MIN_LENGTH && $length <= $this->vars::USERNAME_MAX_LENGTH;
+    }
+
+    /**
      * Validate a new username
      *
      * @since 1.9.1 Formerly known as admin::check_restricted()

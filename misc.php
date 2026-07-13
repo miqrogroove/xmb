@@ -180,7 +180,7 @@ switch ($action) {
         } else {
             $core->request_secure('Lost Password', '');
             $username = $validate->postedVar('username');
-            if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
+            if (! $core->checkUsernameLength($username)) {
                 $core->error($lang['badinfo']);
             }
             $email = $validate->postedVar('email');

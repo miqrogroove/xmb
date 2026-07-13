@@ -256,7 +256,7 @@ switch ($action) {
 
                     $self['username'] = trim($validate->postedVar('username', dbescape: false));
 
-                    if (strlen($self['username']) < $vars::USERNAME_MIN_LENGTH || strlen($self['username']) > $vars::USERNAME_MAX_LENGTH) {
+                    if (! $core->checkUsernameLength($self['username'])) {
                         $softErrors .= $core->softerror($lang['username_length_invalid']);
                         $self['username'] = substr($self['username'], 0, $vars::USERNAME_MAX_LENGTH);
                     } elseif (! $core->usernameValidation(getRawString('username'))) {
@@ -555,7 +555,7 @@ switch ($action) {
 
     case 'viewpro':
         $member = $validate->postedVar('member', dbescape: false, sourcearray: 'g');
-        if (strlen($member) < $vars::USERNAME_MIN_LENGTH || strlen($member) > $vars::USERNAME_MAX_LENGTH) {
+        if (! $core->checkUsernameLength($member)) {
             header('HTTP/1.0 404 Not Found');
             $core->error($lang['nomember']);
         }

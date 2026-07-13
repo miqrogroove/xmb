@@ -51,7 +51,6 @@ class FormsAndCookies implements Mechanism
     private const SESSION_LIFE_SHORT = 3600 * 12;
     private const TEST_DATA = 'xmb';
     private const TOKEN_BYTES = 16;
-    private const USER_MIN_LEN = 3;
 
     // Cookie names.
     private const FORM_COOKIE = 'login';
@@ -71,6 +70,9 @@ class FormsAndCookies implements Mechanism
         // Property promotion.
     }
 
+    /**
+     * @since 1.10.xx
+     */
     public function getServiceID(): string
     {
         return 'forms-and-cookies';
@@ -81,7 +83,7 @@ class FormsAndCookies implements Mechanism
         $data = new Data();
         $uinput = $this->validate->postedVar('username', dbescape: false);
 
-        if (strlen($uinput) < self::USER_MIN_LEN) {
+        if (! $this->core->checkUsernameLength($uinput)) {
             return $data;
         }
 
@@ -129,7 +131,7 @@ class FormsAndCookies implements Mechanism
         $uinput = $this->get_cookie(self::USER_COOKIE);
         $test   = $this->get_cookie(self::TEST_COOKIE);
 
-        if (strlen($uinput) >= self::USER_MIN_LEN || self::TEST_DATA == $test) {
+        if ($this->core->checkUsernameLength($uinput) || self::TEST_DATA == $test) {
             return true;
         } else {
             $this->core->put_cookie('test', self::TEST_DATA, time() + (86400*365));
@@ -144,7 +146,7 @@ class FormsAndCookies implements Mechanism
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
         $uinput = $this->get_cookie(self::USER_COOKIE);
 
-        if (strlen($uinput) < self::USER_MIN_LEN || strlen($pinput) != self::TOKEN_BYTES * 2) {
+        if (! $this->core->checkUsernameLength($uinput) || strlen($pinput) != self::TOKEN_BYTES * 2) {
             $data->status = 'none';
             return $data;
         }

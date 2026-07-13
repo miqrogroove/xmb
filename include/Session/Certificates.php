@@ -28,13 +28,13 @@ use XMB\SQL;
 
 /**
  * Experimental.
+ *
+ * @since 1.10.xx
  */
 class Certificates implements Mechanism
 {
-    // Mechanism configuration.
-    private const USER_MIN_LEN = 3;
-
     public function __construct(
+        private Core $core,
         private SQL $sql,
     ) {
         // Property promotion.
@@ -50,7 +50,7 @@ class Certificates implements Mechanism
         $data = new Data();
         $uinput = $this->certUsernameConversion();
 
-        if (strlen($uinput) < self::USER_MIN_LEN) {
+        if (! $this->core->checkUsernameLength($uinput)) {
             return $data;
         }
 
@@ -155,8 +155,6 @@ class Certificates implements Mechanism
 
     /**
      * This event occurs when the client visits the login page to get ready for a login.
-     *
-     * @since 1.10.00
      */
     public function preLogin(string $newToken)
     {
@@ -166,7 +164,6 @@ class Certificates implements Mechanism
     /**
      * Check the origin of the login request to verify it has not been injected by a different domain.
      *
-     * @since 1.10.00
      * @return bool
      */
     public function checkOrigin(): bool

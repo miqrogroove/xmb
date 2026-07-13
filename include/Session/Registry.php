@@ -31,7 +31,7 @@ use RuntimeException;
  *
  * This is the extension point for adding custom Session logic.
  *
- * @since 1.10.05
+ * @since 1.10.xx
  */
 class Registry
 {

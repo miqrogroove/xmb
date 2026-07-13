@@ -42,7 +42,7 @@ interface Mechanism
     /**
      * Each Mechanism must define its own string identifier for use in the Session Registry.
      *
-     * @since 1.10.05
+     * @since 1.10.xx
      * @return string
      */
     public function getServiceID(): string;
