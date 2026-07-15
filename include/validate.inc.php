@@ -112,6 +112,9 @@ function getRawInput(string $varname, string $sourcearray = 'p'): string|array|n
         case 'c':
             $sourcearray = &$_COOKIE;
             break;
+        case 's':
+            $sourcearray = &$_SERVER;
+            break;
         case 'r':
         default:
             $sourcearray = &$_REQUEST;

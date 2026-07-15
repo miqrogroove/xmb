@@ -58,7 +58,7 @@ class Manager
         private Password $password,
         private SQL $sql,
         private Token $token,
-        private Validation $validate
+        private Validation $validate,
     ) {
         $this->mechanisms = [
             new FormsAndCookies($core, $features, $password, $sql, $token, $validate),

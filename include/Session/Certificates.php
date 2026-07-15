@@ -24,7 +24,11 @@ declare(strict_types=1);
 
 namespace XMB\Session;
 
+use XMB\Core;
 use XMB\SQL;
+use XMB\Validation;
+
+use function XMB\getPhpInput;
 
 /**
  * Experimental.
@@ -36,6 +40,7 @@ class Certificates implements Mechanism
     public function __construct(
         private Core $core,
         private SQL $sql,
+        private Validation $validate,
     ) {
         // Property promotion.
     }
@@ -47,22 +52,8 @@ class Certificates implements Mechanism
 
     public function checkUsername(): Data
     {
+        // Login and logout are not implemented for certificate-only session storage.
         $data = new Data();
-        $uinput = $this->certUsernameConversion();
-
-        if (! $this->core->checkUsernameLength($uinput)) {
-            return $data;
-        }
-
-        $member = $this->sql->getMemberByName($uinput);
-
-        if (empty($member)) {
-            $data->status = 'bad';
-            return $data;
-        }
-
-        $data->member = &$member;
-        $data->status = 'good';
         return $data;
     }
 
@@ -79,8 +70,12 @@ class Certificates implements Mechanism
     public function checkSavedSession(): Data
     {
         $data = new Data();
-
         $uinput = $this->certUsernameConversion();
+
+        if (! $this->core->checkUsernameLength($uinput)) {
+            $data->status = 'none';
+            return $data;
+        }
 
         $member = $this->sql->getMemberByName($uinput);
         
@@ -119,8 +114,6 @@ class Certificates implements Mechanism
 
     /**
      * Creates a new session token and cookies for a client who authenticated during this request.
-     *
-     * @param Data
      */
     public function saveClientData(Data $data): bool
     {
@@ -137,9 +130,6 @@ class Certificates implements Mechanism
 
     /**
      * Retrieve list of all valid sessions for the current user.
-     *
-     * @param string $username
-     * @return array
      */
     public function getSessionList(string $username): array
     {
@@ -163,17 +153,25 @@ class Certificates implements Mechanism
 
     /**
      * Check the origin of the login request to verify it has not been injected by a different domain.
-     *
-     * @return bool
      */
     public function checkOrigin(): bool
     {
         return true;
     }
 
+    /**
+     * Retrieve the username from the certificate and perform any conversion needed.
+     */
     private function certUsernameConversion(): string
     {
-        $uinput = $this->get_cookie(self::USER_COOKIE);
+        if (getPhpInput('SSL_CLIENT_VERIFY', 's') !== 'SUCCESS') {
+            return '';
+        }
+        $uinput = $this->validate->postedVar(
+            varname: 'SSL_CLIENT_S_DN_CN',
+            dbescape: false,
+            sourcearray: 's',
+        );
 
         return $uinput;
     }
