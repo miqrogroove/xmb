@@ -116,7 +116,7 @@ class Manager
      */
     public function isLogoutSupported(): bool
     {
-        return $this->data->canLogout;
+        return $this->saved->canLogout;
     }
 
     /**
