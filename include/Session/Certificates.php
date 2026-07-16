@@ -52,6 +52,11 @@ class Certificates implements Mechanism
         return 'certificates';
     }
 
+    public function isLoginSupported(): bool
+    {
+        return false;
+    }
+
     public function checkUsername(): Data
     {
         // Login and logout are not implemented for certificate-only session storage.
@@ -84,12 +89,12 @@ class Certificates implements Mechanism
         }
 
         $member = $this->sql->getMemberByName($uinput);
-        
+
         if (empty($member)) {
             $data->status = 'none';
             return $data;
         }
-        
+
         $data->member = &$member;
         $data->status = 'good';
         $data->canLogout = false;
@@ -195,6 +200,9 @@ class Certificates implements Mechanism
 
     private function assertServerEnabled()
     {
-        if (! isset($_SERVER['SSL_PROTOCOL'])) throw new RuntimeException('The mod_ssl StdEnvVars option is not enabled.');
+        if (! isset($_SERVER['SSL_PROTOCOL'])) {
+            echo 'XMB session configuration is incorrect. Check the PHP error log for details.';
+            throw new RuntimeException('The mod_ssl StdEnvVars option is not enabled.');
+        }
     }
 }

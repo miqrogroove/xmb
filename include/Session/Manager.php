@@ -122,6 +122,21 @@ class Manager
     }
 
     /**
+     * Find out if any Mechanism supports the XMB form login.
+     *
+     * @since 1.10.xx
+     */
+    public function isLoginSupported(): bool
+    {
+        foreach ($this->mechanisms as $session) {
+            if ($session->isLoginSupported()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Find out if the active Mechanism supports logouts.
      *
      * @since 1.10.xx
@@ -242,6 +257,8 @@ class Manager
     private function login()
     {
         $this->status = 'login-no-input';
+        $data = new Data();
+        $data->status = 'none';
 
         // First, check that all mechanisms are working and not already in a session.
         foreach ($this->mechanisms as $session) {
@@ -349,6 +366,8 @@ class Manager
     private function resume()
     {
         $this->status = 'session-no-input';
+        $data = new Data();
+        $data->status = 'none';
 
         // Authenticate any session token.
         foreach ($this->mechanisms as $session) {

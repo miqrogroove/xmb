@@ -263,10 +263,13 @@ class Login
             } else {
                 $link = '';
             }
-        } else {
+        } elseif ($this->session->isLoginSupported()) {
             $url = $this->vars->full_url . 'misc.php?action=login';
             $link = "<a href='$url'>" . $this->vars->lang['textlogin'] . '</a>';
+        } else {
+            $link = '';
         }
+
         return $link;
     }
 
@@ -328,8 +331,10 @@ class Login
             $this->template->lastvisittext = $this->vars->lang['lastactive'] . ' ' . $lastdate . ' ' . $this->vars->lang['textat'] . ' ' . $lasttime;
         } else {
             $reglink = $this->core->getRegistrationLink();
-            $space = empty($reglink) ? ' ' : ' - ';
-            $this->template->notify = $this->vars->lang['notloggedin'] . ' [' . $loginout . $space . $reglink . ']';
+            if ($loginout !== '' && $reglink !== '') {
+                $loginout .= ' - ';
+            }
+            $this->template->notify = $this->vars->lang['notloggedin'] . ' [' . $loginout . $reglink . ']';
             $this->template->lastvisittext = '';
         }
 

@@ -78,6 +78,16 @@ class FormsAndCookies implements Mechanism
         return 'forms-and-cookies';
     }
 
+    /**
+     * Whether the Mechanism can handle input from XMB's username/password login form.
+     *
+     * @since 1.10.xx
+     */
+    public function isLoginSupported(): bool
+    {
+        return true;
+    }
+
     public function checkUsername(): Data
     {
         $data = new Data();
@@ -150,14 +160,14 @@ class FormsAndCookies implements Mechanism
             $data->status = 'none';
             return $data;
         }
-        
+
         $member = $this->sql->getMemberByName($uinput);
-        
+
         if (empty($member)) {
             $data->status = 'none';
             return $data;
         }
-        
+
         $details = $this->sql->getSession($pinput, $uinput);
 
         if (empty($details)) {
@@ -165,13 +175,13 @@ class FormsAndCookies implements Mechanism
             $data->status = 'bad';
             return $data;
         }
-        
+
         if (time() > (int) $details['expire']) {
             $this->core->auditBadSession($member);
             $data->status = 'bad';
             return $data;
         }
-        
+
         // Token Regeneration
         if (self::REGEN_ENABLED) {
             // Figure out where we are in the regeneration cycle.
@@ -324,7 +334,7 @@ class FormsAndCookies implements Mechanism
 
         $this->core->put_cookie(self::USER_COOKIE, $data->member['username'], $expires);
         $this->core->put_cookie(self::SESSION_COOKIE, $token, $expires);
-        
+
         return true;
     }
 
@@ -455,9 +465,9 @@ class FormsAndCookies implements Mechanism
         $cookieToken = $this->get_cookie(self::FORM_COOKIE);
         $postToken = getPhpInput('token');
         $this->delete_cookie(self::FORM_COOKIE);
-        
+
         if ($cookieToken != $postToken) return false;
-        
+
         return $this->token->consume($postToken, 'Login', '');
     }
 
