@@ -153,7 +153,7 @@ class admin
         }
         $db->free_result($query);
 
-        return (($this->vars->self['username'] == $userfrom) ? $lang['admin_rename_warn_self'] . ' ' : '') . $lang['admin_rename_success'];
+        return (($this->vars->self['username'] === $userfrom) ? $lang['admin_rename_warn_self'] . ' ' : '') . $lang['admin_rename_success'];
     }
 
     /**

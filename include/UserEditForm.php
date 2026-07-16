@@ -133,12 +133,12 @@ class UserEditForm
         if ($timeformatnew != 12 && $timeformatnew != 24) {
             $timeformatnew = $this->vars->settings['timeformat'];
         }
-        if ($this->formMode == 'new' || $this->targetUser['timeformat'] != $timeformatnew) {
+        if ($this->formMode == 'new' || (int) $this->targetUser['timeformat'] != $timeformatnew) {
             $this->edits['timeformat'] = $timeformatnew;
         }
 
         $u2ualert = formInt('u2ualert');
-        if ($this->formMode == 'new' || $this->targetUser['u2ualert'] != $u2ualert) {
+        if ($this->formMode == 'new' || (int) $this->targetUser['u2ualert'] != $u2ualert) {
             $this->edits['u2ualert'] = $u2ualert;
         }
 
@@ -213,7 +213,7 @@ class UserEditForm
         }
 
         $thememem = formInt('thememem');
-        if ($this->formMode == 'new' || $this->targetUser['theme'] != $thememem) {
+        if ($this->formMode == 'new' || (int) $this->targetUser['theme'] != $thememem) {
             $this->edits['theme'] = $thememem;
         }
 
@@ -221,7 +221,7 @@ class UserEditForm
         if (! $this->tran->langfileExists($langfilenew)) {
             $langfilenew = $this->vars->settings['langfile'];
         }
-        if ($this->formMode == 'new' || $this->targetUser['langfile'] != $langfilenew) {
+        if ($this->formMode == 'new' || $this->targetUser['langfile'] !== $langfilenew) {
             $this->edits['langfile'] = $langfilenew;
         }
 
@@ -231,7 +231,7 @@ class UserEditForm
             // Check permission.
             if ($this->editorUser['status'] != 'Super Administrator' && ($origstatus == "Super Administrator" || $status == "Super Administrator")) {
                 // Unauthorized.  Only Super Admins may edit Super Admins.
-            } elseif ($this->targetUser['status'] != $status) {
+            } elseif ($this->targetUser['status'] !== $status) {
                 if ($origstatus == 'Super Administrator') {
                     // Check if the last Super Admin is trying to change own status.
                     $query = $this->db->query("SELECT COUNT(uid) FROM " . $this->vars->tablepre . "members WHERE status = 'Super Administrator'");
@@ -373,7 +373,7 @@ class UserEditForm
         if ($year >= 100 && $year <= 1899) $year = 0;
         $bday = iso8601_date($year, $month, $day);   
 
-        if ($this->formMode == 'new' || $this->targetUser['bday'] != $bday) {
+        if ($this->formMode == 'new' || $this->targetUser['bday'] !== $bday) {
             $this->edits['bday'] = $bday;
         }
     }
@@ -435,19 +435,19 @@ class UserEditForm
             $sig = '';
             $avatar = '';
         }
-        if ($this->formMode == 'new' || $this->targetUser['location'] != $location) {
+        if ($this->formMode == 'new' || $this->targetUser['location'] !== $location) {
             $this->edits['location'] = $location;
         }
-        if ($this->formMode == 'new' || $this->targetUser['site'] != $site) {
+        if ($this->formMode == 'new' || $this->targetUser['site'] !== $site) {
             $this->edits['site'] = format_member_site($site);
         }
-        if ($this->formMode == 'new' || $this->targetUser['bio'] != $bio) {
+        if ($this->formMode == 'new' || $this->targetUser['bio'] !== $bio) {
             $this->edits['bio'] = $bio;
         }
-        if ($this->formMode == 'new' || $this->targetUser['mood'] != $mood) {
+        if ($this->formMode == 'new' || $this->targetUser['mood'] !== $mood) {
             $this->edits['mood'] = $mood;
         }
-        if ($this->formMode == 'new' || $this->targetUser['sig'] != $sig) {
+        if ($this->formMode == 'new' || $this->targetUser['sig'] !== $sig) {
             $this->edits['sig'] = $sig;
             if ($this->formMode != 'new' && $this->vars->settings['resetsigs'] == 'on') {
                 if (strlen(trim($this->targetUser['sig'])) == 0) {
@@ -459,7 +459,7 @@ class UserEditForm
                 }
             }
         }
-        if ($this->formMode == 'new' || $this->targetUser['avatar'] != $avatar) {
+        if ($this->formMode == 'new' || $this->targetUser['avatar'] !== $avatar) {
             $this->edits['avatar'] = $avatar;
         }
     }
@@ -481,10 +481,10 @@ class UserEditForm
         $ppp = formInt('ppp');
         if ($tpp < $this->vars::PAGING_MIN || $tpp > $this->vars::PAGING_MAX) $tpp = (int) $this->vars->settings['topicperpage'];
         if ($ppp < $this->vars::PAGING_MIN || $ppp > $this->vars::PAGING_MAX) $ppp = (int) $this->vars->settings['postperpage'];
-        if ($this->formMode == 'new' || $this->targetUser['tpp'] != $tpp) {
+        if ($this->formMode == 'new' || (int) $this->targetUser['tpp'] != $tpp) {
             $this->edits['tpp'] = $tpp;
         }
-        if ($this->formMode == 'new' || $this->targetUser['ppp'] != $ppp) {
+        if ($this->formMode == 'new' || (int) $this->targetUser['ppp'] != $ppp) {
             $this->edits['ppp'] = $ppp;
         }
     }
@@ -505,7 +505,7 @@ class UserEditForm
         // Never allow attribute-special data in the date format. They are invalid for date formats, as are the html-encoded versions of them.
         if (empty($dateformat) || $dateformat !== $dateformattest) {
             $this->edits['dateformat'] = $this->vars->settings['dateformat'];
-        } elseif ($this->formMode == 'new' || $this->targetUser['dateformat'] != $dateformat) {
+        } elseif ($this->formMode == 'new' || $this->targetUser['dateformat'] !== $dateformat) {
             $this->edits['dateformat'] = $dateformat;
         }
     }

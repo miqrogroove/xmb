@@ -27,6 +27,7 @@ namespace XMB\Services;
 use XMB\{
     Attach,
     BBCode,
+    Bootup,
     Core,
     Debug,
     DBStuff,
@@ -76,6 +77,22 @@ function bbcode(?BBCode $bbcode = null): BBCode
     static $cache;
     
     if ($bbcode !== null) $cache = $bbcode;
+    
+    return $cache;
+}
+
+/**
+ * Get the shared bootup service.
+ *
+ * @since 1.10.06
+ * @param Bootup $bootup Required on first call, otherwise optional. Acts as the setter.
+ * @return Bootup
+ */
+function bootup(?Bootup $bootup = null): Bootup
+{
+    static $cache;
+    
+    if ($bootup !== null) $cache = $bootup;
     
     return $cache;
 }
@@ -147,7 +164,7 @@ function email(?Email $email = null): Email
 /**
  * Get the shared features service.
  *
- * @since 1.10.00
+ * @since 1.10.05
  * @param Features $feature Required on first call, otherwise optional. Acts as the setter.
  * @return Features
  */

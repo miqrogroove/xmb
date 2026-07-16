@@ -39,7 +39,7 @@ $vars = Services\vars();
 $lang = &$vars->lang;
 
 $admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
-$schema = new Schema($db, $vars);
+$schema = new Schema($db, $vars->tablepre);
 
 header('X-Robots-Tag: noindex');
 

@@ -33,22 +33,29 @@ if (! defined('XMB\ROOT')) {
     exit('Not allowed to run this file directly.');
 }
 
-//Check location
+// Check location
 if (
+    ! is_readable('./cinst.php') ||
     ! is_readable('./HttpOutput.php') ||
     ! is_readable('./LoggedOutput.php') ||
     ! is_readable('./SiteData.php') ||
     ! is_readable('./UpgradeOutput.php') ||
     ! is_readable('./upgrade.lib.php') ||
     ! is_readable('./WizFunctions.php') ||
-    ! is_readable(ROOT . 'header.php')
+    ! is_readable(ROOT . 'header.php') ||
+    ! is_readable(ROOT . 'db/DBStuff.php') ||
+    ! is_readable(ROOT . 'db/DBFactory.php')
 ) {
     echo "Could not find the installer files!\n<br />\nPlease make sure the entire XMB folder contents are available.";
     throw new Exception('Attempted install by ' . $_SERVER['REMOTE_ADDR'] . ' without the required files.');
 }
 
+// Interfaces
+require_once ROOT . 'db/DBStuff.php';
 require './UpgradeOutput.php';
 
+// Classes
+require_once ROOT . 'db/DBFactory.php';
 require './HttpOutput.php';
 require './SiteData.php';
 require './WizFunctions.php';
@@ -67,7 +74,6 @@ if (is_readable(ROOT . 'config.php')) {
     try {
         include ROOT . 'config.php';
     } catch (Throwable $e) {
-        $status = 'bad-config-file';
         $config_success = false;
         $config_error = $e->getMessage();
     }
@@ -75,20 +81,25 @@ if (is_readable(ROOT . 'config.php')) {
     $status = 'no-config-file';
     $config_success = false;
 }
+if ($config_success && ! isset($dbname, $dbuser, $dbpw, $dbhost, $database, $tablepre, $full_url, $allow_spec_q, $show_full_info, $comment_output)) {
+    // This test is compatible with XMB 1.9 and newer versions.  Older versions will have to manually update the config.php file.
+    $config_success = false;
+    $status = 'no-db-config';
+}
 if ($config_success) {    
-    if (isset($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre)) {
-        $pconnect = (bool) $pconnect;
-        $log_mysql_errors = (bool) $log_mysql_errors;
-        $status = already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre);
-        switch ($status) {
-            case 'no-db-config':
-            case 'no-db-extension':
-            case 'no-connection':
-                $config_success = false;
-        }
-    } else {
-        $status = 'no-db-config';
+    if (! check_config_values(compact('dbname', 'dbuser', 'dbpw', 'dbhost', 'database', 'tablepre', 'full_url', 'allow_spec_q', 'show_full_info', 'comment_output'))) {
         $config_success = false;
+        $status = 'no-db-config';
+    }
+}
+if ($config_success) {    
+    $pconnect = (bool) $pconnect;
+    $log_mysql_errors = (bool) $log_mysql_errors;
+    $status = already_installed($database, $dbhost, $dbuser, $dbpw, $dbname, $pconnect, $tablepre);
+    switch ($status) {
+        case 'no-db-extension':
+        case 'no-connection':
+            $config_success = false;
     }
 }
 
@@ -98,14 +109,9 @@ if ($status == 'installed') {
     define('XMB\INSTALL', true);
 }
 
-// Check location
-if (! is_readable(ROOT . 'header.php')) {
-    echo 'Could not find XMB!<br />Please make sure the install folder is in the same folder as header.php.<br />';
-    throw new Exception('Attempted upgrade by ' . $_SERVER['REMOTE_ADDR'] . ' from wrong location.');
-}
-
 require ROOT . 'header.php';
 
+$bootup = Services\bootup();
 $template = Services\template();
 $vars = Services\vars();
 
@@ -124,6 +130,11 @@ switch ($status) {
         break;
     case 'no-connection':
         $config_error = $vars->lang['config_error_connect'];
+        break;
+    case 'no-db-table':
+        // config.php is ready for the installer, so use it normally.
+        $bootup->loadConfig();
+        $template->addRefs();
 }
 
 $vStep = intval($_REQUEST['step'] ?? 1);
@@ -304,63 +315,42 @@ switch ($vStep) {
         if (! $config_success) {
             $show->wizardError($vars->lang['config_error'], $config_error);
         }
-
-        $config_array = array(
-            'dbname' => 'DB/NAME',
-            'dbuser' => 'DB/USER',
-            'dbpw' => 'DB/PW',
-            'dbhost' => 'DB_HOST',
-            'database' => 'DB_TYPE',
-            'tablepre' => 'TABLE/PRE',
-            'full_url' => 'FULLURL',
-            'allow_spec_q' => 'SPECQ',
-            'show_full_info' => 'SHOWFULLINFO',
-            'comment_output' => 'COMMENTOUTPUT'
-        );
-        foreach ($config_array as $key => $value) {
-            if (${$key} === $value) {
-                $show->wizardError($vars->lang['config_error'], $vars->lang['config_error_defaults']);
-            }
-        }
         $vars->debug = $debug;
 
-        $boot = new Bootup($template, $vars);
-        $boot->parseURL($full_url);
-        $boot->debugURLsettings($vars->cookiesecure, $vars->cookiedomain, $vars->cookiepath);
+        $bootup->parseURL($full_url);
+        $bootup->debugURLsettings($vars->cookiesecure, $vars->cookiedomain, $vars->cookiepath);
 
         $content = $template->process('install_admin_form.php');
         break;
 
     case 6: // remaining parts
-        $vars->debug = $debug;
-        $vars->full_url = $full_url;
-        $vars->tablepre = $tablepre;
-        $template->addRefs();
 
-        // check db-connection.
+        // Assert full config.php details
         if (! $config_success) {
             $show->wizardError($vars->lang['config_error'], $config_error);
         }
 
-        // Force upgrade to mysqli
-        if ('mysql' === $database) $database = 'mysqli';
-
-        require_once ROOT . "db/{$database}.php";
-
-        $db = new MySQLiDatabase($debug, $log_mysql_errors);
+        // Begin bootstrap for db service
+        $db = DBFactory::createFromFilename(
+            $database,
+            $vars->debug,
+            $log_mysql_errors,
+        );
         $db->stopQueryLogging();
         
-        // let's check if the actual functionality exists...
-
+        // Check if the db environment actually exists
         if (! $db->isInstalled()) {
             $show->wizardError($vars->lang['install_db_ext'], str_replace('$database', $database, $vars->lang['install_db_ext_error']));
         }
 
-        // let's check the connection itself.
+        // Check the connection itself
         $result = $db->testConnect($dbhost, $dbuser, $dbpw, $dbname);
         if (! $result) {
             $show->wizardError($vars->lang['install_db_connect'], str_replace('$msg', $db->getTestError(), $vars->lang['install_db_connect_error']));
         }
+
+        // Set the db service reference
+        Services\db($db);
 
         $sqlver = $db->server_version();
 
@@ -386,8 +376,6 @@ switch ($vStep) {
             $show->okay();
         }
 
-        require './cinst.php';
-
         $validate = new Validation($db);
 
         // Gather user inputs from this step
@@ -399,7 +387,7 @@ switch ($vStep) {
             $show->error('The passwords do not match. Please press back and try again.');
         }
 
-        $lib = installer_factory($db, $site, $show, $vars);
+        $lib = Services\create_installer($site, $show);
 
         $lib->go();
 

@@ -35,7 +35,7 @@ class Schema
 {
     public const VER = 14;
 
-    public function __construct(private DBStuff $db, private Variables $vars)
+    public function __construct(private DBStuff $db, private string $tablepre)
     {
         // Property promotion.
     }
@@ -71,7 +71,7 @@ class Schema
      */
     private function dropTable(string $name): string
     {
-        return "DROP TABLE IF EXISTS " . $this->vars->tablepre . $name;
+        return "DROP TABLE IF EXISTS " . $this->tablepre . $name;
     }
 
     /**
@@ -87,7 +87,7 @@ class Schema
         switch($name) {
             case 'attachments':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `aid` int NOT NULL auto_increment,
                   `pid` int NOT NULL DEFAULT 0,
                   `filename` varchar(120) NOT NULL DEFAULT '',
@@ -108,7 +108,7 @@ class Schema
                 break;
             case 'banned':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `ip1` smallint NOT NULL DEFAULT 0,
                   `ip2` smallint NOT NULL DEFAULT 0,
                   `ip3` smallint NOT NULL DEFAULT 0,
@@ -124,7 +124,7 @@ class Schema
                 break;
             case 'buddys':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `username` varchar(32) NOT NULL DEFAULT '',
                   `buddyname` varchar(32) NOT NULL DEFAULT '',
                   KEY `username` (username (8))
@@ -132,7 +132,7 @@ class Schema
                 break;
             case 'captchaimages':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `imagehash` varchar(32) NOT NULL DEFAULT '',
                   `imagestring` varchar(12) NOT NULL DEFAULT '',
                   `dateline` int NOT NULL DEFAULT '0',
@@ -141,7 +141,7 @@ class Schema
                 break;
             case 'favorites':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `tid` int NOT NULL DEFAULT 0,
                   `username` varchar(32) NOT NULL DEFAULT '',
                   `type` varchar(32) NOT NULL DEFAULT '',
@@ -150,7 +150,7 @@ class Schema
                 break;
             case 'forums':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `type` varchar(15) NOT NULL DEFAULT '',
                   `fid` smallint NOT NULL auto_increment,
                   `name` varchar(128) NOT NULL DEFAULT '',
@@ -179,7 +179,7 @@ class Schema
                 break;
             case 'hold_attachments':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `aid` int NOT NULL auto_increment,
                   `pid` int NOT NULL DEFAULT 0,
                   `filename` varchar(120) NOT NULL DEFAULT '',
@@ -200,7 +200,7 @@ class Schema
                 break;
             case 'hold_favorites':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `tid` int NOT NULL DEFAULT 0,
                   `username` varchar(32) NOT NULL DEFAULT '',
                   `type` varchar(32) NOT NULL DEFAULT '',
@@ -209,7 +209,7 @@ class Schema
                 break;
             case 'hold_posts':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `fid` smallint NOT NULL DEFAULT '0',
                   `tid` int NOT NULL DEFAULT '0',
                   `pid` int NOT NULL auto_increment,
@@ -232,7 +232,7 @@ class Schema
                 break;
             case 'hold_threads':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `tid` int NOT NULL auto_increment,
                   `fid` smallint NOT NULL DEFAULT 0,
                   `subject` varchar(128) NOT NULL DEFAULT '',
@@ -253,7 +253,7 @@ class Schema
                 break;
             case 'hold_vote_desc':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `vote_id` mediumint unsigned NOT NULL auto_increment,
                   `topic_id` INT UNSIGNED NOT NULL,
                   PRIMARY KEY  (`vote_id`),
@@ -262,7 +262,7 @@ class Schema
                 break;
             case 'hold_vote_results':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `vote_id` mediumint unsigned NOT NULL DEFAULT '0',
                   `vote_option_id` tinyint unsigned NOT NULL DEFAULT '0',
                   `vote_option_text` varchar(255) NOT NULL DEFAULT '',
@@ -273,7 +273,7 @@ class Schema
                 break;
             case 'logs':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `username` varchar(32) NOT NULL,
                   `action` varchar(64) NOT NULL DEFAULT '',
                   `fid` smallint NOT NULL DEFAULT 0,
@@ -288,7 +288,7 @@ class Schema
                 break;
             case 'members':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `uid` int NOT NULL auto_increment,
                   `username` varchar(32) NOT NULL DEFAULT '',
                   `password` varchar(32) NOT NULL DEFAULT '',
@@ -341,7 +341,7 @@ class Schema
                 break;
             case 'posts':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `fid` smallint NOT NULL DEFAULT '0',
                   `tid` int NOT NULL DEFAULT '0',
                   `pid` int NOT NULL auto_increment,
@@ -363,7 +363,7 @@ class Schema
                 break;
             case 'ranks':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `title` varchar(100) NOT NULL DEFAULT '',
                   `posts` MEDIUMINT DEFAULT 0,
                   `id` smallint NOT NULL auto_increment,
@@ -376,7 +376,7 @@ class Schema
                 break;
             case 'restricted':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `name` varchar(32) NOT NULL DEFAULT '',
                   `id` smallint NOT NULL auto_increment,
                   `case_sensitivity` ENUM('0', '1') DEFAULT '1' NOT NULL,
@@ -386,7 +386,7 @@ class Schema
                 break;
             case 'sessions':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `token` varchar(32) NOT NULL,
                   `username` varchar(32) NOT NULL,
                   `login_date` int unsigned NOT NULL,
@@ -404,7 +404,7 @@ class Schema
             case 'settings':
                 // Note support for VARCHAR types longer than 255 is not available prior to MySQL v5.0.3.
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `name` varchar(32) NOT NULL,
                   `value` text NOT NULL,
                   PRIMARY KEY (`name`)
@@ -412,7 +412,7 @@ class Schema
                 break;
             case 'smilies':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `type` varchar(15) NOT NULL DEFAULT '',
                   `code` varchar(40) NOT NULL DEFAULT '',
                   `url` varchar(40) NOT NULL DEFAULT '',
@@ -422,7 +422,7 @@ class Schema
                 break;
             case 'themes':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `themeid` smallint NOT NULL auto_increment,
                   `name` varchar(32) NOT NULL DEFAULT '',
                   `bgcolor` varchar(25) NOT NULL DEFAULT '',
@@ -453,7 +453,7 @@ class Schema
                 break;
             case 'threads':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `tid` int NOT NULL auto_increment,
                   `fid` smallint NOT NULL DEFAULT 0,
                   `subject` varchar(128) NOT NULL DEFAULT '',
@@ -474,7 +474,7 @@ class Schema
                 break;
             case 'tokens':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `token` varchar(32) NOT NULL,
                   `username` varchar(32) NOT NULL,
                   `action` varchar(32) NOT NULL,
@@ -486,7 +486,7 @@ class Schema
                 break;
             case 'u2u':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `u2uid` bigint NOT NULL auto_increment,
                   `msgto` varchar(32) NOT NULL DEFAULT '',
                   `msgfrom` varchar(32) NOT NULL DEFAULT '',
@@ -508,7 +508,7 @@ class Schema
                 break;
             case 'vote_desc':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `vote_id` mediumint unsigned NOT NULL auto_increment,
                   `topic_id` INT UNSIGNED NOT NULL,
                   PRIMARY KEY  (`vote_id`),
@@ -517,7 +517,7 @@ class Schema
                 break;
             case 'vote_results':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `vote_id` mediumint unsigned NOT NULL DEFAULT '0',
                   `vote_option_id` tinyint unsigned NOT NULL DEFAULT '0',
                   `vote_option_text` varchar(255) NOT NULL DEFAULT '',
@@ -528,7 +528,7 @@ class Schema
                 break;
             case 'vote_voters':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `vote_id` mediumint unsigned NOT NULL DEFAULT '0',
                   `vote_user_id` mediumint NOT NULL DEFAULT '0',
                   `vote_user_ip` varchar(39) NOT NULL DEFAULT '',
@@ -538,7 +538,7 @@ class Schema
                 break;
             case 'whosonline':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `username` varchar(32) NOT NULL DEFAULT '',
                   `ip` varchar(39) NOT NULL DEFAULT '',
                   `time` int NOT NULL DEFAULT 0,
@@ -552,7 +552,7 @@ class Schema
                 break;
             case 'words':
                 $sql =
-                "CREATE TABLE IF NOT EXISTS " . $this->vars->tablepre . $name." (
+                "CREATE TABLE IF NOT EXISTS " . $this->tablepre . $name." (
                   `find` varchar(60) NOT NULL DEFAULT '',
                   `replace1` varchar(60) NOT NULL DEFAULT '',
                   `id` smallint NOT NULL auto_increment,
@@ -618,7 +618,7 @@ class Schema
      */
     public function tableExists(string $name): bool
     {
-        $sqlname = $this->db->like_escape($this->vars->tablepre . $name);
+        $sqlname = $this->db->like_escape($this->tablepre . $name);
 
         $result = $this->db->query("SHOW TABLES LIKE '$sqlname'");
         $status = $this->db->num_rows($result) === 1;
@@ -642,7 +642,7 @@ class Schema
     {
         if (empty($column) && empty($index)) throw new InvalidArgumentException('The column and the index must not be empty');
 
-        $result = $this->db->query("SHOW INDEX FROM " . $this->vars->tablepre . $table);
+        $result = $this->db->query("SHOW INDEX FROM " . $this->tablepre . $table);
 
         while ($row = $this->db->fetch_array($result)) {
             if (!empty($column) && $row['Column_name'] !== $column) {
@@ -673,7 +673,7 @@ class Schema
     {
         $columns = [];
 
-        $result = $this->db->query("DESCRIBE " . $this->vars->tablepre . $table);
+        $result = $this->db->query("DESCRIBE " . $this->tablepre . $table);
         while ($row = $this->db->fetch_array($result)) {
             $columns[] = $row['Field'];
         }

@@ -195,7 +195,7 @@ class Bootup
      *
      * @since 1.9.11
      */
-    public function debugURLsettings($securesetting, $hostsetting, $pathsetting)
+    public function debugURLsettings(bool $securesetting, string $hostsetting, string $pathsetting)
     {
         if (! isset($_SERVER['REQUEST_URI'])) {
             if (! headers_sent()) header('HTTP/1.0 500 Internal Server Error');
@@ -268,17 +268,11 @@ class Bootup
 
     public function connectDB(): DBStuff
     {
-        // Force upgrade to mysqli.
-        if ('mysql' === $this->vars->database) {
-            $this->vars->database = 'mysqli';
-        }
-
-        require_once ROOT . 'db/' . $this->vars->database . '.php';
-
-        switch ($this->vars->database) {
-            default:
-                $db = new MySQLiDatabase($this->vars->debug, $this->vars->log_mysql_errors);
-        }
+        $db = DBFactory::createFromFilename(
+            $this->vars->database,
+            $this->vars->debug,
+            $this->vars->log_mysql_errors,
+        );
 
         if ($this->vars->debug && defined('XMB\UPGRADE')) {
             $db->stopQueryLogging();

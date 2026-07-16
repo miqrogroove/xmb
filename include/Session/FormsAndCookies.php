@@ -408,7 +408,7 @@ class FormsAndCookies implements Mechanism
             if ((int) $session['expire'] < time()) {
                 continue;
             }
-            $session['current'] = ($pinput == $session['token']);
+            $session['current'] = ($pinput === $session['token']);
             $session['token'] = substr($session['token'], 0, 4);
             $sessions[] = $session;
         }

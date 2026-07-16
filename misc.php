@@ -531,7 +531,7 @@ switch ($action) {
                 $template->memurl = recodeOut($member['username']);
                 $template->username = $member['username'];
                 if ($order == 'status') {
-                    if ($oldst != $member['status']) {
+                    if ($oldst !== $member['status']) {
                         $oldst = $member['status'];
                         $template->seperator_text = (trim($member['status']) == '' ? $lang['onlineother'] : $member['status']);
                         $template->members .= $template->process('misc_mlist_separator.php');

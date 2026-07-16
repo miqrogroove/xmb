@@ -160,17 +160,17 @@ if (noSubmit('editsubmit')) {
     $edits = $form->getEdits();
 
     $email = $validate->postedVar('newemail', dbescape: false);
-    if ($member['email'] != $email) {
+    if ($member['email'] !== $email) {
         $edits['email'] = $email;
     }
 
     $cusstatus = $validate->postedVar('cusstatus', dbescape: false);
-    if ($member['customstatus'] != $cusstatus) {
+    if ($member['customstatus'] !== $cusstatus) {
         $edits['customstatus'] = $cusstatus;
     }
 
     $status = getPhpInput('status');
-    if ($member['status'] != $status) {
+    if ($member['status'] !== $status) {
         if ($member['status'] == 'Super Administrator') {
             $count = $sql->countSuperAdmins();
             if ($count == 1) {

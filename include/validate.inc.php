@@ -423,6 +423,7 @@ function formBool(string $varname): bool
  * @param   string   $compare   is $compare equal to $varname?
  * @return   string   checked html if $compare is equal to $varname, empty otherwise
  */
+#[\Deprecated(message: "this function will be removed in a future version", since: "1.10.07")]
 function isChecked(string $varname, string $compare = 'yes'): string
 {
     return(($varname == $compare) ? 'checked="checked"' : '');
