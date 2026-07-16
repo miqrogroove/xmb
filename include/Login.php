@@ -254,18 +254,22 @@ class Login
      * @since 1.10.00 Formerly Core::getLoginLink()
      * @since 1.10.xx
      */
-    public function getLoginLink(): string
+    public function getLoginLink(string $class = ''): string
     {
+        if ($class !== '') {
+            $class = " class='$class'";
+        }
+
         if (X_MEMBER) {
             if ($this->session->isLogoutSupported()) {
                 $url = $this->vars->full_url . 'misc.php?action=logout';
-                $link = "<a href='$url'>" . $this->vars->lang['textlogout'] . '</a>';
+                $link = "<a href='$url'$class>" . $this->vars->lang['textlogout'] . '</a>';
             } else {
                 $link = '';
             }
         } elseif ($this->session->isLoginSupported()) {
             $url = $this->vars->full_url . 'misc.php?action=login';
-            $link = "<a href='$url'>" . $this->vars->lang['textlogin'] . '</a>';
+            $link = "<a href='$url'$class>" . $this->vars->lang['textlogin'] . '</a>';
         } else {
             $link = '';
         }

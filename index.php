@@ -29,6 +29,7 @@ require './header.php';
 $core = Services\core();
 $db = Services\db();
 $forumcache = Services\forums();
+$login = Services\login();
 $settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
@@ -162,6 +163,7 @@ if ($gid == 0) {
         $template->hUsername = $vars->self['username'];
         $body->welcome = $template->process('index_welcome_member.php');
     } elseif ($core->coppa_check()) {
+        $template->loginlink = $login->getLoginLink('button-link');
         $body->welcome = $template->process('index_welcome_guest.php');
     }
 

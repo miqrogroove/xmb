@@ -21,6 +21,16 @@ a:hover, .category a:hover {
     text-decoration: underline;
 }
 
+a.button-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: <?= $THEME['altbg1'] ?>;
+    text-decoration: none;
+    border-radius: 5px;
+    font-family: sans-serif;
+    text-align: center;    
+}
+
 .category a {
     color: <?= $THEME['cattext'] ?>;
     text-decoration: none;
