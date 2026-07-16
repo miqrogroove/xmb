@@ -66,6 +66,18 @@ class Manager
     }
 
     /**
+     * Remove a Mechansim from the Session Manager
+     *
+     * This is the recommend way to remove the default, for example removeMechanism('forms-and-cookies')
+     *
+     * @since 1.10.xx
+     */
+    public function removeMechanism(string $name)
+    {
+        $this->mechanisms->remove($name);
+    }
+
+    /**
      * Read the client's identity and send any session updates to the client.
      *
      * This logic was separated from the constructor to allow for lazy loading and extensibility.
@@ -110,7 +122,7 @@ class Manager
     }
 
     /**
-     * Logout Supported
+     * Find out if the active Mechanism supports logouts.
      *
      * @since 1.10.xx
      */
