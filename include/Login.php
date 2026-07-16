@@ -292,7 +292,7 @@ class Login
         }
 
         // login/logout links
-        $loginout = $this->login->getLoginLink();
+        $loginout = $this->getLoginLink();
 
         if (X_MEMBER) {
             if (X_ADMIN) {
