@@ -191,7 +191,7 @@ class Certificates implements Mechanism
         return $uinput;
     }
 
-    private function assertServerEnabled(): bool
+    private function assertServerEnabled()
     {
         if (! isset($_SERVER['SSL_PROTOCOL'])) throw new RuntimeException('The mod_ssl StdEnvVars option is not enabled.');
     }
