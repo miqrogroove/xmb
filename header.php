@@ -79,6 +79,7 @@ require ROOT . 'include/services.php';
 require ROOT . 'include/Session/Data.php';
 require ROOT . 'include/Session/FormsAndCookies.php';
 require ROOT . 'include/Session/Manager.php';
+require ROOT . 'include/Session/Registry.php';
 require ROOT . 'include/Settings.php';
 require ROOT . 'include/SmileAndCensor.php';
 require ROOT . 'include/sql.inc.php';

@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace XMB\Session;
 
+use ArrayIterator;
 use IteratorAggregate;
 use RuntimeException;
 use Traversable;
