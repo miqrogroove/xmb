@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace XMB\Session;
 
+use RuntimeException;
 use XMB\Core;
 use XMB\SQL;
 use XMB\Validation;
@@ -39,6 +40,7 @@ class Certificates implements Mechanism
 {
     public function __construct(
         private Core $core,
+        private readonly bool $debug,
         private SQL $sql,
         private Validation $validate,
     ) {
@@ -69,6 +71,10 @@ class Certificates implements Mechanism
 
     public function checkSavedSession(): Data
     {
+        if ($this->debug) {
+            $this->assertServerEnabled();
+        }
+
         $data = new Data();
         $uinput = $this->certUsernameConversion();
 
@@ -101,22 +107,15 @@ class Certificates implements Mechanism
         return;
     }
 
-    /**
-     * Delete tokens from client.
-     *
-     * This is called directly by the Session Manager for login and resume modes when authentication fails.
-     * Responsibility for calling this is delegated to the logout method for logout mode.
-     */
     public function deleteClientData()
     {
+        // Client updates are not enabled for certificate sessions.
         return;
     }
 
-    /**
-     * Creates a new session token and cookies for a client who authenticated during this request.
-     */
     public function saveClientData(Data $data): bool
     {
+        // Client updates are not enabled for certificate sessions.
         return false;
     }
 
@@ -133,9 +132,24 @@ class Certificates implements Mechanism
      */
     public function getSessionList(string $username): array
     {
-        $sessions = [];
+        $agent = $this->validate->postedVar(
+            varname: 'HTTP_USER_AGENT',
+            dbescape: false,
+            sourcearray: 's',
+        );
+        if (strlen($agent) > 255) {
+            $agent = substr($agent, 0, 255);
+        }
 
-        return $sessions;
+        $session = [
+            'token' => '',
+            'login_date' => (string) time(),
+            'agent' => $agent,
+            'name' => '',
+            'current' => true,
+        ];
+
+        return [$session];
     }
 
     public function logoutByList(string $username, array $selection)
@@ -156,7 +170,8 @@ class Certificates implements Mechanism
      */
     public function checkOrigin(): bool
     {
-        return true;
+        // Origin checking is not enabled for certificate authentication.
+        return false;
     }
 
     /**
@@ -174,5 +189,10 @@ class Certificates implements Mechanism
         );
 
         return $uinput;
+    }
+
+    private function assertServerEnabled(): bool
+    {
+        if (! isset($_SERVER['SSL_PROTOCOL'])) throw new RuntimeException('The mod_ssl StdEnvVars option is not enabled.');
     }
 }

@@ -295,7 +295,14 @@ class FormsAndCookies implements Mechanism
 
         $replaces = '';
 
-        $agent = isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 255) : '';
+        $agent = $this->validate->postedVar(
+            varname: 'HTTP_USER_AGENT',
+            dbescape: false,
+            sourcearray: 's',
+        );
+        if (strlen($agent) > 255) {
+            $agent = substr($agent, 0, 255);
+        }
 
         $sname = $this->features->schemaHasSessionNames() ? $data->comment : null;
 
