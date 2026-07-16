@@ -196,7 +196,7 @@ if (defined('XMB\UPGRADE')) {
 /* Set Up HTML Templates and Themes */
 
 bootup()->setCharset();
-$loader->setVisit();
+login()->setVisit();
 theme()->setTheme();
 
 

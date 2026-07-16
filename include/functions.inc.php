@@ -1876,23 +1876,6 @@ class Core
     }
 
     /**
-     * Creates a link to the login or logout page.
-     *
-     * @since 1.10.00
-     */
-    public function getLoginLink(): string
-    {
-        if (X_MEMBER) {
-            $url = $this->vars->full_url . 'misc.php?action=logout';
-            $link = "<a href='$url'>" . $this->vars->lang['textlogout'] . '</a>';
-        } else {
-            $url = $this->vars->full_url . 'misc.php?action=login';
-            $link = "<a href='$url'>" . $this->vars->lang['textlogin'] . '</a>';
-        }
-        return $link;
-    }
-
-    /**
      * Sets an SEO variable used in the header template to indicate the proper current relative URI.
      *
      * @since 1.9.11

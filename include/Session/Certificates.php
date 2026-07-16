@@ -92,6 +92,8 @@ class Certificates implements Mechanism
         
         $data->member = &$member;
         $data->status = 'good';
+        $data->canLogout = false;
+
         return $data;
     }
 

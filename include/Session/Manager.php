@@ -110,6 +110,16 @@ class Manager
     }
 
     /**
+     * Logout Supported
+     *
+     * @since 1.10.xx
+     */
+    public function isLogoutSupported(): bool
+    {
+        return $this->data->canLogout;
+    }
+
+    /**
      * Member Record
      *
      * Provides the member array from the database, or an empty array.
