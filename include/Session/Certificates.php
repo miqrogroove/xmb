@@ -117,7 +117,7 @@ class Certificates implements Mechanism
      */
     public function saveClientData(Data $data): bool
     {
-        return true;
+        return false;
     }
 
     /**

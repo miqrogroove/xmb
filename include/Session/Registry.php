@@ -24,16 +24,16 @@ declare(strict_types=1);
 
 namespace XMB\Session;
 
+use IteratorAggregate;
 use RuntimeException;
+use Traversable;
 
 /**
  * The Session Registry holds instances of Session Mechanisms.
  *
- * This is the extension point for adding custom Session logic.
- *
  * @since 1.10.xx
  */
-class Registry
+class Registry implements IteratorAggregate
 {
     private array $mechanisms = [];
 
@@ -66,5 +66,13 @@ class Registry
         array_multisort($priorities, $services);
 
         return $services;
+    }
+
+    /**
+     * Provides the prioritized list of Mechanisms to a foreach() call.
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->getAllSortedByPriority());
     }
 }

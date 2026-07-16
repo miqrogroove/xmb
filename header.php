@@ -176,7 +176,8 @@ if (! features()->schemaHasSessions()) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $params = $loader->prepareSession();
-create_login($params['mode'], $params['serror']);
+create_session($params['serror']);
+create_login($params['mode']);
 login()->elevateUser($params['force_inv']);
 unset($params);
 

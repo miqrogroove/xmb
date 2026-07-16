@@ -24,12 +24,8 @@ declare(strict_types=1);
 
 namespace XMB\Session;
 
+use LogicException;
 use XMB\Core;
-use XMB\Features;
-use XMB\Password;
-use XMB\SQL;
-use XMB\Token;
-use XMB\Validation;
 
 /**
  * The Session Manager provides Session Data, and it coordinates authentication
@@ -42,27 +38,46 @@ use XMB\Validation;
  */
 class Manager
 {
-    private array $mechanisms;
+    private Registry $mechanisms;
     private string $status = ''; // See getters for details.
     private Data $saved;
+    private bool $initialized = false;
 
     /**
-     * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      * @param string $serror Condition prior to authentication.
      */
     public function __construct(
-        string $mode,
         private string $serror,
         private Core $core,
-        private Features $features,
-        private Password $password,
-        private SQL $sql,
-        private Token $token,
-        private Validation $validate,
     ) {
-        $this->mechanisms = [
-            new FormsAndCookies($core, $features, $password, $sql, $token, $validate),
-        ];
+        $this->mechanisms = new Registry();
+    }
+
+    /**
+     * Register a Mechanism with the Session Manager
+     *
+     * This is the extension point for adding custom Session logic.
+     *
+     * @since 1.10.xx
+     */
+    public function addMechanism(Mechanism $new, int $priority)
+    {
+        $this->mechanisms->add($new, $priority);
+    }
+
+    /**
+     * Read the client's identity and send any session updates to the client.
+     *
+     * This logic was separated from the constructor to allow for lazy loading and extensibility.
+     *
+     * @since 1.10.xx
+     * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
+     */
+    public function readAndUpdateClient(string $mode)
+    {
+        if ($this->initialized) {
+            throw new LogicException('Updating the Session more than once is not allowed');
+        }
 
         switch ($mode) {
             case 'login':
@@ -79,6 +94,8 @@ class Manager
             default:
                 $this->resume();
         }
+
+        $this->initialized = true;
     }
 
     /**
