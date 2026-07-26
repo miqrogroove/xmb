@@ -8,16 +8,7 @@
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><font size="1"><?= $lang['welcomeunreg'] ?></font></td>
 <td align="right" width="25%">
-<form method="get" action="<?= $full_url ?>misc.php" onsubmit="return disableButton(this);">
-<input type="hidden" name="action" value="login" />
-<table border="0" cellpadding="0" cellspacing="0">
-<tr>
-<td nowrap="nowrap">
-<input type="submit" class="submit" value="<?= $lang['textlogin'] ?>" />
-</td>
-</tr>
-</table>
-</form>
+<?= $loginlink ?>
 </td>
 </tr>
 </table>

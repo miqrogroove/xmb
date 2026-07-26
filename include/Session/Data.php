@@ -36,5 +36,6 @@ class Data
     public bool $pwReset = false;   // True if the user is required to set a different password to comply with password policy.
     public string $comment = '';    // The session name provided by the user. Used during a new login only.
     public bool $permanent = false; // True if the session should be saved by the client, otherwise false.
+    public bool $canLogout = true;  // True if the active Mechanism supports session deletion at the user's request.
     public string $status = 'none'; // Session input level.  Must be 'good', 'bad', or 'none'.
 }

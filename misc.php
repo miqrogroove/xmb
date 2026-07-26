@@ -96,6 +96,8 @@ switch ($action) {
         } elseif (noSubmit('loginsubmit')) {
             if (X_MEMBER) {
                 $misc = $template->process('misc_feature_not_while_loggedin.php');
+            } elseif (! $session->isLoginSupported()) {
+                $misc = $template->process('misc_feature_notavailable.php');
             } else {
                 $template->token = $token->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
                 $session->preLogin($template->token);
@@ -166,6 +168,8 @@ switch ($action) {
             $gone = $session->getMember();
             $sql->deleteWhosonline($gone['username']);
             $core->redirect($vars->full_url, timeout: 0);
+        } elseif (! $session->isLogoutSupported()) {
+            $misc = $template->process('misc_feature_notavailable.php');
         } else {
             $core->message($lang['notloggedin']);
         }
@@ -180,7 +184,7 @@ switch ($action) {
         } else {
             $core->request_secure('Lost Password', '');
             $username = $validate->postedVar('username');
-            if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
+            if (! $core->checkUsernameLength($username)) {
                 $core->error($lang['badinfo']);
             }
             $email = $validate->postedVar('email');

@@ -51,7 +51,6 @@ class FormsAndCookies implements Mechanism
     private const SESSION_LIFE_SHORT = 3600 * 12;
     private const TEST_DATA = 'xmb';
     private const TOKEN_BYTES = 16;
-    private const USER_MIN_LEN = 3;
 
     // Cookie names.
     private const FORM_COOKIE = 'login';
@@ -71,12 +70,30 @@ class FormsAndCookies implements Mechanism
         // Property promotion.
     }
 
+    /**
+     * @since 1.10.xx
+     */
+    public function getServiceID(): string
+    {
+        return 'forms-and-cookies';
+    }
+
+    /**
+     * Whether the Mechanism can handle input from XMB's username/password login form.
+     *
+     * @since 1.10.xx
+     */
+    public function isLoginSupported(): bool
+    {
+        return true;
+    }
+
     public function checkUsername(): Data
     {
         $data = new Data();
         $uinput = $this->validate->postedVar('username', dbescape: false);
 
-        if (strlen($uinput) < self::USER_MIN_LEN) {
+        if (! $this->core->checkUsernameLength($uinput)) {
             return $data;
         }
 
@@ -124,7 +141,7 @@ class FormsAndCookies implements Mechanism
         $uinput = $this->get_cookie(self::USER_COOKIE);
         $test   = $this->get_cookie(self::TEST_COOKIE);
 
-        if (strlen($uinput) >= self::USER_MIN_LEN || self::TEST_DATA == $test) {
+        if ($this->core->checkUsernameLength($uinput) || self::TEST_DATA == $test) {
             return true;
         } else {
             $this->core->put_cookie('test', self::TEST_DATA, time() + (86400*365));
@@ -139,18 +156,18 @@ class FormsAndCookies implements Mechanism
         $pinput = $this->get_cookie(self::SESSION_COOKIE);
         $uinput = $this->get_cookie(self::USER_COOKIE);
 
-        if (strlen($uinput) < self::USER_MIN_LEN || strlen($pinput) != self::TOKEN_BYTES * 2) {
+        if (! $this->core->checkUsernameLength($uinput) || strlen($pinput) != self::TOKEN_BYTES * 2) {
             $data->status = 'none';
             return $data;
         }
-        
+
         $member = $this->sql->getMemberByName($uinput);
-        
+
         if (empty($member)) {
             $data->status = 'none';
             return $data;
         }
-        
+
         $details = $this->sql->getSession($pinput, $uinput);
 
         if (empty($details)) {
@@ -158,13 +175,13 @@ class FormsAndCookies implements Mechanism
             $data->status = 'bad';
             return $data;
         }
-        
+
         if (time() > (int) $details['expire']) {
             $this->core->auditBadSession($member);
             $data->status = 'bad';
             return $data;
         }
-        
+
         // Token Regeneration
         if (self::REGEN_ENABLED) {
             // Figure out where we are in the regeneration cycle.
@@ -243,6 +260,12 @@ class FormsAndCookies implements Mechanism
         }
     }
 
+    /**
+     * Delete tokens from client.
+     *
+     * This is called directly by the Session Manager for login and resume modes when authentication fails.
+     * Responsibility for calling this is delegated to the logout method for logout mode.
+     */
     public function deleteClientData()
     {
         $this->delete_cookie(self::REGEN_COOKIE);
@@ -258,8 +281,8 @@ class FormsAndCookies implements Mechanism
             }
         }
 
-        // Remember to check that these cookies will not be reset after initializing the session.
-        // Maybe poison the function put_cookie() itself.
+        // These cookies must not be reset by the Mechanism after clearing the session.
+        // They must be created by saveClientData() only when called by the Session Manager.
     }
 
     /**
@@ -282,7 +305,14 @@ class FormsAndCookies implements Mechanism
 
         $replaces = '';
 
-        $agent = isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 255) : '';
+        $agent = $this->validate->postedVar(
+            varname: 'HTTP_USER_AGENT',
+            dbescape: false,
+            sourcearray: 's',
+        );
+        if (strlen($agent) > 255) {
+            $agent = substr($agent, 0, 255);
+        }
 
         $sname = $this->features->schemaHasSessionNames() ? $data->comment : null;
 
@@ -304,7 +334,7 @@ class FormsAndCookies implements Mechanism
 
         $this->core->put_cookie(self::USER_COOKIE, $data->member['username'], $expires);
         $this->core->put_cookie(self::SESSION_COOKIE, $token, $expires);
-        
+
         return true;
     }
 
@@ -435,9 +465,9 @@ class FormsAndCookies implements Mechanism
         $cookieToken = $this->get_cookie(self::FORM_COOKIE);
         $postToken = getPhpInput('token');
         $this->delete_cookie(self::FORM_COOKIE);
-        
+
         if ($cookieToken != $postToken) return false;
-        
+
         return $this->token->consume($postToken, 'Login', '');
     }
 

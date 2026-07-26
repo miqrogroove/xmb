@@ -21,6 +21,11 @@ a:hover, .category a:hover {
     text-decoration: underline;
 }
 
+a.button-link {
+    display: inline-block;
+    padding: 1px 4px;
+}
+
 .category a {
     color: <?= $THEME['cattext'] ?>;
     text-decoration: none;
@@ -93,7 +98,7 @@ td.quotemessage {
     padding: 10px 0 20px 5px;
 }
 
-textarea, select, input, object {
+textarea, select, input, object, a.button-link {
     background-color: <?= $THEME['altbg1'] ?>;
     border: 1px solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['tabletext'] ?>;

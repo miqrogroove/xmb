@@ -237,14 +237,114 @@ class Login
                 break;
             case 'guest':
                 if (X_GUEST) {
-                    $loginout = $this->core->getLoginLink();
+                    $loginout = $this->getLoginLink();
                     $reglink = $this->core->getRegistrationLink();
-                    if ($reglink !== '') {
+                    if ($reglink !== '' && $loginout !== '') {
                         $reglink = ' ' . $reglink . ' ' . $this->vars->lang['textor'];
                     }
                     $message = $this->vars->lang['reggedonly'] . $reglink . ' ' . $loginout;
                     $this->core->message($message);
                 }
         }
+    }
+
+    /**
+     * Creates a link to the login or logout page.
+     *
+     * @since 1.10.00 Formerly Core::getLoginLink()
+     * @since 1.10.xx
+     */
+    public function getLoginLink(string $class = ''): string
+    {
+        if ($class !== '') {
+            $class = " class='$class'";
+        }
+
+        if (X_MEMBER) {
+            if ($this->session->isLogoutSupported()) {
+                $url = $this->vars->full_url . 'misc.php?action=logout';
+                $link = "<a href='$url'$class>" . $this->vars->lang['textlogout'] . '</a>';
+            } else {
+                $link = '';
+            }
+        } elseif ($this->session->isLoginSupported()) {
+            $url = $this->vars->full_url . 'misc.php?action=login';
+            $link = "<a href='$url'$class>" . $this->vars->lang['textlogin'] . '</a>';
+        } else {
+            $link = '';
+        }
+
+        return $link;
+    }
+
+    /**
+     * Sets up even more Variables, including header template parts.
+     *
+     * @since 1.10.00 Formerly BootupLoader::setVisit()
+     * @since 1.10.xx
+     */
+    public function setVisit()
+    {
+        // Read last visit cookies
+        $xmblva = getInt('xmblva', 'c'); // Previous request timestamp.
+        $xmblvb = getInt('xmblvb', 'c'); // Ending timestamp of previous session.
+        $onlinetime = $this->vars->onlinetime;
+
+        if ($xmblvb > 0) {
+            $thetime = $xmblvb;     // lvb will expire in 600 seconds, so if it's there, we're still in a session and persisting the value from the last visit.
+        } elseif ($xmblva > 0) {
+            $thetime = $xmblva;     // Not currently logged in, so let's get the time from the last visit and save it
+        } else {
+            $thetime = $onlinetime; // no cookie at all, so this is your first visit
+        }
+
+        // login/logout links
+        $loginout = $this->getLoginLink();
+
+        if (X_MEMBER) {
+            if (X_ADMIN) {
+                $url = $this->vars->full_url . 'admin/';
+                $cplink = " - <a href='$url'>" . $this->vars->lang['textcp'] . '</a>';
+            } else {
+                $cplink = '';
+            }
+
+            $url = $this->vars->full_url . 'memcp.php';
+            $memcp = "<a href='$url'>" . $this->vars->lang['textusercp'] . '</a>';
+
+            $url = $this->vars->full_url . 'u2u.php';
+            $u2ulink = '<a href="' . $url . '" onclick="Popup(this.href, \'Window\', 700, 450); return false;">' . $this->vars->lang['banu2u'] . '</a> - ';
+
+            $url = $this->vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($this->vars->xmbuser);
+            $profile = "<a href='$url'>" . $this->vars->xmbuser . '</a>';
+
+            if (strlen($loginout) > 0) {
+                $loginout .= ' - ';
+            }
+            $this->template->notify = $this->vars->lang['loggedin'] . " {$profile}<br />[{$loginout}{$u2ulink}{$memcp}{$cplink}]";
+
+            // Update lastvisit in the header shown
+            if ((int) $this->vars->self['lastvisit'] < $thetime || (
+                (int) $this->vars->self['lastvisit'] > $thetime + $this->vars::ONLINE_TIMER && (int) $this->vars->self['lastvisit'] < $onlinetime - $this->vars::ONLINE_TIMER
+            )) {
+                $thetime = (int) $this->vars->self['lastvisit'];
+            }
+            $lastlocal = $this->core->timeKludge($thetime);
+            $lastdate = $this->core->printGmDate($lastlocal);
+            $lasttime = gmdate($this->vars->timecode, $lastlocal);
+            $this->template->lastvisittext = $this->vars->lang['lastactive'] . ' ' . $lastdate . ' ' . $this->vars->lang['textat'] . ' ' . $lasttime;
+        } else {
+            $reglink = $this->core->getRegistrationLink();
+            if ($loginout !== '' && $reglink !== '') {
+                $loginout .= ' - ';
+            }
+            $this->template->notify = $this->vars->lang['notloggedin'] . ' [' . $loginout . $reglink . ']';
+            $this->template->lastvisittext = '';
+        }
+
+        // Update last visit cookies
+        $this->core->put_cookie('xmblva', (string) $onlinetime, ($onlinetime + (86400*365))); // lva == now
+        $this->core->put_cookie('xmblvb', (string) $thetime, ($onlinetime + $this->vars::ONLINE_TIMER)); // lvb == last visit
+        $this->vars->lastvisit = $thetime; // Used by forumdisplay
     }
 }

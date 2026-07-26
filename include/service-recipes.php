@@ -129,13 +129,27 @@ function create_loader(): BootupLoader
 }
 
 /**
+ * Builds the Session service and dependencies based on the existing Core service.
+ *
+ * @since 1.10.xx
+ */
+function create_session(string $sessionError)
+{
+    session(new \XMB\Session\Manager($sessionError, core()));
+
+    $logic = new \XMB\Session\FormsAndCookies(core(), features(), password(), sql(), token(), validate());
+
+    session()->addMechanism($logic, priority: 10);
+}
+
+/**
  * Builds the Login service and dependencies based on the existing Core service.
  *
  * @since 1.10.06
  */
-function create_login(string $sessionMode, string $sessionError)
+function create_login(string $sessionMode)
 {
-    session(new \XMB\Session\Manager($sessionMode, $sessionError, core(), features(), password(), sql(), token(), validate()));
+    session()->readAndUpdateClient($sessionMode);
 
     login(new \XMB\Login(core(), db(), features(), session(), sql(), template(), translation(), vars()));
 }

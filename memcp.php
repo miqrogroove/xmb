@@ -401,10 +401,6 @@ if ($action == 'profile') {
 
     $lists = $session->getSessionLists();
     foreach ($lists as $name => $list) {
-        if ($name != Session\FormsAndCookies::class) {
-            // This page only handles the default session mechanism for now.
-            continue;
-        }
         foreach ($list as $device) {
             $template->did = $device['token'];
             $time = $core->timeKludge((int) $device['login_date']);

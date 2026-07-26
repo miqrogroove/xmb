@@ -58,7 +58,7 @@ class admin
         $db = $this->db;
         $lang = &$this->vars->lang;
 
-        if (strlen($userto) < $this->vars::USERNAME_MIN_LENGTH || strlen($userto) > $this->vars::USERNAME_MAX_LENGTH) {
+        if (! $this->core->checkUsernameLength($userto)) {
             return $lang['username_length_invalid'];
         }
 

@@ -54,7 +54,7 @@ if (X_MEMBER) {
     if ('' == $username) {
         $core->error($lang['textnousername']);
     }
-    if (strlen($username) < $vars::USERNAME_MIN_LENGTH || strlen($username) > $vars::USERNAME_MAX_LENGTH) {
+    if (! $core->checkUsernameLength($username)) {
         $core->error($lang['username_length_invalid']);
     }
 

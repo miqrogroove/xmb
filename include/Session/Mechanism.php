@@ -40,6 +40,21 @@ namespace XMB\Session;
 interface Mechanism
 {
     /**
+     * Each Mechanism must define its own string identifier for use in the Session Registry.
+     *
+     * @since 1.10.xx
+     * @return string
+     */
+    public function getServiceID(): string;
+
+    /**
+     * Whether the Mechanism can handle input from XMB's username/password login form.
+     *
+     * @since 1.10.xx
+     */
+    public function isLoginSupported(): bool;
+
+    /**
      * Did the client provide a valid ID that matches an XMB member?
      *
      * Called only when a guest client tries to login from an XMB native authentication system.
