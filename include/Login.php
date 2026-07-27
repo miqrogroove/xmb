@@ -252,12 +252,13 @@ class Login
      * Creates a link to the login or logout page.
      *
      * @since 1.10.00 Formerly Core::getLoginLink()
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function getLoginLink(string $class = ''): string
     {
         if ($class !== '') {
-            $class = " class='$class'";
+            $name = htmlEsc($class);
+            $class = " class='$name'";
         }
 
         if (X_MEMBER) {
@@ -281,7 +282,7 @@ class Login
      * Sets up even more Variables, including header template parts.
      *
      * @since 1.10.00 Formerly BootupLoader::setVisit()
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function setVisit()
     {

@@ -42,7 +42,7 @@ interface Mechanism
     /**
      * Each Mechanism must define its own string identifier for use in the Session Registry.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      * @return string
      */
     public function getServiceID(): string;
@@ -50,7 +50,7 @@ interface Mechanism
     /**
      * Whether the Mechanism can handle input from XMB's username/password login form.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function isLoginSupported(): bool;
 

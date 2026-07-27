@@ -131,7 +131,7 @@ function create_loader(): BootupLoader
 /**
  * Builds the Session service and dependencies based on the existing Core service.
  *
- * @since 1.10.xx
+ * @since 1.10.07
  */
 function create_session(string $sessionError)
 {

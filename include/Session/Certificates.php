@@ -32,9 +32,9 @@ use XMB\Validation;
 use function XMB\getPhpInput;
 
 /**
- * Experimental.
+ * Certificate-based authentication for use with Apache mod_ssl.
  *
- * @since 1.10.xx
+ * @since 1.10.07
  */
 class Certificates implements Mechanism
 {
@@ -54,23 +54,26 @@ class Certificates implements Mechanism
 
     public function isLoginSupported(): bool
     {
+        // Form login is not enabled for certificate sessions.
         return false;
     }
 
     public function checkUsername(): Data
     {
-        // Login and logout are not implemented for certificate-only session storage.
+        // Form login is not enabled for certificate sessions.
         $data = new Data();
         return $data;
     }
 
     public function checkPassword(Data $data): Data
     {
+        // Form login is not enabled for certificate sessions.
         return $data;
     }
 
     public function checkClientEnabled(): bool
     {
+        // There are no checks available for client certificate sessions.
         return true;
     }
 
@@ -104,6 +107,7 @@ class Certificates implements Mechanism
 
     public function logout(): Data
     {
+        // Logout is not enabled for certificate sessions.
         $data = $this->checkSavedSession();
 
         return $data;
@@ -111,6 +115,7 @@ class Certificates implements Mechanism
 
     public function logoutAll(string $username, bool $current_client)
     {
+        // Logout is not enabled for certificate sessions.
         return;
     }
 
@@ -126,19 +131,15 @@ class Certificates implements Mechanism
         return false;
     }
 
-    /**
-     * Deletes all expired tokens in the sessions table.
-     */
     public function collectGarbage()
     {
+        // There is nothing to clean up for certificate sessions.
         return;
     }
 
-    /**
-     * Retrieve list of all valid sessions for the current user.
-     */
     public function getSessionList(string $username): array
     {
+        // Only the current session is available for certificate sessions.
         $agent = $this->validate->postedVar(
             varname: 'HTTP_USER_AGENT',
             dbescape: false,
@@ -161,23 +162,19 @@ class Certificates implements Mechanism
 
     public function logoutByList(string $username, array $selection)
     {
+        // Logout is not enabled for certificate sessions.
         return;
     }
 
-    /**
-     * This event occurs when the client visits the login page to get ready for a login.
-     */
     public function preLogin(string $newToken)
     {
+        // Form login is not enabled for certificate sessions.
         return;
     }
 
-    /**
-     * Check the origin of the login request to verify it has not been injected by a different domain.
-     */
     public function checkOrigin(): bool
     {
-        // Origin checking is not enabled for certificate authentication.
+        // Form login is not enabled for certificate sessions.
         return false;
     }
 
@@ -198,6 +195,9 @@ class Certificates implements Mechanism
         return $uinput;
     }
 
+    /**
+     * Generate errors if Apache isn't configured for client certificates.
+     */
     private function assertServerEnabled()
     {
         if (! isset($_SERVER['SSL_PROTOCOL'])) {

@@ -58,7 +58,7 @@ class Manager
      *
      * This is the extension point for adding custom Session logic.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function addMechanism(Mechanism $new, int $priority)
     {
@@ -70,7 +70,7 @@ class Manager
      *
      * This is the recommend way to remove the default, for example removeMechanism('forms-and-cookies')
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function removeMechanism(string $name)
     {
@@ -82,7 +82,7 @@ class Manager
      *
      * This logic was separated from the constructor to allow for lazy loading and extensibility.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
      */
     public function readAndUpdateClient(string $mode)
@@ -124,7 +124,7 @@ class Manager
     /**
      * Find out if any Mechanism supports the XMB form login.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function isLoginSupported(): bool
     {
@@ -139,7 +139,7 @@ class Manager
     /**
      * Find out if the active Mechanism supports logouts.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function isLogoutSupported(): bool
     {
@@ -183,7 +183,7 @@ class Manager
         $lists = [];
         if ('good' == $this->status) {
             foreach ($this->mechanisms as $session) {
-                $lists[get_class($session)] = $session->getSessionList($this->saved->member['username']);
+                $lists[$session->getServiceID()] = $session->getSessionList($this->saved->member['username']);
             }
         }
         return $lists;

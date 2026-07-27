@@ -34,36 +34,36 @@ require ROOT . 'header.php';
 $core = Services\core();
 $features = Services\features();
 $sql = Services\sql();
+$template = Services\template();
 $tokenSvc = Services\token();
 $validate = Services\validate();
 $vars = Services\vars();
+
+if ($features->schemaHasSessions()) {
+    $session = Services\session();
+    if (! $session->isLoginSupported()) {
+        exit($vars->lang['fnasorry3']);
+    }
+}
 
 $username = $validate->postedVar('username', dbescape: false);
 
 if (strlen($username) == 0) {
     $core->put_cookie('xmbuser');  // Make sure user is logged out.
-    $token = '';
+    $template->token = '';
     if ($features->schemaHasTokens()) {
-        $token = $tokenSvc->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
+        $template->token = $tokenSvc->create('Login', '', $vars::NONCE_FORM_EXP, anonymous: true);
         if ($features->schemaHasSessions()) {
-            $session = Services\session();
-            $session->preLogin($token);
+            $session->preLogin($template->token);
         }
     }
-    ?>
-    <form method="post" action="">
-        <label>Username: <input type="text" name="username" /></label><br />
-        <label>Password: <input type="password" name="password" /></label><br />
-        <input type="hidden" name="token" value="<?= $token ?>" />
-        <input type="submit" />
-    </form>
-    <?php
+    $template->process('install_upgrade_login.php', echo: true);
 } else {
     if ($features->schemaHasSessions()) {
         // Already logged in by Session\Manager
         if (! X_SADMIN) {
             echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "install/login.php'>Try Again</a>.<br />";
-            throw new Exception('Upgrade login failure by '.$_SERVER['REMOTE_ADDR']);
+            throw new Exception('Upgrade login failure by ' . $_SERVER['REMOTE_ADDR']);
         }
     } else {
         $password = md5($_POST['password']);
@@ -72,7 +72,7 @@ if (strlen($username) == 0) {
             $core->put_cookie('xmbpw', $password);
         } else {
             echo "This script may be run only by a Super Administrator.<br />Please <a href='" . $vars->full_url . "install/login.php'>Try Again</a>.<br />";
-            throw new Exception('Upgrade login failure by '.$_SERVER['REMOTE_ADDR']);
+            throw new Exception('Upgrade login failure by ' . $_SERVER['REMOTE_ADDR']);
         }
     }
 

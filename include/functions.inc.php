@@ -2253,7 +2253,7 @@ class Core
     /**
      * Check username input length.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      * @param string $username The username to check, HTML encoded.
      * @return bool
      */

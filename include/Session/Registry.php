@@ -32,7 +32,7 @@ use Traversable;
 /**
  * The Session Registry holds instances of Session Mechanisms.
  *
- * @since 1.10.xx
+ * @since 1.10.07
  */
 class Registry implements IteratorAggregate
 {

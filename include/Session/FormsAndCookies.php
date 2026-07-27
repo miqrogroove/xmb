@@ -71,7 +71,7 @@ class FormsAndCookies implements Mechanism
     }
 
     /**
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function getServiceID(): string
     {
@@ -81,7 +81,7 @@ class FormsAndCookies implements Mechanism
     /**
      * Whether the Mechanism can handle input from XMB's username/password login form.
      *
-     * @since 1.10.xx
+     * @since 1.10.07
      */
     public function isLoginSupported(): bool
     {
