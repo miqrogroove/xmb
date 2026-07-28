@@ -434,3 +434,23 @@ table.fdetails {
 table.admin-panel {
     text-size-adjust: none;
 }
+
+.xmb-block {
+    width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
+    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    background: <?= $THEME['altbg1'] ?>;
+    margin: 0 auto;
+}
+
+.xmb-category-head-row {
+    <?= $THEME['catcss'] ?>
+    border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    color: <?= $THEME['cattext'] ?>;
+    padding: <?= $THEME['tablespace'] ?>;
+    font-weight: bold;
+    text-align: center;
+}
+
+.xmb-content-row {
+    padding: <?= $THEME['tablespace'] ?>;
+}

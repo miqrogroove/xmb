@@ -3,8 +3,6 @@
 namespace XMB;
 
 ?>
-<tr bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow">
-<td>
 <br />
 <table cellspacing="0" cellpadding="0" border="0" width="98%" align="center">
 <tr>
@@ -93,5 +91,3 @@ namespace XMB;
 </tr>
 </table>
 <br />
-</td>
-</tr>
