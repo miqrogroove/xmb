@@ -442,6 +442,13 @@ table.admin-panel {
     margin: 0 auto;
 }
 
+.xmb-block-98-flex {
+    width: calc(98% - (2 * <?= $THEME['borderwidth'] ?>));
+    margin: <?= $THEME['borderwidth'] ?> auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .xmb-category-head-row {
     <?= $THEME['catcss'] ?>
     border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
@@ -453,4 +460,18 @@ table.admin-panel {
 
 .xmb-content-row {
     padding: <?= $THEME['tablespace'] ?>;
+}
+
+.xmb-flex-4 {
+    box-shadow: 0 0 0 <?= $THEME['borderwidth'] ?> <?= $THEME['bordercolor'] ?>;
+    margin-right: <?= $THEME['borderwidth'] ?>;
+    background: <?= $THEME['altbg2'] ?>;
+    padding-bottom: <?= $THEME['borderwidth'] ?>;
+    flex: 1 0 calc(25% - (4 * <?= $THEME['borderwidth'] ?>));
+}
+
+@media screen and (max-width: 850px) {
+    .xmb-flex-4 {
+        flex: 1 0 200px;
+    }
 }
