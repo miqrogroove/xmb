@@ -442,6 +442,16 @@ table.admin-panel {
     margin: 0 auto;
 }
 
+.xmb-block-flex {
+    margin: <?= $THEME['borderwidth'] ?> auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.xmb-block-narrow-550 {
+    max-width: 550px;
+}
+
 .xmb-block-98-flex {
     width: calc(98% - (2 * <?= $THEME['borderwidth'] ?>));
     margin: <?= $THEME['borderwidth'] ?> auto;
@@ -458,20 +468,61 @@ table.admin-panel {
     text-align: center;
 }
 
+.xmb-category-head-row-flex {
+    <?= $THEME['catcss'] ?>
+    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    color: <?= $THEME['cattext'] ?>;
+    padding: <?= $THEME['tablespace'] ?>;
+    margin-right: -<?= $THEME['borderwidth'] ?>;
+    margin-bottom: -<?= $THEME['borderwidth'] ?>;
+    font-weight: bold;
+    flex-basis: 100%;
+}
+
 .xmb-content-row {
     padding: <?= $THEME['tablespace'] ?>;
 }
 
 .xmb-flex-4 {
-    box-shadow: 0 0 0 <?= $THEME['borderwidth'] ?> <?= $THEME['bordercolor'] ?>;
-    margin-right: <?= $THEME['borderwidth'] ?>;
-    background: <?= $THEME['altbg2'] ?>;
+    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    margin-right: -<?= $THEME['borderwidth'] ?>;
+    margin-bottom: -<?= $THEME['borderwidth'] ?>;
     padding-bottom: <?= $THEME['borderwidth'] ?>;
     flex: 1 0 calc(25% - (4 * <?= $THEME['borderwidth'] ?>));
+    background: <?= $THEME['altbg2'] ?>;
 }
 
 @media screen and (max-width: 850px) {
     .xmb-flex-4 {
         flex: 1 0 200px;
     }
+}
+
+.xmb-flex-form-label {
+    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    padding: <?= $THEME['tablespace'] ?>;
+    padding-top: calc(<?= $THEME['tablespace'] ?> + 2px);
+    margin-right: -<?= $THEME['borderwidth'] ?>;
+    margin-bottom: -<?= $THEME['borderwidth'] ?>;
+    flex: 0 0 192px;
+    background: <?= $THEME['altbg1'] ?>;
+}
+
+.xmb-flex-form-field {
+    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    margin-right: -<?= $THEME['borderwidth'] ?>;
+    margin-bottom: -<?= $THEME['borderwidth'] ?>;
+    padding: <?= $THEME['tablespace'] ?>;
+    background: <?= $THEME['altbg2'] ?>;
+    flex: 1 0 200px;
+}
+
+.xmb-flex-form-field-span {
+    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    margin-right: -<?= $THEME['borderwidth'] ?>;
+    margin-bottom: -<?= $THEME['borderwidth'] ?>;
+    padding: <?= $THEME['tablespace'] ?>;
+    background: <?= $THEME['altbg2'] ?>;
+    flex-basis: 100%;
+    text-align: center;
 }
