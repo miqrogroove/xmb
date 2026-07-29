@@ -452,30 +452,29 @@ table.admin-panel {
     max-width: 550px;
 }
 
-.xmb-block-98-flex {
+.xmb-block-98-flex, .admin-panel {
     width: calc(98% - (2 * <?= $THEME['borderwidth'] ?>));
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: flex;
     flex-wrap: wrap;
 }
 
-.xmb-category-head-row {
+.category-head {
     <?= $THEME['catcss'] ?>
-    border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['cattext'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     font-weight: bold;
+}
+
+.xmb-block > .category-head {
+    border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     text-align: center;
 }
 
 .xmb-category-head-row-flex, .admin-attachment-search .category-head {
-    <?= $THEME['catcss'] ?>
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
-    color: <?= $THEME['cattext'] ?>;
-    padding: <?= $THEME['tablespace'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
-    font-weight: bold;
     flex-basis: 100%;
 }
 
@@ -483,7 +482,7 @@ table.admin-panel {
     padding: <?= $THEME['tablespace'] ?>;
 }
 
-.xmb-flex-4 {
+.xmb-flex-4, .admin-panel .group {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
@@ -493,7 +492,7 @@ table.admin-panel {
 }
 
 @media screen and (max-width: 850px) {
-    .xmb-flex-4 {
+    .xmb-flex-4, .admin-panel .group {
         flex: 1 0 200px;
     }
 }
