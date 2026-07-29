@@ -466,7 +466,7 @@ table.admin-panel {
     font-weight: bold;
 }
 
-.xmb-block > .category-head {
+.xmb-block > .category-head, .admin-panel .category-head {
     border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     text-align: center;
 }
