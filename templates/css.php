@@ -442,13 +442,13 @@ table.admin-panel {
     margin: 0 auto;
 }
 
-.xmb-block-flex {
+.xmb-block-grid-form, .admin-attachment-search {
     margin: <?= $THEME['borderwidth'] ?> auto;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: max-content auto;
 }
 
-.xmb-block-narrow-550 {
+.xmb-block-narrow-550, .admin-attachment-search {
     max-width: 550px;
 }
 
@@ -468,7 +468,7 @@ table.admin-panel {
     text-align: center;
 }
 
-.xmb-category-head-row-flex {
+.xmb-category-head-row-flex, .admin-attachment-search .category-head {
     <?= $THEME['catcss'] ?>
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     color: <?= $THEME['cattext'] ?>;
@@ -498,31 +498,32 @@ table.admin-panel {
     }
 }
 
-.xmb-flex-form-label {
+.admin-attachment-search .row {
+    display: contents;
+}
+
+.xmb-grid-form-label, .admin-attachment-search .label {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     padding-top: calc(<?= $THEME['tablespace'] ?> + 2px);
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
-    flex: 0 0 192px;
     background: <?= $THEME['altbg1'] ?>;
 }
 
-.xmb-flex-form-field {
+.xmb-grid-form-field, .admin-attachment-search .field {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     background: <?= $THEME['altbg2'] ?>;
-    flex: 1 0 200px;
 }
 
-.xmb-flex-form-field-span {
-    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
-    margin-right: -<?= $THEME['borderwidth'] ?>;
-    margin-bottom: -<?= $THEME['borderwidth'] ?>;
-    padding: <?= $THEME['tablespace'] ?>;
-    background: <?= $THEME['altbg2'] ?>;
-    flex-basis: 100%;
+.admin-attachment-search .span {
+    grid-column: 1 / span 2;
     text-align: center;
+}
+
+.admin-attachment-search .category-head {
+    grid-column: 1 / span 2;
 }
