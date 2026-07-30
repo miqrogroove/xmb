@@ -29,10 +29,10 @@ use RuntimeException;
 
 class Attach
 {
-    public const array IMG_EXTENSIONS = ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico', 'webp', 'avif'];
+    public const IMG_EXTENSIONS = ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico', 'webp', 'avif'];
 
     // XMB's allowed image types must have full GD support as well as browser rendering support. 
-    private const array ALLOWED_IMG_TYPES = [IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_PNG, IMAGETYPE_WBMP, IMAGETYPE_BMP, IMAGETYPE_ICO, IMAGETYPE_WEBP, IMAGETYPE_AVIF];
+    private const ALLOWED_IMG_TYPES = [IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_PNG, IMAGETYPE_WBMP, IMAGETYPE_BMP, IMAGETYPE_ICO, IMAGETYPE_WEBP, IMAGETYPE_AVIF];
     
     public function __construct(private BBCode $bbcode, private DBStuff $db, private SQL $sql, private Variables $vars)
     {
