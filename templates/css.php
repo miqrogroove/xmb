@@ -131,14 +131,6 @@ input[readonly] {
     text-align: center;
 }
 
-.header {
-    background-color: <?= $THEME['header'] ?>;
-    color: <?= $THEME['headertext'] ?>;
-    font-size: <?= $THEME['font-smaller-1'] ?>;
-    font-weight: bold;
-    table-layout: fixed;
-}
-
 .header2 {
     background-color: <?= $THEME['altbg1'] ?>;
     font-weight: bold;
@@ -431,10 +423,6 @@ table.fdetails {
     max-width: 1024px;
 }
 
-table.admin-panel {
-    text-size-adjust: none;
-}
-
 .xmb-block {
     width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
@@ -452,30 +440,15 @@ table.admin-panel {
     max-width: 550px;
 }
 
+.xmb-block-wide-93, .admin-attachment-result {
+    width: 93%;
+}
+
 .xmb-block-98-flex, .admin-panel {
     width: calc(98% - (2 * <?= $THEME['borderwidth'] ?>));
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: flex;
     flex-wrap: wrap;
-}
-
-.category-head {
-    <?= $THEME['catcss'] ?>
-    color: <?= $THEME['cattext'] ?>;
-    padding: <?= $THEME['tablespace'] ?>;
-    font-weight: bold;
-}
-
-.xmb-block > .category-head, .admin-panel .category-head {
-    border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
-    text-align: center;
-}
-
-.xmb-category-head-row-flex, .admin-attachment-search .category-head {
-    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
-    margin-right: -<?= $THEME['borderwidth'] ?>;
-    margin-bottom: -<?= $THEME['borderwidth'] ?>;
-    flex-basis: 100%;
 }
 
 .xmb-content-row {
@@ -497,7 +470,7 @@ table.admin-panel {
     }
 }
 
-.admin-attachment-search .row {
+.admin-attachment-search .row, .admin-attachment-result .row {
     display: contents;
 }
 
@@ -510,12 +483,40 @@ table.admin-panel {
     background: <?= $THEME['altbg1'] ?>;
 }
 
-.xmb-grid-form-field, .admin-attachment-search .field {
+.xmb-grid-form-field, .admin-attachment-search .field, .admin-attachment-result .cell {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
+    color: <?= $THEME['tabletext'] ?>;
     background: <?= $THEME['altbg2'] ?>;
+}
+
+.category-head {
+    <?= $THEME['catcss'] ?>
+    color: <?= $THEME['cattext'] ?>;
+    padding: <?= $THEME['tablespace'] ?>;
+    font-weight: bold;
+}
+
+.xmb-block > .category-head, .admin-panel .category-head {
+    border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    text-align: center;
+}
+
+.xmb-category-head-row-flex, .admin-attachment-search .category-head, .admin-attachment-result .category-head {
+    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+    margin-right: -<?= $THEME['borderwidth'] ?>;
+    margin-bottom: -<?= $THEME['borderwidth'] ?>;
+    flex-basis: 100%;
+}
+
+.header, .header .cell {
+    background-color: <?= $THEME['header'] ?>;
+    color: <?= $THEME['headertext'] ?>;
+    font-size: <?= $THEME['font-smaller-1'] ?>;
+    font-weight: bold;
+    table-layout: fixed;
 }
 
 .admin-attachment-search .span {
@@ -525,4 +526,39 @@ table.admin-panel {
 
 .admin-attachment-search .category-head {
     grid-column: 1 / span 2;
+}
+
+.admin-attachment-result {
+    margin: <?= $THEME['borderwidth'] ?> auto;
+    display: grid;
+    grid-template-columns: auto 20% 28% 11% max-content max-content;
+}
+
+.admin-attachment-result .span {
+    grid-column: 1 / span 6;
+    text-align: center;
+}
+
+.admin-attachment-result .category-head {
+    grid-column: 1 / span 6;
+}
+
+.admin-attachment-result .cell:nth-child(4),
+.admin-attachment-result .cell:nth-child(5),
+.admin-attachment-result .cell:nth-child(6) {
+    text-align: center;
+}
+
+@media screen and (max-width: 850px) {
+    .admin-attachment-result {
+        grid-template-columns: auto 20% 28% max-content;
+    }
+    .admin-attachment-result .cell:nth-child(4),
+    .admin-attachment-result .cell:nth-child(6) {
+        display: none;
+    }
+    .admin-attachment-result .span,
+    .admin-attachment-result .category-head {
+        grid-column: 1 / span 4;
+    }
 }
