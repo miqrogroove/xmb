@@ -29,6 +29,11 @@ use RuntimeException;
 
 class Attach
 {
+    public const array IMG_EXTENSIONS = ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico', 'webp', 'avif'];
+
+    // XMB's allowed image types must have full GD support as well as browser rendering support. 
+    private const array ALLOWED_IMG_TYPES = [IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_PNG, IMAGETYPE_WBMP, IMAGETYPE_BMP, IMAGETYPE_ICO, IMAGETYPE_WEBP, IMAGETYPE_AVIF];
+    
     public function __construct(private BBCode $bbcode, private DBStuff $db, private SQL $sql, private Variables $vars)
     {
         // Property promotion.
@@ -204,26 +209,7 @@ class Attach
         $filetype = image_type_to_mime_type($result[2]);
 
         // Try to make sure the filename extension is okay
-        $extension = strtolower(get_extension($filename));
-        $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico');
-        if (! in_array($extension, $img_extensions)) {
-            $extension = '';
-            $filetypei = strtolower($filetype);
-            if (strpos($filetypei, 'jpeg') !== false) {
-                $extension = '.jpg';
-            } elseif (strpos($filetypei, 'gif') !== false) {
-                $extension = '.gif';
-            } elseif (strpos($filetypei, 'wbmp') !== false) {
-                $extension = '.wbmp';
-            } elseif (strpos($filetypei, 'bmp') !== false) {
-                $extension = '.bmp';
-            } elseif (strpos($filetypei, 'png') !== false) {
-                $extension = '.png';
-            } elseif (strpos($filetypei, 'ico') !== false) {
-                $extension = '.ico';
-            }
-            $filename .= $extension;
-        }
+        $filename = $this->coerceFilenameExtension($filename, $result[2]);
 
         // Check minimum file size for disk storage
         if (! $usedb) {
@@ -255,9 +241,14 @@ class Attach
     {
         // Check if we can store image metadata
         $extension = strtolower(get_extension($result->filename));
-        $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp', 'ico');
-        if (in_array($extension, $img_extensions)) {
+        if (in_array($extension, self::IMG_EXTENSIONS)) {
             $sizeArray = getimagesize($filepath);
+            if ($sizeArray !== false) {
+                // Check if an allowed image type was detected.
+                if (! in_array($sizeArray[2], self::ALLOWED_IMG_TYPES)) {
+                    $sizeArray = false;
+                }
+            }
         } else {
             $sizeArray = false;
         }
@@ -275,58 +266,11 @@ class Attach
                 }
             }
 
-            // Coerce filename extension and mime type when they are incorrect.
-            $filetypei = strtolower($result->filetype);
-            switch ($sizeArray[2]) {
-                case IMAGETYPE_JPEG:
-                    if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'jpe') {
-                        $result->filename .= '.jpg';
-                    }
-                    if (strpos($filetypei, 'jpeg') === FALSE) {
-                        $result->filetype = 'image/jpeg';
-                    }
-                    break;
-                case IMAGETYPE_GIF:
-                    if ($extension != 'gif') {
-                        $result->filename .= '.gif';
-                    }
-                    if (strpos($filetypei, 'gif') === FALSE) {
-                        $result->filetype = 'image/gif';
-                    }
-                    break;
-                case IMAGETYPE_PNG:
-                    if ($extension != 'png') {
-                        $result->filename .= '.png';
-                    }
-                    if (strpos($filetypei, 'png') === FALSE) {
-                        $result->filetype = 'image/png';
-                    }
-                    break;
-                case IMAGETYPE_BMP:
-                    if ($extension != 'bmp') {
-                        $result->filename .= '.bmp';
-                    }
-                    if (strpos($filetypei, 'bmp') === FALSE) {
-                        $result->filetype = 'image/bmp';
-                    }
-                    break;
-                case IMAGETYPE_WBMP: // Added in PHP 4.4.
-                    if ($extension != 'wbmp' && $extension != 'wbm') {
-                        $result->filename .= '.wbmp';
-                    }
-                    if (strpos($filetypei, 'wbmp') === FALSE) {
-                        $result->filetype = 'image/vnd.wap.wbmp';
-                    }
-                    break;
-                case IMAGETYPE_ICO:
-                    if ($extension != 'ico') {
-                        $result->filename .= '.ico';
-                    }
-                    if (strpos($filetypei, 'ico') === FALSE) {
-                        $result->filetype = 'image/vnd.microsoft.icon';
-                    }
-                    break;
-            }
+            // Always coerce mime type for simplicity.
+            $result->filetype = image_type_to_mime_type($sizeArray[2]);
+
+            // Coerce filename extension when incorrect.
+            $result->filename = $this->coerceFilenameExtension($result->filename, $sizeArray[2]);
         }
 
         // Store File
@@ -438,8 +382,7 @@ class Attach
             $this->sql->renameAttachment($aid, $newname, $quarantine);
 
             $extension = strtolower(get_extension($newname));
-            $img_extensions = array('jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp');
-            if (in_array($extension, $img_extensions)) {
+            if (in_array($extension, self::IMG_EXTENSIONS)) {
                 if (0 == $this->sql->countThumbnails($aid, $quarantine)) {
                     $this->regenerateThumbnail($aid, $pid, $quarantine);
                 }
@@ -558,7 +501,7 @@ class Attach
         $newfilename = $aid;
         $path .= $newfilename;
         $file = fopen($path, 'wb');
-        if ($file === FALSE) {
+        if ($file === false) {
             return false;
         }
         if (fwrite($file, $attach['attachment']) != (int) $attach['filesize']) {
@@ -1120,22 +1063,20 @@ class Attach
                 $img = @imagecreatefrompng($path);
                 break;
             case IMAGETYPE_BMP:
-                // See our website for drop-in BMP support.
-                if (! class_exists('phpthumb_bmp')) {
-                    if (is_file(ROOT . 'include/phpthumb-bmp.php')) {
-                        require_once(ROOT . 'include/phpthumb-bmp.php');
-                    }
-                }
-                if (class_exists('phpthumb_bmp')) {
-                    $ns = new phpthumb_bmp;
-                    $img = $ns->phpthumb_bmpfile2gd($path);
-                } else {
-                    $img = false;
-                }
+                $img = @imagecreatefrombmp($path);
                 break;
-            case 15: //IMAGETYPE_WBMP
+            case IMAGETYPE_WBMP:
                 $img = @imagecreatefromwbmp($path);
                 break;
+            case IMAGETYPE_AVIF:
+                $img = @imagecreatefromavif($path);
+                break;
+            case IMAGETYPE_WEBP:
+                $img = @imagecreatefromwebp($path);
+                break;
+            case IMAGETYPE_XBM:
+                $img = @imagecreatefromxbm($path);
+                break;            
             default:
                 return false;
         }
@@ -1148,7 +1089,7 @@ class Attach
         if ($imgSize->isSmallerThan($thumbMaxSize)) {
             if (! $load_if_smaller) {
                 return false;
-            } elseif (!$enlarge_if_smaller) {
+            } elseif (! $enlarge_if_smaller) {
                 $thumbMaxSize = $imgSize;
                 return $img;
             }
@@ -1374,5 +1315,36 @@ class Attach
         if (strlen(htmlEsc($filename)) > $this->vars::FILENAME_MAX_LENGTH - 10) return false;
         
         return isValidFilename($filename);
+    }
+
+    /**
+     * Coerce the filename extension when it doesn't match the file type.
+     *
+     * @since 1.10.07
+     * @param string $filename The original raw file name.
+     * @param int $fileType The file type value provided by getimagesize()
+     * @return string The amended filename.
+     */
+    private function coerceFilenameExtension(string $filename, int $fileType): string
+    {
+        $extension = strtolower(get_extension($filename));
+        switch ($fileType) {
+            case IMAGETYPE_JPEG:
+                if ($extension != 'jpg' && $extension != 'jpeg' && $extension != 'jpe') {
+                    $filename .= '.jpg';
+                }
+                break;
+            case IMAGETYPE_WBMP: // Added in PHP 4.4.
+                if ($extension != 'wbmp' && $extension != 'wbm') {
+                    $filename .= '.wbmp';
+                }
+                break;
+            default:
+                $expected = image_type_to_extension($fileType, include_dot: false);
+                if ($extension !== $expected) {
+                    $filename .= ".$expected";
+                }
+        }
+        return $filename;
     }
 }

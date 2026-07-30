@@ -357,8 +357,7 @@ class Core
             $output = '';
             $prefix = '';
             $extension = strtolower(get_extension($post['filename']));
-            $img_extensions = ['jpg', 'jpeg', 'jpe', 'gif', 'png', 'wbmp', 'wbm', 'bmp'];
-            if ($this->settings->get('attachimgpost') == 'on' && in_array($extension, $img_extensions)) {
+            if ($this->settings->get('attachimgpost') == 'on' && in_array($extension, $this->attach::IMG_EXTENSIONS)) {
                 if ((int) $attach['thumbid'] > 0) {
                     $post['thumburl'] = $this->attach->getURL((int) $attach['thumbid'], $pid, $attach['thumbname'], $htmlencode, $quarantine);
                     $result = explode('x', $attach['thumbsize']);
