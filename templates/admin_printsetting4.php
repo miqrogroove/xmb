@@ -1,8 +1,11 @@
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $settingDesc ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><textarea rows="<?= $rows ?>" name="<?= $name ?>" cols="<?= $cols ?>">
+   <div class="row">
+    <div class="label"><?= $settingDesc ?></div>
+    <div class="field">
+     <div>    
+      <textarea rows="<?= $rows ?>" name="<?= $name ?>" cols="<?= $cols ?>">
 <?php // Linefeed required here - Do not edit!
-echo $value;
+     echo $value;
 ?></textarea><?= $note ?>
-</td>
-</tr>
+     </div>
+    </div>
+   </div>

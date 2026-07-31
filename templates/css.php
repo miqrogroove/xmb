@@ -381,18 +381,6 @@ table.subforums {
     }
 }
 
-.settings-wrap {
-    max-width: 800px;
-}
-
-#settings tbody {
-    display: none;
-}
-
-#settings tbody#boardDetail {
-    display: table-row-group;
-}
-
 #tabs {
     display: flex;
     justify-content: center;
@@ -430,14 +418,30 @@ table.fdetails {
     margin: 0 auto;
 }
 
-.xmb-block-grid-form, .admin-attachment-search {
+.xmb-block-grid-form,
+.admin-attachment-search {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
     grid-template-columns: max-content auto;
 }
 
+.xmb-tabbed-block-form,
+.admin-settings .group {
+    margin: <?= $THEME['borderwidth'] ?> auto;
+    display: none;
+    grid-template-columns: auto auto;
+}
+
+.admin-settings div#boardDetail {
+    display: grid;
+}
+
 .xmb-block-narrow-550, .admin-attachment-search {
     max-width: 550px;
+}
+
+.xmb-block-medium-800, .admin-settings .group {
+    max-width: 800px;
 }
 
 .xmb-block-wide-93, .admin-attachment-result {
@@ -470,11 +474,15 @@ table.fdetails {
     }
 }
 
-.admin-attachment-search .row, .admin-attachment-result .row {
+.admin-attachment-search .row,
+.admin-attachment-result .row,
+.admin-settings .row {
     display: contents;
 }
 
-.xmb-grid-form-label, .admin-attachment-search .label {
+.xmb-grid-form-label,
+.admin-attachment-search .label,
+.admin-settings .label {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     padding-top: calc(<?= $THEME['tablespace'] ?> + 2px);
@@ -483,13 +491,21 @@ table.fdetails {
     background: <?= $THEME['altbg1'] ?>;
 }
 
-.xmb-grid-form-field, .admin-attachment-search .field, .admin-attachment-result .cell {
+.xmb-grid-form-field,
+.admin-attachment-search .field,
+.admin-attachment-result .cell,
+.admin-settings .field {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     color: <?= $THEME['tabletext'] ?>;
     background: <?= $THEME['altbg2'] ?>;
+}
+
+.admin-settings .field {
+    display: flex;
+    align-items: center;
 }
 
 .category-head {
@@ -504,7 +520,10 @@ table.fdetails {
     text-align: center;
 }
 
-.xmb-category-head-row-flex, .admin-attachment-search .category-head, .admin-attachment-result .category-head {
+.xmb-category-head-row-flex,
+.admin-attachment-search .category-head,
+.admin-attachment-result .category-head,
+.admin-settings .category-head {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
@@ -519,12 +538,15 @@ table.fdetails {
     table-layout: fixed;
 }
 
-.admin-attachment-search .span {
+.admin-attachment-search .span,
+.admin-settings .span {
     grid-column: 1 / span 2;
+    display: block;
     text-align: center;
 }
 
-.admin-attachment-search .category-head {
+.admin-attachment-search .category-head,
+.admin-settings .category-head {
     grid-column: 1 / span 2;
 }
 

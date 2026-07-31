@@ -55,7 +55,7 @@ if ($settings->get('subject_in_title') == 'on') {
 
 $core->assertAdminOnly();
 
-$template->css .= "<script src='" . $vars->full_url . "js/settings.js?v=2'></script>\n";
+$template->css .= "<script src='" . $vars->full_url . "js/settings.js?v=4'></script>\n";
 
 $header = $template->process('header.php');
 

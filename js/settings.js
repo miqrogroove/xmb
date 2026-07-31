@@ -3,7 +3,7 @@ function switchTab(myButton, bodyID) {
 
   // Get all table blocks and hide them
   let table = document.getElementById('settings');
-  let bodies = table.getElementsByTagName('tbody');
+  let bodies = table.getElementsByClassName('group');
   for (i = 0; i < bodies.length; i++) {
     bodies[i].style.display = "none";
   }
@@ -16,6 +16,6 @@ function switchTab(myButton, bodyID) {
   }
 
   // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(bodyID).style.display = "table-row-group";
+  document.getElementById(bodyID).style.display = "grid";
   myButton.className = "active";
 }

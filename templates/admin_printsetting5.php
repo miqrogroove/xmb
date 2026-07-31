@@ -1,4 +1,4 @@
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $settingDesc; ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><?= $errorMsg; ?></td>
-</tr>
+   <div class="row">
+    <div class="label"><?= $settingDesc; ?></div>
+    <div class="field"><?= $errorMsg; ?></div>
+   </div>

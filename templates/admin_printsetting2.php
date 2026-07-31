@@ -1,4 +1,4 @@
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" valign="top"><?= $setname ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" size="<?= $size ?>" value="<?= $value ?>" name="<?= $varname ?>" /></td>
-</tr>
+   <div class="row">
+    <div class="label"><?= $setname ?></div>
+    <div class="field"><input type="text" size="<?= $size ?>" value="<?= $value ?>" name="<?= $varname ?>" /></div>
+   </div>
