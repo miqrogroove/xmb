@@ -436,6 +436,10 @@ table.fdetails {
     display: grid;
 }
 
+.xmb-block-narrow-450, .admin-censor {
+    max-width: 450px;
+}
+
 .xmb-block-narrow-550, .admin-attachment-search {
     max-width: 550px;
 }
@@ -476,6 +480,7 @@ table.fdetails {
 
 .admin-attachment-search .row,
 .admin-attachment-result .row,
+.admin-censor .row,
 .admin-settings .row {
     display: contents;
 }
@@ -494,6 +499,7 @@ table.fdetails {
 .xmb-grid-form-field,
 .admin-attachment-search .field,
 .admin-attachment-result .cell,
+.admin-censor .field,
 .admin-settings .field {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -523,6 +529,7 @@ table.fdetails {
 .xmb-category-head-row-flex,
 .admin-attachment-search .category-head,
 .admin-attachment-result .category-head,
+.admin-censor .category-head,
 .admin-settings .category-head {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -583,4 +590,15 @@ table.fdetails {
     .admin-attachment-result .category-head {
         grid-column: 1 / span 4;
     }
+}
+
+.admin-censor {
+    margin: <?= $THEME['borderwidth'] ?> auto;
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.admin-censor .span {
+    grid-column: 1 / span 3;
+    text-align: center;
 }
