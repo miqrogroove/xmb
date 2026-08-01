@@ -574,7 +574,8 @@ table.fdetails {
 
 .admin-attachment-result .cell:nth-child(4),
 .admin-attachment-result .cell:nth-child(5),
-.admin-attachment-result .cell:nth-child(6) {
+.admin-attachment-result .cell:nth-child(6),
+.admin-censor .field:nth-child(1) {
     text-align: center;
 }
 
