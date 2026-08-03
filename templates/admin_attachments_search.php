@@ -1,5 +1,5 @@
 <form method="post" action="<?= $full_url ?>admin/attachments.php">
- <div class="admin-attachment-search">
+ <div class="admin-attachment-wrap"><div class="admin-attachment-search">
   <div class="row">
    <div class="category-head"><?= $lang['textsearch'] ?></div>
   </div>
@@ -38,5 +38,5 @@
   <div class="row">
    <div class="field span"><input type="submit" name="searchsubmit" class="submit" value="<?= $lang['textsearch'] ?>" /></div>
   </div>
- </div>
+ </div></div>
 </form>

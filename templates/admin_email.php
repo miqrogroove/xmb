@@ -7,7 +7,7 @@ namespace XMB;
 ?>
 <form method="post" action="<?= $full_url ?>admin/email.php">
  <input type="hidden" name="token" value="<?= $token ?>" />
- <div class="admin-email">
+ <div class="admin-email-wrap"><div class="admin-email">
   <div class="row">
    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_email_settings'] ?></div>
   </div>
@@ -72,5 +72,5 @@ if ($mailerInConfig) {
   <div class="row">
    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
   </div>
- </div>
+ </div></div>
 </form>

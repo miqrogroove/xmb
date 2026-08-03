@@ -1,6 +1,6 @@
 <form method="post" action="<?= $full_url ?>admin/attachments.php">
  <input type="hidden" name="token" value="<?= $token ?>" />
- <div class="admin-attachment-result">
+ <div class="admin-attachment-wrap"><div class="admin-attachment-result">
   <div class="row">
    <div class="category-head"><?= $lang['textattachsearchresults'] ?></div>
   </div>

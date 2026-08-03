@@ -466,6 +466,19 @@ table.fdetails {
     padding: <?= $THEME['tablespace'] ?>;
 }
 
+.admin-attachment-wrap,
+.admin-censor-wrap,
+.admin-email-wrap,
+.admin-panel-wrap {
+    margin-top: -<?= $THEME['borderwidth'] ?>;
+    margin-left: -<?= $THEME['borderwidth'] ?>;
+}
+
+.admin-settings {
+    margin-top: calc(-<?= $THEME['borderwidth'] ?> + <?= $THEME['tablespace'] ?> + 1px);
+    margin-left: -<?= $THEME['borderwidth'] ?>;
+}
+
 .xmb-flex-4, .admin-panel .group {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;

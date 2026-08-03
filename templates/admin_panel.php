@@ -4,7 +4,7 @@ namespace XMB;
 
 ?>
 <br />
-<div class="admin-panel">
+<div class="admin-panel-wrap"><div class="admin-panel">
  <div class="group">
   <div class="category-head"><?= $lang['general'] ?></div>
   <div class="xmb-content-row">
@@ -92,5 +92,5 @@ namespace XMB;
 
   </div>
  </div>
-</div>
+</div></div>
 <br />

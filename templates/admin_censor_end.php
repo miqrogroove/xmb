@@ -9,5 +9,5 @@
   <div class="row">
    <div class="field span"><input type="submit" class="submit" name="censorsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
   </div>
- </div>
+ </div></div>
 </form>
