@@ -412,7 +412,6 @@ table.fdetails {
 }
 
 .xmb-block {
-    width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     background: <?= $THEME['altbg1'] ?>;
     margin: 0 auto;
@@ -452,6 +451,10 @@ table.fdetails {
     width: 93%;
 }
 
+.xmb-block-wide-default, .xmb-block, .admin-email {
+    width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
+}
+
 .xmb-block-98-flex, .admin-panel {
     width: calc(98% - (2 * <?= $THEME['borderwidth'] ?>));
     margin: <?= $THEME['borderwidth'] ?> auto;
@@ -481,12 +484,14 @@ table.fdetails {
 .admin-attachment-search .row,
 .admin-attachment-result .row,
 .admin-censor .row,
+.admin-email .row,
 .admin-settings .row {
     display: contents;
 }
 
 .xmb-grid-form-label,
 .admin-attachment-search .label,
+.admin-email .label,
 .admin-settings .label {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
@@ -500,6 +505,7 @@ table.fdetails {
 .admin-attachment-search .field,
 .admin-attachment-result .cell,
 .admin-censor .field,
+.admin-email .field,
 .admin-settings .field {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -530,6 +536,7 @@ table.fdetails {
 .admin-attachment-search .category-head,
 .admin-attachment-result .category-head,
 .admin-censor .category-head,
+.admin-email .category-head,
 .admin-settings .category-head {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -546,6 +553,7 @@ table.fdetails {
 }
 
 .admin-attachment-search .span,
+.admin-email .span,
 .admin-settings .span {
     grid-column: 1 / span 2;
     display: block;
@@ -553,6 +561,7 @@ table.fdetails {
 }
 
 .admin-attachment-search .category-head,
+.admin-email .category-head,
 .admin-settings .category-head {
     grid-column: 1 / span 2;
 }
@@ -602,4 +611,10 @@ table.fdetails {
 .admin-censor .span {
     grid-column: 1 / span 3;
     text-align: center;
+}
+
+.admin-email {
+    margin: <?= $THEME['borderwidth'] ?> auto;
+    display: grid;
+    grid-template-columns: auto auto;
 }
