@@ -21,7 +21,9 @@ namespace XMB;
  <input type="hidden" name="token" value="<?= $token ?>" />
  <div class="admin-settings" id="settings">
   <div class="group" id="boardDetail">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings1'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings1'] ?></div>
+   </div>
 <?php
     $rulesNote = '<br />' . $lang['texthtmlis'] . ' ' . $lang['texton'];
     $admin->printsetting2($lang['textsitename'], 'sitenamenew', $SETTINGS['sitename'], 50);
@@ -33,10 +35,14 @@ namespace XMB;
     $admin->printsetting4($lang['textbboffreason'], 'bboffreasonnew', $SETTINGS['bboffreason'], 5, 50);
     $admin->printsetting6($lang['gzipcompression'], 'gzipcompressnew', 'gzipcompress');
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="defaults">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings2'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings2'] ?></div>
+   </div>
    <div class="row">
     <div class="label"><?= $lang['textlanguage'] ?></div>
     <div class="field"><?= $langfileselect ?></div>
@@ -57,10 +63,14 @@ namespace XMB;
 <?php
     $admin->printsetting2($lang['dateformat'], 'dateformatnew', $SETTINGS['dateformat'], 20);
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="modules">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings3'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings3'] ?></div>
+   </div>
 <?php
     $admin->printsetting6($lang['textsearchstatus'], 'searchstatusnew', 'searchstatus');
     $admin->printsetting6($lang['textfaqstatus'], 'faqstatusnew', 'faqstatus');
@@ -70,10 +80,14 @@ namespace XMB;
     $admin->printsetting6($lang['coppastatus'], 'coppanew', 'coppa');
     $admin->printsetting6($lang['reportpoststatus'], 'reportpostnew', 'reportpost');
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="cosmetic">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings4'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings4'] ?></div>
+   </div>
 <?php
     $admin->printsetting6($lang['showsubforums'], 'showsubforumsnew', 'showsubforums');
     $admin->printsetting6($lang['space_cats'], 'space_catsnew', 'space_cats');
@@ -88,10 +102,14 @@ namespace XMB;
     $admin->printsetting6($lang['editedby'], 'editedbynew', 'editedby');
     $admin->printsetting6($lang['show_logs_in_threads'], 'showlogsnew', 'show_logs_in_threads');
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="front">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings9'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings9'] ?></div>
+   </div>
 <?php
     $admin->printsetting6($lang['index_stats'], 'index_statsnew', 'index_stats');
     $admin->printsetting6($lang['textcatsonly'], 'catsonlynew', 'catsonly');
@@ -103,10 +121,14 @@ namespace XMB;
     $admin->printsetting4($lang['tickercontents'], 'tickercontentsnew', $SETTINGS['tickercontents'], 5, 50);
     $admin->printsetting3($lang['tickercode'], 'tickercodenew', array($lang['plaintext'], $lang['textbbcode'], $lang['texthtml']), array('plain', 'bbcode', 'html'), $tickercodechecked, false);
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="users">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings5'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings5'] ?></div>
+   </div>
 <?php
     $admin->printsetting6($lang['reg_on'], 'reg_on', 'regstatus');
     $admin->printsetting3($lang['ipreg'], 'ipReg', array($lang['texton'], $lang['textoff']), array('on', 'off'), $allowipreg, false);
@@ -126,10 +148,14 @@ namespace XMB;
     $admin->printsetting6($lang['moderation_setting'], 'quarantinenew', 'quarantine_new_users');
     $admin->printsetting6($lang['hide_banned_users'], 'hidebannednew', 'hide_banned');
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="attachments">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings8'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings8'] ?></div>
+   </div>
 <?php
     if (! ini_get('file_uploads')) {
         $admin->printsetting5($lang['status'], $lang['uploadDisabled']);
@@ -160,10 +186,14 @@ namespace XMB;
     $admin->printsetting3($lang['textfilesurlpath'], 'filesurlpathnew', array($lang['textfilesurlpath1'], $lang['textfilesurlpath2'], $lang['textfilesurlpath3'], $lang['textfilesurlpath4'], $lang['textfilesurlpath5']), array('1', '2', '3', '4', '5'), $urlformatchecked, false);
     $admin->printsetting2($lang['textfilesbase'], 'filesbasenew', $SETTINGS['files_virtual_url'], 50);
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="other">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings6'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings6'] ?></div>
+   </div>
 <?php
     $admin->printsetting2($lang['texthottopic'], 'hottopicnew', ((int) $SETTINGS['hottopic']), 3);
     $admin->printsetting6($lang['bbinsert'], 'bbinsertnew', 'bbinsert');
@@ -179,10 +209,14 @@ namespace XMB;
         $admin->printsetting2($lang['max_avatar_size_h'], 'max_avatar_size_h_new', $max_avatar_sizes[1], 4);
     }
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="captcha">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings7'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings7'] ?></div>
+   </div>
 <?php
     if (! $goodCaptcha) {
         $admin->printsetting5($lang['captchastatus'], $lang['captcha_not_working']);
@@ -210,10 +244,14 @@ namespace XMB;
         $admin->printsetting6($lang['captchaimagecolor'], 'captchaimagecolornew', 'captcha_image_color');
     }
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
   <div class="group" id="thirdParty">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings10'] ?></div>
+   <div class="row">
+    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings10'] ?></div>
+   </div>
 <?php
     $recaptcha_link = '<br /><span class="smalltext">[ <a href="https://console.cloud.google.com/security/recaptcha" onclick="window.open(this.href); return false;">Setup</a> ]';
     $admin->printsetting6($lang['google_captcha_onoff'], 'recaptchanew', 'google_captcha');
@@ -221,7 +259,9 @@ namespace XMB;
     $admin->printsetting2($lang['google_captcha_secretkey'], 'recaptchasecretnew', $SETTINGS['google_captcha_secret'], 50);
     $admin->printsetting3($lang['google_captcha_type'], 'recaptchatypenew', $gcaptchaNames, $gcaptchaValues, $gcaptchaChecked, multi: false);
 ?>
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="row">
+    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
   </div>
  </div>
 </form>
