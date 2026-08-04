@@ -12,7 +12,7 @@ namespace XMB;
    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_email_settings'] ?></div>
   </div>
 <?php
-    $admin->printsetting2($lang['adminemail'], 'adminemailnew', $SETTINGS['adminemail'], 50);
+    $admin->printsetting2($lang['adminemail'], 'adminemailnew', $SETTINGS['adminemail'], 45);
 ?>
   <div class="row">
    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
@@ -43,13 +43,13 @@ if ($mailerInConfig) {
    <div class="field"><?= $lang['mailerTypeSymfonyDetail'] ?></div>
   </div>
 <?php
-    $admin->printsetting2($lang['mailerHost'], 'hostnew', $SETTINGS['mailer_host'], 50);
+    $admin->printsetting2($lang['mailerHost'], 'hostnew', $SETTINGS['mailer_host'], 45);
     $admin->printsetting2($lang['mailerPort'], 'portnew', $SETTINGS['mailer_port'], 6);
-    $admin->printsetting2($lang['mailerUsername'], 'usernamenew', $SETTINGS['mailer_username'], 50);
+    $admin->printsetting2($lang['mailerUsername'], 'usernamenew', $SETTINGS['mailer_username'], 45);
 ?>
   <div class="row">
    <div class="label"><?= $lang['mailerPassword'] ?></div>
-   <div class="field"><input type="text" name="passwordnew" size="50" value="<?= $passwordAttr ?>" /></div>
+   <div class="field"><input type="text" name="passwordnew" size="45" value="<?= $passwordAttr ?>" /></div>
   </div>
 <?php
     $labels = [$lang['textoff'], $lang['automatic'], $lang['texton']];
@@ -65,9 +65,9 @@ if ($mailerInConfig) {
   </div>
 <?php
     $admin->printsetting5($lang['textdesc'], $lang['mailerDkimIntro']);
-    $admin->printsetting2($lang['mailerDkimKey'], 'dkimkeynew', $SETTINGS['mailer_dkim_key_path'], 50);
-    $admin->printsetting2($lang['mailerDkimDomain'], 'dkimdomainnew', $SETTINGS['mailer_dkim_domain'], 50);
-    $admin->printsetting2($lang['mailerDkimSelector'], 'dkimselectornew', $SETTINGS['mailer_dkim_selector'], 50);
+    $admin->printsetting2($lang['mailerDkimKey'], 'dkimkeynew', $SETTINGS['mailer_dkim_key_path'], 45);
+    $admin->printsetting2($lang['mailerDkimDomain'], 'dkimdomainnew', $SETTINGS['mailer_dkim_domain'], 45);
+    $admin->printsetting2($lang['mailerDkimSelector'], 'dkimselectornew', $SETTINGS['mailer_dkim_selector'], 45);
 ?>
   <div class="row">
    <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
