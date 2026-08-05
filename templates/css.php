@@ -439,8 +439,13 @@ table.fdetails {
     max-width: 450px;
 }
 
-.xmb-block-narrow-550, .admin-attachment-search {
+.xmb-block-narrow-550,
+.admin-attachment-search {
     max-width: 550px;
+}
+
+.xmb-block-medium-750, .admin-newsletter {
+    max-width: 750px;
 }
 
 .xmb-block-medium-800, .admin-settings .group {
@@ -469,6 +474,7 @@ table.fdetails {
 .admin-attachment-wrap,
 .admin-censor-wrap,
 .admin-email-wrap,
+.admin-newsletter-wrap,
 .admin-panel-wrap {
     margin-top: -<?= $THEME['borderwidth'] ?>;
     margin-left: -<?= $THEME['borderwidth'] ?>;
@@ -498,6 +504,7 @@ table.fdetails {
 .admin-attachment-result .row,
 .admin-censor .row,
 .admin-email .row,
+.admin-newsletter .row,
 .admin-settings .row {
     display: contents;
 }
@@ -505,6 +512,7 @@ table.fdetails {
 .xmb-grid-form-label,
 .admin-attachment-search .label,
 .admin-email .label,
+.admin-newsletter .label,
 .admin-settings .label {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
@@ -519,6 +527,7 @@ table.fdetails {
 .admin-attachment-result .cell,
 .admin-censor .field,
 .admin-email .field,
+.admin-newsletter .field,
 .admin-settings .field {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -550,6 +559,7 @@ table.fdetails {
 .admin-attachment-result .category-head,
 .admin-censor .category-head,
 .admin-email .category-head,
+.admin-newsletter .category-head,
 .admin-settings .category-head {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -567,6 +577,7 @@ table.fdetails {
 
 .admin-attachment-search .span,
 .admin-email .span,
+.admin-newsletter .span,
 .admin-settings .span {
     grid-column: 1 / span 2;
     display: block;
@@ -575,8 +586,19 @@ table.fdetails {
 
 .admin-attachment-search .category-head,
 .admin-email .category-head,
+.admin-newsletter .category-head,
 .admin-settings .category-head {
     grid-column: 1 / span 2;
+}
+
+@media screen and (max-width: 600px) {
+    .admin-settings input[type="text"],
+    .admin-settings textarea {
+        width: 250px;
+    }
+    .admin-attachment-search input[type="text"] {
+        width: 190px;
+    }
 }
 
 .admin-attachment-result {
@@ -626,8 +648,28 @@ table.fdetails {
     text-align: center;
 }
 
-.admin-email {
+@media screen and (max-width: 600px) {
+    .admin-censor input[type="text"] {
+        width: 150px;
+    }
+}
+
+.admin-email,
+.admin-newsletter {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
     grid-template-columns: auto auto;
+}
+
+@media screen and (max-width: 600px) {
+    .admin-email input[type="text"] {
+        width: 250px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .admin-newsletter input[type="text"],
+    .admin-newsletter textarea {
+        width: calc(100% - (2 * (<?= $THEME['tablespace'] ?> - <?= $THEME['borderwidth'] ?>)));
+    }
 }
