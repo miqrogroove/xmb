@@ -431,6 +431,11 @@ table.fdetails {
     grid-template-columns: auto auto;
 }
 
+.xmb-block-simple,
+.admin-search-form {
+    margin: <?= $THEME['borderwidth'] ?> auto;
+}
+
 .admin-settings div#boardDetail {
     display: grid;
 }
@@ -440,7 +445,8 @@ table.fdetails {
 }
 
 .xmb-block-narrow-550,
-.admin-attachment-search {
+.admin-attachment-search,
+.admin-search-form {
     max-width: 550px;
 }
 
@@ -475,7 +481,8 @@ table.fdetails {
 .admin-censor-wrap,
 .admin-email-wrap,
 .admin-newsletter-wrap,
-.admin-panel-wrap {
+.admin-panel-wrap,
+.admin-search-wrap {
     margin-top: -<?= $THEME['borderwidth'] ?>;
     margin-left: -<?= $THEME['borderwidth'] ?>;
 }
@@ -505,6 +512,7 @@ table.fdetails {
 .admin-censor .row,
 .admin-email .row,
 .admin-newsletter .row,
+.admin-search-form .row,
 .admin-settings .row {
     display: contents;
 }
@@ -528,6 +536,7 @@ table.fdetails {
 .admin-censor .field,
 .admin-email .field,
 .admin-newsletter .field,
+.admin-search-form .field,
 .admin-settings .field {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -560,6 +569,7 @@ table.fdetails {
 .admin-censor .category-head,
 .admin-email .category-head,
 .admin-newsletter .category-head,
+.admin-search-form .category-head,
 .admin-settings .category-head {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -619,7 +629,8 @@ table.fdetails {
 .admin-attachment-result .cell:nth-child(4),
 .admin-attachment-result .cell:nth-child(5),
 .admin-attachment-result .cell:nth-child(6),
-.admin-censor .field:nth-child(1) {
+.admin-censor .field:nth-child(1),
+.admin-search-form .field {
     text-align: center;
 }
 
