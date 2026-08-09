@@ -411,12 +411,6 @@ table.fdetails {
     max-width: 1024px;
 }
 
-.xmb-block {
-    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
-    background: <?= $THEME['altbg1'] ?>;
-    margin: 0 auto;
-}
-
 .xmb-block-grid-form,
 .admin-attachment-search {
     margin: <?= $THEME['borderwidth'] ?> auto;
@@ -432,6 +426,7 @@ table.fdetails {
 }
 
 .xmb-block-simple,
+.admin-block,
 .admin-search-form {
     margin: <?= $THEME['borderwidth'] ?> auto;
 }
@@ -462,7 +457,9 @@ table.fdetails {
     width: 93%;
 }
 
-.xmb-block-wide-default, .xmb-block, .admin-email {
+.xmb-block-wide-default,
+.admin-block,
+.admin-email {
     width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
 }
 
@@ -478,6 +475,7 @@ table.fdetails {
 }
 
 .admin-attachment-wrap,
+.admin-block-wrap,
 .admin-censor-wrap,
 .admin-email-wrap,
 .admin-newsletter-wrap,
@@ -512,7 +510,6 @@ table.fdetails {
 .admin-censor .row,
 .admin-email .row,
 .admin-newsletter .row,
-.admin-search-form .row,
 .admin-settings .row {
     display: contents;
 }
@@ -534,6 +531,7 @@ table.fdetails {
 .admin-attachment-search .field,
 .admin-attachment-result .cell,
 .admin-censor .field,
+.admin-content-row,
 .admin-email .field,
 .admin-newsletter .field,
 .admin-search-form .field,
@@ -544,6 +542,10 @@ table.fdetails {
     padding: <?= $THEME['tablespace'] ?>;
     color: <?= $THEME['tabletext'] ?>;
     background: <?= $THEME['altbg2'] ?>;
+}
+
+.admin-content-row {
+    background: <?= $THEME['altbg1'] ?>;
 }
 
 .admin-settings .field {
@@ -558,7 +560,8 @@ table.fdetails {
     font-weight: bold;
 }
 
-.xmb-block > .category-head, .admin-panel .category-head {
+.admin-block > .category-head,
+.admin-panel .category-head {
     border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     text-align: center;
 }
@@ -566,6 +569,7 @@ table.fdetails {
 .xmb-category-head-row-flex,
 .admin-attachment-search .category-head,
 .admin-attachment-result .category-head,
+.admin-block > .category-head,
 .admin-censor .category-head,
 .admin-email .category-head,
 .admin-newsletter .category-head,
