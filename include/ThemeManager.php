@@ -121,6 +121,22 @@ class ThemeManager
      */
     public function more_theme_vars()
     {
+        // Correct any missing unit names.
+        if (is_numeric($this->vars->theme['borderwidth'])) {
+            $this->vars->theme['borderwidth'] = trim($this->vars->theme['borderwidth']) . 'px';
+        }
+        if (is_numeric($this->vars->theme['tablespace'])) {
+            $this->vars->theme['tablespace'] = trim($this->vars->theme['tablespace']) . 'px';
+        }
+        if (is_numeric($this->vars->theme['tablewidth'])) {
+            if ($this->vars->theme['tablewidth'] > 100) {
+                $unit = 'px';
+            } else {
+                $unit = '%';
+            }
+            $this->vars->theme['tablewidth'] = trim($this->vars->theme['tablewidth']) . $unit;
+        }
+
         // Alters certain visibility-variables
         if (false === strpos($this->vars->theme['bgcolor'], '.')) {
             $this->vars->theme['bgcode'] = 'background-color: ' . $this->vars->theme['bgcolor'] . ';';
@@ -172,7 +188,7 @@ class ThemeManager
         static $cachedFs;
 
         // Cache the theme font size in an array.
-        if (!isset($cachedFs)) {
+        if (! isset($cachedFs)) {
             preg_match('#([0-9]+)([a-z]*)#i', $this->vars->theme['fontsize'], $result);
             if (empty($result[1])) {
                 $result[1] = '12';
