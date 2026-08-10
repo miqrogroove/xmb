@@ -67,7 +67,7 @@ if (onSubmit('searchsubmit')) {
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE regip = '$userip'");
         while ($users = $db->fetch_array($query)) {
             $link = $vars->full_url . "member.php?action=viewpro&amp;member=" . recodeOut($users['username']);
-            $userList[] = "<a href = '$link'>{$users['username']}<br />";
+            $userList[] = "<a href = '$link'>{$users['username']}</a>";
             $userFound++;
         }
     }
@@ -77,9 +77,9 @@ if (onSubmit('searchsubmit')) {
         while ($post = $db->fetch_array($query)) {
             $link = $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}";
             if (! empty($post['subject'])) {
-                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject($post['subject']) . '<br />';
+                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject($post['subject']) . '</a>';
             } else {
-                $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
+                $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -</a>";
             }
             $msgFound++;
         }
@@ -89,7 +89,7 @@ if (onSubmit('searchsubmit')) {
         $query = $db->query("SELECT * FROM " . $vars->tablepre . "members WHERE bio LIKE '%$dblikeprofile%'");
         while ($users = $db->fetch_array($query)) {
             $link = $vars->full_url . "member.php?action=viewpro&amp;member=" . recodeOut($users['username']);
-            $userList[] = "<a href='$link'>{$users['username']}<br />";
+            $userList[] = "<a href='$link'>{$users['username']}</a>";
             $userFound++;
         }
     }
@@ -99,9 +99,9 @@ if (onSubmit('searchsubmit')) {
         while ($post = $db->fetch_array($query)) {
             $link = $vars->full_url . "viewthread.php?tid={$post['tid']}&amp;goto=search&amp;pid={$post['pid']}";
             if (! empty($post['subject'])) {
-                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject($post['subject']) . '<br />';
+                $msgList[] = "<a href='$link'>" . $core->rawHTMLsubject($post['subject']) . '</a>';
             } else {
-                $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -<br />";
+                $msgList[] = "<a href='$link'>- - {$lang['textnosub']} - -</a>";
             }
             $msgFound++;
         }
