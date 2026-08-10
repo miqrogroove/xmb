@@ -459,7 +459,8 @@ table.fdetails {
 
 .xmb-block-wide-default,
 .admin-block,
-.admin-email {
+.admin-email,
+.admin-search-result {
     width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
 }
 
@@ -510,6 +511,7 @@ table.fdetails {
 .admin-censor .row,
 .admin-email .row,
 .admin-newsletter .row,
+.admin-search-result .row,
 .admin-settings .row {
     display: contents;
 }
@@ -535,6 +537,8 @@ table.fdetails {
 .admin-email .field,
 .admin-newsletter .field,
 .admin-search-form .field,
+.admin-search-result .field,
+.admin-search-result .row-head,
 .admin-settings .field {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
@@ -544,7 +548,9 @@ table.fdetails {
     background: <?= $THEME['altbg2'] ?>;
 }
 
-.admin-content-row {
+.admin-content-row,
+.admin-search-form .field,
+.admin-search-result .field {
     background: <?= $THEME['altbg1'] ?>;
 }
 
@@ -601,6 +607,7 @@ table.fdetails {
 .admin-attachment-search .category-head,
 .admin-email .category-head,
 .admin-newsletter .category-head,
+.admin-search-result .span,
 .admin-settings .category-head {
     grid-column: 1 / span 2;
 }
@@ -687,4 +694,10 @@ table.fdetails {
     .admin-newsletter textarea {
         width: calc(100% - (2 * (<?= $THEME['tablespace'] ?> - <?= $THEME['borderwidth'] ?>)));
     }
+}
+
+.admin-search-result {
+    margin: <?= $THEME['borderwidth'] ?> auto;
+    display: grid;
+    grid-template-columns: 5% auto;
 }
