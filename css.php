@@ -45,4 +45,5 @@ header("Cache-Control: public, max-age=604800");
 header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
 
 $template->addRefs();
+$template->process('css_variables.php', echo: true);
 $template->process('css.php', echo: true);

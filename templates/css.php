@@ -411,26 +411,6 @@ table.fdetails {
     max-width: 1024px;
 }
 
-/* Application Variables - These are likely to be neither predictable nor to require any customization */
-
-.admin-attachment-result {
-    --xmb-grid-columns: auto 20% 28% 11% max-content max-content;
-}
-.admin-attachment-search {
-    --xmb-grid-columns: max-content auto;
-}
-.admin-censor {
-    --xmb-grid-columns: auto auto auto;
-}
-.admin-email,
-.admin-newsletter,
-.admin-settings {
-    --xmb-grid-columns: auto auto;
-}
-.admin-search-result {
-    --xmb-grid-columns: 5% auto;
-}
-
 /* Table Replacement Styles */
 
 .xmb-grid {
