@@ -433,8 +433,7 @@ table.fdetails {
 
 /* Table Replacement Styles */
 
-.xmb-block-grid-form,
-.admin-attachment-search {
+.xmb-grid {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
     grid-template-columns: var(--xmb-grid-columns);
@@ -646,12 +645,6 @@ table.fdetails {
     }
 }
 
-.admin-attachment-result {
-    margin: <?= $THEME['borderwidth'] ?> auto;
-    display: grid;
-    grid-template-columns: var(--xmb-grid-columns);
-}
-
 .admin-attachment-result .span {
     grid-column: 1 / span 6;
     text-align: center;
@@ -683,12 +676,6 @@ table.fdetails {
     }
 }
 
-.admin-censor {
-    margin: <?= $THEME['borderwidth'] ?> auto;
-    display: grid;
-    grid-template-columns: var(--xmb-grid-columns);
-}
-
 .admin-censor .span {
     grid-column: 1 / span 3;
     text-align: center;
@@ -698,13 +685,6 @@ table.fdetails {
     .admin-censor input[type="text"] {
         width: 150px;
     }
-}
-
-.admin-email,
-.admin-newsletter {
-    margin: <?= $THEME['borderwidth'] ?> auto;
-    display: grid;
-    grid-template-columns: var(--xmb-grid-columns);
 }
 
 @media screen and (max-width: 600px) {
@@ -718,10 +698,4 @@ table.fdetails {
     .admin-newsletter textarea {
         width: calc(100% - (2 * (<?= $THEME['tablespace'] ?> - <?= $THEME['borderwidth'] ?>)));
     }
-}
-
-.admin-search-result {
-    margin: <?= $THEME['borderwidth'] ?> auto;
-    display: grid;
-    grid-template-columns: var(--xmb-grid-columns);
 }

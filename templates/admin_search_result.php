@@ -1,7 +1,7 @@
 <br />
 
 <div class="admin-search-wrap">
- <div class="admin-search-result">
+ <div class="xmb-grid admin-search-result">
   <div class="row">
    <div class="row-head span">
     <strong><?= $userFound ?></strong> <?= $userFound == 1 ? $lang['beenfound_singular'] : $lang['beenfound'] ?><br />
