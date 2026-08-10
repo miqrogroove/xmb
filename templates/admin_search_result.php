@@ -5,7 +5,7 @@
   <div class="row">
    <div class="row-head span">
     <strong><?= $userFound ?></strong> <?= $userFound == 1 ? $lang['beenfound_singular'] : $lang['beenfound'] ?><br />
-   </td>
+   </div>
   </div>
 
 <?php foreach ($userList as $num => $val) { ?>
@@ -14,7 +14,7 @@
     <strong><?= ($num + 1) ?>.</strong>
    </div>
    <div class="field">
-    <?= $val; ?>
+    <?= $val ?>
    </div>
   </div>
 <?php } ?>
@@ -31,7 +31,7 @@
     <strong><?= ($num + 1) ?>.</strong>
    </div>
    <div class="field">
-    <?= $val; ?>
+    <?= $val ?>
    </div>
   </div>
 <?php } ?>

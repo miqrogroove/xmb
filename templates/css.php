@@ -411,18 +411,40 @@ table.fdetails {
     max-width: 1024px;
 }
 
+/* Application Variables - These are likely to be neither predictable nor to require any customization */
+
+.admin-attachment-result {
+    --xmb-grid-columns: auto 20% 28% 11% max-content max-content;
+}
+.admin-attachment-search {
+    --xmb-grid-columns: max-content auto;
+}
+.admin-censor {
+    --xmb-grid-columns: auto auto auto;
+}
+.admin-email,
+.admin-newsletter,
+.admin-settings {
+    --xmb-grid-columns: auto auto;
+}
+.admin-search-result {
+    --xmb-grid-columns: 5% auto;
+}
+
+/* Table Replacement Styles */
+
 .xmb-block-grid-form,
 .admin-attachment-search {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
-    grid-template-columns: max-content auto;
+    grid-template-columns: var(--xmb-grid-columns);
 }
 
 .xmb-tabbed-block-form,
 .admin-settings .group {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: none;
-    grid-template-columns: auto auto;
+    grid-template-columns: var(--xmb-grid-columns);
 }
 
 .xmb-block-simple,
@@ -549,7 +571,6 @@ table.fdetails {
 }
 
 .admin-content-row,
-.admin-search-form .field,
 .admin-search-result .field {
     background: <?= $THEME['altbg1'] ?>;
 }
@@ -568,8 +589,11 @@ table.fdetails {
 
 .admin-block > .category-head,
 .admin-panel .category-head {
-    border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     text-align: center;
+}
+
+.admin-panel .category-head {
+    border-bottom: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
 }
 
 .xmb-category-head-row-flex,
@@ -625,7 +649,7 @@ table.fdetails {
 .admin-attachment-result {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
-    grid-template-columns: auto 20% 28% 11% max-content max-content;
+    grid-template-columns: var(--xmb-grid-columns);
 }
 
 .admin-attachment-result .span {
@@ -662,7 +686,7 @@ table.fdetails {
 .admin-censor {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: var(--xmb-grid-columns);
 }
 
 .admin-censor .span {
@@ -680,7 +704,7 @@ table.fdetails {
 .admin-newsletter {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: var(--xmb-grid-columns);
 }
 
 @media screen and (max-width: 600px) {
@@ -699,5 +723,5 @@ table.fdetails {
 .admin-search-result {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
-    grid-template-columns: 5% auto;
+    grid-template-columns: var(--xmb-grid-columns);
 }
