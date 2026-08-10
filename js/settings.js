@@ -3,7 +3,7 @@ function switchTab(myButton, bodyID) {
 
   // Get all table blocks and hide them
   let table = document.getElementById('settings');
-  let bodies = table.getElementsByClassName('group');
+  let bodies = table.getElementsByClassName('xmb-tabbed-grid');
   for (i = 0; i < bodies.length; i++) {
     bodies[i].style.display = "none";
   }

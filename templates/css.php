@@ -439,8 +439,7 @@ table.fdetails {
     grid-template-columns: var(--xmb-grid-columns);
 }
 
-.xmb-tabbed-block-form,
-.admin-settings .group {
+.xmb-tabbed-grid {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: none;
     grid-template-columns: var(--xmb-grid-columns);
@@ -452,7 +451,7 @@ table.fdetails {
     margin: <?= $THEME['borderwidth'] ?> auto;
 }
 
-.admin-settings div#boardDetail {
+#boardDetail {
     display: grid;
 }
 
@@ -470,7 +469,8 @@ table.fdetails {
     max-width: 750px;
 }
 
-.xmb-block-medium-800, .admin-settings .group {
+.xmb-block-medium-800,
+.admin-settings .xmb-tabbed-grid {
     max-width: 800px;
 }
 

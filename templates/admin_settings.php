@@ -20,7 +20,7 @@ namespace XMB;
 <form method="post" action="<?= $full_url ?>admin/settings.php">
  <input type="hidden" name="token" value="<?= $token ?>" />
  <div class="admin-settings" id="settings">
-  <div class="group" id="boardDetail">
+  <div class="xmb-tabbed-grid" id="boardDetail">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings1'] ?></div>
    </div>
@@ -39,7 +39,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="defaults">
+  <div class="xmb-tabbed-grid" id="defaults">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings2'] ?></div>
    </div>
@@ -67,7 +67,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="modules">
+  <div class="xmb-tabbed-grid" id="modules">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings3'] ?></div>
    </div>
@@ -84,7 +84,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="cosmetic">
+  <div class="xmb-tabbed-grid" id="cosmetic">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings4'] ?></div>
    </div>
@@ -106,7 +106,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="front">
+  <div class="xmb-tabbed-grid" id="front">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings9'] ?></div>
    </div>
@@ -125,7 +125,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="users">
+  <div class="xmb-tabbed-grid" id="users">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings5'] ?></div>
    </div>
@@ -152,7 +152,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="attachments">
+  <div class="xmb-tabbed-grid" id="attachments">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings8'] ?></div>
    </div>
@@ -190,7 +190,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="other">
+  <div class="xmb-tabbed-grid" id="other">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings6'] ?></div>
    </div>
@@ -213,7 +213,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="captcha">
+  <div class="xmb-tabbed-grid" id="captcha">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings7'] ?></div>
    </div>
@@ -248,7 +248,7 @@ namespace XMB;
     <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
-  <div class="group" id="thirdParty">
+  <div class="xmb-tabbed-grid" id="thirdParty">
    <div class="row">
     <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings10'] ?></div>
    </div>
