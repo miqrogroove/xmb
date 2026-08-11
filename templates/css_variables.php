@@ -3,6 +3,11 @@
 .admin-attachment-result {
     --xmb-grid-columns: auto 20% 28% 11% max-content max-content;
 }
+@media screen and (max-width: 850px) {
+    .admin-attachment-result {
+        --xmb-grid-columns: auto 20% 28% max-content;
+    }
+}
 .admin-attachment-search {
     --xmb-grid-columns: max-content auto;
 }

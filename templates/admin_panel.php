@@ -4,7 +4,7 @@ namespace XMB;
 
 ?>
 <br />
-<div class="xmb-block-wrap admin-panel-wrap"><div class="admin-panel">
+<div class="xmb-block-wrap admin-panel-wrap"><div class="xmb-block-flex admin-panel">
  <div class="group">
   <div class="category-head"><?= $lang['general'] ?></div>
   <div class="xmb-content-row">
