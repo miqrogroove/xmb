@@ -42,8 +42,14 @@ $themeMgr->more_theme_vars();
 header("Content-type: text/css");
 header("Content-Description: XMB Stylesheet");
 header("Cache-Control: public, max-age=604800");
-header("Expires: ".gmdate('D, d M Y H:i:s', time() + 604800)." GMT");
+header("Expires: " . gmdate('D, d M Y H:i:s', time() + 604800) . " GMT");
 
 $template->addRefs();
 $template->process('css_variables.php', echo: true);
-$template->process('css.php', echo: true);
+if (is_readable(ROOT . $vars->theme['imgdir'] . '/theme-css.php')) {
+    // This is a custom template opportunity.  The default CSS template will not be used when the corresponding theme provides its own template.
+    $template->process(ROOT . $vars->theme['imgdir'] . '/theme-css.php', echo: true);
+} else {
+    // Use the default CSS template.
+    $template->process('css.php', echo: true);
+}

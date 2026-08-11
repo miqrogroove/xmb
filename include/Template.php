@@ -137,7 +137,7 @@ class Template
      *
      * @since 1.0 Formerly "template()".
      * @since 1.10.00 Now using disk-stored files and full PHP format.
-     * @param string $filename The filename, including extension, of the PHP template.
+     * @param string $filename The filename, including extension, of the PHP template.  Alternatively, a relative path beginning with ROOT.
      * @param bool $echo Optional. When true, the processed template will be sent to the output stream.
      * @return string When $echo is false, the processed template will be returned, otherwise an empty string.
      */
@@ -146,10 +146,18 @@ class Template
         extract($this->data);
 
         if (! $echo) ob_start();
-        
-        if ($this->vars->comment_output) echo "<!--Begin Template: $filename -->\n";
 
-        include ROOT . "templates/$filename";
+        if ($this->vars->comment_output) echo "<!-- Begin Template: $filename -->\n";
+
+        if (substr($filename, 0, strlen(ROOT)) === ROOT) {
+            // $filename is a relative path, for example, ROOT . 'images/my-theme/theme-css.php';
+            $displayname = substr($filename, strlen(ROOT));
+            include $filename;
+        } else {
+            // $filename should be a normal template, for example, 'admin_settings.php';
+            $displayname = $filename;
+            include ROOT . "templates/$filename";
+        }
 
         if ($this->vars->comment_output) echo "\n<!-- End Template: $filename -->";
 
