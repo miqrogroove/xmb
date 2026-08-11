@@ -418,22 +418,26 @@ table.fdetails {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
     grid-template-columns: var(--xmb-grid-columns);
+    color: <?= $THEME['tabletext'] ?>;
 }
 
 .xmb-tabbed-grid {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: none;
     grid-template-columns: var(--xmb-grid-columns);
+    color: <?= $THEME['tabletext'] ?>;
 }
 
 .xmb-block-flex {
     margin: <?= $THEME['borderwidth'] ?> auto;
     display: flex;
     flex-wrap: wrap;
+    color: <?= $THEME['tabletext'] ?>;
 }
 
 .xmb-block-simple {
     margin: <?= $THEME['borderwidth'] ?> auto;
+    color: <?= $THEME['tabletext'] ?>;
 }
 
 #boardDetail {
@@ -536,7 +540,6 @@ table.fdetails {
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
-    color: <?= $THEME['tabletext'] ?>;
     background: <?= $THEME['altbg2'] ?>;
 }
 
