@@ -1,4 +1,5 @@
 /* XMB Stylesheet */
+
 body {
     scrollbar-arrow-color: <?= $THEME['header'] ?>;
     scrollbar-base-color: <?= $THEME['altbg1'] ?>;

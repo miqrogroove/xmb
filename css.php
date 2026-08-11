@@ -31,25 +31,26 @@ $template = Services\template();
 $themeMgr = Services\theme();
 $vars = Services\vars();
 
-$vars->comment_output = false; // If true, CSS would be invalid.
 $vars->theme = $sql->getThemeByID(getInt('id'));
 if (empty($vars->theme)) {
     header('HTTP/1.0 404 Not Found');
     exit($vars->lang['generic_missing']);
 }
 $themeMgr->more_theme_vars();
+$template->addRefs();
+
+// Check if this theme has a CSS override.  This is a custom template opportunity.  The default CSS template will not be used when the override exists. 
+$filename = ROOT . $vars->theme['imgdir'] . '/theme-css.php';
+if (! is_readable($filename)) {
+    // Use the default CSS template.
+    $filename = 'css.php';
+}
 
 header("Content-type: text/css");
 header("Content-Description: XMB Stylesheet");
 header("Cache-Control: public, max-age=604800");
 header("Expires: " . gmdate('D, d M Y H:i:s', time() + 604800) . " GMT");
 
-$template->addRefs();
-$template->process('css_variables.php', echo: true);
-if (is_readable(ROOT . $vars->theme['imgdir'] . '/theme-css.php')) {
-    // This is a custom template opportunity.  The default CSS template will not be used when the corresponding theme provides its own template.
-    $template->process(ROOT . $vars->theme['imgdir'] . '/theme-css.php', echo: true);
-} else {
-    // Use the default CSS template.
-    $template->process('css.php', echo: true);
-}
+$template->process('css_variables.php', echo: true, language: 'css');
+echo "\n";
+$template->process($filename, echo: true, language: 'css');
