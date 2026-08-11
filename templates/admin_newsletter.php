@@ -1,6 +1,6 @@
 <form method="post" action="<?= $full_url ?>admin/newsletter.php">
  <input type="hidden" name="token" value="<?= $token ?>" />
- <div class="admin-newsletter-wrap">
+ <div class="xmb-block-wrap admin-newsletter-wrap">
   <div class="xmb-grid admin-newsletter">
    <div class="row">
     <div class="category-head"><?= $lang['textnewsletter'] ?></div>

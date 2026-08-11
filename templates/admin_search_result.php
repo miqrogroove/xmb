@@ -1,6 +1,6 @@
 <br />
 
-<div class="admin-search-wrap">
+<div class="xmb-block-wrap admin-search-wrap">
  <div class="xmb-grid admin-search-result">
   <div class="row">
    <div class="row-head span">

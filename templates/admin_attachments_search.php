@@ -1,5 +1,5 @@
 <form method="post" action="<?= $full_url ?>admin/attachments.php">
- <div class="admin-attachment-wrap"><div class="xmb-grid admin-attachment-search">
+ <div class="xmb-block-wrap admin-attachment-wrap"><div class="xmb-grid admin-attachment-search">
   <div class="row">
    <div class="category-head"><?= $lang['textsearch'] ?></div>
   </div>

@@ -1,6 +1,6 @@
 <form method="post" action="<?= $full_url ?>admin/search.php">
- <div class="admin-search-wrap">
-  <div class="admin-search-form">
+ <div class="xmb-block-wrap admin-search-wrap">
+  <div class="xmb-block-simple admin-search-form">
    <div class="row">
     <div class="category-head"><?= $lang['insertdata'] ?>:</div>
    </div>

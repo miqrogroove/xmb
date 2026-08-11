@@ -426,9 +426,7 @@ table.fdetails {
     grid-template-columns: var(--xmb-grid-columns);
 }
 
-.xmb-block-simple,
-.admin-block,
-.admin-search-form {
+.xmb-block-simple {
     margin: <?= $THEME['borderwidth'] ?> auto;
 }
 
@@ -477,13 +475,7 @@ table.fdetails {
     padding: <?= $THEME['tablespace'] ?>;
 }
 
-.admin-attachment-wrap,
-.admin-block-wrap,
-.admin-censor-wrap,
-.admin-email-wrap,
-.admin-newsletter-wrap,
-.admin-panel-wrap,
-.admin-search-wrap {
+.xmb-block-wrap {
     margin-top: -<?= $THEME['borderwidth'] ?>;
     margin-left: -<?= $THEME['borderwidth'] ?>;
 }
@@ -508,13 +500,8 @@ table.fdetails {
     }
 }
 
-.admin-attachment-search .row,
-.admin-attachment-result .row,
-.admin-censor .row,
-.admin-email .row,
-.admin-newsletter .row,
-.admin-search-result .row,
-.admin-settings .row {
+.xmb-grid .row,
+.xmb-tabbed-grid .row {
     display: contents;
 }
 
