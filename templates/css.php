@@ -460,6 +460,11 @@ table.fdetails {
     max-width: 800px;
 }
 
+.xmb-block-wide-90,
+.admin-forums {
+    width: calc(90% - (2 * <?= $THEME['borderwidth'] ?>));
+}
+
 .xmb-block-wide-93, .admin-attachment-result {
     width: 93%;
 }
@@ -537,6 +542,7 @@ table.fdetails {
 }
 
 .admin-content-row,
+.admin-forums .group,
 .admin-search-result .field {
     background: <?= $THEME['altbg1'] ?>;
 }
@@ -553,7 +559,7 @@ table.fdetails {
     font-weight: bold;
 }
 
-.admin-block > .category-head,
+.admin-block > .row > .category-head,
 .admin-panel .category-head {
     text-align: center;
 }
@@ -632,4 +638,8 @@ table.fdetails {
     .admin-newsletter textarea {
         width: calc(100% - (2 * (<?= $THEME['tablespace'] ?> - <?= $THEME['borderwidth'] ?>)));
     }
+}
+
+.admin-forums .xmb-grid-form-field {
+    font-size: <?= $THEME['font-smaller-1'] ?>;
 }
