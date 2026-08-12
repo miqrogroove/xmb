@@ -651,6 +651,20 @@ table.subforums {
     font-size: <?= $THEME['font-smaller-1'] ?>;
 }
 
+.xmb-grid .indent1 {
+    padding-left: calc(3.7em + <?= $THEME['tablespace'] ?>);
+}
+
+.xmb-grid .indent2 {
+    padding-left: calc(3.7em * 2 + <?= $THEME['tablespace'] ?>);
+}
+
+@media screen and (max-width: 800px) {
+    .admin-forums span {
+        display: block;
+    }
+}
+
 .permissions-grid th:first-child, 
 .permissions-grid td:first-child {
     max-width: 50px;
