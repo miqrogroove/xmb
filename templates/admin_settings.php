@@ -22,7 +22,7 @@ namespace XMB;
  <div class="admin-settings" id="settings">
   <div class="xmb-tabbed-grid" id="boardDetail">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings1'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings1'] ?></div>
    </div>
 <?php
     $rulesNote = '<br />' . $lang['texthtmlis'] . ' ' . $lang['texton'];
@@ -41,7 +41,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="defaults">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings2'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings2'] ?></div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textlanguage'] ?></div>
@@ -69,7 +69,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="modules">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings3'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings3'] ?></div>
    </div>
 <?php
     $admin->printsetting6($lang['textsearchstatus'], 'searchstatusnew', 'searchstatus');
@@ -86,7 +86,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="cosmetic">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings4'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings4'] ?></div>
    </div>
 <?php
     $admin->printsetting6($lang['showsubforums'], 'showsubforumsnew', 'showsubforums');
@@ -108,7 +108,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="front">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings9'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings9'] ?></div>
    </div>
 <?php
     $admin->printsetting6($lang['index_stats'], 'index_statsnew', 'index_stats');
@@ -127,7 +127,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="users">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings5'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings5'] ?></div>
    </div>
 <?php
     $admin->printsetting6($lang['reg_on'], 'reg_on', 'regstatus');
@@ -154,7 +154,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="attachments">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings8'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings8'] ?></div>
    </div>
 <?php
     if (! ini_get('file_uploads')) {
@@ -192,7 +192,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="other">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings6'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings6'] ?></div>
    </div>
 <?php
     $admin->printsetting2($lang['texthottopic'], 'hottopicnew', ((int) $SETTINGS['hottopic']), 3);
@@ -215,7 +215,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="captcha">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings7'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings7'] ?></div>
    </div>
 <?php
     if (! $goodCaptcha) {
@@ -250,7 +250,7 @@ namespace XMB;
   </div>
   <div class="xmb-tabbed-grid" id="thirdParty">
    <div class="row">
-    <div class="category-head">&raquo;&nbsp;<?= $lang['admin_main_settings10'] ?></div>
+    <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_main_settings10'] ?></div>
    </div>
 <?php
     $recaptcha_link = '<br /><span class="smalltext">[ <a href="https://console.cloud.google.com/security/recaptcha" onclick="window.open(this.href); return false;">Setup</a> ]';

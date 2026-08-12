@@ -408,10 +408,6 @@ table.subforums {
     background-color: <?= $THEME['header'] ?>;
 }
 
-table.fdetails {
-    max-width: 1024px;
-}
-
 /* Table Replacement Styles */
 
 .xmb-grid {
@@ -437,7 +433,7 @@ table.fdetails {
     color: <?= $THEME['tabletext'] ?>;
 }
 
-#boardDetail {
+.admin-settings #boardDetail {
     display: grid;
 }
 
@@ -460,13 +456,9 @@ table.fdetails {
     max-width: 800px;
 }
 
-.xmb-block-wide-90,
-.admin-forums {
-    width: calc(90% - (2 * <?= $THEME['borderwidth'] ?>));
-}
-
-.xmb-block-wide-93, .admin-attachment-result {
-    width: 93%;
+.xmb-block-medium-1024,
+.admin-forums-detail {
+    max-width: 1024px;
 }
 
 .xmb-block-wide-default,
@@ -476,7 +468,18 @@ table.fdetails {
     width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
 }
 
-.xmb-block-wide-98, .admin-panel {
+.xmb-block-wide-90,
+.admin-forums {
+    width: calc(90% - (2 * <?= $THEME['borderwidth'] ?>));
+}
+
+.xmb-block-wide-93,
+.admin-attachment-result {
+    width: calc(93% - (2 * <?= $THEME['borderwidth'] ?>));
+}
+
+.xmb-block-wide-98,
+.admin-panel {
     width: calc(98% - (2 * <?= $THEME['borderwidth'] ?>));
 }
 
@@ -547,7 +550,9 @@ table.fdetails {
     background: <?= $THEME['altbg1'] ?>;
 }
 
-.admin-settings .field {
+.vertical-center,
+.admin-settings .field,
+.admin-forums-detail .xmb-grid-form-label {
     display: flex;
     align-items: center;
 }
@@ -560,8 +565,13 @@ table.fdetails {
 }
 
 .admin-block > .row > .category-head,
-.admin-panel .category-head {
+.admin-panel .category-head,
+.permissions-grid thead .category-head {
     text-align: center;
+}
+
+.permissions-grid tbody .category-head {
+    text-align: right;
 }
 
 .admin-panel .category-head {
@@ -589,10 +599,7 @@ table.fdetails {
     grid-column: var(--xmb-grid-span);
 }
     
-.admin-attachment-search .span,
-.admin-email .span,
-.admin-newsletter .span,
-.admin-settings .span {
+.admin-settings .field.span {
     display: block;
     text-align: center;
 }
@@ -642,4 +649,9 @@ table.fdetails {
 
 .admin-forums .xmb-grid-form-field {
     font-size: <?= $THEME['font-smaller-1'] ?>;
+}
+
+.permissions-grid th:first-child, 
+.permissions-grid td:first-child {
+    max-width: 50px;
 }

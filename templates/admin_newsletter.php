@@ -3,7 +3,7 @@
  <div class="xmb-block-wrap admin-newsletter-wrap">
   <div class="xmb-grid admin-newsletter">
    <div class="row">
-    <div class="category-head"><?= $lang['textnewsletter'] ?></div>
+    <div class="category-head span"><?= $lang['textnewsletter'] ?></div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textsubject'] ?></div>
@@ -48,7 +48,7 @@
     </div>
    </div>
    <div class="row">
-    <div class="field span"><input class="submit" type="submit" name="newslettersubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+    <div class="field span submit"><input class="submit" type="submit" name="newslettersubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
    </div>
   </div>
  </div>

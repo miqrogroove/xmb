@@ -5,31 +5,32 @@ declare(strict_types=1);
 namespace XMB;
 
 ?>
-</table></td>
-</tr>
-
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textuserlist'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><textarea rows="4" cols="30" name="userlistnew">
+      </tbody>
+     </table>
+    </div>
+   </div>
+   <div class="row">
+    <div class="xmb-grid-form-label"><?= $lang['textuserlist'] ?></div>
+    <div class="xmb-grid-form-field">
+     <textarea rows="4" cols="30" name="userlistnew">
 <?php // Linefeed required here - Do not edit!
-echo $forum['userlist'];
-?></textarea></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['forumpw'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="passwordnew" value="<?= htmlEsc($forum['password'], storedData: true) ?>" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>"><?= $lang['textdeleteques'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="checkbox" name="delete" value="<?= $forum['fid'] ?>" /></td>
-</tr>
-<tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" class="ctrtablerow" colspan="2"><input type="submit" name="forumsubmit" value="<?= $lang['textsubmitchanges'] ?>" class="submit" /></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
+    echo $forum['userlist'];
+?></textarea>
+    </div>
+   </div>
+   <div class="row">
+    <div class="xmb-grid-form-label">
+     <div><?= $lang['forumpw'] ?></div>
+    </div>
+    <div class="xmb-grid-form-field vertical-center"><input type="text" name="passwordnew" value="<?= htmlEsc($forum['password'], storedData: true) ?>" /></div>
+   </div>
+   <div class="row">
+    <div class="xmb-grid-form-label"><?= $lang['textdeleteques'] ?></div>
+    <div class="xmb-grid-form-field"><input type="checkbox" name="delete" value="<?= $forum['fid'] ?>" /></div>
+   </div>
+   <div class="row">
+    <div class="xmb-grid-form-field span submit"><input type="submit" name="forumsubmit" value="<?= $lang['textsubmitchanges'] ?>" class="submit" /></div>
+   </div>
+  </div>
+ </div>
 </form>
-</td>
-</tr>

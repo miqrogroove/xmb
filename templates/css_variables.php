@@ -15,6 +15,7 @@
     --xmb-grid-columns: auto auto auto;
 }
 .admin-email,
+.admin-forums-detail,
 .admin-newsletter,
 .admin-settings {
     --xmb-grid-columns: auto auto;
@@ -23,7 +24,6 @@
     --xmb-grid-columns: 5% auto;
 }
 
-.admin-attachment-result .category-head,
 .admin-attachment-result .span {
     --xmb-grid-span: 1 / span 6;
 }
@@ -40,14 +40,11 @@
 .admin-censor .span {
     --xmb-grid-span: 1 / span 3;
 }
-.admin-attachment-search .category-head,
 .admin-attachment-search .span,
-.admin-email .category-head,
 .admin-email .span,
-.admin-newsletter .category-head,
+.admin-forums-detail .span,
 .admin-newsletter .span,
 .admin-search-result .span,
-.admin-settings .category-head,
 .admin-settings .span {
     --xmb-grid-span: 1 / span 2;
 }

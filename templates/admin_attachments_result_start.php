@@ -2,7 +2,7 @@
  <input type="hidden" name="token" value="<?= $token ?>" />
  <div class="xmb-block-wrap admin-attachment-wrap"><div class="xmb-grid admin-attachment-result">
   <div class="row">
-   <div class="category-head"><?= $lang['textattachsearchresults'] ?></div>
+   <div class="category-head span"><?= $lang['textattachsearchresults'] ?></div>
   </div>
   <div class="row header">
    <div class="cell"><?= $lang['textfilename'] ?></div>

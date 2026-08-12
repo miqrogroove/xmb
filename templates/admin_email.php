@@ -9,16 +9,16 @@ namespace XMB;
  <input type="hidden" name="token" value="<?= $token ?>" />
  <div class="xmb-block-wrap admin-email-wrap"><div class="xmb-grid admin-email">
   <div class="row">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_email_settings'] ?></div>
+   <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_email_settings'] ?></div>
   </div>
 <?php
     $admin->printsetting2($lang['adminemail'], 'adminemailnew', $SETTINGS['adminemail'], 45);
 ?>
   <div class="row">
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="field span submit"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
   </div>
   <div class="row">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_email_server'] ?></div>
+   <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_email_server'] ?></div>
   </div>
 <?php
 if ($mailerInConfig) {
@@ -58,10 +58,10 @@ if ($mailerInConfig) {
 }
 ?>
   <div class="row">
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="field span submit"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
   </div>
   <div class="row">
-   <div class="category-head">&raquo;&nbsp;<?= $lang['admin_email_dkim'] ?></div>
+   <div class="category-head span">&raquo;&nbsp;<?= $lang['admin_email_dkim'] ?></div>
   </div>
 <?php
     $admin->printsetting5($lang['textdesc'], $lang['mailerDkimIntro']);
@@ -70,7 +70,7 @@ if ($mailerInConfig) {
     $admin->printsetting2($lang['mailerDkimSelector'], 'dkimselectornew', $SETTINGS['mailer_dkim_selector'], 45);
 ?>
   <div class="row">
-   <div class="field span"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   <div class="field span submit"><input class="submit" type="submit" name="settingsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
   </div>
  </div></div>
 </form>

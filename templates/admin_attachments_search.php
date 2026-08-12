@@ -1,7 +1,7 @@
 <form method="post" action="<?= $full_url ?>admin/attachments.php">
  <div class="xmb-block-wrap admin-attachment-wrap"><div class="xmb-grid admin-attachment-search">
   <div class="row">
-   <div class="category-head"><?= $lang['textsearch'] ?></div>
+   <div class="category-head span"><?= $lang['textsearch'] ?></div>
   </div>
   <div class="row">
    <div class="label"><label for="field1"><?= $lang['attachmanwherename'] ?></label></div>
@@ -36,7 +36,7 @@
    <div class="field"><input id="field8" type="text" name="daysold" size="10" /></div>
   </div>
   <div class="row">
-   <div class="field span"><input type="submit" name="searchsubmit" class="submit" value="<?= $lang['textsearch'] ?>" /></div>
+   <div class="field span submit"><input type="submit" name="searchsubmit" class="submit" value="<?= $lang['textsearch'] ?>" /></div>
   </div>
  </div></div>
 </form>
