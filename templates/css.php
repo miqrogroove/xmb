@@ -415,27 +415,24 @@ table.fdetails {
 /* Table Replacement Styles */
 
 .xmb-grid {
-    margin: <?= $THEME['borderwidth'] ?> auto;
     display: grid;
     grid-template-columns: var(--xmb-grid-columns);
-    color: <?= $THEME['tabletext'] ?>;
 }
 
 .xmb-tabbed-grid {
-    margin: <?= $THEME['borderwidth'] ?> auto;
     display: none;
     grid-template-columns: var(--xmb-grid-columns);
-    color: <?= $THEME['tabletext'] ?>;
 }
 
 .xmb-block-flex {
-    margin: <?= $THEME['borderwidth'] ?> auto;
     display: flex;
     flex-wrap: wrap;
-    color: <?= $THEME['tabletext'] ?>;
 }
 
-.xmb-block-simple {
+.xmb-block-simple,
+.xmb-block-flex,
+.xmb-grid,
+.xmb-tabbed-grid {
     margin: <?= $THEME['borderwidth'] ?> auto;
     color: <?= $THEME['tabletext'] ?>;
 }
@@ -526,16 +523,12 @@ table.fdetails {
 }
 
 .xmb-grid-form-field,
-.admin-attachment-search .field,
+.xmb-grid .field,
+.xmb-grid .row-head,
+.xmb-tabbed-grid .field,
+.xmb-block-simple .field,
 .admin-attachment-result .cell,
-.admin-censor .field,
-.admin-content-row,
-.admin-email .field,
-.admin-newsletter .field,
-.admin-search-form .field,
-.admin-search-result .field,
-.admin-search-result .row-head,
-.admin-settings .field {
+.admin-content-row {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
