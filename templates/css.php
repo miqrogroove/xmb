@@ -524,11 +524,8 @@ table.subforums {
 }
 
 .xmb-grid-form-label,
-.admin-attachment-search .label,
-.admin-email .label,
-.admin-moderators .label,
-.admin-newsletter .label,
-.admin-settings .label {
+.xmb-grid .label,
+.xmb-tabbed-grid .label {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     padding-top: calc(<?= $THEME['tablespace'] ?> + 2px);
