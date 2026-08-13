@@ -210,8 +210,13 @@ input[readonly] {
     table-layout: fixed;
 }
 
-.subject {
+.subject,
+.subheader {
     font-weight: bold;
+}
+
+.subitem {
+    font-style: italic;
 }
 
 .submit {
@@ -469,7 +474,8 @@ table.subforums {
 }
 
 .xmb-block-wide-90,
-.admin-forums {
+.admin-forums,
+.admin-moderators {
     width: calc(90% - (2 * <?= $THEME['borderwidth'] ?>));
 }
 
@@ -520,6 +526,7 @@ table.subforums {
 .xmb-grid-form-label,
 .admin-attachment-search .label,
 .admin-email .label,
+.admin-moderators .label,
 .admin-newsletter .label,
 .admin-settings .label {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;

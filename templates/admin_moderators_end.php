@@ -1,13 +1,9 @@
-<tr>
-<td colspan="2" class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>"><span class="smalltxt"><?= $lang['multmodnote'] ?></span></td>
-</tr>
-<tr>
-<td colspan="2" class="ctrtablerow" bgcolor="<?= $THEME['altbg2'] ?>"><input type="submit" class="submit" name="modsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
+   <div class="row">
+    <div class="field span"><span class="smalltxt"><?= $lang['multmodnote'] ?></span></div>
+   </div>
+   <div class="row">
+    <div class="field span submit"><input type="submit" class="submit" name="modsubmit" value="<?= $lang['textsubmitchanges'] ?>" /></div>
+   </div>
+  </div>
+ </div>
 </form>
-</td>
-</tr>

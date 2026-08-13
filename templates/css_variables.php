@@ -16,6 +16,7 @@
 }
 .admin-email,
 .admin-forums-detail,
+.admin-moderators,
 .admin-newsletter,
 .admin-settings {
     --xmb-grid-columns: auto auto;
@@ -43,6 +44,7 @@
 .admin-attachment-search .span,
 .admin-email .span,
 .admin-forums-detail .span,
+.admin-moderators .span,
 .admin-newsletter .span,
 .admin-search-result .span,
 .admin-settings .span {

@@ -1,3 +1,3 @@
-<tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
-<td colspan="2"><strong><?= $catName ?></strong></td>
-</tr>
+   <div class="row">
+    <div class="field span subheader"><?= $catName ?></div>
+   </div>

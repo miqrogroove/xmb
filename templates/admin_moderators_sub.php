@@ -1,4 +1,4 @@
-<tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
-<td><?= $lang['4spaces'] ?><?= $lang['4spaces'] ?><em><?= $name ?></em></td>
-<td><input type="text" name="mod[<?= $fid ?>]" value="<?= $moderator ?>" /></td>
-</tr>
+   <div class="row">
+    <div class="label indent2 subitem"><?= $name ?></div>
+    <div class="field"><input type="text" name="mod[<?= $fid ?>]" value="<?= $moderator ?>" /></div>
+   </div>
