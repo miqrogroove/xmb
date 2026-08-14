@@ -448,6 +448,7 @@ table.subforums {
 
 .xmb-block-narrow-550,
 .admin-attachment-search,
+.admin-prune,
 .admin-search-form {
     max-width: 550px;
 }
@@ -556,7 +557,8 @@ table.subforums {
 
 .vertical-center,
 .admin-settings .field,
-.admin-forums-detail .xmb-grid-form-label {
+.admin-forums-detail .xmb-grid-form-label,
+.admin-prune .label {
     display: flex;
     align-items: center;
 }
@@ -672,4 +674,16 @@ table.subforums {
 .permissions-grid th:first-child, 
 .permissions-grid td:first-child {
     max-width: 50px;
+}
+
+.option-list div {
+  margin: 5px 0px;
+}
+
+.option-list input[type="checkbox"] {
+  margin: 0px 4px;
+}
+
+.option-list input[type="radio"] {
+  margin: 0px 7px 0px 4px;
 }

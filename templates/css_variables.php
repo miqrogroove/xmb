@@ -18,6 +18,7 @@
 .admin-forums-detail,
 .admin-moderators,
 .admin-newsletter,
+.admin-prune,
 .admin-settings {
     --xmb-grid-columns: auto auto;
 }
@@ -46,6 +47,7 @@
 .admin-forums-detail .span,
 .admin-moderators .span,
 .admin-newsletter .span,
+.admin-prune .span,
 .admin-search-result .span,
 .admin-settings .span {
     --xmb-grid-span: 1 / span 2;
