@@ -132,6 +132,10 @@ input[readonly] {
     text-align: center;
 }
 
+.center-text {
+    text-align: center;
+}
+
 .header2 {
     background-color: <?= $THEME['altbg1'] ?>;
     font-weight: bold;
@@ -448,6 +452,7 @@ table.subforums {
 
 .xmb-block-narrow-550,
 .admin-attachment-search,
+.admin-ipban,
 .admin-prune,
 .admin-search-form {
     max-width: 550px;
@@ -551,6 +556,7 @@ table.subforums {
 
 .admin-content-row,
 .admin-forums .group,
+.admin-ipban .delete,
 .admin-search-result .field {
     background: <?= $THEME['altbg1'] ?>;
 }

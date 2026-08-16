@@ -1,4 +1,4 @@
-/* XMB Application Variables - These are likely to be needed for backward and forward theme compatibility */
+/* XMB Application Variables - These are needed for backward and forward theme compatibility */
 
 .admin-attachment-result {
     --xmb-grid-columns: auto 20% 28% 11% max-content max-content;
@@ -13,6 +13,9 @@
 }
 .admin-censor {
     --xmb-grid-columns: auto auto auto;
+}
+.admin-ipban {
+    --xmb-grid-columns: min-content auto auto;
 }
 .admin-email,
 .admin-forums-detail,
@@ -34,12 +37,12 @@
     .admin-attachment-result .cell:nth-child(6) {
         --xmb-column-hide: none;
     }
-    .admin-attachment-result .span,
-    .admin-attachment-result .category-head {
+    .admin-attachment-result .span {
         --xmb-grid-span: 1 / span 4;
     }
 }
-.admin-censor .span {
+.admin-censor .span,
+.admin-ipban .span {
     --xmb-grid-span: 1 / span 3;
 }
 .admin-attachment-search .span,
