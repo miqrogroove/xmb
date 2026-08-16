@@ -94,7 +94,7 @@ if ($settings->get('ip_banning') == 'on') {
     } elseif (onSubmit('ipbandisable')) {
         $core->request_secure('Control Panel/IP Banning', 'mass-edit');
         $settings->put('ip_banning', 'off');
-        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '"><td class="ctrtablerow">' . $lang['textipupdate'] . '</td></tr>';
+        $body = '<div class="ctrtablerow">' . $lang['textipupdate'] . '</div>';
     } else {
         $core->request_secure('Control Panel/IP Banning', 'mass-edit');
         $newip1 = getPhpInput('newip1');
@@ -148,7 +148,7 @@ if ($settings->get('ip_banning') == 'on') {
             }
         }
         $link = '</p><p><a href="' . $vars->full_url . 'admin/ipban.php">' . $lang['textipbanlink'] . '</a>';
-        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $status . $link . '</p></td></tr>';
+        $body = '<div class="ctrtablerow"><p>' . $status . $link . '</p></div>';
     }
 } else {
     if (noSubmit('ipbanenable')) {
@@ -159,7 +159,7 @@ if ($settings->get('ip_banning') == 'on') {
         $core->request_secure('Control Panel/IP Banning', 'enable');
         $settings->put('ip_banning', 'on');
         $link = '</p><p><a href="' . $vars->full_url . 'admin/ipban.php">' . $lang['textipbanlink'] . '</a>';
-        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textipupdate'] . $link . '</p></td></tr>';
+        $body = '<div class="ctrtablerow"><p>' . $lang['textipupdate'] . $link . '</p></div>';
     }
 }
 
