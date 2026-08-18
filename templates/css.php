@@ -472,27 +472,40 @@ table.subforums {
     max-width: 1024px;
 }
 
-.xmb-block-wide-default,
 .admin-block,
 .admin-email,
 .admin-search-result {
-    width: calc(<?= $THEME['tablewidth'] ?> - (2 * <?= $THEME['borderwidth'] ?>));
+    --xmb-block-width: <?= $THEME['tablewidth'] ?>;
 }
 
-.xmb-block-wide-90,
 .admin-forums,
+.admin-members-search,
 .admin-moderators {
-    width: calc(90% - (2 * <?= $THEME['borderwidth'] ?>));
+    --xmb-block-width: 90%;
 }
 
-.xmb-block-wide-93,
+.admin-members-result {
+    --xmb-block-width: 91%;
+}
+
 .admin-attachment-result {
-    width: calc(93% - (2 * <?= $THEME['borderwidth'] ?>));
+    --xmb-block-width: 93%;
 }
 
-.xmb-block-wide-98,
 .admin-panel {
-    width: calc(98% - (2 * <?= $THEME['borderwidth'] ?>));
+    --xmb-block-width: 98%;
+}
+
+.admin-attachment-result,
+.admin-block,
+.admin-email,
+.admin-forums,
+.admin-members-result,
+.admin-members-search,
+.admin-moderators,
+.admin-panel,
+.admin-search-result {
+    width: calc(var(--xmb-block-width) - (2 * <?= $THEME['borderwidth'] ?>));
 }
 
 .xmb-content-row {
@@ -562,11 +575,18 @@ table.subforums {
 }
 
 .vertical-center,
-.admin-settings .field,
 .admin-forums-detail .xmb-grid-form-label,
-.admin-prune .label {
+.admin-members-result .result .field,
+.admin-prune .label,
+.admin-settings .field {
     display: flex;
     align-items: center;
+}
+
+.horizontal-center,
+.admin-members-result .delete {
+    display: flex;
+    justify-content: center;
 }
 
 .category-head {
@@ -574,6 +594,10 @@ table.subforums {
     color: <?= $THEME['cattext'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     font-weight: bold;
+}
+
+.normal-text {
+    font-weight: normal;
 }
 
 .admin-block > .row > .category-head,
@@ -610,7 +634,9 @@ table.subforums {
 .span {
     grid-column: var(--xmb-grid-span);
 }
-    
+
+.admin-members-prune-ays,
+.admin-members-result .delete,
 .admin-settings .field.span {
     display: block;
     text-align: center;

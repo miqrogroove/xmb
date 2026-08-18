@@ -1,5 +1,8 @@
 /* XMB Application Variables - These are needed for backward and forward theme compatibility */
 
+.admin-members-result {
+    --xmb-grid-columns: max-content auto auto max-content auto auto auto;
+}
 .admin-attachment-result {
     --xmb-grid-columns: auto 20% 28% 11% max-content max-content;
 }
@@ -28,7 +31,13 @@
 .admin-search-result {
     --xmb-grid-columns: 5% auto;
 }
+.admin-members-search {
+    --xmb-grid-columns: 22% auto;
+}
 
+.admin-members-result .span {
+    --xmb-grid-span: 1 / span 7;
+}
 .admin-attachment-result .span {
     --xmb-grid-span: 1 / span 6;
 }
@@ -48,6 +57,7 @@
 .admin-attachment-search .span,
 .admin-email .span,
 .admin-forums-detail .span,
+.admin-members-search .span,
 .admin-moderators .span,
 .admin-newsletter .span,
 .admin-prune .span,

@@ -1,49 +1,41 @@
-<tr bgcolor="<?= $THEME['altbg2'] ?>">
-<td>
 <form method="post" action="<?= $full_url ?>admin/members.php?members=search">
-<table cellspacing="0" cellpadding="0" border="0" width="90%" align="center">
-<tr>
-<td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
-<tr>
-<td class="category" colspan="2"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['textmembers'] ?></strong></font></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsrchusr'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="srchmem" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsrchemail'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="srchemail" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textsrchip'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>"><input type="text" name="srchip" /></td>
-</tr>
-<tr class="tablerow">
-<td bgcolor="<?= $THEME['altbg1'] ?>" width="22%"><?= $lang['textwithstatus'] ?></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>">
-<select name="srchstatus">
-<option value=""><?= $lang['anystatus'] ?></option>
-<option value="Super Administrator"><?= $lang['superadmin'] ?></option>
-<option value="Administrator"><?= $lang['textadmin'] ?></option>
-<option value="Super Moderator"><?= $lang['textsupermod'] ?></option>
-<option value="Moderator"><?= $lang['textmod'] ?></option>
-<option value="Member"><?= $lang['textmem'] ?></option>
-<option value="Lurking"><?= $lang['lurking'] ?></option>
-<option value="Inactive"><?= $lang['inactiveUser'] ?></option>
-<option value="Banned"><?= $lang['textbanned'] ?></option>
-<option value="Pending"><?= $lang['textpendinglogin'] ?></option>
-</select>
-</td>
-</tr>
-<tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" class="ctrtablerow" colspan="2"><input type="submit" class="submit" value="<?= $lang['textgo'] ?>" /></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
+ <div class="xmb-block-wrap admin-members-search-wrap">
+  <div class="xmb-grid admin-members-search">
+   <div class="row">
+    <div class="category-head span"><?= $lang['textmembers'] ?></div>
+   </div>
+   <div class="row">
+    <div class="label"><?= $lang['textsrchusr'] ?></div>
+    <div class="field"><input type="text" name="srchmem" /></div>
+   </div>
+   <div class="row">
+    <div class="label"><?= $lang['textsrchemail'] ?></div>
+    <div class="field"><input type="text" name="srchemail" /></div>
+   </div>
+   <div class="row">
+    <div class="label"><?= $lang['textsrchip'] ?></div>
+    <div class="field"><input type="text" name="srchip" /></div>
+   </div>
+   <div class="row">
+    <div class="label"><?= $lang['textwithstatus'] ?></div>
+    <div class="field">
+     <select name="srchstatus">
+      <option value=""><?= $lang['anystatus'] ?></option>
+      <option value="Super Administrator"><?= $lang['superadmin'] ?></option>
+      <option value="Administrator"><?= $lang['textadmin'] ?></option>
+      <option value="Super Moderator"><?= $lang['textsupermod'] ?></option>
+      <option value="Moderator"><?= $lang['textmod'] ?></option>
+      <option value="Member"><?= $lang['textmem'] ?></option>
+      <option value="Lurking"><?= $lang['lurking'] ?></option>
+      <option value="Inactive"><?= $lang['inactiveUser'] ?></option>
+      <option value="Banned"><?= $lang['textbanned'] ?></option>
+      <option value="Pending"><?= $lang['textpendinglogin'] ?></option>
+     </select>
+    </div>
+   </div>
+   <div class="row">
+    <div class="field span submit"><input type="submit" class="submit" value="<?= $lang['textgo'] ?>" /></div>
+   </div>
+  </div>
+ </div>
 </form>
-</td>
-</tr>
