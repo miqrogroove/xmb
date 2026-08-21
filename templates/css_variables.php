@@ -6,6 +6,9 @@
 .admin-attachment-result {
     --xmb-grid-columns: auto 20% 28% 11% max-content max-content;
 }
+.admin-ranks {
+    --xmb-grid-columns: max-content auto auto auto auto auto;
+}
 @media screen and (max-width: 850px) {
     .admin-attachment-result {
         --xmb-grid-columns: auto 20% 28% max-content;
@@ -38,7 +41,8 @@
 .admin-members-result .span {
     --xmb-grid-span: 1 / span 7;
 }
-.admin-attachment-result .span {
+.admin-attachment-result .span,
+.admin-ranks .span {
     --xmb-grid-span: 1 / span 6;
 }
 @media screen and (max-width: 850px) {
@@ -61,6 +65,7 @@
 .admin-moderators .span,
 .admin-newsletter .span,
 .admin-prune .span,
+.admin-ranks .span.new-name,
 .admin-search-result .span,
 .admin-settings .span {
     --xmb-grid-span: 1 / span 2;

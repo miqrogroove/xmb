@@ -458,7 +458,13 @@ table.subforums {
     max-width: 550px;
 }
 
-.xmb-block-medium-750, .admin-newsletter {
+.xmb-block-medium-650,
+.admin-ranks {
+    max-width: 650px;
+}
+
+.xmb-block-medium-750,
+.admin-newsletter {
     max-width: 750px;
 }
 
@@ -570,6 +576,7 @@ table.subforums {
 .admin-content-row,
 .admin-forums .group,
 .admin-ipban .delete,
+.admin-ranks .new .field,
 .admin-search-result .field {
     background: <?= $THEME['altbg1'] ?>;
 }
@@ -637,6 +644,7 @@ table.subforums {
 
 .admin-members-prune-ays,
 .admin-members-result .delete,
+.admin-ranks .delete,
 .admin-settings .field.span {
     display: block;
     text-align: center;
