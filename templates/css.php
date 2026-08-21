@@ -563,6 +563,7 @@ table.subforums {
 .xmb-grid-form-field,
 .xmb-grid .field,
 .xmb-grid .row-head,
+.xmb-grid > .row > .header,
 .xmb-tabbed-grid .field,
 .xmb-block-simple .field,
 .admin-attachment-result .cell,
@@ -645,19 +646,13 @@ table.subforums {
     grid-column: var(--xmb-grid-span);
 }
 
-.header, .header .cell {
+.header,
+.xmb-grid > .row > .header {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
     font-size: <?= $THEME['font-smaller-1'] ?>;
     font-weight: bold;
     table-layout: fixed;
-}
-
-.xmb-grid > .row > .header {
-    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
-    margin-right: -<?= $THEME['borderwidth'] ?>;
-    margin-bottom: -<?= $THEME['borderwidth'] ?>;
-    padding: <?= $THEME['tablespace'] ?>;
 }
 
 .span {
