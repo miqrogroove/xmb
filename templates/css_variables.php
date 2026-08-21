@@ -40,7 +40,8 @@
 .admin-search-result {
     --xmb-grid-columns: 5% auto;
 }
-.admin-members-search {
+.admin-members-search,
+.admin-rename {
     --xmb-grid-columns: 22% auto;
 }
 
@@ -75,6 +76,7 @@
 .admin-newsletter .span,
 .admin-prune .span,
 .admin-ranks .span.new-name,
+.admin-rename .span,
 .admin-search-result .span,
 .admin-settings .span {
     --xmb-grid-span: 1 / span 2;

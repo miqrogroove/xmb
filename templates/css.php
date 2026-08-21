@@ -454,6 +454,7 @@ table.subforums {
 .admin-attachment-search,
 .admin-ipban,
 .admin-prune,
+.admin-rename,
 .admin-search-form {
     max-width: 550px;
 }

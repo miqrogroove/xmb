@@ -67,7 +67,7 @@ if (onSubmit('renamesubmit')) {
     $vUserFrom = $validate->postedVar('frmUserFrom', dbescape: false);
     $vUserTo = $validate->postedVar('frmUserTo', dbescape: false);
     $myErr = $admin->rename_user($vUserFrom, $vUserTo);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $myErr . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $myErr . '</div>';
 } else {
     $template->token = $token->create('Control Panel/Rename User', '', $vars::NONCE_FORM_EXP);
 
