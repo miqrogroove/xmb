@@ -20,21 +20,25 @@
 .admin-smilies {
     --xmb-grid-columns: max-content auto auto max-content;
 }
-.admin-attachment-search {
-    --xmb-grid-columns: max-content auto;
-}
 .admin-censor {
     --xmb-grid-columns: auto auto auto;
 }
 .admin-ipban {
     --xmb-grid-columns: min-content auto auto;
 }
+.admin-themes {
+    --xmb-grid-columns: max-content auto max-content;
+}
+.admin-attachment-search {
+    --xmb-grid-columns: max-content auto;
+}
 .admin-email,
 .admin-forums-detail,
 .admin-moderators,
 .admin-newsletter,
 .admin-prune,
-.admin-settings {
+.admin-settings,
+.admin-themes-import {
     --xmb-grid-columns: auto auto;
 }
 .admin-restrictions-new {

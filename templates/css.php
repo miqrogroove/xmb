@@ -450,6 +450,8 @@ table.subforums {
     max-width: 450px;
 }
 
+.admin-themes,
+.admin-themes-import,
 .admin-smilies {
     max-width: 500px;
 }
@@ -593,6 +595,10 @@ table.subforums {
     background: <?= $THEME['altbg2'] ?>;
 }
 
+.admin-themes .count {
+    background: <?= $THEME['altbg2'] ?>;
+}
+
 .vertical-center,
 .admin-forums-detail .xmb-grid-form-label,
 .admin-members-result .result .field,
@@ -607,7 +613,8 @@ table.subforums {
 .admin-restrictions .check,
 .admin-restrictions .delete,
 .admin-smilies .check,
-.admin-smilies .delete {
+.admin-smilies .delete,
+.admin-themes .delete {
     display: flex;
     justify-content: center;
 }

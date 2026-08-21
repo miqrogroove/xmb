@@ -143,9 +143,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
     if (! $query) {
         $core->error($lang['textthemeimportfail']);
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'
-        . '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'
-        . $lang['textthemeimportsuccess'] . '</td></tr></td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['textthemeimportsuccess'] . '</div>';
 } elseif (onSubmit('themesubmit')) {
     $core->request_secure('Control Panel/Themes', 'mass-edit');
     $theme_delete = $validate->postedArray('theme_delete', 'int');
@@ -169,7 +167,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
     foreach ($theme_name as $themeid => $name) {
         $sql->setThemeName((int) $themeid, $name);
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['themeupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['themeupdate'] . '</div>';
 }
 
 if ($single_int > 0) {
@@ -219,7 +217,7 @@ if ($single_int > 0) {
 
     $db->query("UPDATE " . $vars->tablepre . "themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew', version = version + 1 WHERE themeid='$orig'");
 
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['themeupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['themeupdate'] . '</div>';
 } elseif ($single_str == "submit" && $newtheme) {
     $core->request_secure('Control Panel/Themes', 'New Theme');
 
@@ -248,7 +246,7 @@ if ($single_int > 0) {
 
     $db->query("INSERT INTO " . $vars->tablepre . "themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext, admdir) VALUES ('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew', '$admdirnew')");
 
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['themeupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['themeupdate'] . '</div>';
 }
 
 $header = $template->process('header.php');
