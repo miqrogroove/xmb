@@ -6,13 +6,16 @@
 .admin-attachment-result {
     --xmb-grid-columns: auto 20% 28% 11% max-content max-content;
 }
-.admin-ranks {
-    --xmb-grid-columns: max-content auto auto auto auto auto;
-}
 @media screen and (max-width: 850px) {
     .admin-attachment-result {
         --xmb-grid-columns: auto 20% 28% max-content;
     }
+}
+.admin-ranks {
+    --xmb-grid-columns: max-content auto auto auto auto auto;
+}
+.admin-restrictions {
+    --xmb-grid-columns: max-content auto max-content max-content;
 }
 .admin-attachment-search {
     --xmb-grid-columns: max-content auto;
@@ -30,6 +33,9 @@
 .admin-prune,
 .admin-settings {
     --xmb-grid-columns: auto auto;
+}
+.admin-restrictions-new {
+    --xmb-grid-columns: max-content max-content;
 }
 .admin-search-result {
     --xmb-grid-columns: 5% auto;
@@ -53,6 +59,9 @@
     .admin-attachment-result .span {
         --xmb-grid-span: 1 / span 4;
     }
+}
+.admin-restrictions .span {
+    --xmb-grid-span: 1 / span 4;
 }
 .admin-censor .span,
 .admin-ipban .span {
