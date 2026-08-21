@@ -204,9 +204,9 @@ if (noSubmit('smiliesubmit')) {
             }
         }
         closedir($dir);
-        $body .= '<tr bgcolor="'.$vars->theme['altbg2'].'" class="ctrtablerow"><td>'.$newposticons_count.' / '.$posticons_count.' '.$lang['posticonsadded'].'</td></tr>';
+        $body .= '<div class="ctrtablerow">'.$newposticons_count.' / '.$posticons_count.' '.$lang['posticonsadded'].'</div>';
     }
-    $body .= '<tr bgcolor="'.$vars->theme['altbg2'].'" class="ctrtablerow"><td>'.$lang['smilieupdate'].'</td></tr>';
+    $body .= '<div class="ctrtablerow">'.$lang['smilieupdate'].'</div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

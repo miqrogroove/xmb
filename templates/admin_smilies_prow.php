@@ -1,5 +1,5 @@
-<tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" align="center" class="tablerow"><input type="checkbox" name="pidelete[<?= $smilie['id'] ?>]" value="1" /></td>
-<td colspan="2" align="left" bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow"><input type="text" name="piurl[<?= $smilie['id'] ?>]" value="<?= $smilie['url'] ?>" /></td>
-<td bgcolor="<?= $THEME['altbg2'] ?>" align="center" class="tablerow"><img src="<?= $full_url ?><?= $THEME['smdir'] ?>/<?= $smilie['url'] ?>" alt="<?= $smilie['url'] ?>" /></td>
-</tr>
+   <div class="row icon-list">
+    <div class="field delete"><input type="checkbox" name="pidelete[<?= $smilie['id'] ?>]" value="1" /></div>
+    <div class="field span"><input type="text" name="piurl[<?= $smilie['id'] ?>]" value="<?= $smilie['url'] ?>" /></div>
+    <div class="field icon"><img src="<?= $full_url ?><?= $THEME['smdir'] ?>/<?= $smilie['url'] ?>" alt="<?= $smilie['url'] ?>" /></div>
+   </div>

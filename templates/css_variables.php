@@ -17,6 +17,9 @@
 .admin-restrictions {
     --xmb-grid-columns: max-content auto max-content max-content;
 }
+.admin-smilies {
+    --xmb-grid-columns: max-content auto auto max-content;
+}
 .admin-attachment-search {
     --xmb-grid-columns: max-content auto;
 }
@@ -45,39 +48,21 @@
     --xmb-grid-columns: 22% auto;
 }
 
-.admin-members-result .span {
-    --xmb-grid-span: 1 / span 7;
-}
-.admin-attachment-result .span,
-.admin-ranks .span {
-    --xmb-grid-span: 1 / span 6;
-}
 @media screen and (max-width: 850px) {
     .admin-attachment-result .cell:nth-child(4),
     .admin-attachment-result .cell:nth-child(6) {
         --xmb-column-hide: none;
     }
-    .admin-attachment-result .span {
-        --xmb-grid-span: 1 / span 4;
-    }
 }
-.admin-restrictions .span {
-    --xmb-grid-span: 1 / span 4;
+.span {
+    --xmb-grid-span: 1 / -1;
 }
-.admin-censor .span,
-.admin-ipban .span {
-    --xmb-grid-span: 1 / span 3;
+.admin-smilies .add-all .span {
+    --xmb-grid-span: 2 / -1;
 }
-.admin-attachment-search .span,
-.admin-email .span,
-.admin-forums-detail .span,
-.admin-members-search .span,
-.admin-moderators .span,
-.admin-newsletter .span,
-.admin-prune .span,
-.admin-ranks .span.new-name,
-.admin-rename .span,
-.admin-search-result .span,
-.admin-settings .span {
-    --xmb-grid-span: 1 / span 2;
+.admin-smilies .icon-list .span {
+    --xmb-grid-span: 2 / span 2;
+}
+.admin-smilies .new .span {
+    --xmb-grid-span: 3 / -1;
 }
