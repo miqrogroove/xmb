@@ -347,7 +347,7 @@ if (noSubmit('settingsubmit')) {
     $admin->input_int_setting('u2uquota', 'u2uquotanew');
     $admin->input_onoff_setting('whosonlinestatus', 'whos_on');
 
-    $body = '<tr bgcolor="' . $THEME['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textsettingsupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['textsettingsupdate'] . '</div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

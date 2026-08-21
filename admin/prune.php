@@ -201,7 +201,7 @@ if (noSubmit('pruneSubmit')) {
             }
         }
     }
-    $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='tablerow'><td align='center'>{$lang['forumpruned']}</td></tr>";
+    $body = "<div class='ctrtablerow'>{$lang['forumpruned']}</div>";
 }
 
 $endTable = $template->process('admin_table_end.php');

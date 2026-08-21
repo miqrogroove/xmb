@@ -84,7 +84,7 @@ if (noSubmit('censorsubmit')) {
     if ($newfind) {
         $db->query("INSERT INTO " . $vars->tablepre . "words (find, replace1) VALUES ('$newfind', '$newreplace')");
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['censorupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['censorupdate'] . '</div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

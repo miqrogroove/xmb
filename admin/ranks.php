@@ -126,7 +126,7 @@ if (noSubmit('rankssubmit')) {
     if ($newtitle) {
         $sql->saveRank($newtitle, $newposts, $newstars, $newallowavatars == 'yes', $newavaurl);
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['rankingsupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['rankingsupdate'] . '</div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

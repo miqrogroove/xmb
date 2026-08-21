@@ -367,7 +367,7 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
     }
 
     $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
-    $body .= '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textforumupdate'] . $link . '</p></td></tr>';
+    $body .= '<div class="ctrtablerow"><p>' . $lang['textforumupdate'] . $link . '</p></div>';
 } else {
     $core->request_secure('Control Panel/Forums', (string) $fdetails);
 
@@ -432,9 +432,9 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
 
     if ($success) {
         $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
-        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['textforumupdate'] . $link . '</p></td></tr>';
+        $body = '<div class="ctrtablerow"><p>' . $lang['textforumupdate'] . $link . '</p></div>';
     } else {
-        $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>';
+        $body = '<div class="ctrtablerow">';
         $body .= $core->message(
             $lang['deleteaborted'] . '<br />' . $lang['forumnotempty'],
             showheader: false,
@@ -442,7 +442,7 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
             return_as_string: true,
             showfooter: false,
         );
-        $body .= '</td></tr>';
+        $body .= '</div>';
     }
 }
 

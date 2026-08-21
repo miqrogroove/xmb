@@ -120,7 +120,7 @@ if (noSubmit('modsubmit')) {
             }
         }
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmodupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $lang['textmodupdate'] . '</div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

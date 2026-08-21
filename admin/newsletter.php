@@ -91,7 +91,7 @@ if (noSubmit('newslettersubmit')) {
             $db->escape_fast($memnews['username']);
             $db->query("INSERT INTO " . $vars->tablepre . "u2u (msgto, msgfrom, type, owner, folder, subject, message, dateline, readstatus, sentstatus) VALUES ('{$memnews['username']}', '" . $vars->xmbuser . "', 'incoming', '{$memnews['username']}', 'Inbox', '$newssubject', '$newsmessage', '" . time() . "', 'no', 'yes')");
         }
-        $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='tablerow'><td align='center'>{$lang['newslettersubmit']}</td></tr>";
+        $body = "<div class='ctrtablerow'>{$lang['newslettersubmit']}</div>";
     } else {
         $rawnewssubject = decimalEntityStrip(getPhpInput('newssubject'));
         $rawnewsmessage = getPhpInput('newsmessage');
@@ -121,7 +121,7 @@ if (noSubmit('newslettersubmit')) {
             $total++;
         }
         error_log("XMB Notice: $total newsletter e-mails transmitted by $rawuser");
-        $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='tablerow'><td align='center'>{$lang['newslettersubmit']} {$lang['textsent']} $total</td></tr>";
+        $body = "<div class='ctrtablerow'>{$lang['newslettersubmit']} {$lang['textsent']} $total</div>";
     }
 }
 

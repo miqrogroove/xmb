@@ -232,7 +232,7 @@ if (noSubmit('membersubmit')) {
             }
         }
     }
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['textmembersupdate'] . '</td></tr>';
+    $body = '<div class="ctrtablerow"><td>' . $lang['textmembersupdate'] . '</div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

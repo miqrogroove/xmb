@@ -101,7 +101,7 @@ if (noSubmit('restrictedsubmit')) {
     }
 
     $link = '</p><p><a href="' . $vars->full_url . 'admin/restrictions.php">' . $lang['cprestrictedlink'] . '</a>';
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td><p>' . $lang['restrictedupdate'] . $link . '</p></td></tr>';
+    $body = '<div class="ctrtablerow"><p>' . $lang['restrictedupdate'] . $link . '</p></div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

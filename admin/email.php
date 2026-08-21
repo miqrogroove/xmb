@@ -131,7 +131,7 @@ if (noSubmit('settingsubmit')) {
         $core->error($lang['mailerTestFail'] . $e->getMessage());
     }
     $status = $result ? $lang['mailerTestSuccess'] : $lang['emailErrorPhp'];
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $status . '</td></tr>';
+    $body = '<div class="ctrtablerow">' . $status . '</div>';
 }
 
 $endTable = $template->process('admin_table_end.php');

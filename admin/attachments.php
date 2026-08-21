@@ -251,14 +251,14 @@ if ($action == "movetodb") {
     $aid = getInt('aid');
     $pid = getInt('pid');
     $attach->moveToDB($aid, $pid);
-    $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='ctrtablerow'><td>{$lang['movetodb_done']}</td></tr>";
+    $body = "<div class='ctrtablerow'>{$lang['movetodb_done']}</div>";
 }
 
 if ($action == "movetodisk") {
     $aid = getInt('aid');
     $pid = getInt('pid');
     $attach->moveToDisk($aid, $pid);
-    $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='ctrtablerow'><td>{$lang['movetodisk_done']}</td></tr>";
+    $body = "<div class='ctrtablerow'>{$lang['movetodisk_done']}</div>";
 }
 
 if ($action == "regeneratethumbnail") {
@@ -271,7 +271,7 @@ if ($action == "regeneratethumbnail") {
         $msg = $attach->uploadErrorMsg($status);
     }
 
-    $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='ctrtablerow'><td>$msg</td></tr>";
+    $body = "<div class='ctrtablerow'>$msg</div>";
 }
 
 $header = $template->process('header.php');

@@ -132,7 +132,7 @@ if (onSubmit('nosubmit')) {
         $core->updateforumcount($fid);
     }
 
-    $body = "<tr bgcolor='" . $vars->theme['altbg2'] . "' class='ctrtablerow'><td>{$lang['editprofile_postsdeleted']}</td></tr>";
+    $body = "<div class='ctrtablerow'>{$lang['editprofile_postsdeleted']}</div>";
 }
 
 $endTable = $template->process('admin_table_end.php');
