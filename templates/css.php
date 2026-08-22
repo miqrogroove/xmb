@@ -306,10 +306,6 @@ table.subforums {
     margin-left: 8px;
 }
 
-.medium-width-box {
-    min-width: 50%;
-}
-
 @media screen and (min-width: 1200px) {
     .codemessage code {
         width: 800px;
@@ -323,10 +319,6 @@ table.subforums {
 @media screen and (min-width: 1850px) {
     .codemessage code {
         width: 1400px;
-    }
-    .medium-width-box {
-        min-width: 925px;
-        max-width: 1000px;
     }
 }
 @media screen and (max-width: 850px) {
@@ -460,7 +452,8 @@ table.subforums {
 .admin-ipban,
 .admin-prune,
 .admin-rename,
-.admin-search-form {
+.admin-search-form,
+.admin-themes-single {
     max-width: 550px;
 }
 
@@ -479,6 +472,12 @@ table.subforums {
 
 .admin-forums-detail {
     max-width: 1024px;
+}
+
+@media screen and (min-width: 1100px) {
+    .admin-themes-single {
+        max-width: 50%;
+    }
 }
 
 .admin-block,
@@ -632,6 +631,7 @@ table.subforums {
 
 .admin-block > .row > .category-head,
 .admin-panel .category-head,
+.admin-themes-single .category-head,
 .permissions-grid thead .category-head {
     text-align: center;
 }
@@ -757,4 +757,8 @@ table.subforums {
     font-size: <?= $THEME['font-smaller-1'] ?>;
     line-height: 1.5;
     margin: 5px;
+}
+
+.admin-themes-single .color {
+    width: 13px;
 }

@@ -29,6 +29,9 @@
 .admin-themes {
     --xmb-grid-columns: max-content auto max-content;
 }
+.admin-themes-single {
+    --xmb-grid-columns: auto auto max-content;
+}
 .admin-attachment-search {
     --xmb-grid-columns: max-content auto;
 }
@@ -58,10 +61,12 @@
         --xmb-column-hide: none;
     }
 }
-.span {
+.span,
+.admin-themes-single .row .field.submit {
     --xmb-grid-span: 1 / -1;
 }
-.admin-smilies .add-all .span {
+.admin-smilies .add-all .span,
+.admin-themes-single .field.span {
     --xmb-grid-span: 2 / -1;
 }
 .admin-smilies .icon-list .span {
@@ -70,3 +75,4 @@
 .admin-smilies .new .span {
     --xmb-grid-span: 3 / -1;
 }
+    
