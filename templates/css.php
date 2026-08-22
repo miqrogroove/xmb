@@ -496,7 +496,8 @@ table.subforums {
     --xmb-block-width: 91%;
 }
 
-.admin-attachment-result {
+.admin-attachment-result,
+.admin-themes-new {
     --xmb-block-width: 93%;
 }
 
@@ -512,7 +513,8 @@ table.subforums {
 .admin-members-search,
 .admin-moderators,
 .admin-panel,
-.admin-search-result {
+.admin-search-result,
+.admin-themes-new {
     width: calc(var(--xmb-block-width) - (2 * <?= $THEME['borderwidth'] ?>));
 }
 

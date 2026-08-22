@@ -41,7 +41,8 @@
 .admin-newsletter,
 .admin-prune,
 .admin-settings,
-.admin-themes-import {
+.admin-themes-import,
+.admin-themes-new {
     --xmb-grid-columns: auto auto;
 }
 .admin-restrictions-new {
