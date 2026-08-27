@@ -54,32 +54,39 @@ $table = $template->process('admin_table.php');
 
 $body = $template->process('admin_modlog_start.php');
 
-$count = (int) $db->result($db->query("SELECT count(fid) FROM " . $vars->tablepre . "logs WHERE NOT (fid='0' AND tid='0')"), 0);
-$template->count = $count;
+$count = (int) $db->result($db->query("SELECT count(fid) FROM " . $vars->tablepre . "logs WHERE NOT (fid='0' AND tid='0')"));
+
+$rowsPerPage = 100;
+$first = 1;
+$last = ceil($count / $rowsPerPage);
 
 $page = getInt('page');
-if (! $page) {
-    $page = 1;
+if (0 == $page) {
+    $page = $first;
+} elseif ($page < $first || $page > $last) {
+    http_response_code(404);
+    $core->message($lang['generic_missing']);
 }
 
-$old = (($page-1)*100);
-$current = ($page*100);
+$old = ($page - 1) * $rowsPerPage;
 
+$template->count = $count;
 $template->firstpage = '';
 $template->lastpage = '';
 $template->prevpage = '';
 $template->nextpage = '';
 $template->random_var = '';
-
-$query = $db->query("SELECT l.*, t.subject FROM " . $vars->tablepre . "logs l LEFT JOIN " . $vars->tablepre . "threads t ON l.tid=t.tid WHERE NOT (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, 100");
 $template->url = '';
+
+$query = $db->query("SELECT l.*, t.subject FROM " . $vars->tablepre . "logs l LEFT JOIN " . $vars->tablepre . "threads t ON l.tid=t.tid WHERE NOT (l.fid='0' AND l.tid='0') ORDER BY date ASC LIMIT $old, $rowsPerPage");
+
 while ($recordinfo = $db->fetch_array($query)) {
     $template->date = $core->printGmDate((int) $recordinfo['date']);
     $template->time = gmdate($vars->timecode, (int) $recordinfo['date']);
     if ((int) $recordinfo['tid'] > 0 && $recordinfo['action'] != 'delete' && trim($recordinfo['subject'] ?? '') != '') {
         $template->url = "<a href='" . $vars->full_url . "viewthread.php?tid={$recordinfo['tid']}' target='_blank'>{$recordinfo['subject']}</a>";
     } elseif ($recordinfo['action'] == 'delete') {
-        $recordinfo['action'] = '<strong>'.$recordinfo['action'].'</strong>';
+        $recordinfo['action'] = "<strong>{$recordinfo['action']}</strong>";
         $template->url = "tid={$recordinfo['tid']} - fid:{$recordinfo['fid']}";
     } else {
         $template->url = "tid={$recordinfo['tid']} - fid:{$recordinfo['fid']}";
@@ -90,46 +97,20 @@ while ($recordinfo = $db->fetch_array($query)) {
 
 // TODO: Check if this can be replaced by the multipage functions.
 
-if ($count > $current) {
-    $page = $current/100;
-    if ($page > 1) {
-        $template->prevpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page='.($page-1).'">&laquo; Previous Page</a>';
-    }
+if ($page != $first) {
+    $template->firstpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page=' . $first . '">&nbsp;&laquo;&laquo;</a>';
+    $template->prevpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page=' . ($page - 1) . '">&laquo; Previous Page</a>';
+}
 
-    $template->nextpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page='.($page+1).'">Next Page &raquo;</a>';
+if ($page != $last) {
+    $template->nextpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page=' . ($page + 1) . '">Next Page &raquo;</a>';
+    $template->lastpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page=' . $last . '">&nbsp;&raquo;&raquo;</a>';
+}
 
-    if ($template->prevpage == '' || $template->nextpage == '') {
-        $template->random_var = '';
-    } else {
-        $template->random_var = '-';
-    }
-
-    $last = ceil($count/100);
-    if ($last > $page) {
-        $template->lastpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page='.$last.'">&nbsp;&raquo;&raquo;</a>';
-    }
-
-    $first = 1;
-    if ($page > $first) {
-        $template->firstpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page='.$first.'">&nbsp;&laquo;&laquo;</a>';
-    }
+if ($template->prevpage == '' || $template->nextpage == '') {
+    $template->random_var = '';
 } else {
-    if ($page > 1) {
-        $template->prevpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page='.($page-1).'">&laquo; Previous Page</a>';
-    }
-
-    $first = 1;
-    if ($page > $first) {
-        $template->firstpage = '<a href="' . $vars->full_url . 'admin/modlog.php?page='.$first.'">&nbsp;&laquo;&laquo;</a>';
-    } else {
-        $template->firstpage = '';
-    }
-
-    if ($template->prevpage == '' || $template->nextpage == '') {
-        $template->random_var = '';
-    } else {
-        $template->random_var = '-';
-    }
+    $template->random_var = '-';
 }
 
 $body .= $template->process('admin_modlog_end.php');

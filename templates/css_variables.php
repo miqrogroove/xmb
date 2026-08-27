@@ -14,6 +14,9 @@
 .admin-ranks {
     --xmb-grid-columns: max-content auto auto auto auto auto;
 }
+.admin-modlog {
+    --xmb-grid-columns: auto auto auto auto;
+}
 .admin-restrictions {
     --xmb-grid-columns: max-content auto max-content max-content;
 }

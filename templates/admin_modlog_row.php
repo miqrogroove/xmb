@@ -1,6 +1,6 @@
-<tr>
-<td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><a href="<?= $full_url ?>member.php?action=viewpro&amp;member=<?= $recordinfo['username'] ?>"><?= $recordinfo['username'] ?></a></td>
-<td class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>"><?= $date?> at <?= $time?></td>
-<td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $url ?></td>
-<td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>"><?= $recordinfo['action'] ?></td>
-</tr>
+  <div class="row">
+   <div class="field"><a href="<?= $full_url ?>member.php?action=viewpro&amp;member=<?= $recordinfo['username'] ?>"><?= $recordinfo['username'] ?></a></div>
+   <div class="field date"><?= $date?> at <?= $time?></div>
+   <div class="field"><?= $url ?></div>
+   <div class="field"><?= $recordinfo['action'] ?></div>
+  </div>

@@ -442,6 +442,7 @@ table.subforums {
     max-width: 450px;
 }
 
+.admin-modlog,
 .admin-themes,
 .admin-themes-import,
 .admin-smilies {
@@ -581,6 +582,7 @@ table.subforums {
 .admin-content-row,
 .admin-forums .group,
 .admin-ipban .delete,
+.admin-modlog .field:not(.date),
 .admin-ranks .new .field,
 .admin-search-result .field,
 .admin-smilies .new .field,
