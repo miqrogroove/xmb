@@ -11,6 +11,9 @@
         --xmb-grid-columns: auto 20% 28% max-content;
     }
 }
+.admin-log {
+    --xmb-grid-columns: auto auto auto auto auto;
+}
 .admin-ranks {
     --xmb-grid-columns: max-content auto auto auto auto auto;
 }

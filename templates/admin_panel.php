@@ -49,8 +49,8 @@ namespace XMB;
  <div class="group">
   <div class="category-head"><?= $lang['logs'] ?></div>
   <div class="xmb-content-row">
-    &raquo;&nbsp;<a href="<?= $full_url ?>admin/modlog.php"><?= $lang['textmodlogs'] ?></a><br />
-    &raquo;&nbsp;<a href="<?= $full_url ?>admin/log.php"><?= $lang['textcplogs'] ?></a><br />
+    &raquo;&nbsp;<a href="<?= $full_url ?>admin/log.php?type=mod"><?= $lang['textmodlogs'] ?></a><br />
+    &raquo;&nbsp;<a href="<?= $full_url ?>admin/log.php?type=cp"><?= $lang['textcplogs'] ?></a><br />
 <?php if (X_SADMIN) { ?>
     &raquo;&nbsp;<a href="<?= $full_url ?>admin/logsdump.php"><?= $lang['textlogsdump'] ?></a><br />
 <?php } ?>

@@ -1,16 +1,12 @@
-<tr class="header">
-<td colspan="5"><?= $firstpage ?> <?= $prevpage ?> <?= $random_var ?> <?= $nextpage ?> <?= $lastpage ?></td>
-</tr>
-
-<?php if ($count == 0) { ?>
-<tr class="header">
-<td colspan="5"><?= $lang['logs_none'] ?></td>
-</tr>
+<?php if ($prevpage != '' || $nextpage != '') { ?>
+  <div class="row">
+   <div class="header span"><?= $firstpage ?> <?= $prevpage ?> <?= $random_var ?> <?= $nextpage ?> <?= $lastpage ?></div>
+  </div>
+<?php } elseif ($count == 0) { ?>
+  <div class="row">
+   <div class="header span"><?= $lang['logs_none'] ?></div>
+  </div>
 <?php } ?>
 
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
+ </div>
+</div>
