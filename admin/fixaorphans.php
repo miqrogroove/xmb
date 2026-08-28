@@ -63,7 +63,7 @@ if (onSubmit('nosubmit')) {
 
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $i . $lang['o_attachments_found'] . '</td></tr>';
+    $body = "<div class='ctrtablerow'>{$i}{$lang['o_attachments_found']}</div>";
 } else {
     $template->token = $token->create('Control Panel/Fix Orphans', 'Attachments', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['o_attachments_confirm'];

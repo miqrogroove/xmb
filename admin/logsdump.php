@@ -63,7 +63,7 @@ if (onSubmit('nosubmit')) {
     $sql->clearAdminLog();
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_logs'].'</td></tr>';
+    $body = "<div class='ctrtablerow'>{$lang['tool_completed']} - {$lang['tool_logs']}</div>";
 } else {
     $template->token = $token->create('Control Panel/Clear CP Logs', '', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['logsdump_confirm'];

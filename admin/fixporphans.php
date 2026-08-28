@@ -104,7 +104,7 @@ if (noSubmit('orphsubmit')) {
         }
     }
 
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $i . $lang['o_posts_found'] . '</td></tr>';
+    $body = "<div class='ctrtablerow'>{$i}{$lang['o_posts_found']}</div>";
 }
 
 $endTable = $template->process('admin_table_end.php');

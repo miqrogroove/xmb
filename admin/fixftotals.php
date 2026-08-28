@@ -61,7 +61,7 @@ if (onSubmit('nosubmit')) {
     $sql->fixAllForumCounts();
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_forumtotal'].'</td></tr>';
+    $body = "<div class='ctrtablerow'>{$lang['tool_completed']} - {$lang['tool_forumtotal']}</div>";
 } else {
     $template->token = $token->create('Control Panel/Fix Forum Totals', '', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['fixposts_confirm'];

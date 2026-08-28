@@ -672,6 +672,9 @@ table.subforums {
     grid-column: var(--xmb-grid-span);
 }
 
+.admin-ays,
+.admin-fixporphans,
+.admin-fixtorphans,
 .admin-members-prune-ays,
 .admin-members-result .delete,
 .admin-ranks .delete,
