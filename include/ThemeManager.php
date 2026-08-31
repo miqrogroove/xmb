@@ -139,9 +139,9 @@ class ThemeManager
 
         // Alters certain visibility-variables
         if (false === strpos($this->vars->theme['bgcolor'], '.')) {
-            $this->vars->theme['bgcode'] = 'background-color: ' . $this->vars->theme['bgcolor'] . ';';
+            $this->vars->theme['bgcode'] = $this->vars->theme['bgcolor'];
         } else {
-            $this->vars->theme['bgcode'] = 'background-image: url(' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['bgcolor'] . ');';
+            $this->vars->theme['bgcode'] = 'url(' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['bgcolor'] . ')';
         }
 
         if (false === strpos($this->vars->theme['catcolor'], '.')) {

@@ -11,7 +11,7 @@
 <?= $css ?>
 <script type="text/javascript" src="<?= $full_url ?>js/header.js?v=2"></script>
 </head>
-<body text="<?= $THEME['text'] ?>">
+<body>
 <?= $bbcodescript ?>
 <a name="top"></a>
 

@@ -4,9 +4,10 @@ body {
     scrollbar-arrow-color: <?= $THEME['header'] ?>;
     scrollbar-base-color: <?= $THEME['altbg1'] ?>;
     text-align: left;
-    <?= $THEME['bgcode'], "\n" ?>
+    background: <?= $THEME['bgcode'] ?>;
     font-family: <?= $THEME['font'] ?>;
     font-size: <?= $THEME['fontsize'] ?>;
+    color: <?= $THEME['text'] ?>;
 }
 
 body > br {
@@ -753,15 +754,15 @@ table.subforums {
 }
 
 .option-list div {
-  margin: 5px 0px;
+    margin: 5px 0px;
 }
 
 .option-list input[type="checkbox"] {
-  margin: 0px 4px;
+    margin: 0px 4px;
 }
 
 .option-list input[type="radio"] {
-  margin: 0px 7px 0px 4px;
+    margin: 0px 7px 0px 4px;
 }
 
 .admin-restrictions .new-instructions {
