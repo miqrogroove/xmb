@@ -157,17 +157,6 @@ input[readonly] {
     table-layout: fixed;
 }
 
-.navtd {
-    background-color: <?= $THEME['header'] ?>;
-    color: <?= $THEME['headertext'] ?>;
-    table-layout: fixed;
-    text-decoration: none;
-}
-
-.navtd a {
-    white-space: nowrap;
-}
-
 .navtd2 {
     background-color: <?= $THEME['header'] ?>;
     color: <?= $THEME['headertext'] ?>;
@@ -484,7 +473,9 @@ table.subforums {
 
 .admin-block,
 .admin-email,
-.admin-search-result {
+.admin-search-result,
+.breadcrumbs,
+.page-header {
     --xmb-block-width: <?= $THEME['tablewidth'] ?>;
 }
 
@@ -516,7 +507,9 @@ table.subforums {
 .admin-moderators,
 .admin-panel,
 .admin-search-result,
-.admin-themes-new {
+.admin-themes-new,
+.breadcrumbs,
+.page-header {
     width: calc(var(--xmb-block-width) - (2 * <?= $THEME['borderwidth'] ?>));
 }
 
@@ -550,7 +543,9 @@ table.subforums {
 }
 
 .xmb-grid .row,
-.xmb-tabbed-grid .row {
+.xmb-tabbed-grid .row,
+.header-top-grid .row,
+.links-grid .row {
     display: contents;
 }
 
@@ -572,12 +567,18 @@ table.subforums {
 .xmb-tabbed-grid .field,
 .xmb-block-simple .field,
 .admin-attachment-result .cell,
-.admin-content-row {
+.admin-content-row,
+.header-top,
+.navtd {
     border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
     margin-right: -<?= $THEME['borderwidth'] ?>;
     margin-bottom: -<?= $THEME['borderwidth'] ?>;
     padding: <?= $THEME['tablespace'] ?>;
     background: <?= $THEME['altbg2'] ?>;
+}
+
+.xmb-grid .naked-cell {
+    padding: <?= $THEME['tablespace'] ?>;
 }
 
 .admin-content-row,
@@ -608,7 +609,8 @@ table.subforums {
 .admin-forums-detail .xmb-grid-form-label,
 .admin-members-result .result .field,
 .admin-prune .label,
-.admin-settings .field {
+.admin-settings .field,
+.breadcrumbs .naked-cell {
     display: flex;
     align-items: center;
 }
@@ -770,4 +772,58 @@ table.subforums {
 
 .admin-themes-single .color {
     width: 13px;
+}
+
+.page-header > .row > div {
+    padding: 6px;
+}
+
+.header-top {
+    background: <?= $THEME['topbgcode'] ?>;
+}
+
+.header-top-grid {
+    display: grid;
+    grid-template-columns: var(--xmb-grid-columns);
+    grid-template-rows: var(--xmb-grid-rows);
+    font-size: <?= $THEME['font-smaller-1'] ?>;
+}
+
+.header-top-grid .logo {
+    grid-row: var(--xmb-grid-span);
+}
+
+.header-top-grid .user-alerts,
+.header-top-grid .login-status div {
+    text-align: right;
+}
+
+.header-top-grid .login-status {
+    display: flex;
+    align-items: end;
+    justify-content: right;
+}
+
+.navtd {
+    background-color: <?= $THEME['header'] ?>;
+    color: <?= $THEME['headertext'] ?>;
+    table-layout: fixed;
+    text-decoration: none;
+}
+
+.navtd a {
+    white-space: nowrap;
+}
+
+.breadcrumbs {
+    margin-top: 2px;
+}
+
+.links-grid {
+    display: grid;
+    grid-template-columns: var(--xmb-grid-columns);
+}
+
+.links-grid .sitelink {
+    text-align: right;
 }

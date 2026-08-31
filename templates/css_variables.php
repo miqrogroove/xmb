@@ -41,6 +41,9 @@
 .admin-attachment-search {
     --xmb-grid-columns: max-content auto;
 }
+.breadcrumbs {
+    --xmb-grid-columns: auto min-content min-content;
+}
 .admin-email,
 .admin-forums-detail,
 .admin-moderators,
@@ -48,7 +51,9 @@
 .admin-prune,
 .admin-settings,
 .admin-themes-import,
-.admin-themes-new {
+.admin-themes-new,
+.header-top-grid,
+.links-grid {
     --xmb-grid-columns: auto auto;
 }
 .admin-restrictions-new {
@@ -69,7 +74,8 @@
     }
 }
 .span,
-.admin-themes-single .row .field.submit {
+.admin-themes-single .row .field.submit,
+.header-top-grid .logo {
     --xmb-grid-span: 1 / -1;
 }
 .admin-smilies .add-all .span,
@@ -82,4 +88,7 @@
 .admin-smilies .new .span {
     --xmb-grid-span: 3 / -1;
 }
-    
+
+.header-top-grid {
+    --xmb-grid-rows: auto auto;
+}

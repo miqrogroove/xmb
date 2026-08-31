@@ -153,9 +153,9 @@ class ThemeManager
         }
 
         if (false === strpos($this->vars->theme['top'], '.')) {
-            $this->vars->theme['topbgcode'] = "bgcolor='" . $this->vars->theme['top'] . "'";
+            $this->vars->theme['topbgcode'] = $this->vars->theme['top'];
         } else {
-            $this->vars->theme['topbgcode'] = "style='background-image: url(" . $this->vars->full_url . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['top'] . ")'";
+            $this->vars->theme['topbgcode'] = 'url(' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['top'] . ')';
         }
 
         null_string($this->vars->theme['boardimg']);

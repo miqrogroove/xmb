@@ -14,47 +14,44 @@
 <body text="<?= $THEME['text'] ?>">
 <?= $bbcodescript ?>
 <a name="top"></a>
-<table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
-<tr>
-<td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="6" width="100%">
-<tr>
-<td width="74%" <?= $THEME['topbgcode'] ?>>
-<table border="0" width="100%" cellpadding="0" cellspacing="0">
-<tr>
-<td valign="top" rowspan="2"><?= $THEME['logo'] ?></td>
-<td align="right" valign="top"><font class="smalltxt"><?= $lastvisittext ?><br /><?= $newu2umsg ?></font></td>
-</tr>
-<tr>
-<td align="right" valign="bottom"><font class="smalltxt"><?= $notify ?></font></td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td class="navtd">
-<table width="100%" cellpadding="0" cellspacing="0">
-<tr>
-<td class="navtd"><?= $searchlink ?> <?= $links ?> <?= $pluglink ?></td>
-<td align="right"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><?= $lang['backto'] ?> <img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/top_home.gif" border="0" alt="<?= $SETTINGS['sitename'] ?>" /></a></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-<table cellspacing="0" cellpadding="1" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
-<tr>
-<td><table width="100%" cellspacing="0" cellpadding="<?= $THEME['tablespace'] ?>" align="center">
-<tr>
-<td class="nav"> <a href="<?= $full_url ?>"><?= $SETTINGS['bbname'] ?></a> <?= $navigation ?></td>
-<td align="right"><?= $quickjump ?></td>
-<td align="right" width="1"><a href="#bottom" title="<?= $lang['gotobottom'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/arrow_dw.gif" border="0" alt="<?= $lang['gotobottom'] ?>" /></a></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
+
+<div class="xmb-block-wrap page-header-wrap">
+ <div class="xmb-block-simple page-header">
+  <div class="row">
+   <div class="header-top">
+    <div class="header-top-grid">
+     <div class="row">
+      <div class="logo"><?= $THEME['logo'] ?></div>
+      <div class="user-alerts"><?= $lastvisittext ?><br /><?= $newu2umsg ?></div>
+     </div>
+     <div class="row">
+      <div class="login-status">
+       <div><?= $notify ?></div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="row">
+   <div class="navtd">
+    <div class="links-grid">
+     <div class="row">
+      <div class="pluglinks"><?= $searchlink ?> <?= $links ?> <?= $pluglink ?></div>
+      <div class="sitelink"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><?= $lang['backto'] ?> <img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/top_home.gif" border="0" alt="<?= $SETTINGS['sitename'] ?>" /></a></div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div class="xmb-grid breadcrumbs">
+ <div class="row">
+  <div class="naked-cell nav">
+   <div> <a href="<?= $full_url ?>"><?= $SETTINGS['bbname'] ?></a> <?= $navigation ?></div>
+  </div>
+  <div class="naked-cell"><?= $quickjump ?></div>
+  <div class="naked-cell"><a href="#bottom" title="<?= $lang['gotobottom'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/arrow_dw.gif" border="0" alt="<?= $lang['gotobottom'] ?>" /></a></div>
+ </div>
+</div>
 <br />
