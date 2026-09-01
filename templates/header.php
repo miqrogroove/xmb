@@ -19,7 +19,7 @@
 <td bgcolor="<?= $THEME['bordercolor'] ?>">
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="6" width="100%">
 <tr>
-<td width="74%" <?= $THEME['topbgcode'] ?>>
+<td <?= $THEME['topbgcode'] ?>>
 <table border="0" width="100%" cellpadding="0" cellspacing="0">
 <tr>
 <td valign="top" rowspan="2"><?= $THEME['logo'] ?></td>
