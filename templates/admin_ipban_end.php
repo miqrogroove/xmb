@@ -1,5 +1,5 @@
 <tr bgcolor="<?= $THEME['altbg2'] ?>">
-<td colspan="4" class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>"><?= $lang['textnewip'] ?>
+<td colspan="3" class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>"><?= $lang['textnewip'] ?>
 <input type="text" name="newip1" size="3" maxlength="3" bgcolor="<?= $THEME['altbg2'] ?>" />.<input type="text" name="newip2" size="3" maxlength="3" bgcolor="<?= $THEME['altbg2'] ?>" />.<input type="text" name="newip3" size="3" maxlength="3" bgcolor="<?= $THEME['altbg2'] ?>" />.<input type="text" name="newip4" size="3" maxlength="3" bgcolor="<?= $THEME['altbg2'] ?>" /></td>
 </tr>
 </table>
