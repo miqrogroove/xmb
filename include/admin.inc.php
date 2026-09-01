@@ -87,7 +87,8 @@ class admin
             return $lang['restricted'];
         }
 
-        $this->session->logoutAll($userfrom);
+        $isSelf = $this->vars->self['username'] == $userfrom;
+        $this->session->logoutAll($userfrom, $isSelf);
 
         ignore_user_abort(true);
         set_time_limit(180);
