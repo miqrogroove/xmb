@@ -11,7 +11,7 @@ namespace XMB;
 &nbsp; <?= $lang['textorder'] ?> <input type="text" name="displayorder<?= $subforum['fid'] ?>" size="2" value="<?= $subforum['displayorder'] ?>" />
 &nbsp; <select name="status<?= $subforum['fid'] ?>">
 <option value="on" <?= $on ?>><?= $lang['texton'] ?></option><option value="off" <?= $off ?>><?= $lang['textoff'] ?></option></select>
-&nbsp; <select name="moveto<?= $subforum['fid'] ?>"><option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
+&nbsp; <select name="moveto<?= $subforum['fid'] ?>"><option value="">-<?= $lang['textnone'] ?>-</option>
 <?php
 foreach ($forums[0] as $moveforum) { // Ungrouped forum options.
     if ($moveforum['fid'] == $subforum['fup']) {
