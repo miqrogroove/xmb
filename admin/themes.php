@@ -59,7 +59,7 @@ if ($getThemeId) {
     $query = $db->query("SELECT * FROM " . $vars->tablepre . "themes WHERE themeid = $getThemeId");
     $themebits = $db->fetch_array($query);
     foreach ($themebits as $key => $val) {
-        if (! is_integer($key) && $key != 'themeid' && $key != 'dummy') {
+        if ($key != 'themeid' && $key != 'version') {
             $contents[] = "$key=$val";
         }
     }
