@@ -2707,6 +2707,25 @@ class Upgrade
             $this->upgrade_query($sql);
         }
 
+        // This block will need to be moved to schema v15 when that's added, because this code is not original to v14.
+        $table = 'settings';
+
+        $this->show->progress("Requesting to lock the $table table");
+        $this->upgrade_query('LOCK TABLES ' . $this->vars->tablepre . $table." WRITE");
+        $this->show->progress("Gathering schema information from the $table table");
+
+        $result = $this->upgrade_query('SELECT value FROM ' . $this->vars->tablepre . $table." WHERE name = 'tickercontents'");
+        if ($this->db->num_rows($result) == 1) {
+            $row = $this->db->fetch_array($result);
+            if (false !== strpos($row['value'], 'cp.php?action=settings')) {
+                $this->show->progress("Revising values in the $table table");
+                $newValue = str_replace('cp.php?action=settings', 'admin/settings.php', $row['value']);
+                $newValue = $this->db->escape($newValue);
+                $this->upgrade_query('UPDATE ' . $this->vars->tablepre . $table . " SET value = '$newValue' WHERE name = 'tickercontents'");
+            }
+        }
+        $this->db->free_result($result);
+
         $this->show->progress("Releasing the lock on the $table table");
         $this->upgrade_query('UNLOCK TABLES');
 
