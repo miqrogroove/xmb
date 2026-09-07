@@ -41,7 +41,8 @@
 .admin-attachment-search {
     --xmb-grid-columns: max-content auto;
 }
-.breadcrumbs {
+.breadcrumbs,
+.bottom-breadcrumbs {
     --xmb-grid-columns: auto min-content min-content;
 }
 .admin-email,

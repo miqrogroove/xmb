@@ -78,15 +78,15 @@ namespace XMB;
    </div>
    <div class="row">
     <div class="label"><?= $lang['textborderwidth'] ?></div>
-    <div class="field span"><input type="text" name="borderwidthnew" value="<?= $themestuff['borderwidth'] ?>" size="2" /></div>
+    <div class="field span"><input type="text" name="borderwidthnew" value="<?= $themestuff['borderwidth'] ?>" size="4" /></div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textwidth'] ?></div>
-    <div class="field span"><input type="text" name="tablewidthnew" value="<?= $themestuff['tablewidth'] ?>" size="3" /></div>
+    <div class="field span"><input type="text" name="tablewidthnew" value="<?= $themestuff['tablewidth'] ?>" size="4" /></div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textspace'] ?></div>
-    <div class="field span"><input type="text" name="tablespacenew" value="<?= $themestuff['tablespace'] ?>" size="2" /></div>
+    <div class="field span"><input type="text" name="tablespacenew" value="<?= $themestuff['tablespace'] ?>" size="4" /></div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textfont'] ?></div>

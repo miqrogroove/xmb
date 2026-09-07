@@ -37,7 +37,7 @@
     <div class="links-grid">
      <div class="row">
       <div class="pluglinks"><?= $searchlink ?> <?= $links ?> <?= $pluglink ?></div>
-      <div class="sitelink"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><?= $lang['backto'] ?> <img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/top_home.gif" border="0" alt="<?= $SETTINGS['sitename'] ?>" /></a></div>
+      <div class="sitelink"><a href="<?= $SETTINGS['siteurl'] ?>" title="<?= $SETTINGS['sitename'] ?>"><?= $lang['backto'] ?> <img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/top_home.gif" alt="<?= $SETTINGS['sitename'] ?>" /></a></div>
      </div>
     </div>
    </div>
@@ -51,7 +51,6 @@
    <div> <a href="<?= $full_url ?>"><?= $SETTINGS['bbname'] ?></a> <?= $navigation ?></div>
   </div>
   <div class="naked-cell"><?= $quickjump ?></div>
-  <div class="naked-cell"><a href="#bottom" title="<?= $lang['gotobottom'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/arrow_dw.gif" border="0" alt="<?= $lang['gotobottom'] ?>" /></a></div>
+  <div class="naked-cell"><a href="#bottom" title="<?= $lang['gotobottom'] ?>"><img src="<?= $full_url ?><?= $THEME['imgdir'] ?>/arrow_dw.gif" alt="<?= $lang['gotobottom'] ?>" /></a></div>
  </div>
 </div>
-<br />
