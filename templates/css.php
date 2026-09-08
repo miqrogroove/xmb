@@ -606,8 +606,7 @@ table.subforums {
     background: <?= $THEME['altbg2'] ?>;
 }
 
-.admin-themes .count,
-.bottom-breadcrumbs .naked-cell {
+.admin-themes .count {
     background: <?= $THEME['altbg2'] ?>;
 }
 
@@ -617,7 +616,7 @@ table.subforums {
 .admin-prune .label,
 .admin-settings .field,
 .breadcrumbs .naked-cell,
-.bottom-breadcrumbs .naked-cell {
+.bottom-breadcrumbs-grid .naked-cell {
     display: flex;
     align-items: center;
 }
@@ -845,10 +844,11 @@ table.subforums {
     text-align: right;
 }
 
-.xmb-outer-border-wrap {
-    margin: calc(12px + <?= $THEME['borderwidth'] ?>) 0px;
+.bottom-breadcrumbs-wrap {
+    margin-top: calc(12px + <?= $THEME['borderwidth'] ?>);
+    margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
     
-.xmb-outer-border-wrap .xmb-grid {
-    border: <?= $THEME['borderwidth'] ?> solid <?= $THEME['bordercolor'] ?>;
+.bottom-breadcrumbs .field {
+    padding: 0px;
 }
