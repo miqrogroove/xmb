@@ -1138,8 +1138,12 @@ class Core
      *
      * @since 1.9.1
      */
-    public function put_cookie(string $name, string $value = '', int $expire = 0, ?string $path = null, ?string $domain = null, bool $secure = false)
+    public function put_cookie(string $name, string $value = '', int $expire = 0, ?string $path = null, ?string $domain = null, ?bool $secure = null)
     {
+        if (! is_null($secure)) {
+            trigger_error('The secure parameter to put_cookie() is no longer honored and will be removed in a future version.', E_USER_DEPRECATED);
+        }
+
         // Make sure the output stream is still empty.  Otherwise, someone called this function at the wrong time.
         if (headers_sent()) {
             trigger_error('Attempted use of put_cookie() after headers already sent.', E_USER_WARNING);
@@ -1149,7 +1153,7 @@ class Core
         // Default arguments were poorly chosen, so let's try to fill them in now.
         if (is_null($path)) $path = $this->vars->cookiepath;
         if (is_null($domain)) $domain = $this->vars->cookiedomain;
-        if (! $secure) $secure = $this->vars->cookiesecure;
+        $secure = $this->vars->cookiesecure;
         $httponly = true;
         $samesite = 'Lax';
 
