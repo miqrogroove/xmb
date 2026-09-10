@@ -18,7 +18,7 @@ namespace XMB;
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['texthemename'] ?></td>
-<td colspan="2"><input type="text" name="namenew" value="<?= $themestuff['name'] ?>" /></td>
+<td colspan="2"><input type="text" name="namenew" value="<?= $themestuff['name'] ?>" required=required /></td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['textbgcolor'] ?></td>

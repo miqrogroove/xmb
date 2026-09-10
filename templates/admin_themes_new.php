@@ -8,7 +8,7 @@
 <table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['texthemename'] ?></td>
-<td><input type="text" name="namenew" /></td>
+<td><input type="text" name="namenew" required=required /></td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['textbgcolor'] ?></td>

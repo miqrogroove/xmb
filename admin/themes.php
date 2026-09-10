@@ -33,6 +33,7 @@ $session = Services\session();
 $settings = Services\settings();
 $sql = Services\sql();
 $template = Services\template();
+$themeMgr = Services\theme();
 $token = Services\token();
 $validate = Services\validate();
 $vars = Services\vars();
@@ -115,8 +116,23 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
         $core->error($lang['textthemeimportfail']);
     }
     $themebits = $admin->readFileAsINI($_FILES['themefile']['tmp_name']);
-    $start = "INSERT INTO " . $vars->tablepre . "themes";
 
+    $required = ['name','bgcolor','altbg1','altbg2','link','bordercolor','header','headertext','top','catcolor','tabletext','text','borderwidth','tablewidth','tablespace','font','fontsize','boardimg','imgdir','admdir','smdir','cattext'];
+    foreach ($required as $key) {
+        if (! isset($themebits[$key])) {
+            $core->error($lang['textthemeimportfail']);
+        }
+    }
+
+    $themebits['fontsize'] = $themeMgr->clampFontSize($themebits['fontsize']);
+    $themebits['name'] = trim($themebits['name']);
+    unset($themebits['themeid'], $themebits['version']);
+
+    if ('' == $themebits['name']) {
+        $core->error($lang['textthemeimportfail']);
+    }
+
+    $dbname = '';
     $keysql = [];
     $valsql = [];
     foreach ($themebits as $key => $val) {
@@ -167,7 +183,10 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
     }
 
     foreach ($theme_name as $themeid => $name) {
-        $sql->setThemeName((int) $themeid, $name);
+        $name = trim($name);
+        if ('' != $name) {
+            $sql->setThemeName((int) $themeid, $name);
+        }
     }
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['themeupdate'] . '</td></tr>';
 }
@@ -194,7 +213,7 @@ if ($single_int > 0) {
     $orig = formInt('orig');
     $core->request_secure('Control Panel/Themes', (string) $orig);
 
-    $namenew = $validate->postedVar('namenew');
+    $namenew = trim($validate->postedVar('namenew'));
     $bgcolornew = $validate->postedVar('bgcolornew');
     $altbg1new = $validate->postedVar('altbg1new');
     $altbg2new = $validate->postedVar('altbg2new');
@@ -211,11 +230,15 @@ if ($single_int > 0) {
     $tablewidthnew = $validate->postedVar('tablewidthnew');
     $tablespacenew = $validate->postedVar('tablespacenew');
     $fnew = $validate->postedVar('fnew');
-    $fsizenew = $validate->postedVar('fsizenew');
+    $fsizenew = $db->escape($themeMgr->clampFontSize(getPhpInput('fsizenew')));
     $boardlogonew = $validate->postedVar('boardlogonew');
     $imgdirnew = $validate->postedVar('imgdirnew');
     $admdirnew = $validate->postedVar('admdirnew');
     $smdirnew = $validate->postedVar('smdirnew');
+
+    if ('' == $namenew) {
+        $core->error($lang['input_missing']);
+    }
 
     $db->query("UPDATE " . $vars->tablepre . "themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew', version = version + 1 WHERE themeid='$orig'");
 
@@ -223,7 +246,7 @@ if ($single_int > 0) {
 } elseif ($single_str == "submit" && $newtheme) {
     $core->request_secure('Control Panel/Themes', 'New Theme');
 
-    $namenew = $validate->postedVar('namenew');
+    $namenew = trim($validate->postedVar('namenew'));
     $bgcolornew = $validate->postedVar('bgcolornew');
     $altbg1new = $validate->postedVar('altbg1new');
     $altbg2new = $validate->postedVar('altbg2new');
@@ -240,11 +263,15 @@ if ($single_int > 0) {
     $tablewidthnew = $validate->postedVar('tablewidthnew');
     $tablespacenew = $validate->postedVar('tablespacenew');
     $fnew = $validate->postedVar('fnew');
-    $fsizenew = $validate->postedVar('fsizenew');
+    $fsizenew = $db->escape($themeMgr->clampFontSize(getPhpInput('fsizenew')));
     $boardlogonew = $validate->postedVar('boardlogonew');
     $imgdirnew = $validate->postedVar('imgdirnew');
     $admdirnew = $validate->postedVar('admdirnew');
     $smdirnew = $validate->postedVar('smdirnew');
+
+    if ('' == $namenew) {
+        $core->error($lang['input_missing']);
+    }
 
     $db->query("INSERT INTO " . $vars->tablepre . "themes (name, bgcolor, altbg1, altbg2, link, bordercolor, header, headertext, top, catcolor, tabletext, text, borderwidth, tablewidth, tablespace, font, fontsize, boardimg, imgdir, smdir, cattext, admdir) VALUES ('$namenew', '$bgcolornew', '$altbg1new', '$altbg2new', '$linknew', '$bordercolornew', '$headernew', '$headertextnew', '$topnew', '$catcolornew', '$tabletextnew', '$textnew', '$borderwidthnew', '$tablewidthnew', '$tablespacenew', '$fnew', '$fsizenew', '$boardlogonew', '$imgdirnew', '$smdirnew', '$cattextnew', '$admdirnew')");
 
