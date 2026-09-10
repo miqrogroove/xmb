@@ -432,25 +432,27 @@ if ($validForSave && $action !== 'edit' && X_GUEST && $settings->get('captcha_st
 
 // Check required fields
 if ($validForSave) {
+    $emptySubject = strlen($subjectinput) == 0;
+    $emptyMessage = strlen($messageinput) == 0;
     switch ($action) {
         case 'reply':
+            $delete = 'no';
+            $isFirstPost = false;
+            break;
         case 'edit':
             $isFirstPost = $pid == $sql->getFirstPostInThread($tid);
-            if (strlen($subjectinput) == 0) {
-                if (strlen($messageinput) == 0) {
-                    $errors .= $core->softerror($lang['postnothing']);
-                } elseif ($delete != 'yes') {
-                    // Check if this is the first post in the thread.
-                    if ($isFirstPost) {
-                        $errors .= $core->softerror($lang['textnosubject']);
-                    }
-                }
-            }
             break;
         case 'newthread':
-            if (strlen($subjectinput) == 0) {
-                $errors .= $core->softerror($lang['textnosubject']);
-            }
+            $delete = 'no';
+            $isFirstPost = true;
+    }
+
+    if ($emptySubject && 'no' == $delete) {
+        if ($isFirstPost) {
+            $errors .= $core->softerror($lang['textnosubject']);
+        } elseif ($emptyMessage) {
+            $errors .= $core->softerror($lang['postnothing']);
+        }
     }
 }
 
@@ -783,7 +785,7 @@ if ($action == 'reply' && $repquote > 0) {
 }
 
 // Abstract the latest values into $postinfo.  For post editing, these values might come from the database rather than the request.  For preview, always use request values.
-if ($action == 'edit' && noSubmit('editsubmit') && noSubmit('previewpost')) {
+if ($action == 'edit' && noSubmit('previewpost') && (noSubmit('editsubmit') || $emptySubject && $emptyMessage)) {
     $postinfo = $orig;
     $bBBcodeOnForThisPost = ($forum['allowbbcode'] == 'yes' && $postinfo['bbcodeoff'] == 'no');
     $bIMGcodeOnForThisPost = ($bBBcodeOnForThisPost && $forum['allowimgcode'] == 'yes');
