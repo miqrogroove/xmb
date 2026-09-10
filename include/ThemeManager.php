@@ -121,26 +121,10 @@ class ThemeManager
      */
     public function more_theme_vars()
     {
-        // Alters certain visibility-variables
-        if (false === strpos($this->vars->theme['bgcolor'], '.')) {
-            $this->vars->theme['bgcode'] = 'background-color: ' . $this->vars->theme['bgcolor'] . ';';
-        } else {
-            $this->vars->theme['bgcode'] = 'background-image: url(' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['bgcolor'] . ');';
-        }
-
-        if (false === strpos($this->vars->theme['catcolor'], '.')) {
-            $this->vars->theme['catbgcode'] = "bgcolor='" . $this->vars->theme['catcolor'] . "'";
-            $this->vars->theme['catcss'] = "background-color: " . $this->vars->theme['catcolor'] . ";\n";
-        } else {
-            $this->vars->theme['catbgcode'] = "style='background-image: url(" . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['catcolor'] . ")'";
-            $this->vars->theme['catcss'] = "background-image: url(" . $this->vars->full_url . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['catcolor'] . ");\n";
-        }
-
-        if (false === strpos($this->vars->theme['top'], '.')) {
-            $this->vars->theme['topbgcode'] = "bgcolor='" . $this->vars->theme['top'] . "'";
-        } else {
-            $this->vars->theme['topbgcode'] = "style='background-image: url(" . $this->vars->full_url . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['top'] . ")'";
-        }
+        $this->vars->theme['bgcode'] = $this->makeBackgroundStyle($this->vars->theme['bgcolor'], $this->vars->theme['imgdir']);
+        $this->vars->theme['catbgcode'] = $this->makeBackgroundAttr($this->vars->theme['catcolor'], $this->vars->theme['imgdir']);
+        $this->vars->theme['catcss'] = $this->makeBackgroundStyle($this->vars->theme['catcolor'], $this->vars->theme['imgdir']);
+        $this->vars->theme['topbgcode'] = $this->makeBackgroundAttr($this->vars->theme['top'], $this->vars->theme['imgdir']);
 
         null_string($this->vars->theme['boardimg']);
         $l = parse_url($this->vars->theme['boardimg']);
@@ -158,6 +142,34 @@ class ThemeManager
         // Legacy variable names
         $this->vars->theme['font1'] = $this->vars->theme['font-smaller-1'];
         $this->vars->theme['font3'] = $this->vars->theme['font-larger-2'];
+    }
+
+    /**
+     * Create an HTML attribute to implement a background color or filename.
+     *
+     * @since 1.10.07
+     */
+    public function makeBackgroundAttr(string $background, string $imgdir): string
+    {
+        if (false === strpos($background, '.')) {
+            return "bgcolor='$setting'";
+        } else {
+            return "style='background-image: url(" . $this->vars->full_url . $imgdir . "/" . $background . ");'";
+        }
+    }
+
+    /**
+     * Create a CSS property to implement a background color or filename.
+     *
+     * @since 1.10.07
+     */
+    public function makeBackgroundStyle(string $background, string $imgdir): string
+    {
+        if (false === strpos($background, '.')) {
+            return "background-color: $setting;\n";
+        } else {
+            return "background-image: url(" . $this->vars->full_url . $imgdir . "/" . $background . ");\n";
+        }
     }
 
     /**

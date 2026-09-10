@@ -23,7 +23,7 @@ namespace XMB;
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['textbgcolor'] ?></td>
 <td><input type="text" name="bgcolornew" value="<?= $themestuff['bgcolor'] ?>" /></td>
-<td bgcolor="<?= $themestuff['bgcolor'] ?>">&nbsp;</td>
+<td <?= $themestuff['bgcode'] ?>>&nbsp;</td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['textaltbg1'] ?></td>
@@ -58,12 +58,12 @@ namespace XMB;
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['texttop'] ?></td>
 <td><input type="text" name="topnew" value="<?= $themestuff['top'] ?>" /></td>
-<td bgcolor="<?= $themestuff['top'] ?>">&nbsp;</td>
+<td <?= $themestuff['topbgcode'] ?>>&nbsp;</td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['textcatcolor'] ?></td>
 <td><input type="text" name="catcolornew" value="<?= $themestuff['catcolor'] ?>" /></td>
-<td bgcolor="<?= $themestuff['catcolor'] ?>">&nbsp;</td>
+<td <?= $themestuff['catbgcode'] ?>>&nbsp;</td>
 </tr>
 <tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
 <td><?= $lang['textcattextcolor'] ?></td>

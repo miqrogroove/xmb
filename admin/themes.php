@@ -196,10 +196,15 @@ if ($single_int > 0) {
     $template->single_int = $single_int;
 
     $query = $db->query("SELECT * FROM " . $vars->tablepre . "themes WHERE themeid = $single_int");
-    $template->themestuff = $db->fetch_array($query);
+    $themestuff = $db->fetch_array($query);
     $db->free_result($query);
 
-    $core->nav($template->themestuff['name']);
+    $core->nav($themestuff['name']);
+
+    $themestuff['bgcode'] = $themeMgr->makeBackgroundAttr($themestuff['bgcolor'], $themestuff['imgdir']);
+    $themestuff['catbgcode'] = $themeMgr->makeBackgroundAttr($themestuff['catcolor'], $themestuff['imgdir']);
+    $themestuff['topbgcode'] = $themeMgr->makeBackgroundAttr($themestuff['top'], $themestuff['imgdir']);
+    $template->themestuff = $themestuff;
 
     $body = $template->process('admin_themes_single.php');
 } elseif ($single_str == "bump") {
