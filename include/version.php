@@ -30,8 +30,8 @@ if (! defined('ROOT')) {
 }
 
 define('X_VERSION', '1.9.12');
-define('X_VERSION_EXT', '1.9.12.10');
-define('X_VERSION_DATE', '202060521');
+define('X_VERSION_EXT', '1.9.12.11');
+define('X_VERSION_DATE', '20260926');
 define('MYSQL_MIN_VER', '4.1.7');
 define('PHP_MIN_VER', '7.0.0');
 define('COPY_YEAR', '2001-2026');
