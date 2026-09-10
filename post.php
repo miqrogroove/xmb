@@ -370,12 +370,10 @@ switch ($action) {
         $orig['status'] ??= '';
 
         $isMod = $core->modcheckPost($vars->self['username'], $forum['moderator'], $orig['status']);
+        $canEdit = $isMod || $vars->self['username'] === $orig['author'] && $thread['closed'] == '';
 
-        if (! $isMod) {
-            $delete = 'no';
-            if ($vars->self['username'] !== $orig['author'] || $thread['closed'] != '') {
-                $core->error($lang['noedit']);
-            }
+        if (! $canEdit) {
+            $core->error($lang['noedit']);
         }
 }
 
