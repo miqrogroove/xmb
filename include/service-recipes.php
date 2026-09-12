@@ -60,7 +60,7 @@ function create_core(DBStuff $db)
 {
     db($db);
 
-    debug(new \XMB\Debug(db()));
+    debug(new \XMB\Debug(db(), vars()));
     sql(new \XMB\SQL(db(), vars()->tablepre));
     validate(new \XMB\Validation(db()));
 

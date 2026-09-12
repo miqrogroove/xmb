@@ -31,8 +31,10 @@ namespace XMB;
  */
 class Debug
 {
-    public function __construct(private DBStuff $db)
-    {
+    public function __construct(
+        private DBStuff $db,
+        private Variables $vars,
+    ) {
         // Property promotion.
     }
     
@@ -45,17 +47,21 @@ class Debug
     {
         if (! X_SADMIN) return '';
 
+        $template = new Template($this->vars);
+        $template->addRefs();
+
         $stuff = [];
         $queries = $this->db->getQueryList();
         $querytimes = $this->db->getQueryTimes();
-        $stuff[] = '<table style="width: 97%;"><colgroup span="2" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
         foreach ($queries as $key => $val) {
-            $number = $key + 1;
-            $val = $this->mysql_syn_highlight(htmlEsc($val));
-            $stuff[] = "<tr><td><strong>$number.</strong></td><td>" . number_format($querytimes[$key], 8) . "</td><td>$val</td></tr>";
+            $stuff[] = [
+                'number' => $key + 1,
+                'time' => number_format($querytimes[$key], 8),
+                'val' => $this->mysql_syn_highlight(htmlEsc($val)),
+            ];
         }
-        $stuff[] = '</table>';
-        return implode("\n", $stuff);
+        $template->stuff = $stuff;
+        return $template->process('debug_query.php');
     }
 
     /**
