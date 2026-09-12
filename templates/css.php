@@ -477,6 +477,7 @@ table.subforums {
 .admin-search-result,
 .breadcrumbs,
 .bottom-breadcrumbs,
+.core-message,
 .page-header,
 .page-footer {
     --xmb-block-width: <?= $THEME['tablewidth'] ?>;
@@ -513,6 +514,7 @@ table.subforums {
 .admin-themes-new,
 .breadcrumbs,
 .bottom-breadcrumbs,
+.core-message,
 .page-header,
 .page-footer {
     width: calc(var(--xmb-block-width) - (2 * <?= $THEME['borderwidth'] ?>));
@@ -594,7 +596,8 @@ table.subforums {
 .admin-ranks .new .field,
 .admin-search-result .field,
 .admin-smilies .new .field,
-.admin-smilies .add-all .field {
+.admin-smilies .add-all .field,
+.core-message .field {
     background: <?= $THEME['altbg1'] ?>;
 }
 

@@ -1005,18 +1005,18 @@ class Core
         bool $showfooter = true,
         bool $isError = true,
     ): string {
-        $template = $this->template;
-
-        $template->message = $msg;
-
         if ($isError) {
-            $name = 'error';
+            $key = 'error';
         } else {
-            $name = 'message';
+            $key = 'message';
         }
 
+        $template = $this->template;
+        $template->message = $msg;
+        $template->headerText = $this->vars->lang[$key];
+
         if ($showheader) {
-            $this->nav($this->vars->lang[$name]);
+            $this->nav($this->vars->lang[$key]);
         }
 
         if (is_string($redirect)) {
@@ -1029,7 +1029,7 @@ class Core
             $template->header = '';
         }
 
-        $error = $template->process($name . '.php');
+        $error = $template->process('message.php');
 
         if ($showfooter) {
             $template->footerstuff = $this->end_time();
