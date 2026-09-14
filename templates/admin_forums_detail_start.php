@@ -37,12 +37,12 @@
      <table class="permissions-grid" style="width: 100%; text-align: center;">
       <colgroup span=5 />
       <thead>
-       <tr>
-        <td class="tablerow">&nbsp;</td>
-        <th class="category-head" scope="col"><?= $lang['polls'];   ?></th>
-        <th class="category-head" scope="col"><?= $lang['threads']; ?></th>
-        <th class="category-head" scope="col"><?= $lang['replies']; ?></th>
-        <th class="category-head" scope="col"><?= $lang['view'];    ?></th>
+       <tr class="tablerow">
+        <td>&nbsp;</td>
+        <th class="header" scope="col"><?= $lang['polls'];   ?></th>
+        <th class="header" scope="col"><?= $lang['threads']; ?></th>
+        <th class="header" scope="col"><?= $lang['replies']; ?></th>
+        <th class="header" scope="col"><?= $lang['view'];    ?></th>
        </tr>
       </thead>
       <tbody>

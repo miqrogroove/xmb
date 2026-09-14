@@ -659,7 +659,7 @@ table.subforums {
     text-align: center;
 }
 
-.permissions-grid tbody .category-head {
+.permissions-grid tbody .header {
     text-align: right;
 }
 
