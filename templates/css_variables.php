@@ -33,7 +33,7 @@
     --xmb-grid-columns: min-content auto auto;
 }
 .debug-query {
-    --xmb-grid-columns: min-content min-content auto;
+    --xmb-grid-columns: min-content min-content minmax(min-content, max-content);
 }
 .admin-themes {
     --xmb-grid-columns: max-content auto max-content;
