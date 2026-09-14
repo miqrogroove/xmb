@@ -26,11 +26,21 @@
     <?= $footerstuff['querynum'] ?>
     <?= $footerstuff['phpsql'] ?>
     <?= $footerstuff['load'] ?>
-    <?= $footerstuff['querydump'] ?>
    </div>
   </div>
  </div>
 </div>
+
+<?php if ('' != $footerstuff['querydump']) { ?>
+<div class="xmb-block-wrap debug-block-wrap">
+ <div class="xmb-block-simple debug-block">
+  <div class="field smalltxt">
+   <?= $footerstuff['querydump'] ?>
+  </div>
+ </div>
+</div>
+<?php } ?>
+
 <a id="bottom" name="bottom"></a>
 </body>
 </html>

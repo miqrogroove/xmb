@@ -48,7 +48,6 @@ class Debug
         if (! X_SADMIN) return '';
 
         $template = new Template($this->vars);
-        $template->addRefs();
 
         $stuff = [];
         $queries = $this->db->getQueryList();

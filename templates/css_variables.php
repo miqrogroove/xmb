@@ -32,6 +32,9 @@
 .admin-ipban {
     --xmb-grid-columns: min-content auto auto;
 }
+.debug-query {
+    --xmb-grid-columns: min-content min-content auto;
+}
 .admin-themes {
     --xmb-grid-columns: max-content auto max-content;
 }
