@@ -352,14 +352,14 @@ class admin
      *
      * @since 1.9.1
      */
-    public function dump_query($resource, $header = true): string
+    public function dump_query($resource, bool $header = true): string
     {
         $THEME = &$this->vars->theme;
 
         if ($this->db->error()) {
-            $error = '<tr bgcolor="' . $THEME['altbg1'] . '" class="ctrtablerow"><td align="left">';
+            $error = "<div class='row'>\n<div class='label'>\n";
             $error .= $this->core->error($this->db->error(), showheader: false, return_as_string: true, showfooter: false, die: false);
-            $error .= '</td></tr>';
+            $error .= "</div>\n</div>\n";
             return $error;
         } elseif ($resource === true) {
             // Success with no result.
@@ -368,23 +368,19 @@ class admin
             ob_start();
             $count = $this->db->num_fields($resource);
             if ($header) {
-                ?>
-                <tr class="category" bgcolor="<?= $THEME['altbg2'] ?>" align="center">
-                <?php
+                echo "<div class='row'>\n";
                 for ($i = 0; $i < $count; $i++) {
-                    echo '<td align="left">';
-                    echo '<strong><font color=' . $THEME['cattext'] . '>' . $this->db->field_name($resource, $i) . '</font></strong>';
-                    echo '</td>';
+                    echo "<div class='header'>" . $this->db->field_name($resource, $i) . "</div>\n";
                 }
-                echo '</tr>';
+                echo "</div>\n";
             }
 
             while ($a = $this->db->fetch_array($resource, $this->db::SQL_NUM)) {
                 ?>
-                <tr bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow">
+                <div class="row">
                 <?php
                 for ($i = 0; $i < $count; $i++) {
-                    echo '<td align="left">';
+                    echo '<div class="field">';
 
                     if (null === $a[$i]) {
                         echo '<em>NULL</em>';
@@ -393,9 +389,9 @@ class admin
                     } else {
                         echo nl2br(htmlEsc($a[$i], storedData: true));
                     }
-                    echo '</td>';
+                    echo '</div>';
                 }
-                echo '</tr>';
+                echo '</div>';
             }
             return ob_get_clean();
         }
