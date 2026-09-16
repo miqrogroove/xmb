@@ -65,7 +65,7 @@ if (onSubmit('nosubmit')) {
 
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_u2u'].'</td></tr>';
+    $body = "<div class='ctrtablerow'>{$lang['tool_completed']} - {$lang['tool_u2u']}</div>";
 } else {
     $template->token = $token->create('Control Panel/Clear All U2Us', '', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['u2udump_confirm'];

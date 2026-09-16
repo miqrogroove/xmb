@@ -63,7 +63,7 @@ if (onSubmit('nosubmit')) {
 
     $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
     $core->audit($vars->self['username'], $auditaction);
-    $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['tool_completed'].' - '.$lang['tool_whosonline'] . '</td></tr>';
+    $body = "<div class='ctrtablerow'>{$lang['tool_completed']} - {$lang['tool_whosonline']}</div>";
 } else {
     $template->token = $token->create('Control Panel/Clear Whos Online', '', $vars::NONCE_AYS_EXP);
     $template->prompt = $lang['whoodump_confirm'];
