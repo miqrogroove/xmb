@@ -481,6 +481,7 @@ table.subforums {
 .bottom-breadcrumbs,
 .core-message,
 .debug-block,
+.index-ticker,
 .page-header,
 .page-footer,
 .result-message,
@@ -520,6 +521,7 @@ table.subforums {
 .breadcrumbs,
 .bottom-breadcrumbs,
 .core-message,
+.index-ticker,
 .page-header,
 .page-footer,
 .result-message,
@@ -883,6 +885,14 @@ table.subforums {
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
     
+.index-ticker-wrap {
+    margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
+}
+    
 .bottom-breadcrumbs .field {
     padding: 0px;
+}
+
+.index-ticker .field {
+    padding: 13px;
 }

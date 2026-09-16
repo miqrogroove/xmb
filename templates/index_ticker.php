@@ -12,24 +12,15 @@ var contents = new Array();
 setTickerEvent();
 //--><!]]>
 </script>
-<table border="0" cellpadding="0" cellspacing="0" width="<?= $THEME['tablewidth'] ?>" align="center">
-<tr>
-<td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-<tr>
-<td class="tablerow" colspan="2" width="100%">
-<table cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" border="0" width="100%" align="center">
-<tr>
-<td class="category"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['tickername'] ?> [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</font></strong></td>
-</tr>
-<tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" class="mediumtxt" style="height: 30px;"><div align="center" id="tickerdiv"></div></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-<br />
+<div class="xmb-block-wrap index-ticker-wrap">
+ <div class="xmb-block-simple index-ticker">
+  <div class="row">
+   <div class="category-head"><?= $lang['tickername'] ?> [<a id="tickertoggle" href="javascript:tickertoggle();">&nbsp;</a>]</div>
+  </div>
+  <div class="row">
+   <div class="field">
+    <div align="center" id="tickerdiv"></div>
+   </div>
+  </div>
+ </div>
+</div>
