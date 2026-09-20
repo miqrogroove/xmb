@@ -481,6 +481,7 @@ table.subforums {
 .bottom-breadcrumbs,
 .core-message,
 .debug-block,
+.index-guest,
 .index-ticker,
 .page-header,
 .page-footer,
@@ -521,6 +522,7 @@ table.subforums {
 .breadcrumbs,
 .bottom-breadcrumbs,
 .core-message,
+.index-guest,
 .index-ticker,
 .page-header,
 .page-footer,
@@ -640,7 +642,8 @@ table.subforums {
 .admin-prune .label,
 .admin-settings .field,
 .breadcrumbs .naked-cell,
-.bottom-breadcrumbs-grid .naked-cell {
+.bottom-breadcrumbs-grid .naked-cell,
+.index-guest .welcome {
     display: flex;
     align-items: center;
 }
@@ -766,7 +769,8 @@ table.subforums {
     }
 }
 
-.admin-forums .xmb-grid-form-field {
+.admin-forums .xmb-grid-form-field,
+.index-guest .welcome {
     font-size: <?= $THEME['font-smaller-1'] ?>;
 }
 
@@ -839,7 +843,8 @@ table.subforums {
 }
 
 .header-top-grid .user-alerts,
-.header-top-grid .login-status div {
+.header-top-grid .login-status div,
+.index-guest .link {
     text-align: right;
 }
 
@@ -885,6 +890,7 @@ table.subforums {
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
     
+.index-guest,
 .index-ticker-wrap {
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }

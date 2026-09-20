@@ -1,18 +1,11 @@
-<table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center">
-<tr>
-<td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
-<tr>
-<td class="category" colspan="2"><font color="<?= $THEME['cattext'] ?>"><strong><?= $lang['welcomeunregnotify'] ?></strong></font></td>
-</tr>
-<tr bgcolor="<?= $THEME['altbg2'] ?>" class="tablerow">
-<td><font size="1"><?= $lang['welcomeunreg'] ?></font></td>
-<td align="right" width="25%">
-<?= $loginlink ?>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-<br />
+<div class="xmb-block-wrap index-guest-wrap">
+ <div class="xmb-grid index-guest">
+  <div class="row">
+   <div class="category-head span"><?= $lang['welcomeunregnotify'] ?></div>
+  </div>
+  <div class="row">
+   <div class="field welcome"><?= $lang['welcomeunreg'] ?></div>
+   <div class="field link"><?= $loginlink ?></div>
+  </div>
+ </div>
+</div>

@@ -70,6 +70,9 @@
 .admin-rename {
     --xmb-grid-columns: 22% auto;
 }
+.index-guest {
+    --xmb-grid-columns: 75% auto;
+}
 
 @media screen and (max-width: 850px) {
     .admin-attachment-result .cell:nth-child(4),
