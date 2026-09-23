@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use XMB\Enum\IndexListHeaderLocation;
+
 require './header.php';
 
 $core = Services\core();
@@ -311,19 +313,20 @@ $body->indexBarTop = '';
 $indexBar = $forumlist = $spacer = '';
 $forumarray = [];
 $catLessForums = 0;
+$headerLocation = IndexListHeaderLocation::tryFrom((int) $settings->get('indexshowbar'));
 
 if ($settings->get('space_cats') == 'on') {
     $spacer = $template->process('index_category_spacer.php');
 }
 
 if ($settings->get('catsonly') != 'on') {
-    if ($settings->get('indexshowbar') == 1) {
-        $indexBar = $template->process('index_category_hr.php');
-        $body->indexBarTop = $indexBar;
-    }
-
-    if ($settings->get('indexshowbar') == 2) {
-        $body->indexBarTop = $template->process('index_category_hr.php');
+    switch ($headerLocation) {
+        case IndexListHeaderLocation::EachCategory:
+            $indexBar = $template->process('index_category_hr.php');
+            $body->indexBarTop = $indexBar;
+            break;
+        case IndexListHeaderLocation::TopOnly:
+            $body->indexBarTop = $template->process('index_category_hr.php');
     }
 } elseif ($gid > 0) {
     $indexBar = $template->process('index_category_hr.php');
@@ -354,10 +357,14 @@ foreach ($fquery as $thing) {
     }
 
     if ($lastcat !== $thing['cat_fid'] && ($settings->get('catsonly') == 'on' || ! empty($cforum))) {
+        // Did this group have any forums?
         if ($forumlist != '') {
+            // Build up the collection of groups.
             $forumarray[] = $forumlist;
+            // Then reset the group.
             $forumlist = '';
         }
+        // Initialize the next group with a header row.
         $lastcat = $thing['cat_fid'];
         $thing['cat_name'] = fnameOut($thing['cat_name']);
         $template->thing = $thing;
@@ -367,12 +374,15 @@ foreach ($fquery as $thing) {
         }
     }
 
+    // Add each forum to the current group.
     if (! empty($cforum)) {
         $forumlist .= $cforum;
     }
 }
 
+// Add the last group to the collection.
 $forumarray[] = $forumlist;
+// Add spacers when enabled.
 $body->forumlist = implode($spacer, $forumarray);
 
 if ($body->forumlist == '') {
@@ -385,7 +395,7 @@ if ($body->forumlist == '') {
 }
 unset($fquery);
 
-if ($catLessForums == 0 && $settings->get('indexshowbar') == 1) {
+if ($catLessForums == 0 && $headerLocation === IndexListHeaderLocation::EachCategory) {
     $body->indexBarTop = '';
 }
 

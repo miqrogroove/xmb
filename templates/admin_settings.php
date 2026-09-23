@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use XMB\Enum\IndexListHeaderLocation;
+
 ?>
 <div id="tabs">
  <button onclick="switchTab(this, 'boardDetail')" class="active"><?= $lang['admin_main_settings1']; ?></button>
@@ -91,7 +93,26 @@ namespace XMB;
 <?php
     $admin->printsetting6($lang['showsubforums'], 'showsubforumsnew', 'showsubforums');
     $admin->printsetting6($lang['space_cats'], 'space_catsnew', 'space_cats');
-    $admin->printsetting3($lang['indexShowBarDesc'], 'indexShowBarNew', array($lang['indexShowBarCats'], $lang['indexShowBarTop'], $lang['indexShowBarNone']), array(1, 2, 3), array($indexShowBarCats, $indexShowBarTop, $indexShowBarNone), false);
+    $admin->printsetting3(
+        $lang['indexShowBarDesc'],
+        'indexShowBarNew',
+        varnames: [
+            $lang['indexShowBarCats'],
+            $lang['indexShowBarTop'],
+            $lang['indexShowBarNone'],
+        ],
+        values: [
+            IndexListHeaderLocation::EachCategory->value,
+            IndexListHeaderLocation::TopOnly->value,
+            IndexListHeaderLocation::None->value,
+        ],
+        checked: [
+            $indexShowBarCats,
+            $indexShowBarTop,
+            $indexShowBarNone
+        ],
+        multi: false,
+    );
     $admin->printsetting6($lang['quickreply_status'], 'quickreply_statusnew', 'quickreply_status');
     $admin->printsetting6($lang['quickjump_status'], 'quickjump_statusnew', 'quickjump_status');
     $admin->printsetting6($lang['allowrankedit'], 'allowrankeditnew', 'allowrankedit');

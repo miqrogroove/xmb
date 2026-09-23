@@ -64,6 +64,7 @@ require ROOT . 'include/captcha.inc.php';
 require ROOT . 'include/CartesianSize.php';
 require ROOT . 'include/debug.inc.php';
 require ROOT . 'include/Email.php';
+require ROOT . 'include/Enum/IndexListHeaderLocation.php';
 require ROOT . 'include/Features.php';
 require ROOT . 'include/format.php';
 require ROOT . 'include/Forums.php';

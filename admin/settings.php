@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use XMB\Enum\IndexListHeaderLocation;
+
 const ROOT = '../';
 require ROOT . 'header.php';
 
@@ -91,16 +93,16 @@ if (noSubmit('settingsubmit')) {
     $template->indexShowBarCats = false;
     $template->indexShowBarTop = false;
     $template->indexShowBarNone = false;
-    switch ($settings->get('indexshowbar')) {
-        case 1:
+    $headerLocation = IndexListHeaderLocation::tryFrom((int) $settings->get('indexshowbar'));
+    switch ($headerLocation) {
+        case IndexListHeaderLocation::EachCategory:
             $template->indexShowBarCats = true;
             break;
-        case 3:
+        case IndexListHeaderLocation::None:
             $template->indexShowBarNone = true;
             break;
         default:
             $template->indexShowBarTop = true;
-            break;
     }
 
     $notifycheck = [
