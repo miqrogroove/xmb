@@ -26,7 +26,8 @@
 .admin-smilies {
     --xmb-grid-columns: max-content auto auto max-content;
 }
-.admin-censor {
+.admin-censor,
+.index-member {
     --xmb-grid-columns: auto auto auto;
 }
 .admin-ipban {
@@ -86,7 +87,8 @@
     --xmb-grid-span: 1 / -1;
 }
 .admin-smilies .add-all .span,
-.admin-themes-single .field.span {
+.admin-themes-single .field.span,
+.index-member .span {
     --xmb-grid-span: 2 / -1;
 }
 .admin-smilies .icon-list .span {

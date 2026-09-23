@@ -257,6 +257,7 @@ span[class^="status_"] {
 .tablelinks td {
     overflow: hidden;
 }
+.index-member .tablelinks a,
 .tablelinks td a {
     display: block;
     width: 100%;
@@ -482,6 +483,7 @@ table.subforums {
 .core-message,
 .debug-block,
 .index-guest,
+.index-member,
 .index-ticker,
 .page-header,
 .page-footer,
@@ -523,6 +525,7 @@ table.subforums {
 .bottom-breadcrumbs,
 .core-message,
 .index-guest,
+.index-member,
 .index-ticker,
 .page-header,
 .page-footer,
@@ -844,7 +847,8 @@ table.subforums {
 
 .header-top-grid .user-alerts,
 .header-top-grid .login-status div,
-.index-guest .link {
+.index-guest .link,
+.index-member .category-head.span {
     text-align: right;
 }
 
@@ -891,6 +895,7 @@ table.subforums {
 }
     
 .index-guest,
+.index-member,
 .index-ticker-wrap {
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
@@ -901,4 +906,10 @@ table.subforums {
 
 .index-ticker .field {
     padding: 13px;
+}
+.index-member > .row:nth-child(1) > div:nth-child(1) {
+    border-right: none;
+}
+.index-member > .row:nth-child(1) > div:nth-child(2) {
+    border-left: none;
 }
