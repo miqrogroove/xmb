@@ -482,6 +482,7 @@ table.subforums {
 .bottom-breadcrumbs,
 .core-message,
 .debug-block,
+.forum-list,
 .index-guest,
 .index-member,
 .index-ticker,
@@ -524,6 +525,7 @@ table.subforums {
 .breadcrumbs,
 .bottom-breadcrumbs,
 .core-message,
+.forum-list,
 .index-guest,
 .index-member,
 .index-ticker,
@@ -622,6 +624,9 @@ table.subforums {
 .admin-smilies .add-all .field,
 .admin-sql .note,
 .core-message .field,
+.forum-list .icon,
+.forum-list .lastpostcell,
+.forum-list .thread-count,
 .sql-result .field {
     background: <?= $THEME['altbg1'] ?>;
 }
@@ -646,6 +651,7 @@ table.subforums {
 .admin-settings .field,
 .breadcrumbs .naked-cell,
 .bottom-breadcrumbs-grid .naked-cell,
+.forum-list .field,
 .index-guest .welcome {
     display: flex;
     align-items: center;
@@ -663,6 +669,15 @@ table.subforums {
     justify-content: center;
 }
 
+.center-both-ways,
+.forum-list .icon,
+.forum-list .thread-count,
+.forum-list .post-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .category-head {
     <?= $THEME['catcss'] ?>
     color: <?= $THEME['cattext'] ?>;
@@ -677,6 +692,7 @@ table.subforums {
 .admin-block > .row > .category-head,
 .admin-panel .category-head,
 .admin-themes-single .category-head,
+.forum-list .header,
 .permissions-grid thead .category-head {
     text-align: center;
 }
@@ -893,7 +909,8 @@ table.subforums {
     margin-top: calc(6px + <?= $THEME['borderwidth'] ?>);
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
-    
+
+.forum-list .spacer,
 .index-guest,
 .index-member,
 .index-ticker-wrap {

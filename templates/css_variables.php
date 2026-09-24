@@ -11,11 +11,14 @@
         --xmb-grid-columns: auto 20% 28% max-content;
     }
 }
+.admin-ranks {
+    --xmb-grid-columns: max-content auto auto auto auto auto;
+}
 .admin-log {
     --xmb-grid-columns: auto auto auto auto auto;
 }
-.admin-ranks {
-    --xmb-grid-columns: max-content auto auto auto auto auto;
+.forum-list {
+    --xmb-grid-columns: minmax(max-content, 4%) auto minmax(max-content, 6%) minmax(max-content, 6%) 22%;
 }
 .admin-modlog {
     --xmb-grid-columns: auto auto auto auto;
