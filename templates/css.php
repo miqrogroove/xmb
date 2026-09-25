@@ -626,6 +626,7 @@ table.subforums {
 .core-message .field,
 .forum-list .icon,
 .forum-list .lastpostcell,
+.forum-list .message,
 .forum-list .thread-count,
 .sql-result .field {
     background: <?= $THEME['altbg1'] ?>;
@@ -671,6 +672,7 @@ table.subforums {
 
 .center-both-ways,
 .forum-list .icon,
+.forum-list .message,
 .forum-list .thread-count,
 .forum-list .post-count {
     display: flex;

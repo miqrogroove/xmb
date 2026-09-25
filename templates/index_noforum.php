@@ -1,3 +1,3 @@
-<tr>
-<td bgcolor="<?= $THEME['altbg1'] ?>" class="ctrtablerow" colspan="5"><font class="mediumtxt"><?= $message ?></font></td>
-</tr>
+<div class="row">
+ <div class="field message span"><?= $message ?></div>
+</div>
