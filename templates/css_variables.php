@@ -77,6 +77,9 @@
 .index-guest {
     --xmb-grid-columns: 75% auto;
 }
+.index-whosonline .onnow {
+    --xmb-grid-columns: 4% auto;
+}
 
 @media screen and (max-width: 850px) {
     .admin-attachment-result .cell:nth-child(4),

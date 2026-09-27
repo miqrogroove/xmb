@@ -1,13 +1,9 @@
-<tr>
-<td colspan="2" class="category">
-<a href="<?= $full_url ?>misc.php?action=onlinetoday"><strong><font color="<?= $THEME['cattext'] ?>">[+] <?= $last50today ?></font></strong></a>
-</td>
-</tr>
-<tr>
-<td bgcolor="<?= $THEME['altbg2'] ?>" colspan="2" class="mediumtxt">
-<?= $todaymembers ?>&nbsp;
-</td>
-</tr>
-<tr>
-<td bgcolor="<?= $THEME['altbg1'] ?>" colspan="2" class="mediumtxt"><?= $memontoday ?></td>
-</tr>
+  <div class="row">
+   <div class="category-head"><a href="<?= $full_url ?>misc.php?action=onlinetoday">[+] <?= $last50today ?></a></div>
+  </div>
+  <div class="row">
+   <div class="field list"><?= $todaymembers ?></div>
+  </div>
+  <div class="row">
+   <div class="field today-count"><?= $memontoday ?></div>
+  </div>

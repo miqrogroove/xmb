@@ -486,6 +486,7 @@ table.subforums {
 .index-guest,
 .index-member,
 .index-ticker,
+.index-whosonline,
 .page-header,
 .page-footer,
 .result-message,
@@ -529,6 +530,7 @@ table.subforums {
 .index-guest,
 .index-member,
 .index-ticker,
+.index-whosonline,
 .page-header,
 .page-footer,
 .result-message,
@@ -628,6 +630,9 @@ table.subforums {
 .forum-list .lastpostcell,
 .forum-list .message,
 .forum-list .thread-count,
+.index-whosonline .icon,
+.index-whosonline .key,
+.index-whosonline .today-count,
 .sql-result .field {
     background: <?= $THEME['altbg1'] ?>;
 }
@@ -653,7 +658,8 @@ table.subforums {
 .breadcrumbs .naked-cell,
 .bottom-breadcrumbs-grid .naked-cell,
 .forum-list .field,
-.index-guest .welcome {
+.index-guest .welcome,
+.index-whosonline .list {
     display: flex;
     align-items: center;
 }
@@ -695,6 +701,7 @@ table.subforums {
 .admin-panel .category-head,
 .admin-themes-single .category-head,
 .forum-list .header,
+.index-whosonline .icon,
 .permissions-grid thead .category-head {
     text-align: center;
 }
@@ -913,6 +920,7 @@ table.subforums {
 }
 
 .forum-list .spacer,
+.forum-list-wrap,
 .index-guest,
 .index-member,
 .index-ticker-wrap {
@@ -931,4 +939,12 @@ table.subforums {
 }
 .index-member > .row:nth-child(1) > div:nth-child(2) {
     border-left: none;
+}
+
+.xmb-grid.onnow {
+    margin: 0px;
+}
+
+.category-head span.filler {
+    font-weight: normal;
 }
