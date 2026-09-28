@@ -485,6 +485,7 @@ table.subforums {
 .forum-list,
 .index-guest,
 .index-member,
+.index-stats,
 .index-ticker,
 .index-whosonline,
 .page-header,
@@ -529,6 +530,7 @@ table.subforums {
 .forum-list,
 .index-guest,
 .index-member,
+.index-stats,
 .index-ticker,
 .index-whosonline,
 .page-header,
@@ -919,11 +921,15 @@ table.subforums {
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
 
+.admin-block
+.core-message,
 .forum-list .spacer,
 .forum-list-wrap,
 .index-guest,
 .index-member,
-.index-ticker-wrap {
+.index-stats,
+.index-ticker-wrap,
+.index-whosonline {
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
     

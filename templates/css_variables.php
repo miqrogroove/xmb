@@ -80,6 +80,9 @@
 .index-whosonline .onnow {
     --xmb-grid-columns: 4% auto;
 }
+.index-stats {
+    --xmb-grid-columns: 50% auto;
+}
 
 @media screen and (max-width: 850px) {
     .admin-attachment-result .cell:nth-child(4),

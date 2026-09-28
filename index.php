@@ -149,7 +149,7 @@ if ($local_index_stats == 'on' && $gid == 0) {
         $posts = (int) $db->result($query, 2);
         $db->free_result($query);
 
-        $template->memhtml = '<a href="member.php?action=viewpro&amp;member='.recodeOut($lastmember['username']).'"><strong>'.$lastmember['username'].'</strong></a>.';
+        $template->memhtml = '<a href="' . $vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($lastmember['username']) . '"><strong>' . $lastmember['username'] . '</strong></a>.';
         $search  = [ '$threads', '$posts', '$members' ];
         $replace = [  $threads,   $posts,   $members  ];
         $template->indexstats = str_replace($search, $replace, $lang['evalindexstats']);
@@ -243,7 +243,7 @@ if ($gid == 0) {
                 $show_inv_key = true;
             }
 
-            $memtally[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($online['username']).'">'.$pre.''.$online['username'].''.$suff.'</a>';
+            $memtally[] = '<a href="' . $vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($online['username']) . '">' . $pre . $online['username'] . $suff . '</a>';
             $num++;
         }
 
@@ -279,7 +279,7 @@ if ($gid == 0) {
                 if ($x <= $settings->get('onlinetodaycount')) {
                     $pre = '<span class="status_'.str_replace(' ', '_', $memberstoday['status']).'">';
                     $suff = '</span>';
-                    $todaymembers[] = '<a href="member.php?action=viewpro&amp;member='.recodeOut($memberstoday['username']).'">'.$pre.''.$memberstoday['username'].''.$suff.'</a>';
+                    $todaymembers[] = '<a href="' . $vars->full_url . 'member.php?action=viewpro&amp;member=' . recodeOut($memberstoday['username']) . '">' . $pre . $memberstoday['username'] . $suff . '</a>';
                     $x++;
                 } else {
                     continue;
