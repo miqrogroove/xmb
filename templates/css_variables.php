@@ -78,7 +78,7 @@
     --xmb-grid-columns: 75% auto;
 }
 .index-whosonline .onnow {
-    --xmb-grid-columns: 4% auto;
+    --xmb-grid-columns: minmax(4%, max-content) auto;
 }
 .index-stats {
     --xmb-grid-columns: 50% auto;
