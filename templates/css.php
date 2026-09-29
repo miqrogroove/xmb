@@ -222,11 +222,6 @@ input[readonly] {
     table-layout: fixed;
 }
 
-span[class^="status_"] {
-    color: <?= $THEME['tabletext'] ?>;
-    font-size: <?= $THEME['font-smaller-1'] ?>;
-}
-
 .status_Super_Administrator {
     text-decoration: underline;
     font-weight: bold;
@@ -634,6 +629,7 @@ table.subforums {
 .forum-list .thread-count,
 .index-whosonline .icon,
 .index-whosonline .key,
+.index-whosonline .now-count,
 .index-whosonline .today-count,
 .sql-result .field {
     background: <?= $THEME['altbg1'] ?>;
@@ -800,7 +796,9 @@ table.subforums {
 }
 
 .admin-forums .xmb-grid-form-field,
-.index-guest .welcome {
+.index-guest .welcome,
+.index-whosonline .key,
+.index-whosonline .now-count {
     font-size: <?= $THEME['font-smaller-1'] ?>;
 }
 
@@ -949,8 +947,4 @@ table.subforums {
 
 .xmb-grid.onnow {
     margin: 0px;
-}
-
-.category-head span.filler {
-    font-weight: normal;
 }
