@@ -254,9 +254,6 @@ if ($gid == 0) {
         }
 
         $template->memtally = implode(', ', $memtally);
-        if ($template->memtally == '') {
-            $template->memtally = '&nbsp;';
-        }
 
         $template->whosonlinetoday = '';
         if ($settings->get('onlinetoday_status') == 'on') {
