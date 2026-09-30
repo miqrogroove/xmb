@@ -950,5 +950,5 @@ table.subforums {
 }
 
 .lastpostcell img {
-    padding-left: 0.8em;
+    padding: 0.8em 0 0.8em 0.8em;
 }
