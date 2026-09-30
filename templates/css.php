@@ -177,23 +177,6 @@ input[readonly] {
     text-align: right;
 }
 
-.lastpostcell {
-    color: <?= $THEME['tabletext'] ?>;
-    table-layout: fixed;
-    text-align: right;
-    padding: 0;
-}
-
-.lastpostcell img {
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-}
-
-.tablelinks .lastpostcell a {
-    padding-top: 1.5em;
-    padding-bottom: 1.5em;
-}
-
 .sig {
     border-top: 1px dashed <?= $THEME['bordercolor'] ?>;
     padding: 13px 0 0 3px;
@@ -950,4 +933,24 @@ table.subforums {
 .index-whosonline .onnow p {
     margin: 0px;
     line-height: 1.5;
+}
+
+.lastpostcell,
+.forum-list .lastpostcell {
+    text-align: right;
+    display: flex;
+    justify-content: right;
+    padding-right: 10px;
+}
+
+.lastpostcell div:first-child {
+    width: 100%;
+}
+
+.lastpostcell div:first-child a {
+    display: block;
+}
+
+.lastpostcell img {
+    padding-left: 0.8em;
 }
