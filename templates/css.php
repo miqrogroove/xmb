@@ -941,14 +941,12 @@ table.subforums {
     display: flex;
     justify-content: right;
     padding-right: 10px;
+    font-size: <?= $THEME['font-smaller-1'] ?>;
 }
 
-.lastpostcell div:first-child {
-    width: 100%;
-}
-
-.lastpostcell div:first-child a {
+.lastpostcell a:first-child {
     display: block;
+    width: 100%;
 }
 
 .lastpostcell img {
