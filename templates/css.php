@@ -944,6 +944,12 @@ table.subforums {
     font-size: <?= $THEME['font-smaller-1'] ?>;
 }
 
+/* Temporary: Don't break the old forumdisplay layout, yet */
+
+table.subforums .lastpostcell {
+    display: table-cell;
+}
+
 .lastpostcell a:first-child {
     display: block;
     width: 100%;
