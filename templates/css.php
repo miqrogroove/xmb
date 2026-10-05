@@ -194,7 +194,7 @@ input[readonly] {
     color: <?= $THEME['tabletext'] ?>;
     table-layout: fixed;
     text-align: right;
-    padding: 0;
+    padding: 0 0 0 5px;
 }
 
 .lastpostcell img {
