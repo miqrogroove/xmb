@@ -1,8 +1,8 @@
 # Welcome to XMB
 
-Our code moved to GitHub on 1 January 2025.
+XMB eXtreme Message Board is a community system for creating website forums. Our code has evolved since 2001 and moved to its GitHub repository in 2025.
 
-The Master branch is currently XMB 1.10.
+The dev branch is currently unstable and planned for future release as XMB 1.12.
 
 Visit [xmbforum2.com](https://www.xmbforum2.com) for more resources.
 
@@ -10,7 +10,7 @@ Visit [xmbforum2.com](https://www.xmbforum2.com) for more resources.
 
 Copy and unpack the XMB files to your web server.  Visit the `/install/` path to complete the setup.
 
-You will need a MySQL database and connection details to get started.
+You will need a MySQL database and connection details to get started.  For details, see [Requirements](https://docs.xmbforum2.com/index.php?title=Requirements).
 
 ## Getting Started (Clone)
 
@@ -41,5 +41,9 @@ Issues, requests, discussions, and reports are all welcome here.  Note that we h
 If you would like to contribute or collaborate, feel free to offer ideas.  This project needs a website designer and more.
 
 ## Credits
+
+Copyright (c) 2001-2026 The XMB Group
+
+https://www.xmbforum2.com/
 
 There are many people to thank for decades of development, so look in [the Contributors file](CONTRIBUTORS.md).

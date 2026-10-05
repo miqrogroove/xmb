@@ -1,11 +1,9 @@
 <?php
 
 /**
- * eXtreme Message Board
- * XMB 1.10
+ * XMB eXtreme Message Board
  *
- * Developed And Maintained By The XMB Group
- * Copyright (c) 2001-2026, The XMB Group
+ * Copyright (c) The XMB Group
  * https://www.xmbforum2.com/
  *
  * XMB is free software: you can redistribute it and/or modify it under the terms
