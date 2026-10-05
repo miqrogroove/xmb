@@ -48,7 +48,7 @@ class Debug
         $stuff = [];
         $queries = $this->db->getQueryList();
         $querytimes = $this->db->getQueryTimes();
-        $stuff[] = '<table><colgroup span="3" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
+        $stuff[] = '<table style="width: 100%;"><colgroup span="3" /><tr><td style="width: 2em;">#</td><td style="width: 8em;">Duration:</td><td>Query:</td></tr>';
         foreach ($queries as $key => $val) {
             $number = $key + 1;
             $val = $this->mysql_syn_highlight(htmlEsc($val));
