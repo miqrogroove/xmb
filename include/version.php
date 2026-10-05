@@ -39,7 +39,7 @@ class XMBVersion
             'versionStage' => 'alpha',
             'versionDate' => '20261005',
             'mysqlMinVer' => '5.5.8',
-            'phpMinVer' => '8.2.0',
+            'phpMinVer' => '8.4.0',
             'copyright' => '2001-2026',
             'company' => 'The XMB Group',
         );

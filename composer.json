@@ -7,12 +7,12 @@
         "ext-curl": "*",
         "ext-gd": "*",
         "ext-mysqli": "*",
-        "php": ">=8.2",
+        "php": ">=8.4",
         "symfony/mailer": "7.4.*"
     },
     "config": {
         "platform": {
-            "php": "8.2.0"
+            "php": "8.4.0"
         }
     },
     "scripts": {
