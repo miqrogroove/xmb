@@ -24,10 +24,10 @@ namespace XMB;
   </span>
   <span>
    <select name="moveto<?= $subforum['fid'] ?>">
-    <option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
+    <option value="">-<?= $lang['textnone'] ?>-</option>
 <?php
     foreach ($forums[0] as $moveforum) { // Ungrouped forum options.
-        echo "<option value='{$moveforum['fid']}' $curgroup> &nbsp; &raquo; " . adminStripText($moveforum['name']) . "</option>";
+        echo "<option value='{$moveforum['fid']}'> &nbsp; &raquo; " . adminStripText($moveforum['name']) . "</option>";
     }
     foreach ($groups as $moveforum) { // Groups and grouped forum options.
         echo "<option value='{$moveforum['fid']}'>" . adminStripText($moveforum['name']) . "</option>";

@@ -62,8 +62,10 @@ $delete = getInt('delete', 'p');
 $template->fdetails = $fdetails;
 if (noSubmit('forumsubmit') && ! $fdetails) {
     $groups = [];
-    $forums = [];
-    $forums[0] = [];
+    // Ungrouped forums will be keyed to zero and referenced later, so must be initialized.
+    $forums = [
+        0 => [],
+    ];
     $forumlist = [];
     $subs = [];
     $i = 0;
@@ -76,7 +78,7 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
             $groups[$i]['status'] = $selForums['status'];
             $groups[$i]['fup'] = $selForums['fup'];
         } elseif ($selForums['type'] == 'forum') {
-            $id = (empty($selForums['fup'])) ? 0 : $selForums['fup'];
+            $id = (int) $selForums['fup'];
             $forums[$id][$i]['fid'] = $selForums['fid'];
             $forums[$id][$i]['name'] = $selForums['name'];
             $forums[$id][$i]['displayorder'] = $selForums['displayorder'];

@@ -14,12 +14,12 @@ namespace XMB;
    </div>
    <div class="row">
     <div class="label"><?= $lang['texthemename'] ?></div>
-    <div class="field span"><input type="text" name="namenew" value="<?= $themestuff['name'] ?>" /></div>
+    <div class="field span"><input type="text" name="namenew" value="<?= $themestuff['name'] ?>" required=required /></div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textbgcolor'] ?></div>
     <div class="field"><input type="text" name="bgcolornew" value="<?= $themestuff['bgcolor'] ?>" /></div>
-    <div class="field color" style="background-color: <?= $themestuff['bgcolor'] ?>">&nbsp;</div>
+    <div class="field color" <?= $themestuff['bgcode'] ?>>&nbsp;</div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textaltbg1'] ?></div>
@@ -54,12 +54,12 @@ namespace XMB;
    <div class="row">
     <div class="label"><?= $lang['texttop'] ?></div>
     <div class="field"><input type="text" name="topnew" value="<?= $themestuff['top'] ?>" /></div>
-    <div class="field color" style="background-color: <?= $themestuff['top'] ?>">&nbsp;</div>
+    <div class="field color" <?= $themestuff['topbgcode'] ?>>&nbsp;</div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textcatcolor'] ?></div>
     <div class="field"><input type="text" name="catcolornew" value="<?= $themestuff['catcolor'] ?>" /></div>
-    <div class="field color" style="background-color: <?= $themestuff['catcolor'] ?>">&nbsp;</div>
+    <div class="field color" <?= $themestuff['catbgcode'] ?>>&nbsp;</div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textcattextcolor'] ?></div>

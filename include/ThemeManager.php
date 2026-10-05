@@ -137,26 +137,10 @@ class ThemeManager
             $this->vars->theme['tablewidth'] = trim($this->vars->theme['tablewidth']) . $unit;
         }
 
-        // Alters certain visibility-variables
-        if (false === strpos($this->vars->theme['bgcolor'], '.')) {
-            $this->vars->theme['bgcode'] = $this->vars->theme['bgcolor'];
-        } else {
-            $this->vars->theme['bgcode'] = 'url(' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['bgcolor'] . ')';
-        }
-
-        if (false === strpos($this->vars->theme['catcolor'], '.')) {
-            $this->vars->theme['catbgcode'] = "bgcolor='" . $this->vars->theme['catcolor'] . "'";
-            $this->vars->theme['catcss'] = "background-color: " . $this->vars->theme['catcolor'] . ";\n";
-        } else {
-            $this->vars->theme['catbgcode'] = "style='background-image: url(" . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['catcolor'] . ")'";
-            $this->vars->theme['catcss'] = "background-image: url(" . $this->vars->full_url . $this->vars->theme['imgdir'] . "/" . $this->vars->theme['catcolor'] . ");\n";
-        }
-
-        if (false === strpos($this->vars->theme['top'], '.')) {
-            $this->vars->theme['topbgcode'] = $this->vars->theme['top'];
-        } else {
-            $this->vars->theme['topbgcode'] = 'url(' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $this->vars->theme['top'] . ')';
-        }
+        $this->vars->theme['bgcode'] = $this->makeBackgroundStyle($this->vars->theme['bgcolor'], $this->vars->theme['imgdir']);
+        $this->vars->theme['catbgcode'] = $this->makeBackgroundAttr($this->vars->theme['catcolor'], $this->vars->theme['imgdir']);
+        $this->vars->theme['catcss'] = $this->makeBackgroundStyle($this->vars->theme['catcolor'], $this->vars->theme['imgdir']);
+        $this->vars->theme['topbgcode'] = $this->makeBackgroundAttr($this->vars->theme['top'], $this->vars->theme['imgdir']);
 
         null_string($this->vars->theme['boardimg']);
         $l = parse_url($this->vars->theme['boardimg']);
@@ -177,13 +161,41 @@ class ThemeManager
     }
 
     /**
+     * Create an HTML attribute to implement a background color or filename.
+     *
+     * @since 1.10.07
+     */
+    public function makeBackgroundAttr(string $background, string $imgdir): string
+    {
+        if (false === strpos($background, '.')) {
+            return "bgcolor='$setting'";
+        } else {
+            return "style='background-image: url(" . $this->vars->full_url . $imgdir . "/" . $background . ");'";
+        }
+    }
+
+    /**
+     * Create a CSS property to implement a background color or filename.
+     *
+     * @since 1.10.07
+     */
+    public function makeBackgroundStyle(string $background, string $imgdir): string
+    {
+        if (false === strpos($background, '.')) {
+            return "background-color: $setting;\n";
+        } else {
+            return "background-image: url(" . $this->vars->full_url . $imgdir . "/" . $background . ");\n";
+        }
+    }
+
+    /**
      * Adds relative font size values to the theme's font size.
      *
      * @since 1.9.12.07
      * @param int $add Change applied to the theme font size.
      * @return string CSS font size, like '12px'.
      */
-    function fontSize(int $add): string
+    public function fontSize(int $add): string
     {
         static $cachedFs;
 
@@ -215,7 +227,7 @@ class ThemeManager
      * @param ?int $selection The previously selected value, or null.
      * @param bool $allowDefault Optional. When true, an extra value is provided to represent the default theme.
      */
-    function selector(string $nameAttr, ?int $selection, bool $allowDefault = true)
+    public function selector(string $nameAttr, ?int $selection, bool $allowDefault = true): string
     {
         $themelist = [
             "<select name='$nameAttr'>",
@@ -230,5 +242,27 @@ class ThemeManager
         $themelist[] = '</select>';
 
         return implode("\n", $themelist);
+    }
+
+    /**
+     * Prevent use of font size values like '1px'
+     *
+     * @since 1.10.07
+     */
+    public function clampFontSize(string $fontSize): string
+    {
+        $min = 6;
+        $max = 32;
+
+        $fontSize = trim($fontSize);
+        if (substr($fontSize, -2) == 'px' || is_numeric($fontSize)) {
+            $px = (int) $fontSize;
+            if ($px < $min) {
+                $fontSize = $min . 'px';
+            } elseif ($px > $max) {
+                $fontSize = $max . 'px';
+            }
+        }
+        return $fontSize;
     }
 }

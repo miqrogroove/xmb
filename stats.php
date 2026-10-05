@@ -139,13 +139,21 @@ $latest = implode('<br />', $latest);
 $db->free_result($query);
 
 // Get most popular forum
-if (strlen($fids) == 0) {
-    $popforum = $lang['textnoforumsexist'];
-} else {
+$popforum = '';
+$popPostCount = '0';
+$popThreadCount = '0';
+if (strlen($fids) != 0) {
     $query = $db->query("SELECT posts, threads, fid, name FROM " . $vars->tablepre . "forums WHERE $restrict AND (type='sub' OR type='forum') AND status='on' ORDER BY posts DESC LIMIT 0, 1");
-    $pop = $db->fetch_array($query);
-    $popforum = '<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . intval($pop['fid']) . '"><strong>' . fnameOut($pop['name']) . '</strong></a>';
+    if ($db->num_rows($query) != 0) {
+        $pop = $db->fetch_array($query);
+        $popforum = '<a href="' . $vars->full_url . 'forumdisplay.php?fid=' . intval($pop['fid']) . '"><strong>' . fnameOut($pop['name']) . '</strong></a>';
+        $popPostCount = $pop['posts'];
+        $popThreadCount = $pop['threads'];
+    }
     $db->free_result($query);
+}
+if ($popforum == '') {
+    $popforum = $lang['textnoforumsexist'];
 }
 
 // Get amount of posts per day
@@ -182,7 +190,7 @@ $template->stats6 = str_replace('$viewmost', $viewmost, $lang['evalstats6']);
 $template->stats7 = str_replace('$replymost', $replymost, $lang['evalstats7']);
 
 $search  = [ '$popforum', '$pop[posts]', '$pop[threads]'  ];
-$replace = [  $popforum,   $pop['posts'], $pop['threads'] ];
+$replace = [  $popforum,   $popPostCount, $popThreadCount ];
 $template->stats8 = str_replace($search, $replace, $lang['evalstats8']);
 
 $template->stats9 = str_replace('$mempost', $mempost, $lang['evalstats9']);

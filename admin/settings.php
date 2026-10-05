@@ -69,6 +69,7 @@ $table = $template->process('admin_table.php');
 $admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
 if (noSubmit('settingsubmit')) {
+    $admin->fixTickerLinks();
     $template->admin = $admin;
     $template->core = $core;
 

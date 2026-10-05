@@ -4,7 +4,7 @@
   <div class="xmb-grid admin-themes-new">
    <div class="row">
     <div class="label"><?= $lang['texthemename'] ?></div>
-    <div class="field"><input type="text" name="namenew" /></div>
+    <div class="field"><input type="text" name="namenew" required=required /></div>
    </div>
    <div class="row">
     <div class="label"><?= $lang['textbgcolor'] ?></div>

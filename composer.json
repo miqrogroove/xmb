@@ -1,6 +1,6 @@
 {
     "name": "miqrogroove/xmb",
-    "version": "1.10.03",
+    "version": "1.10.07",
     "description": "XMB eXtreme Message Board, a forum system written in PHP.",
     "license": "GPL-3.0-or-later",
     "require": {

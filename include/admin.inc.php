@@ -87,7 +87,8 @@ class admin
             return $lang['restricted'];
         }
 
-        $this->session->logoutAll($userfrom);
+        $isSelf = $this->vars->self['username'] == $userfrom;
+        $this->session->logoutAll($userfrom, $isSelf);
 
         ignore_user_abort(true);
         set_time_limit(180);
@@ -395,5 +396,28 @@ class admin
             }
             return ob_get_clean();
         }
+    }
+
+    /**
+     * Update the front page ticker if missed during previous upgrade.
+     *
+     * @since 1.10.7
+     */
+    public function fixTickerLinks()
+    {
+        $flagName = 'ticker_schema14_fixed';
+        $flagValue = 'yes';
+
+        // Check if settings are already OK.
+        if ($this->settings->get($flagName) == $flagValue) return;
+        if ((int) $this->settings->get('schema_version') < 14) return;
+
+        $oldValue = $this->settings->get('tickercontents');
+        if (false !== strpos($oldValue, 'cp.php?action=settings')) {
+            $newValue = str_replace('cp.php?action=settings', 'admin/settings.php', $oldValue);
+            $this->settings->put('tickercontents', $newValue);
+        }
+
+        $this->settings->put($flagName, $flagValue);
     }
 }

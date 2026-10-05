@@ -23,7 +23,7 @@ namespace XMB;
    </select> &nbsp;
   </span>
   <span>
-   <select name="moveto<?= $subforum['fid'] ?>"><option value="" selected="selected">-<?= $lang['textnone'] ?>-</option>
+   <select name="moveto<?= $subforum['fid'] ?>"><option value="">-<?= $lang['textnone'] ?>-</option>
 <?php
     foreach ($forums[0] as $moveforum) { // Ungrouped forum options.
         if ($moveforum['fid'] == $subforum['fup']) {
