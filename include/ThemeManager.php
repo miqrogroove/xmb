@@ -140,7 +140,7 @@ class ThemeManager
         $this->vars->theme['bgcode'] = $this->makeBackgroundStyle($this->vars->theme['bgcolor'], $this->vars->theme['imgdir']);
         $this->vars->theme['catbgcode'] = $this->makeBackgroundAttr($this->vars->theme['catcolor'], $this->vars->theme['imgdir']);
         $this->vars->theme['catcss'] = $this->makeBackgroundStyle($this->vars->theme['catcolor'], $this->vars->theme['imgdir']);
-        $this->vars->theme['topbgcode'] = $this->makeBackgroundAttr($this->vars->theme['top'], $this->vars->theme['imgdir']);
+        $this->vars->theme['topbgcode'] = $this->makeBackgroundStyle($this->vars->theme['top'], $this->vars->theme['imgdir']);
 
         null_string($this->vars->theme['boardimg']);
         $l = parse_url($this->vars->theme['boardimg']);
