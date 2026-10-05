@@ -1,5 +1,6 @@
 {
     "name": "miqrogroove/xmb",
+    "version": "0.0.0",
     "description": "XMB eXtreme Message Board, a forum system written in PHP.",
     "license": "GPL-3.0-or-later",
     "require": {
@@ -7,11 +8,11 @@
         "ext-gd": "*",
         "ext-mysqli": "*",
         "php": ">=8.4",
-        "symfony/mailer": "7.4.*"
+        "symfony/mailer": "8.1.*"
     },
     "config": {
         "platform": {
-            "php": "8.4.0"
+            "php": "8.4.1"
         }
     },
     "scripts": {
