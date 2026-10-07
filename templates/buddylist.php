@@ -8,15 +8,15 @@
 <script type="text/javascript" src="<?= $full_url ?>js/popup.js"></script>
 </head>
 <body text="<?= $THEME['text'] ?>">
-<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
-<tr>
-<td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
-<tr>
-<td class="category"><strong><font color="<?= $THEME['cattext'] ?>"><?= $lang['textbuddylist'] ?></font></strong></td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="<?= $THEME['altbg1'] ?>">
+
+<div class="xmb-block-wrap buddylist-wrap">
+ <div class="xmb-block-simple buddylist">
+  <div class="row">
+   <div class="category-head"><?= $lang['textbuddylist'] ?></div>
+  </div>
+  <div class="row">
+   <div class="field book-block">
+
 <table width="98%">
 <tr>
 <td class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>" colspan="2"><strong><?= $lang['textonline'] ?></strong></td>
@@ -27,26 +27,22 @@
 </tr>
 <?= $buddys['offline'] ?>
 </table>
-</td>
-</tr>
-<tr>
-<td class="tablerow" bgcolor="<?= $THEME['altbg2'] ?>"><strong><a href="<?= $full_url ?>buddy.php"><?= $lang['refreshbuddylist'] ?></a></strong></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-<br />
-<table cellspacing="0" cellpadding="0" border="0" width="100%" align="center">
-<tr>
-<td bgcolor="<?= $THEME['bordercolor'] ?>">
-<table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%">
-<tr>
-<td class="ctrtablerow" bgcolor="<?= $THEME['altbg1'] ?>"><font class="mediumtxt"><a href="<?= $full_url ?>buddy.php?action=edit"><?= $lang['editbuddylist'] ?></a></font></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
+
+   </div>
+  </div>
+  <div class="row">
+   <div class="field"><strong><a href="<?= $full_url ?>buddy.php"><?= $lang['refreshbuddylist'] ?></a></strong></div>
+  </div>
+ </div>
+</div>
+
+<div class="xmb-block-wrap buddy-link-wrap">
+ <div class="xmb-block-simple buddy-link">
+  <div class="row">
+   <div class="field"><a href="<?= $full_url ?>buddy.php?action=edit"><?= $lang['editbuddylist'] ?></a></div>
+  </div>
+ </div>
+</div>
+
 </body>
 </html>

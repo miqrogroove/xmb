@@ -605,6 +605,8 @@ table.subforums {
 .admin-smilies .new .field,
 .admin-smilies .add-all .field,
 .admin-sql .note,
+.buddy-link .field,
+.buddylist .book-block,
 .core-message .field,
 .forum-list .icon,
 .forum-list .lastpostcell,
@@ -680,6 +682,7 @@ table.subforums {
 .admin-block > .row > .category-head,
 .admin-panel .category-head,
 .admin-themes-single .category-head,
+.buddy-link .field,
 .forum-list .header,
 .permissions-grid thead .category-head {
     text-align: center;
@@ -900,7 +903,8 @@ table.subforums {
     margin-bottom: calc(12px + <?= $THEME['borderwidth'] ?>);
 }
 
-.admin-block
+.admin-block,
+.buddylist-wrap,
 .core-message,
 .forum-list .spacer,
 .forum-list-wrap,
