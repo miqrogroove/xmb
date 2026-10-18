@@ -401,6 +401,7 @@ table.subforums {
 .xmb-tabbed-grid {
     margin: <?= $THEME['borderwidth'] ?> auto;
     color: <?= $THEME['tabletext'] ?>;
+    --xmb-block-width: <?= $THEME['tablewidth'] ?>;
 }
 
 .admin-settings #boardDetail {
@@ -450,27 +451,6 @@ table.subforums {
     .admin-themes-single {
         max-width: 50%;
     }
-}
-
-.admin-block,
-.admin-email,
-.admin-search-result,
-.admin-sql,
-.breadcrumbs,
-.bottom-breadcrumbs,
-.core-message,
-.debug-block,
-.forum-list,
-.index-guest,
-.index-member,
-.index-stats,
-.index-ticker,
-.index-whosonline,
-.page-header,
-.page-footer,
-.result-message,
-.sql-result {
-    --xmb-block-width: <?= $THEME['tablewidth'] ?>;
 }
 
 .admin-forums,
