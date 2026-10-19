@@ -4,7 +4,7 @@ body {
     scrollbar-arrow-color: <?= $THEME['header'] ?>;
     scrollbar-base-color: <?= $THEME['altbg1'] ?>;
     text-align: left;
-    <?= $THEME['bgcode'] ?>;
+    <?= $THEME['bgcode'] ?>
     font-family: <?= $THEME['font'] ?>;
     font-size: <?= $THEME['fontsize'] ?>;
     color: <?= $THEME['text'] ?>;
@@ -820,7 +820,7 @@ table.subforums {
 }
 
 .header-top {
-    <?= $THEME['topbgcode'] ?>;
+    <?= $THEME['topbgcode'] ?>
 }
 
 .header-top-grid {
