@@ -136,11 +136,9 @@ if (vars()->debug) {
 } else {
     error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
-if (! defined('XMB\UPGRADE_CLI')) {
-    bootup()->setBrowser();
-    bootup()->setIP();
-    bootup()->setURL();
-}
+bootup()->setBrowser();
+bootup()->setIP();
+bootup()->setURL();
 bootup()->setVersion();
 observer()->assertEmptyOutputStream('version.php');
 
@@ -182,7 +180,7 @@ create_login($params['mode']);
 login()->elevateUser($params['force_inv']);
 unset($params);
 
-if (defined('XMB\UPGRADE')) {
+if (defined('XMB\UPGRADE') || PHP_SAPI == 'cli') {
     return;
 } elseif ((int) settings()->get('schema_version') < \XMB\Schema::VER) {
     if (X_SADMIN) {

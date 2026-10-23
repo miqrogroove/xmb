@@ -45,7 +45,6 @@ ini_set('error_log', 'error_log');
 // Script constants.
 define('XMB\ROOT', '../'); // Location of XMB files relative to this script.
 define('XMB\UPGRADE', true);
-define('XMB\UPGRADE_CLI', true);
 
 // Upgrade the existing config.php file if it's from the v1.9 series.
 require './WizFunctions.php';
