@@ -1,15 +1,12 @@
-<table cellspacing="0" cellpadding="0" border="0" width="<?= $THEME['tablewidth'] ?>" align="center" class="tablelinks subforums">
-<tr>
-<td bgcolor="<?= $THEME['bordercolor'] ?>"><table border="0" cellspacing="<?= $THEME['borderwidth'] ?>" cellpadding="<?= $THEME['tablespace'] ?>" width="100%" align="center">
-<tr class="header">
-<td width="4%">&nbsp;</td>
-<td width="58%"><?= $lang['textforum'] ?></td>
-<td width="6%" align="center"><?= $lang['texttopics'] ?></td>
-<td width="6%" align="center"><?= $lang['textposts'] ?></td>
-<td width="19%"><?= $lang['textlastpost'] ?></td>
-</tr>
-<?= $forumlist ?>
-</table>
-</td>
-</tr>
-</table>
+<div class="xmb-block-wrap forum-list-wrap">
+ <div class="xmb-grid forum-list tablelinks">
+  <div class="row">
+   <div class="header">&nbsp;</div>
+   <div class="header"><?= $lang['textforum'] ?></div>
+   <div class="header"><?= $lang['texttopics'] ?></div>
+   <div class="header"><?= $lang['textposts'] ?></div>
+   <div class="header"><?= $lang['textlastpost'] ?></div>
+  </div>
+  <?= $forumlist ?>
+ </div>
+</div>

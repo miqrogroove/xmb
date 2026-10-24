@@ -89,7 +89,7 @@ if ($forum['type'] == 'forum') {
     $permitted = $core->permittedForums('forum');
     foreach ($permitted as $sub) {
         if ($sub['type'] == 'sub' && (int) $sub['fup'] == $fid) {
-            $template->forumlist .= $core->forum($sub, 'forumdisplay_subforum', index_subforums: []);
+            $template->forumlist .= $core->forum($sub, 'index_forum', index_subforums: []); // The subforum template is now shared with the index page forum template.
         }
     }
     if ($template->forumlist != '') {
