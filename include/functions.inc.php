@@ -600,7 +600,7 @@ class Core
             $subforums = implode(', ', $subforums);
             $subforums = "{$lang['textsubforums']} $subforums";
             if ('' !== $forum['description'] || '' != $forum['moderator']) {
-                $subforums = '<br /><br />' . $subforums;
+                $subforums = '<br />' . $subforums;
             }
         } else {
             $subforums = '';

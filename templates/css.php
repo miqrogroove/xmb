@@ -930,10 +930,6 @@ table.subforums {
 
 /* Temporary: Don't break the old forumdisplay layout, yet */
 
-table.subforums .lastpostcell {
-    display: table-cell;
-}
-
 .lastpostcell a:first-child {
     display: block;
     width: 100%;
@@ -941,4 +937,13 @@ table.subforums .lastpostcell {
 
 .lastpostcell img {
     padding: 0.8em 0 0.8em 0.8em;
+}
+
+.xmb-wide-links-parent,
+.forum-list .description .content {
+    width: 100%;
+
+    & > a {
+        display: block;
+    }
 }
