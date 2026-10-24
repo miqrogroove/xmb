@@ -598,9 +598,9 @@ class Core
 
         if (! empty($subforums)) {
             $subforums = implode(', ', $subforums);
-            $subforums = "{$lang['textsubforums']} <span class='plainlinks'>$subforums</span>";
+            $subforums = "{$lang['textsubforums']} $subforums";
             if ('' !== $forum['description'] || '' != $forum['moderator']) {
-                $subforums = '<br />' . $subforums;
+                $subforums = '<br /><br />' . $subforums;
             }
         } else {
             $subforums = '';
