@@ -836,7 +836,6 @@ table.subforums {
 
 .header-top-grid .user-alerts,
 .header-top-grid .login-status div,
-.index-guest .link,
 .index-member .category-head.span {
     text-align: right;
 }
@@ -917,6 +916,12 @@ table.subforums {
 .index-whosonline .onnow p {
     margin: 0px;
     line-height: 1.5;
+}
+
+.index-guest .link {
+    display: flex;
+    align-items: center;
+    justify-content: right;
 }
 
 .lastpostcell,
