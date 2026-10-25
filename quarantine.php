@@ -164,7 +164,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             if ($post['subject'] == '') {
                 $template->linktitle = $thread['subject'];
             }
-            $template->postURL = "{$full_url}forumdisplay.php?fid={$fid}"; // Generic forum link.  Thread is quarantined.
+            $template->postURL = $vars->full_url . "forumdisplay.php?fid={$fid}"; // Generic forum link.  Thread is quarantined.
 
             $template->process('viewthread_post.php', echo: true);
             echo "</table></td></tr></table><br />\n";
@@ -240,7 +240,7 @@ if ($action == 'viewforum' || $action == 'viewuser') {
             if ($post['subject'] == '') {
                 $template->linktitle = $thread['subject'];
             }
-            $template->postURL = "{$full_url}viewthread.php?tid={$tid}"; // Generic thread link.  Post is quarantined.
+            $template->postURL = $vars->full_url . "viewthread.php?tid={$tid}"; // Generic thread link.  Post is quarantined.
 
             $template->process('viewthread_post.php', echo: true);
 
