@@ -127,7 +127,7 @@ if (X_SMOD && $gid == 0) {
             die: false,
             return_as_string: true,
             showfooter: false
-        ) . "<br />\n";
+        );
     }
 }
 
