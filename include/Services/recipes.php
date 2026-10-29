@@ -23,9 +23,11 @@ declare(strict_types=1);
 namespace XMB\Services;
 
 use XMB\{
+    Bootup,
     BootupLoader,
     DBStuff,
     Install,
+    Login,
     SiteData,
     Upgrade,
     UpgradeOutput,
@@ -38,15 +40,19 @@ use const XMB\ROOT;
  *
  * @since 1.10.06
  */
-function create_bootup()
+function create_bootup(): Bootup
 {
-    vars(new \XMB\Variables());
+    $services = container();
 
-    observer(new \XMB\Observer(vars()));
-    template(new \XMB\Template(vars()));
-    translation(new \XMB\Translation(vars()));
+    $services->set('vars', $vars = new \XMB\Variables());
 
-    bootup(new \XMB\Bootup(template(), vars()));
+    $services->set('observer', new \XMB\Observer($vars));
+    $services->set('template', $template = new \XMB\Template($vars));
+    $services->set('translation', new \XMB\Translation($vars));
+
+    $services->set('bootup', $bootup = new Bootup($template, $vars));
+
+    return $bootup;
 }
 
 /**
@@ -56,27 +62,32 @@ function create_bootup()
  */
 function create_core(DBStuff $db)
 {
-    db($db);
+    $services = container();
+    $template = $services->get('template');
+    $translation = $services->get('translation');
+    $vars = $services->get('vars');
 
-    debug(new \XMB\Debug(db(), vars()));
-    sql(new \XMB\SQL(db(), vars()->tablepre));
-    validate(new \XMB\Validation(db()));
+    $services->set('db', $db);
 
-    forums(new \XMB\Forums(sql()));
-    settings(new \XMB\Settings(db(), sql(), vars()));
-    smile(new \XMB\SmileAndCensor(sql()));
-    token(new \XMB\Token(sql(), vars()));
+    $services->set('debug', $debug = new \XMB\Debug($db, $vars));
+    $services->set('sql', $sql = new \XMB\SQL($db, $vars->tablepre));
+    $services->set('validate', new \XMB\Validation($db));
 
-    email(new \XMB\Email(vars())); // Depends on settings and will likely use it in the future.
-    features(new \XMB\Features(settings()));
-    theme(new \XMB\ThemeManager(forums(), settings(), sql(), template(), vars()));
+    $services->set('forums', $forums = new \XMB\Forums($sql));
+    $services->set('settings', $settings = new \XMB\Settings($db, $sql, $vars));
+    $services->set('smile', $smile = new \XMB\SmileAndCensor($sql));
+    $services->set('token', $token = new \XMB\Token($sql, $vars));
 
-    bbcode(new \XMB\BBCode(theme(), vars()));
-    password(new \XMB\Password(features(), sql()));
+    $services->set('email', $email = new \XMB\Email($vars)); // Depends on settings and will likely use it in the future.
+    $services->set('features', $features = new \XMB\Features($settings));
+    $services->set('theme', $theme = new \XMB\ThemeManager($forums, $settings, $sql, $template, $vars));
 
-    attach(new \XMB\Attach(bbcode(), db(), sql(), vars()));
+    $services->set('bbcode', $bbcode = new \XMB\BBCode($theme, $vars));
+    $services->set('password', $password = new \XMB\Password($features, $sql));
 
-    core(new \XMB\Core(attach(), bbcode(), db(), debug(), email(), forums(), password(), settings(), smile(), sql(), template(), token(), translation(), vars()));
+    $services->set('attach', $attach = new \XMB\Attach($bbcode, $db, $sql, $vars));
+
+    $services->set('core', new \XMB\Core($attach, $bbcode, $db, $debug, $email, $forums, $password, $settings, $smile, $sql, $template, $token, $translation, $vars));
 }
 
 /**
@@ -89,17 +100,20 @@ function create_installer(SiteData $site, UpgradeOutput $show): Install
 {
     require_once ROOT . 'install/cinst.php';
 
-    $schema = new \XMB\Schema(db(), vars()->tablepre);
+    $services = container();
+    $db = $services->get('db');
+    $vars = $services->get('vars');
 
-    sql(new \XMB\SQL(db(), vars()->tablepre));
+    $services->set('schema', $schema = new \XMB\Schema($db, $vars->tablepre));
+    $services->set('sql', $sql = new \XMB\SQL($db, $vars->tablepre));
 
-    settings(new \XMB\Settings(db(), sql(), vars(), installMode: true));
+    $services->set('settings', $settings = new \XMB\Settings($db, $sql, $vars, installMode: true));
 
-    features(new \XMB\Features(settings()));
+    $services->set('features', $features = new \XMB\Features($settings));
 
-    password(new \XMB\Password(features(), sql()));
+    $services->set('password', $password = new \XMB\Password($features, $sql));
 
-    return new Install(db(), password(), $schema, $site, sql(), $show, vars());
+    return new Install($db, $password, $schema, $site, $sql, $show, $vars);
 }
 
 /**
@@ -111,9 +125,13 @@ function create_upgrader(UpgradeOutput $show): Upgrade
 {
     require_once ROOT . 'install/upgrade.lib.php';
 
-    $schema = new \XMB\Schema(db(), vars()->tablepre);
+    $services = container();
+    $db = $services->get('db');
+    $vars = $services->get('vars');
 
-    return new Upgrade(db(), $show, $schema, vars());
+    $services->set('schema', $schema = new \XMB\Schema($db, $vars->tablepre));
+
+    return new Upgrade($db, $show, $schema, $vars);
 }
 
 /**
@@ -123,7 +141,15 @@ function create_upgrader(UpgradeOutput $show): Upgrade
  */
 function create_loader(): BootupLoader
 {
-    return new BootupLoader(core(), db(), features(), template(), vars());
+    $services = container();
+
+    return new BootupLoader(
+        $services->get('core'),
+        $services->get('db'),
+        $services->get('features'),
+        $services->get('template'),
+        $services->get('vars'),
+    );
 }
 
 /**
@@ -133,11 +159,21 @@ function create_loader(): BootupLoader
  */
 function create_session(string $sessionError)
 {
-    session(new \XMB\Session\Manager($sessionError, core()));
+    $services = container();
+    $core = $services->get('core');
 
-    $logic = new \XMB\Session\FormsAndCookies(core(), features(), password(), sql(), token(), validate());
+    $services->set('session', $session = new \XMB\Session\Manager($sessionError, $core));
 
-    session()->addMechanism($logic, priority: 10);
+    $logic = new \XMB\Session\FormsAndCookies(
+        $core,
+        $services->get('features'),
+        $services->get('password'),
+        $services->get('sql'),
+        $services->get('token'),
+        $services->get('validate'),
+    );
+
+    $session->addMechanism($logic, priority: 10);
 }
 
 /**
@@ -145,9 +181,25 @@ function create_session(string $sessionError)
  *
  * @since 1.10.06
  */
-function create_login(string $sessionMode)
+function create_login(string $sessionMode): Login
 {
-    session()->readAndUpdateClient($sessionMode);
+    $services = container();
+    $session = $services->get('session');
 
-    login(new \XMB\Login(core(), db(), features(), session(), sql(), template(), translation(), vars()));
+    $session->readAndUpdateClient($sessionMode);
+
+    $login = new Login(
+        $services->get('core'),
+        $services->get('db'),
+        $services->get('features'),
+        $session,
+        $services->get('sql'),
+        $services->get('template'),
+        $services->get('translation'),
+        $services->get('vars'),
+    );
+
+    $services->set('login', $login);
+
+    return $login;
 }

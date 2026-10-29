@@ -24,12 +24,13 @@ namespace XMB;
 
 require './header.php';
 
-$core = Services\core();
-$db = Services\db();
-$sql = Services\sql();
-$template = Services\template();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$db = $services->get('db');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 
 header('X-Robots-Tag: noindex');
 

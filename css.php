@@ -24,10 +24,11 @@ namespace XMB;
 
 require './header.php';
 
-$sql = Services\sql();
-$template = Services\template();
-$themeMgr = Services\theme();
-$vars = Services\vars();
+$services = Services\container();
+$sql = $services->get('sql');
+$template = $services->get('template');
+$themeMgr = $services->get('theme');
+$vars = $services->get('vars');
 
 $vars->theme = $sql->getThemeByID(getInt('id'));
 if (empty($vars->theme)) {

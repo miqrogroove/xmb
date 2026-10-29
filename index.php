@@ -26,14 +26,15 @@ use XMB\Enum\IndexListHeaderLocation;
 
 require './header.php';
 
-$core = Services\core();
-$db = Services\db();
-$forumcache = Services\forums();
-$login = Services\login();
-$settings = Services\settings();
-$sql = Services\sql();
-$template = Services\template();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$db = $services->get('db');
+$forumcache = $services->get('forums');
+$login = $services->get('login');
+$settings = $services->get('settings');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 
 $forums = $core->getStructuredForums(usePerms: true);

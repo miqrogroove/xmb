@@ -24,14 +24,15 @@ namespace XMB;
 
 require './header.php';
 
-$core = Services\core();
-$passMan = Services\password();
-$session = Services\session();
-$sql = Services\sql();
-$template = Services\template();
-$token = Services\token();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$passMan = $services->get('password');
+$session = $services->get('session');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$token = $services->get('token');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 
 $token1 = getPhpInput('a', sourcearray: 'g');

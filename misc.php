@@ -24,21 +24,22 @@ namespace XMB;
 
 require './header.php';
 
-$core = Services\core();
-$db = Services\db();
-$emailSvc = Services\email();
-$forums = Services\forums();
-$login = Services\login();
-$observer = Services\observer();
-$password = Services\password();
-$session = Services\session();
-$smile = Services\smile();
-$sql = Services\sql();
-$template = Services\template();
-$token = Services\token();
-$tran = Services\translation();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$db = $services->get('db');
+$emailSvc = $services->get('email');
+$forums = $services->get('forums');
+$login = $services->get('login');
+$observer = $services->get('observer');
+$password = $services->get('password');
+$session = $services->get('session');
+$smile = $services->get('smile');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$token = $services->get('token');
+$tran = $services->get('translation');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 

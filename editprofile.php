@@ -24,17 +24,18 @@ namespace XMB;
 
 require './header.php';
 
-$core = Services\core();
-$db = Services\db();
-$passMan = Services\password();
-$session = Services\session();
-$sql = Services\sql();
-$template = Services\template();
-$theme = Services\theme();
-$token = Services\token();
-$tran = Services\translation();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$db = $services->get('db');
+$passMan = $services->get('password');
+$session = $services->get('session');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$theme = $services->get('theme');
+$token = $services->get('token');
+$tran = $services->get('translation');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 
 $core->nav('<a href="' . $vars->full_url . 'admin/">'.$lang['textcp'].'</a>');

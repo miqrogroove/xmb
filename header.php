@@ -49,6 +49,7 @@ ob_start();
 // Interfaces
 require_once ROOT . 'db/DBStuff.php';
 require ROOT . 'include/Session/Mechanism.php';
+require ROOT . 'vendor/autoload.php';
 
 // Classes
 require_once ROOT . 'db/DBFactory.php';
@@ -73,8 +74,10 @@ require ROOT . 'include/online.inc.php';
 require ROOT . 'include/Password.php';
 require ROOT . 'include/Ranks.php';
 require ROOT . 'include/schema.inc.php';
-require ROOT . 'include/Services/recipes.php';
+require ROOT . 'include/Services/Container.php';
 require ROOT . 'include/Services/container-cache.php';
+require ROOT . 'include/Services/NotFoundException.php';
+require ROOT . 'include/Services/recipes.php';
 require ROOT . 'include/Session/Data.php';
 require ROOT . 'include/Session/FormsAndCookies.php';
 require ROOT . 'include/Session/Manager.php';
@@ -96,38 +99,39 @@ require ROOT . 'include/validate-email.inc.php';
 require ROOT . 'include/Validation.php';
 require ROOT . 'include/Variables.php';
 require_once ROOT . 'include/version.php';
-require ROOT . 'vendor/autoload.php';
 
 
 /* Create base services */
 
-create_bootup();
+container($services = new Container);
 
-template()->init();
-observer()->testSuperGlobals();
-observer()->assertEmptyOutputStream('the include/* files', use_debug: false);
+$bootup = create_bootup();
+
+$services->get('template')->init();
+$services->get('observer')->testSuperGlobals();
+$services->get('observer')->assertEmptyOutputStream('the include/* files', use_debug: false);
 
 ob_end_clean();
 
-vars()->onlinetime = (int) $mtime[1];
-vars()->starttime = $mtime[1] + $mtime[0];
+$services->get('vars')->onlinetime = (int) $mtime[1];
+$services->get('vars')->starttime = $mtime[1] + $mtime[0];
 unset($mtime);
 
 
 /* Load the Configuration Created by Install */
 
 if (defined('XMB\INSTALL') && ! defined('XMB\INSTALL_P2')) {
-    vars()->show_full_info = true;
-    bootup()->setVersion();
-    translation()->langPanic();
-    template()->addRefs();
-    bootup()->setCharset();
+    $services->get('vars')->show_full_info = true;
+    $services->get('bootup')->setVersion();
+    $services->get('translation')->langPanic();
+    $services->get('template')->addRefs();
+    $bootup->setCharset();
     return;
 }
 
-bootup()->loadConfig();
-observer()->assertEmptyOutputStream('config.php');
-if (vars()->debug) {
+$services->get('bootup')->loadConfig();
+$services->get('observer')->assertEmptyOutputStream('config.php');
+if ($services->get('vars')->debug) {
     if (error_reporting() !== -1) {
         echo 'XMB was unable to set the error_reporting level. Your host might be using a proprietary PHP extension to block error reporting. Please disable the XMB debug mode and contact your hostmaster for more information.';
         throw new UnexpectedValueException('The PHP error_reporting() function failed to return the correct value after XMB set it to -1');
@@ -136,17 +140,17 @@ if (vars()->debug) {
     error_reporting(E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
 }
 if (! defined('XMB\UPGRADE_CLI')) {
-    bootup()->setBrowser();
-    bootup()->setIP();
-    bootup()->setURL();
+    $bootup->setBrowser();
+    $bootup->setIP();
+    $bootup->setURL();
 }
-bootup()->setVersion();
-observer()->assertEmptyOutputStream('version.php');
+$bootup->setVersion();
+$services->get('observer')->assertEmptyOutputStream('version.php');
 
 
 /* Create more services */
 
-create_core(bootup()->connectDB());
+create_core($bootup->connectDB());
 
 
 /* Start 2nd Phase of Bootup */
@@ -155,19 +159,19 @@ $loader = create_loader();
 
 $loader->setHeaders();
 
-if (! features()->schemaHasSessions()) {
-    core()->loadLangWithoutSession();
-    bootup()->setCharset();
+if (! $services->get('features')->schemaHasSessions()) {
+    $services->get('core')->loadLangWithoutSession();
+    $bootup->setCharset();
     if (! defined('XMB\UPGRADE')) {
-        core()->unavailable('upgrade');
+        $services->get('core')->unavailable('upgrade');
     }
-    $xmbuser = validate()->postedVar(
+    $xmbuser = $services->get('validate')->postedVar(
         varname: 'xmbuser',
         dbescape: false,
         sourcearray: 'c',
     );
     $xmbpw = getPhpInput('xmbpw', 'c');
-    define('XMB\X_SADMIN', sql()->checkUpgradeOldLogin($xmbuser, $xmbpw));
+    define('XMB\X_SADMIN', $services->get('sql')->checkUpgradeOldLogin($xmbuser, $xmbpw));
     unset($loader, $xmbuser, $xmbpw);
     return;
 }
@@ -177,40 +181,40 @@ if (! features()->schemaHasSessions()) {
 
 $params = $loader->prepareSession();
 create_session($params['serror']);
-create_login($params['mode']);
-login()->elevateUser($params['force_inv']);
+$login = create_login($params['mode']);
+$login->elevateUser($params['force_inv']);
 unset($params);
 
 if (defined('XMB\UPGRADE')) {
     return;
-} elseif ((int) settings()->get('schema_version') < \XMB\Schema::VER) {
+} elseif ((int) $services->get('settings')->get('schema_version') < \XMB\Schema::VER) {
     if (X_SADMIN) {
-        core()->redirect(vars()->full_url . 'install/', timeout: 0);
+        $services->get('core')->redirect($services->get('vars')->full_url . 'install/', timeout: 0);
     } else {
-        core()->unavailable('upgrade');
+        $services->get('core')->unavailable('upgrade');
     }
 }
 
 
 /* Set Up HTML Templates and Themes */
 
-bootup()->setCharset();
-login()->setVisit();
-theme()->setTheme();
+$bootup->setCharset();
+$login->setVisit();
+$services->get('theme')->setTheme();
 
 
 /* Theme Ready.  Make pretty errors. */
 
-login()->sendErrors();
+$login->sendErrors();
 
 
 /* Finish HTML Templates */
 
-if ((X_ADMIN || settings()->get('bbstatus') == 'on') && (X_MEMBER || settings()->get('regviewonly') == 'off')) {
+if ((X_ADMIN || $services->get('settings')->get('bbstatus') == 'on') && (X_MEMBER || $services->get('settings')->get('regviewonly') == 'off')) {
     $loader->createNavbarLinks();
     $loader->makePlugLinks();
     $loader->makeQuickJump();
-    if (X_MEMBER) $loader->checkU2U(sql());
+    if (X_MEMBER) $loader->checkU2U($services->get('sql'));
 }
 
 
@@ -223,6 +227,6 @@ $loader->startCompression();
 
 $loader->adminFirewall();
 
-unset($loader);
+$services->get('observer')->assertEmptyOutputStream('header.php');
 
-observer()->assertEmptyOutputStream('header.php');
+unset($bootup, $loader, $login, $services);

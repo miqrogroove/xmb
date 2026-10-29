@@ -24,11 +24,12 @@ namespace XMB;
 
 require './header.php';
 
-$core = Services\core();
-$db = Services\db();
-$forums = Services\forums();
-$template = Services\template();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$db = $services->get('db');
+$forums = $services->get('forums');
+$template = $services->get('template');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 $SETTINGS = &$vars->settings;
 

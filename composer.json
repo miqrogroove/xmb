@@ -8,7 +8,8 @@
         "ext-gd": "*",
         "ext-mysqli": "*",
         "php": ">=8.4",
-        "symfony/mailer": "8.1.*"
+        "symfony/mailer": "8.1.*",
+        "psr/container": "^2.0"
     },
     "config": {
         "platform": {

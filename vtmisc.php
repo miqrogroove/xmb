@@ -24,14 +24,15 @@ namespace XMB;
 
 require './header.php';
 
-$core = Services\core();
-$db = Services\db();
-$forums = Services\forums();
-$sql = Services\sql();
-$template = Services\template();
-$tran = Services\translation();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$db = $services->get('db');
+$forums = $services->get('forums');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$tran = $services->get('translation');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 
 if (X_GUEST) {

@@ -24,12 +24,13 @@ namespace XMB;
 
 require './header.php';
 
-$core = Services\core();
-$db = Services\db();
-$smile = Services\smile();
-$template = Services\template();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$db = $services->get('db');
+$smile = $services->get('smile');
+$template = $services->get('template');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 
 $core->nav($lang['textsearch']);

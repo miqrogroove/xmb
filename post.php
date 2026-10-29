@@ -24,17 +24,18 @@ namespace XMB;
 
 require './header.php';
 
-$attachSvc = Services\attach();
-$core = Services\core();
-$db = Services\db();
-$email = Services\email();
-$forums = Services\forums();
-$settings = Services\settings();
-$sql = Services\sql();
-$template = Services\template();
-$tran = Services\translation();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$attachSvc = $services->get('attach');
+$core = $services->get('core');
+$db = $services->get('db');
+$email = $services->get('email');
+$forums = $services->get('forums');
+$settings = $services->get('settings');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$tran = $services->get('translation');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');

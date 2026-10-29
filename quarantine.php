@@ -24,17 +24,18 @@ namespace XMB;
 
 require './header.php';
 
-$attachSvc = Services\attach();
-$core = Services\core();
-$db = Services\db();
-$email = Services\email();
-$forums = Services\forums();
-$sql = Services\sql();
-$template = Services\template();
-$tokenSvc = Services\token();
-$tran = Services\translation();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$attachSvc = $services->get('attach');
+$core = $services->get('core');
+$db = $services->get('db');
+$email = $services->get('email');
+$forums = $services->get('forums');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$tokenSvc = $services->get('token');
+$tran = $services->get('translation');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 
 $lang = &$vars->lang;
 $onlinetime = $vars->onlinetime;
