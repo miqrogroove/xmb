@@ -54,6 +54,11 @@ require './ShellOutput.php';
 require './SiteData.php';
 require './WizFunctions.php';
 
+// Retrieve dependencies
+$services = Services\container();
+$bootup = $services->get('bootup');
+$vars = $services->get('vars');
+
 // Create an output implementation for the install library.  You may also customize this one or supply your own.
 $show = new ShellOutput();
 
@@ -76,8 +81,7 @@ file_put_contents(ROOT . 'config.php', $configuration);
 
 // Manage XMB services
 // If you'd like to also assert that XMB isn't installed already, take a look in WizFunctions.php
-Services\bootup()->loadConfig();
-$vars = Services\vars();
+$bootup->loadConfig();
 
 $db = DBFactory::createFromFilename(
     $vars->database,
@@ -89,7 +93,7 @@ $result = $db->testConnect($site->dbHost, $site->dbUser, $site->dbPass, $site->d
 if (! $result) {
     $show->error($vars->lang['install_db_connect'], str_replace('$msg', $db->getTestError(), $vars->lang['install_db_connect_error']));
 }
-Services\db($db);
+$services->set('db', $db);
 
 // Create an Install instance.
 $lib = Services\create_installer($site, $show);

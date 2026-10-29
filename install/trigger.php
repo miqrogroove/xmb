@@ -45,8 +45,9 @@ require ROOT . 'header.php';
 require './UpgradeOutput.php';
 require './LoggedOutput.php';
 
-$db = Services\db();
-$vars = Services\vars();
+$services = Services\container();
+$db = $services->get('db');
+$vars = $services->get('vars');
 $show = new LoggedOutput();
 $lib = Services\create_upgrader($show);
 

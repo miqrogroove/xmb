@@ -25,11 +25,12 @@ namespace XMB;
 const ROOT = '../';
 require ROOT . 'header.php';
 
-$attach = Services\attach();
-$core = Services\core();
-$template = Services\template();
-$token = Services\token();
-$vars = Services\vars();
+$services = Services\container();
+$attach = $services->get('attach');
+$core = $services->get('core');
+$template = $services->get('template');
+$token = $services->get('token');
+$vars = $services->get('vars');
 $lang = &$vars->lang;
 
 header('X-Robots-Tag: noindex');

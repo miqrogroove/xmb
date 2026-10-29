@@ -29,16 +29,17 @@ const UPGRADE = true;
 
 require ROOT . 'header.php';
 
-$core = Services\core();
-$features = Services\features();
-$sql = Services\sql();
-$template = Services\template();
-$tokenSvc = Services\token();
-$validate = Services\validate();
-$vars = Services\vars();
+$services = Services\container();
+$core = $services->get('core');
+$features = $services->get('features');
+$sql = $services->get('sql');
+$template = $services->get('template');
+$tokenSvc = $services->get('token');
+$validate = $services->get('validate');
+$vars = $services->get('vars');
 
 if ($features->schemaHasSessions()) {
-    $session = Services\session();
+    $session = $services->get('session');
     if (! $session->isLoginSupported()) {
         exit($vars->lang['fnasorry3']);
     }

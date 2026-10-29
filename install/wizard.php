@@ -109,9 +109,10 @@ if ($status == 'installed') {
 
 require ROOT . 'header.php';
 
-$bootup = Services\bootup();
-$template = Services\template();
-$vars = Services\vars();
+$services = Services\container();
+$bootup = $services->get('bootup');
+$template = $services->get('template');
+$vars = $services->get('vars');
 
 $template->versiongeneral = $vars->versiongeneral;
 $template->versionshort = $vars->versionshort;
@@ -145,7 +146,7 @@ $class[$vStep] = 'current';
 $template->class = $class;
 
 if ($status == 'installed') {
-    $db = Services\db();
+    $db = $services->get('db');
 
     if ((int) $vars->settings['schema_version'] >= Schema::VER) {
         header('HTTP/1.0 403 Forbidden');
@@ -348,7 +349,7 @@ switch ($vStep) {
         }
 
         // Set the db service reference
-        Services\db($db);
+        $services->set('db', $db);
 
         $sqlver = $db->server_version();
 

@@ -66,6 +66,6 @@ $show->finished('Done');
 
 // Cleanup Notes
 // 1. The website is still in maintenance mode, which was forced during the upgrade.  Reset it now.
-Services\settings()->put('bbstatus', 'on');
+Services\container()->get('settings')->put('bbstatus', 'on');
 
 // 2. This script did not self-destruct and should not be available for public use on a live site.
