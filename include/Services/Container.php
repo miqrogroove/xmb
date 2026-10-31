@@ -22,19 +22,30 @@ declare(strict_types=1);
 
 namespace XMB\Services;
 
+use LogicException;
 use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {
+    private array $aliases = [];
+    private array $factories = [];
     private array $services = [];
 
-    public function set(string $id, object $service)
+    public function set(string $class, callable $factory, array $aliases = [])
     {
-        if (isset($this->services[$id])) {
-            throw new LogicException("Attempted duplication of container element ID '$id' is not allowed.");
+        if (isset($this->services[$class])) {
+            throw new LogicException("Attempted duplication of class '$class' in a Container is not allowed.");
+        }
+        foreach ($aliases as $alias) {
+            if (isset($this->aliases[$alias])) {
+                throw new LogicException("Attempted duplication of alias '$alias' in a Container is not allowed.");
+            }
+        }
+        foreach ($aliases as $alias) {
+            $this->aliases[$alias] = $class;
         }
 
-        $this->services[$id] = $service;
+        $this->factories[$class] = $factory;
     }
 
     /**
@@ -49,11 +60,16 @@ class Container implements ContainerInterface
      */
     public function get(string $id): object
     {
-        $service = $this->find($id);
+        $factory = $this->find($id);
 
-        if ($service === null) throw new NotFoundException();
+        if ($factory === null) throw new NotFoundException();
 
-        return $service;
+        if (! isset($this->services[$id])) {
+            // Invoke the factory and pass the container to allow resolution of dependencies.
+            $this->services[$id] = $factory($this);
+        }
+
+        return $this->services[$id];
     }
 
     /**
@@ -74,21 +90,17 @@ class Container implements ContainerInterface
         return $service !== null;
     }
 
-    private function find(string $id): ?object
+    private function find(string $id): ?callable
     {
-        $service = null;
+        $factory = null;
 
-        if (isset($this->services[$id])) {
-            $service = $this->services[$id];
-        } else {
-            foreach ($this->services as $test) {
-                if ($test instanceof $id) {
-                    $service = $test;
-                    break;
-                }
-            }
+        if (isset($this->factories[$id])) {
+            $factory = $this->factories[$id];
+        } elseif (isset($this->aliases[$id])) {
+            $id = $this->aliases[$id];
+            $factory = $this->factories[$id];
         }
 
-        return $service;
+        return $factory;
     }
 }

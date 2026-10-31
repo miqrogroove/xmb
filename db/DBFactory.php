@@ -33,8 +33,6 @@ class DBFactory
 {
     /**
      * Load the configured DB implementation and return an instance.
-     *
-     * @since 1.10.06
      */
     public static function createFromFilename(string $database, bool $debug, bool $logErrors): DBStuff
     {

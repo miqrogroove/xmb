@@ -103,35 +103,38 @@ require_once ROOT . 'include/version.php';
 
 /* Create base services */
 
-container($services = new Container);
+container($services = create_container());
 
-$bootup = create_bootup();
+$bootup = $services->get('bootup');
+$observer = $services->get('observer');
+$vars = $services->get('vars');
 
 $services->get('template')->init();
-$services->get('observer')->testSuperGlobals();
-$services->get('observer')->assertEmptyOutputStream('the include/* files', use_debug: false);
+$observer->testSuperGlobals();
+$observer->assertEmptyOutputStream('the include/* files', use_debug: false);
 
 ob_end_clean();
 
-$services->get('vars')->onlinetime = (int) $mtime[1];
-$services->get('vars')->starttime = $mtime[1] + $mtime[0];
+$vars->onlinetime = (int) $mtime[1];
+$vars->starttime = $mtime[1] + $mtime[0];
 unset($mtime);
 
 
 /* Load the Configuration Created by Install */
 
-if (defined('XMB\INSTALL') && ! defined('XMB\INSTALL_P2')) {
-    $services->get('vars')->show_full_info = true;
-    $services->get('bootup')->setVersion();
+if (defined('XMB\INSTALL')) {
+    $vars->show_full_info = true;
+    $bootup->setVersion();
     $services->get('translation')->langPanic();
     $services->get('template')->addRefs();
     $bootup->setCharset();
+    unset($bootup, $observer, $services, $vars);
     return;
 }
 
 $services->get('bootup')->loadConfig();
-$services->get('observer')->assertEmptyOutputStream('config.php');
-if ($services->get('vars')->debug) {
+$observer->assertEmptyOutputStream('config.php');
+if ($vars->debug) {
     if (error_reporting() !== -1) {
         echo 'XMB was unable to set the error_reporting level. Your host might be using a proprietary PHP extension to block error reporting. Please disable the XMB debug mode and contact your hostmaster for more information.';
         throw new UnexpectedValueException('The PHP error_reporting() function failed to return the correct value after XMB set it to -1');
@@ -145,18 +148,17 @@ if (! defined('XMB\UPGRADE_CLI')) {
     $bootup->setURL();
 }
 $bootup->setVersion();
-$services->get('observer')->assertEmptyOutputStream('version.php');
+$observer->assertEmptyOutputStream('version.php');
 
 
 /* Create more services */
 
-create_core($bootup->connectDB());
+$bootup->connectDB($services->get('db'));
 
 
 /* Start 2nd Phase of Bootup */
 
-$loader = create_loader();
-
+$loader = $services->get('loader');
 $loader->setHeaders();
 
 if (! $services->get('features')->schemaHasSessions()) {
@@ -172,7 +174,8 @@ if (! $services->get('features')->schemaHasSessions()) {
     );
     $xmbpw = getPhpInput('xmbpw', 'c');
     define('XMB\X_SADMIN', $services->get('sql')->checkUpgradeOldLogin($xmbuser, $xmbpw));
-    unset($loader, $xmbuser, $xmbpw);
+    unset($xmbuser, $xmbpw);
+    unset($bootup, $loader, $observer, $services, $vars);
     return;
 }
 
@@ -180,8 +183,8 @@ if (! $services->get('features')->schemaHasSessions()) {
 /* Authorize User, Set Up Session, and Load Language Translation */
 
 $params = $loader->prepareSession();
-create_session($params['serror']);
-$login = create_login($params['mode']);
+$services->get('session')->readAndUpdateClient($params['mode'], $params['serror']);
+$login = $services->get('login');
 $login->elevateUser($params['force_inv']);
 unset($params);
 
@@ -189,7 +192,7 @@ if (defined('XMB\UPGRADE')) {
     return;
 } elseif ((int) $services->get('settings')->get('schema_version') < \XMB\Schema::VER) {
     if (X_SADMIN) {
-        $services->get('core')->redirect($services->get('vars')->full_url . 'install/', timeout: 0);
+        $services->get('core')->redirect($vars->full_url . 'install/', timeout: 0);
     } else {
         $services->get('core')->unavailable('upgrade');
     }
@@ -227,6 +230,6 @@ $loader->startCompression();
 
 $loader->adminFirewall();
 
-$services->get('observer')->assertEmptyOutputStream('header.php');
+$observer->assertEmptyOutputStream('header.php');
 
-unset($bootup, $loader, $login, $services);
+unset($bootup, $loader, $login, $observer, $services, $vars);

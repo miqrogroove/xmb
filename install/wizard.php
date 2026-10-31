@@ -35,8 +35,10 @@ if (! defined('XMB\ROOT')) {
 if (
     ! is_readable('./cinst.php') ||
     ! is_readable('./HttpOutput.php') ||
+    ! is_readable('./InstallFactory.php') ||
     ! is_readable('./LoggedOutput.php') ||
     ! is_readable('./SiteData.php') ||
+    ! is_readable('./UpgradeFactory.php') ||
     ! is_readable('./UpgradeOutput.php') ||
     ! is_readable('./upgrade.lib.php') ||
     ! is_readable('./WizFunctions.php') ||
@@ -55,6 +57,7 @@ require './UpgradeOutput.php';
 // Classes
 require_once ROOT . 'db/DBFactory.php';
 require './HttpOutput.php';
+require './InstallFactory.php';
 require './SiteData.php';
 require './WizFunctions.php';
 
@@ -330,11 +333,9 @@ switch ($vStep) {
         }
 
         // Begin bootstrap for db service
-        $db = DBFactory::createFromFilename(
-            $database,
-            $vars->debug,
-            $log_mysql_errors,
-        );
+        $services = Services\container();
+        $services->get('bootup')->loadConfig();
+        $db = $services->get('db');
         $db->stopQueryLogging();
         
         // Check if the db environment actually exists
@@ -347,9 +348,6 @@ switch ($vStep) {
         if (! $result) {
             $show->wizardError($vars->lang['install_db_connect'], str_replace('$msg', $db->getTestError(), $vars->lang['install_db_connect_error']));
         }
-
-        // Set the db service reference
-        $services->set('db', $db);
 
         $sqlver = $db->server_version();
 
@@ -386,9 +384,8 @@ switch ($vStep) {
             $show->error('The passwords do not match. Please press back and try again.');
         }
 
-        $lib = Services\create_installer($site, $show);
-
-        $lib->go();
+        Services\register_installer($services, $site, $show);
+        $services->get('install')->go();
 
         $show->finished(str_replace('$url', $vars->full_url, $vars->lang['install_done_detail']));
         $template->process('install_footer.php', echo: true);

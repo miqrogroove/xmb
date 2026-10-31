@@ -264,14 +264,8 @@ class Bootup
         $this->vars->onlineip = $_SERVER['REMOTE_ADDR'];
     }
 
-    public function connectDB(): DBStuff
+    public function connectDB(DBStuff $db)
     {
-        $db = DBFactory::createFromFilename(
-            $this->vars->database,
-            $this->vars->debug,
-            $this->vars->log_mysql_errors,
-        );
-
         if ($this->vars->debug && defined('XMB\UPGRADE')) {
             $db->stopQueryLogging();
         }
@@ -283,8 +277,6 @@ class Bootup
             $this->vars->dbname,
             $this->vars->pconnect,
         );
-
-        return $db;
     }
 
     public function setCharset()

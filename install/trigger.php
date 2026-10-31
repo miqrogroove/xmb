@@ -42,6 +42,7 @@ if (ini_get('display_errors')) {
 
 // Authenticate Browser
 require ROOT . 'header.php';
+require './UpgradeFactory.php';
 require './UpgradeOutput.php';
 require './LoggedOutput.php';
 
@@ -49,7 +50,8 @@ $services = Services\container();
 $db = $services->get('db');
 $vars = $services->get('vars');
 $show = new LoggedOutput();
-$lib = Services\create_upgrader($show);
+Services\register_upgrader($services, $show);
+$lib = $services->get('upgrade');
 
 if (! defined('XMB\X_SADMIN') || ! X_SADMIN) {
     header('HTTP/1.0 403 Forbidden');

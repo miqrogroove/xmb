@@ -40,12 +40,9 @@ class Manager
     private string $status = ''; // See getters for details.
     private Data $saved;
     private bool $initialized = false;
+    private string $serror = ''; // To be provided during lazy initialization.
 
-    /**
-     * @param string $serror Condition prior to authentication.
-     */
     public function __construct(
-        private string $serror,
         private Core $core,
     ) {
         $this->mechanisms = new Registry();
@@ -82,12 +79,16 @@ class Manager
      *
      * @since 1.10.07
      * @param string $mode Must be one of 'login', 'logout', 'resume', or 'disabled'.
+     * @param string $serror The condition prior to authentication.
      */
-    public function readAndUpdateClient(string $mode)
+    public function readAndUpdateClient(string $mode, string $serror)
     {
         if ($this->initialized) {
             throw new LogicException('Updating the Session more than once is not allowed');
         }
+
+        $this->initialized = true;
+        $this->serror = $serror;
 
         switch ($mode) {
             case 'login':
@@ -104,8 +105,6 @@ class Manager
             default:
                 $this->resume();
         }
-
-        $this->initialized = true;
     }
 
     /**
