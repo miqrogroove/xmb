@@ -221,7 +221,7 @@ if (noSubmit('membersubmit')) {
             }
 
             if (getRawString('pw' . $mem['uid']) != '') {
-                $result = $core->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);
+                $result = $passMan->assertPasswordPolicy('pw' . $mem['uid'], 'pw' . $mem['uid']);
                 $passMan->change($mem['username'], $result['password']);
                 unset($result);
 

@@ -309,8 +309,10 @@ function create_bbcode(callable $getService): \XMB\BBCode
 function create_password(callable $getService): \XMB\Password
 {
     return new \XMB\Password(
+        $getService('core'),
         $getService('features'),
-        $getService('sql')
+        $getService('sql'),
+        $getService('vars'),
     );
 }
 
@@ -343,7 +345,6 @@ function create_core(callable $getService): \XMB\Core
         $getService('debug'),
         $getService('email'),
         $getService('forums'),
-        $getService('password'),
         $getService('settings'),
         $getService('smile'),
         $getService('sql'),

@@ -38,7 +38,6 @@ class Core
         private Debug $debug,
         private Email $email,
         private Forums $forums,
-        private Password $password,
         private Settings $settings,
         private SmileAndCensor $smile,
         private SQL $sql,
@@ -2189,38 +2188,6 @@ class Core
             header('HTTP/1.0 403 Forbidden');
             $this->message($this->vars->lang['u2uadmin_noperm']);
         }
-    }
-
-    /**
-     * Checks a new password against requirements.
-     *
-     * @since 1.10.00
-     * @param string $passInputName
-     * @param string $passConfirmName
-     * @param bool $softError When true, it returns the error message instead of displaying it immediately.
-     * @return array of strings: 'password' contains the new password, otherwise 'error' contains the soft error HTML.
-     */
-    public function assertPasswordPolicy(string $passInputName, string $passConfirmName, bool $softError = false): array
-    {
-        $password1 = getRawString($passInputName);
-        $password2 = getRawString($passConfirmName);
-
-        $errCode = $this->password->checkPolicy($password1, $password2);
-        if ($errCode == '') {
-            $data = [
-                'password' => $password1,
-                'error' => '',
-            ];
-        } elseif ($softError) {
-            $data = [
-                'password' => '',
-                'error' => $this->softerror($this->vars->lang[$errCode]),
-            ];
-        } else {
-            $this->error($this->vars->lang[$errCode]);
-        }
-
-        return $data;
     }
 
     /**

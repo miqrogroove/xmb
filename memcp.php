@@ -146,7 +146,7 @@ if ($action == 'profile') {
                 $core->auditBadLogin($vars->self);
                 $core->error($lang['textpwincorrect']);
             }
-            $result = $core->assertPasswordPolicy('newpassword', 'newpasswordcf');
+            $result = $passMan->assertPasswordPolicy('newpassword', 'newpasswordcf');
             $passMan->change($vars->self['username'], $result['password']);
             unset($oldPass, $result, $storedPass);
             $pwChange = true;

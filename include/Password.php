@@ -38,7 +38,7 @@ class Password
 
     private const ALGO = PASSWORD_DEFAULT;
 
-    public function __construct(private Features $features, private SQL $sql)
+    public function __construct(private Core $core, private Features $features, private SQL $sql, private Variables $vars)
     {
         // Property promotion
     }
@@ -183,5 +183,38 @@ class Password
         }
 
         return $newPass;
+    }
+
+    /**
+     * Checks a new password against requirements.
+     *
+     * @since 1.10.00 Formerly Core::assertPasswordPolicy()
+     * @since 1.12.00
+     * @param string $passInputName
+     * @param string $passConfirmName
+     * @param bool $softError When true, it returns the error message instead of displaying it immediately.
+     * @return array of strings: 'password' contains the new password, otherwise 'error' contains the soft error HTML.
+     */
+    public function assertPasswordPolicy(string $passInputName, string $passConfirmName, bool $softError = false): array
+    {
+        $password1 = getRawString($passInputName);
+        $password2 = getRawString($passConfirmName);
+
+        $errCode = $this->checkPolicy($password1, $password2);
+        if ($errCode == '') {
+            $data = [
+                'password' => $password1,
+                'error' => '',
+            ];
+        } elseif ($softError) {
+            $data = [
+                'password' => '',
+                'error' => $this->core->softerror($this->vars->lang[$errCode]),
+            ];
+        } else {
+            $this->error($this->vars->lang[$errCode]);
+        }
+
+        return $data;
     }
 }

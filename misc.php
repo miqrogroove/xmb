@@ -231,7 +231,7 @@ switch ($action) {
             $core->request_secure('Forced PW Change', (string) $uid);
             $member = $sql->getMemberByID($uid);
             
-            $result = $core->assertPasswordPolicy('password', 'password2');
+            $result = $password->assertPasswordPolicy('password', 'password2');
             $password->change($member['username'], $result['password']);
 
             $session->newUser($member);

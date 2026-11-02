@@ -57,7 +57,7 @@ if (X_MEMBER) {
         $core->error($lang['username_length_invalid']);
     }
 
-    $result = $core->assertPasswordPolicy('password1', 'password2');
+    $result = $passMan->assertPasswordPolicy('password1', 'password2');
 
     // Inputs look reasonable.  Check the token.
     if (! $token->consume($token2, 'Lost Password', $username)) {

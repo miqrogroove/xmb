@@ -190,7 +190,7 @@ if (noSubmit('editsubmit')) {
     }
 
     if (getRawString('newpassword') != '') {
-        $result = $core->assertPasswordPolicy('newpassword', 'newpassword');
+        $result = $passMan->assertPasswordPolicy('newpassword', 'newpassword');
         $passMan->change($rawuser, $result['password']);
         unset($result);
 
