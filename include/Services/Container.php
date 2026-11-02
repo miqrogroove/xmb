@@ -52,24 +52,49 @@ class Container implements ContainerInterface
      * Finds an entry of the container by its identifier and returns it.
      *
      * @param string $id Identifier of the entry to look for.
+     * @param DependencyContext $context Optional. Context for tracking resolver factory recursion.
      *
      * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
      * @throws ContainerExceptionInterface Error while retrieving the entry.
      *
      * @return mixed Entry.
      */
-    public function get(string $id): object
+    public function get(string $id, ?DependencyContext $context = null): object
     {
-        $factory = $this->find($id);
+        $class = $this->find($id);
 
-        if ($factory === null) throw new NotFoundException();
+        if ($class === null) throw new NotFoundException();
 
-        if (! isset($this->services[$id])) {
-            // Invoke the factory and pass the container to allow resolution of dependencies.
-            $this->services[$id] = $factory($this);
+        $service = $this->services[$class] ?? null;
+
+        if ($service === null) {
+            // Start tracking recursion.
+            if ($context === null) {
+                $context = new DependencyContext();
+            } elseif (in_array($class, $context->stack)) {
+                throw new ContainerException("Circular dependency detected for service class $class");
+            }
+            $context->stack[] = $class;
+
+            // Invoke the factory and pass a closure to allow resolution of dependencies.
+            $factory = $this->factories[$class];
+            $closure = function (string $id) use ($context): object
+            {
+                // Pass the context into the next get() call.
+                return $this->get($id, $context);
+            };
+            try {
+                $service = $factory($closure);
+            } finally {
+                // Due to the recursive nature of this method, we have to account for the possibility
+                // that any Exception thrown by dependency resolution could be caught by a parent caller
+                // and we would continue to use the context in that situation, so it must be cleaned up here.
+                array_pop($context->stack);
+            }
+            $this->services[$class] = $service;
         }
 
-        return $this->services[$id];
+        return $service;
     }
 
     /**
@@ -90,17 +115,24 @@ class Container implements ContainerInterface
         return $service !== null;
     }
 
-    private function find(string $id): ?callable
+    /**
+     * Find the registered class name from an ID string.
+     *
+     * A registered class name ID will be returned as-is.
+     * Any registered alias ID will be resolved to the class name.
+     *
+     * @param string $id Identifier of the entry to look for.
+     *
+     * @return ?string
+     */
+    private function find(string $id): ?string
     {
-        $factory = null;
+        $class = $this->aliases[$id] ?? null;
 
-        if (isset($this->factories[$id])) {
-            $factory = $this->factories[$id];
-        } elseif (isset($this->aliases[$id])) {
-            $id = $this->aliases[$id];
-            $factory = $this->factories[$id];
+        if ($class === null && isset($this->factories[$id])) {
+            $class = $id;
         }
 
-        return $factory;
+        return $class;
     }
 }

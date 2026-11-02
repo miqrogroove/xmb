@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace XMB;
 
-use Psr\Container\ContainerInterface;
-
 /**
  * Responsible for creating the Install instances.
  *
@@ -45,18 +43,18 @@ class InstallFactory
     /**
      * Fetch dependencies, configure a new instance, and return it.
      */
-    public function __invoke(ContainerInterface $container): Install
+    public function __invoke(callable $getService): Install
     {
         require_once ROOT . 'install/cinst.php';
 
         return new Install(
-            $container->get('db'),
-            $container->get('password'),
-            $container->get('schema'),
+            $getService('db'),
+            $getService('password'),
+            $getService('schema'),
             $this->site,
-            $container->get('sql'),
+            $getService('sql'),
             $this->outputInterface,
-            $container->get('vars'),
+            $getService('vars'),
         );
     }
 }

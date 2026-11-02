@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace XMB;
 
-use Psr\Container\ContainerInterface;
-
 /**
  * Responsible for creating the Upgrade instances.
  *
@@ -43,15 +41,15 @@ class UpgradeFactory
     /**
      * Fetch dependencies, configure a new instance, and return it.
      */
-    public function __invoke(ContainerInterface $container): Upgrade
+    public function __invoke(callable $getService): Upgrade
     {
         require_once ROOT . 'install/upgrade.lib.php';
 
         return new Upgrade(
-            $container->get('db'),
+            $getService('db'),
             $this->outputInterface,
-            $container->get('schema'),
-            $container->get('vars'),
+            $getService('schema'),
+            $getService('vars'),
         );
     }
 }

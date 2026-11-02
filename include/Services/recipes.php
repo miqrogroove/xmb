@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace XMB\Services;
 
-use Psr\Container\ContainerInterface;
-
 use const XMB\ROOT;
 
 /**
@@ -99,10 +97,10 @@ function create_vars(): \XMB\Variables
  *
  * @since 1.12.00
  */
-function create_observer(ContainerInterface $container): \XMB\Observer
+function create_observer(callable $getService): \XMB\Observer
 {
     return new \XMB\Observer(
-        $container->get('vars'),
+        $getService('vars'),
     );
 }
 
@@ -111,10 +109,10 @@ function create_observer(ContainerInterface $container): \XMB\Observer
  *
  * @since 1.12.00
  */
-function create_template(ContainerInterface $container): \XMB\Template
+function create_template(callable $getService): \XMB\Template
 {
     return new \XMB\Template(
-        $container->get('vars'),
+        $getService('vars'),
     );
 }
 
@@ -123,10 +121,10 @@ function create_template(ContainerInterface $container): \XMB\Template
  *
  * @since 1.12.00
  */
-function create_translation(ContainerInterface $container): \XMB\Translation
+function create_translation(callable $getService): \XMB\Translation
 {
     return new \XMB\Translation(
-        $container->get('vars'),
+        $getService('vars'),
     );
 }
 
@@ -135,11 +133,11 @@ function create_translation(ContainerInterface $container): \XMB\Translation
  *
  * @since 1.10.06
  */
-function create_bootup(ContainerInterface $container): \XMB\Bootup
+function create_bootup(callable $getService): \XMB\Bootup
 {
     return new \XMB\Bootup(
-        $container->get('template'), 
-        $container->get('vars'),
+        $getService('template'), 
+        $getService('vars'),
     );
 }
 
@@ -150,9 +148,9 @@ function create_bootup(ContainerInterface $container): \XMB\Bootup
  *
  * @since 1.12.00
  */
-function create_db(ContainerInterface $container): \XMB\DBStuff
+function create_db(callable $getService): \XMB\DBStuff
 {
-    $vars = $container->get('vars');
+    $vars = $getService('vars');
 
     return \XMB\DBFactory::createFromFilename(
         $vars->database,
@@ -166,11 +164,11 @@ function create_db(ContainerInterface $container): \XMB\DBStuff
  *
  * @since 1.12.00
  */
-function create_debug(ContainerInterface $container): \XMB\Debug
+function create_debug(callable $getService): \XMB\Debug
 {
     return new \XMB\Debug(
-        $container->get('db'),
-        $container->get('vars'),
+        $getService('db'),
+        $getService('vars'),
     );
 }
 
@@ -179,11 +177,11 @@ function create_debug(ContainerInterface $container): \XMB\Debug
  *
  * @since 1.12.00
  */
-function create_sql(ContainerInterface $container): \XMB\SQL
+function create_sql(callable $getService): \XMB\SQL
 {
     return new \XMB\SQL(
-        $container->get('db'),
-        $container->get('vars')->tablepre,
+        $getService('db'),
+        $getService('vars')->tablepre,
     );
 }
 
@@ -192,10 +190,10 @@ function create_sql(ContainerInterface $container): \XMB\SQL
  *
  * @since 1.12.00
  */
-function create_validate(ContainerInterface $container): \XMB\Validation
+function create_validate(callable $getService): \XMB\Validation
 {
     return new \XMB\Validation(
-        $container->get('db'),
+        $getService('db'),
     );
 }
 
@@ -204,10 +202,10 @@ function create_validate(ContainerInterface $container): \XMB\Validation
  *
  * @since 1.12.00
  */
-function create_forums(ContainerInterface $container): \XMB\Forums
+function create_forums(callable $getService): \XMB\Forums
 {
     return new \XMB\Forums(
-        $container->get('sql'),
+        $getService('sql'),
     );
 }
 
@@ -216,12 +214,12 @@ function create_forums(ContainerInterface $container): \XMB\Forums
  *
  * @since 1.12.00
  */
-function create_settings(ContainerInterface $container): \XMB\Settings
+function create_settings(callable $getService): \XMB\Settings
 {
     return new \XMB\Settings(
-        $container->get('db'),
-        $container->get('sql'),
-        $container->get('vars'),
+        $getService('db'),
+        $getService('sql'),
+        $getService('vars'),
     );
 }
 
@@ -230,10 +228,10 @@ function create_settings(ContainerInterface $container): \XMB\Settings
  *
  * @since 1.12.00
  */
-function create_smile(ContainerInterface $container): \XMB\SmileAndCensor
+function create_smile(callable $getService): \XMB\SmileAndCensor
 {
     return new \XMB\SmileAndCensor(
-        $container->get('sql'),
+        $getService('sql'),
     );
 }
 
@@ -242,11 +240,11 @@ function create_smile(ContainerInterface $container): \XMB\SmileAndCensor
  *
  * @since 1.12.00
  */
-function create_token(ContainerInterface $container): \XMB\Token
+function create_token(callable $getService): \XMB\Token
 {
     return new \XMB\Token(
-        $container->get('sql'),
-        $container->get('vars'),
+        $getService('sql'),
+        $getService('vars'),
     );
 }
 
@@ -255,10 +253,10 @@ function create_token(ContainerInterface $container): \XMB\Token
  *
  * @since 1.12.00
  */
-function create_email(ContainerInterface $container): \XMB\Email
+function create_email(callable $getService): \XMB\Email
 {
     return new \XMB\Email(
-        $container->get('vars'),
+        $getService('vars'),
     );
 }
 
@@ -267,10 +265,10 @@ function create_email(ContainerInterface $container): \XMB\Email
  *
  * @since 1.12.00
  */
-function create_features(ContainerInterface $container): \XMB\Features
+function create_features(callable $getService): \XMB\Features
 {
     return new \XMB\Features(
-        $container->get('settings'),
+        $getService('settings'),
     );
 }
 
@@ -279,14 +277,14 @@ function create_features(ContainerInterface $container): \XMB\Features
  *
  * @since 1.12.00
  */
-function create_theme(ContainerInterface $container): \XMB\ThemeManager
+function create_theme(callable $getService): \XMB\ThemeManager
 {
     return new \XMB\ThemeManager(
-        $container->get('forums'),
-        $container->get('settings'),
-        $container->get('sql'),
-        $container->get('template'),
-        $container->get('vars'),
+        $getService('forums'),
+        $getService('settings'),
+        $getService('sql'),
+        $getService('template'),
+        $getService('vars'),
     );
 }
 
@@ -295,11 +293,11 @@ function create_theme(ContainerInterface $container): \XMB\ThemeManager
  *
  * @since 1.12.00
  */
-function create_bbcode(ContainerInterface $container): \XMB\BBCode
+function create_bbcode(callable $getService): \XMB\BBCode
 {
     return new \XMB\BBCode(
-        $container->get('theme'),
-        $container->get('vars'),
+        $getService('theme'),
+        $getService('vars'),
     );
 }
 
@@ -308,11 +306,11 @@ function create_bbcode(ContainerInterface $container): \XMB\BBCode
  *
  * @since 1.12.00
  */
-function create_password(ContainerInterface $container): \XMB\Password
+function create_password(callable $getService): \XMB\Password
 {
     return new \XMB\Password(
-        $container->get('features'),
-        $container->get('sql')
+        $getService('features'),
+        $getService('sql')
     );
 }
 
@@ -321,13 +319,13 @@ function create_password(ContainerInterface $container): \XMB\Password
  *
  * @since 1.12.00
  */
-function create_attach(ContainerInterface $container): \XMB\Attach
+function create_attach(callable $getService): \XMB\Attach
 {
     return new \XMB\Attach(
-        $container->get('bbcode'),
-        $container->get('db'),
-        $container->get('sql'),
-        $container->get('vars'),
+        $getService('bbcode'),
+        $getService('db'),
+        $getService('sql'),
+        $getService('vars'),
     );
 }
 
@@ -336,23 +334,23 @@ function create_attach(ContainerInterface $container): \XMB\Attach
  *
  * @since 1.10.06
  */
-function create_core(ContainerInterface $container): \XMB\Core
+function create_core(callable $getService): \XMB\Core
 {
     return new \XMB\Core(
-        $container->get('attach'),
-        $container->get('bbcode'),
-        $container->get('db'),
-        $container->get('debug'),
-        $container->get('email'),
-        $container->get('forums'),
-        $container->get('password'),
-        $container->get('settings'),
-        $container->get('smile'),
-        $container->get('sql'),
-        $container->get('template'),
-        $container->get('token'),
-        $container->get('translation'),
-        $container->get('vars'),
+        $getService('attach'),
+        $getService('bbcode'),
+        $getService('db'),
+        $getService('debug'),
+        $getService('email'),
+        $getService('forums'),
+        $getService('password'),
+        $getService('settings'),
+        $getService('smile'),
+        $getService('sql'),
+        $getService('template'),
+        $getService('token'),
+        $getService('translation'),
+        $getService('vars'),
     );
 }
 
@@ -361,14 +359,14 @@ function create_core(ContainerInterface $container): \XMB\Core
  *
  * @since 1.10.06
  */
-function create_loader(ContainerInterface $container): \XMB\BootupLoader
+function create_loader(callable $getService): \XMB\BootupLoader
 {
     return new \XMB\BootupLoader(
-        $container->get('core'),
-        $container->get('db'),
-        $container->get('features'),
-        $container->get('template'),
-        $container->get('vars'),
+        $getService('core'),
+        $getService('db'),
+        $getService('features'),
+        $getService('template'),
+        $getService('vars'),
     );
 }
 
@@ -377,19 +375,19 @@ function create_loader(ContainerInterface $container): \XMB\BootupLoader
  *
  * @since 1.10.07
  */
-function create_session(ContainerInterface $container): \XMB\Session\Manager
+function create_session(callable $getService): \XMB\Session\Manager
 {
     $session = new \XMB\Session\Manager(
-        $container->get('core'),
+        $getService('core'),
     );
 
     $logic = new \XMB\Session\FormsAndCookies(
-        $container->get('core'),
-        $container->get('features'),
-        $container->get('password'),
-        $container->get('sql'),
-        $container->get('token'),
-        $container->get('validate'),
+        $getService('core'),
+        $getService('features'),
+        $getService('password'),
+        $getService('sql'),
+        $getService('token'),
+        $getService('validate'),
     );
 
     $session->addMechanism($logic, priority: 10);
@@ -402,17 +400,17 @@ function create_session(ContainerInterface $container): \XMB\Session\Manager
  *
  * @since 1.10.06
  */
-function create_login(ContainerInterface $container): \XMB\Login
+function create_login(callable $getService): \XMB\Login
 {
     return new \XMB\Login(
-        $container->get('core'),
-        $container->get('db'),
-        $container->get('features'),
-        $container->get('session'),
-        $container->get('sql'),
-        $container->get('template'),
-        $container->get('translation'),
-        $container->get('vars'),
+        $getService('core'),
+        $getService('db'),
+        $getService('features'),
+        $getService('session'),
+        $getService('sql'),
+        $getService('template'),
+        $getService('translation'),
+        $getService('vars'),
     );
 }
 
@@ -421,10 +419,10 @@ function create_login(ContainerInterface $container): \XMB\Login
  *
  * @since 1.12.00
  */
-function create_schema(ContainerInterface $container): \XMB\Schema
+function create_schema(callable $getService): \XMB\Schema
 {
     return new \XMB\Schema(
-        $container->get('db'),
-        $container->get('vars'),
+        $getService('db'),
+        $getService('vars'),
     );
 }
