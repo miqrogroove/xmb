@@ -33,29 +33,29 @@ function create_container(): Container
 {
     $container = new Container();
 
-    $container->set(\XMB\Attach::class, 'XMB\Services\create_attach', ['attach']);
-    $container->set(\XMB\BBCode::class, 'XMB\Services\create_bbcode', ['bbcode']);
-    $container->set(\XMB\Bootup::class, 'XMB\Services\create_bootup', ['bootup']);
-    $container->set(\XMB\BootupLoader::class, 'XMB\Services\create_loader', ['loader']);
-    $container->set(\XMB\Core::class, 'XMB\Services\create_core', ['core']);
-    $container->set(\XMB\DBStuff::class, 'XMB\Services\create_db', ['db']);
-    $container->set(\XMB\Debug::class, 'XMB\Services\create_debug', ['debug']);
-    $container->set(\XMB\Email::class, 'XMB\Services\create_email', ['email']);
-    $container->set(\XMB\Features::class, 'XMB\Services\create_features', ['features']);
-    $container->set(\XMB\Forums::class, 'XMB\Services\create_forums', ['forums']);
-    $container->set(\XMB\Login::class, 'XMB\Services\create_login', ['login']);
-    $container->set(\XMB\Observer::class, 'XMB\Services\create_observer', ['observer']);
-    $container->set(\XMB\Password::class, 'XMB\Services\create_password', ['password']);
-    $container->set(\XMB\Session\Manager::class, 'XMB\Services\create_session', ['session']);
-    $container->set(\XMB\Settings::class, 'XMB\Services\create_settings', ['settings']);
-    $container->set(\XMB\SmileAndCensor::class, 'XMB\Services\create_smile', ['smile']);
-    $container->set(\XMB\SQL::class, 'XMB\Services\create_sql', ['sql']);
-    $container->set(\XMB\Template::class, 'XMB\Services\create_template', ['template']);
-    $container->set(\XMB\Token::class, 'XMB\Services\create_token', ['token']);
-    $container->set(\XMB\Translation::class, 'XMB\Services\create_translation', ['translation']);
-    $container->set(\XMB\ThemeManager::class, 'XMB\Services\create_theme', ['theme']);
-    $container->set(\XMB\Validation::class, 'XMB\Services\create_validate', ['validate']);
-    $container->set(\XMB\Variables::class, 'XMB\Services\create_vars', ['vars']);
+    $container->set(\XMB\Attach::class, create_attach(...), ['attach']);
+    $container->set(\XMB\BBCode::class, create_bbcode(...), ['bbcode']);
+    $container->set(\XMB\Bootup::class, create_bootup(...), ['bootup']);
+    $container->set(\XMB\BootupLoader::class, create_loader(...), ['loader']);
+    $container->set(\XMB\Core::class, create_core(...), ['core']);
+    $container->set(\XMB\DBStuff::class, create_db(...), ['db']);
+    $container->set(\XMB\Debug::class, create_debug(...), ['debug']);
+    $container->set(\XMB\Email::class, create_email(...), ['email']);
+    $container->set(\XMB\Features::class, create_features(...), ['features']);
+    $container->set(\XMB\Forums::class, create_forums(...), ['forums']);
+    $container->set(\XMB\Login::class, create_login(...), ['login']);
+    $container->set(\XMB\Observer::class, create_observer(...), ['observer']);
+    $container->set(\XMB\Password::class, create_password(...), ['password']);
+    $container->set(\XMB\Session\Manager::class, create_session(...), ['session']);
+    $container->set(\XMB\Settings::class, create_settings(...), ['settings']);
+    $container->set(\XMB\SmileAndCensor::class, create_smile(...), ['smile']);
+    $container->set(\XMB\SQL::class, create_sql(...), ['sql']);
+    $container->set(\XMB\Template::class, create_template(...), ['template']);
+    $container->set(\XMB\Token::class, create_token(...), ['token']);
+    $container->set(\XMB\Translation::class, create_translation(...), ['translation']);
+    $container->set(\XMB\ThemeManager::class, create_theme(...), ['theme']);
+    $container->set(\XMB\Validation::class, create_validate(...), ['validate']);
+    $container->set(\XMB\Variables::class, create_vars(...), ['vars']);
 
     return $container;
 }
