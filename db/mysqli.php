@@ -361,7 +361,7 @@ class MySQLiDatabase implements DBStuff
             $errno = $e->getCode();
         }
 
-        if ($this->querynum == 0 && $msg = '') {
+        if ($this->querynum == 0 && $msg === '') {
             $log_advice = "There was an error processing a database query. This might happen if XMB is not yet installed.<br />\n";
         } else {
             $log_advice = '';
