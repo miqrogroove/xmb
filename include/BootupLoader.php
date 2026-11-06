@@ -190,7 +190,7 @@ class BootupLoader
         foreach ($this->vars->plugname as $plugnum => $item) {
             if (! empty($this->vars->plugurl[$plugnum]) && !empty($item)) {
                 if (trim($this->vars->plugimg[$plugnum]) != '') {
-                    $img = '<img src="'.$this->vars->plugimg[$plugnum].'" border="0" alt="'.$this->vars->plugname[$plugnum].'" />';
+                    $img = '<img src="'.$this->vars->plugimg[$plugnum].'" border="0" alt="" />';
                 } else {
                     $img = '';
                 }
