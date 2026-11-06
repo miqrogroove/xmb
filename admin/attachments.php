@@ -50,7 +50,7 @@ if ($vars->settings['subject_in_title'] == 'on') {
 
 $core->assertAdminOnly();
 
-$auditaction = $_SERVER['REQUEST_URI'];
+$auditaction = $vars->url;
 $aapos = strpos($auditaction, "?");
 if ($aapos !== false) {
     $auditaction = substr($auditaction, $aapos + 1);

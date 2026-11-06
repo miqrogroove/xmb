@@ -66,7 +66,7 @@ if (onSubmit('nosubmit')) {
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
     $core->request_secure('Control Panel/Repair Tables', '');
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+    $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
 
     set_time_limit(180);

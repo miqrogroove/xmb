@@ -369,7 +369,7 @@ class MySQLiDatabase implements DBStuff
         if ($this->logErrors) {
             $log_advice .= "Please check the error log for details.<br />\n";
         } else {
-            $log_advice .= "Please set LOG_MYSQL_ERRORS to true in config.php.<br />\n";
+            $log_advice .= "Please set \$log_mysql_errors to true in config.php.<br />\n";
         }
 
         if ($this->debug && (! defined('XMB\X_SADMIN') || X_SADMIN)) {
@@ -395,7 +395,7 @@ class MySQLiDatabase implements DBStuff
         } else {
             echo "The system has failed to process your request.<br />\n", $log_advice;
             if (defined('XMB\X_SADMIN') && X_SADMIN && ! $this->debug) {
-                echo "To display details, please set DEBUG to true in config.php.<br />\n";
+                echo "To display details, please set \$debug to true in config.php.<br />\n";
             }
         }
         if ($this->logErrors) {

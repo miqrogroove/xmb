@@ -58,7 +58,7 @@ if (onSubmit('nosubmit')) {
 } elseif (onSubmit('yessubmit')) {
     $core->request_secure('Control Panel/Fix Thread Totals', '');
     $sql->fixAllThreadCounts();
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+    $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
     $body = "<div class='ctrtablerow'>{$lang['tool_completed']} - {$lang['tool_threadtotal']}</div>";
 } else {

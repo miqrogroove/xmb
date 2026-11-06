@@ -57,7 +57,7 @@ if (onSubmit('nosubmit')) {
     $core->redirect($vars->full_url . 'admin/', timeout: 0);
 } elseif (onSubmit('yessubmit')) {
     $core->request_secure('Control Panel/Fix Last Posts', 'Threads');
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+    $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
     $sql->fixLastPostForAllThreads();
     $body = "<div class='ctrtablerow'>{$lang['tool_completed']} - {$lang['tool_lastpost']}</div>";

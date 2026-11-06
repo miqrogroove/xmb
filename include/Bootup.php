@@ -113,6 +113,8 @@ class Bootup
 
     public function setURL()
     {
+        if (PHP_SAPI == 'cli') return;
+
         // Set the URL, and prevent overflow of the location column.
         $this->vars->url = $_SERVER['REQUEST_URI'] ?? '';
         if (strlen(htmlEsc($this->vars->url)) > self::LocationMaxLength) {
@@ -195,6 +197,8 @@ class Bootup
      */
     public function debugURLsettings(bool $securesetting, string $hostsetting, string $pathsetting)
     {
+        if (PHP_SAPI == 'cli') return;
+
         if (! isset($_SERVER['REQUEST_URI'])) {
             if (! headers_sent()) header('HTTP/1.0 500 Internal Server Error');
             if (false === strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft')) {
@@ -261,6 +265,8 @@ class Bootup
 
     public function setIP()
     {
+        if (PHP_SAPI == 'cli') return;
+
         $this->vars->onlineip = $_SERVER['REMOTE_ADDR'];
     }
 

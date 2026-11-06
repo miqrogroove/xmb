@@ -73,7 +73,7 @@ if (onSubmit('nosubmit')) {
         $sql->deleteVotesByTID($tids);
     }
 
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+    $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
     $body = "<div class='ctrtablerow'>{$i}{$lang['o_polls_found']}</div>";
 } else {

@@ -51,7 +51,7 @@ if (! X_SADMIN) {
     $core->error($lang['superadminonly']);
 }
 
-$auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+$auditaction = $vars->onlineip . '|#|' . $vars->url;
 $core->audit($vars->self['username'], $auditaction);
 
 $header = $template->process('header.php');

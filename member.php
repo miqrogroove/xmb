@@ -189,7 +189,7 @@ switch ($action) {
                         $success = false;
                         if (false !== $raw_result) {
                             $decoded = json_decode($raw_result, associative: true);
-                            if (arrayCoalesce($decoded, 'success') === true && arrayCoalesce($decoded, 'action') === 'register') {
+                            if (is_array($decoded) && arrayCoalesce($decoded, 'success') === true && arrayCoalesce($decoded, 'action') === 'register') {
                                 if (isset($decoded['score'])) {
                                     // This is API v3.
                                     if ($decoded['score'] >= 0.5) {
