@@ -428,7 +428,9 @@ switch ($action) {
             $ext[] = "order=$order";
         }
 
+        $searching = false;
         if ($dblikeemail != '') {
+            $searching = true;
             $where[] = "email LIKE '%$dblikeemail%'";
             $ext[] = 'srchemail=' . rawurlencode(getPhpInput('srchemail', 'g'));
             $template->srchemail = $validate->postedVar(
@@ -441,6 +443,7 @@ switch ($action) {
         }
 
         if ($dblikeip != '') {
+            $searching = true;
             $where[] = "regip LIKE '%$dblikeip%'";
             $ext[] = 'srchip=' . rawurlencode(getPhpInput('srchip', 'g'));
             $template->srchip = $validate->postedVar(
@@ -453,6 +456,7 @@ switch ($action) {
         }
 
         if ($dblikemem != '') {
+            $searching = true;
             $where[] = "username LIKE '%$dblikemem%'";
             $ext[] = 'srchmem=' . rawurlencode(getPhpInput('srchmem', 'g'));
             $template->srchmem = $validate->postedVar(
@@ -490,7 +494,9 @@ switch ($action) {
         }
 
         $where[] = "lastvisit != 0";
-        if ('on' == $SETTINGS['hide_banned']) {
+
+        $admin_searching = X_ADMIN && $searching;
+        if ('on' == $SETTINGS['hide_banned'] && ! $admin_searching) {
             $where[] = "status != 'Banned' ";
         }
         $q = implode(' AND ', $where);
