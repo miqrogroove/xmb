@@ -156,11 +156,11 @@ class MySQLiDatabase implements DBStuff
             $this->test_error = $e->getMessage();
             return false;
         }
-        
+
         $this->test_error = '';
         return true;
     }
-    
+
     /**
      * Gets any error message that was encountered during the last call to testConnect().
      *
@@ -350,21 +350,26 @@ class MySQLiDatabase implements DBStuff
      */
     private function panic(Exception $e, string $sql = '', string $msg = '')
     {
-        if (!headers_sent()) {
+        if (! headers_sent()) {
             header('HTTP/1.0 500 Internal Server Error');
         }
-        
+
         echo $msg;
 
         if ($this->debug || $this->logErrors) {
             $error = $e->getMessage();
             $errno = $e->getCode();
         }
-        
-        if ($this->logErrors) {
-            $log_advice = "Please check the error log for details.<br />\n";
+
+        if ($this->querynum == 0 && $msg = '') {
+            $log_advice = "There was an error processing a database query. This might happen if XMB is not yet installed.<br />\n";
         } else {
-            $log_advice = "Please set LOG_MYSQL_ERRORS to true in config.php.<br />\n";
+            $log_advice = '';
+        }
+        if ($this->logErrors) {
+            $log_advice .= "Please check the error log for details.<br />\n";
+        } else {
+            $log_advice .= "Please set LOG_MYSQL_ERRORS to true in config.php.<br />\n";
         }
 
         if ($this->debug && (! defined('XMB\X_SADMIN') || X_SADMIN)) {
@@ -634,7 +639,7 @@ class MySQLiDatabase implements DBStuff
             $this->panic($e, $thisQuery);
         }
         $this->querytimes[] = $this->stop_timer();
-        
+
         if ($result === false) $result = true; // Inform the caller we haven't exhausted the results yet.
 
         if ($this->debug && $this->logErrors) {

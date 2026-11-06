@@ -38,18 +38,8 @@ class Settings
 
     private function readToVars()
     {
-        // This is normally the first query on the connection, so do not panic unless query logging is enabled.
-        $panic = $this->vars->debug && $this->vars->log_mysql_errors;
-        $squery = $this->db->query("SELECT * FROM " . $this->vars->tablepre . "settings", $panic);
+        $squery = $this->db->query("SELECT * FROM " . $this->vars->tablepre . "settings");
 
-        // Assume XMB is not installed if first query fails.
-        if (false === $squery) {
-            header('HTTP/1.0 500 Internal Server Error');
-            if (file_exists(ROOT . 'install/')) {
-                exit('XMB is not yet installed. <a href="' . $this->vars->full_url . '/install/index.php">Please click here to begin</a>.');
-            }
-            exit('XMB is not installed. Please upload the /install/ directory to begin.');
-        }
         if ($this->db->num_rows($squery) == 0) {
             header('HTTP/1.0 500 Internal Server Error');
             exit('Fatal Error: The XMB settings table is empty.');
