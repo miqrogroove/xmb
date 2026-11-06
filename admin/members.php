@@ -50,7 +50,7 @@ if ($vars->settings['subject_in_title'] == 'on') {
 
 $core->assertAdminOnly();
 
-$auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+$auditaction = $vars->onlineip . '|#|' . $vars->url;
 $core->audit($vars->self['username'], $auditaction);
 
 $header = $template->process('header.php');

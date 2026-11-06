@@ -59,7 +59,7 @@ $template->css .= "<script src='" . $vars->full_url . "js/settings.js?v=2'></scr
 
 $header = $template->process('header.php');
 
-$auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+$auditaction = $vars->onlineip . '|#|' . $vars->url;
 $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');

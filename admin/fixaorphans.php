@@ -61,7 +61,7 @@ if (onSubmit('nosubmit')) {
 
     $i = $attach->deleteOrphans();
 
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+    $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $i . $lang['o_attachments_found'] . '</td></tr>';
 } else {

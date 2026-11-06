@@ -59,7 +59,7 @@ if (onSubmit('nosubmit')) {
 } elseif (onSubmit('yessubmit')) {
     $core->request_secure('Control Panel/Fix Member Posts', '');
     $sql->fixAllMemberCounts();
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+    $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>'.$lang['tool_completed'].' - '.$lang['tool_mempost'].'</td></tr>';
 } else {

@@ -61,7 +61,7 @@ if (onSubmit('nosubmit')) {
 
     $db->query("TRUNCATE " . $vars->tablepre . "whosonline");
 
-    $auditaction = $vars->onlineip . '|#|' . $_SERVER['REQUEST_URI'];
+    $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
     $body = '<tr bgcolor="' . $vars->theme['altbg2'] . '" class="ctrtablerow"><td>' . $lang['tool_completed'].' - '.$lang['tool_whosonline'] . '</td></tr>';
 } else {
