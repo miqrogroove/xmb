@@ -26,11 +26,8 @@ const ROOT = '../';
 require ROOT . 'header.php';
 
 $services = Services\container();
+$admin = $services->get('admin');
 $core = $services->get('core');
-$db = $services->get('db');
-$session = $services->get('session');
-$settings = $services->get('settings');
-$sql = $services->get('sql');
 $template = $services->get('template');
 $token = $services->get('token');
 $validate = $services->get('validate');
@@ -60,8 +57,6 @@ $table = $template->process('admin_table.php');
 
 if (onSubmit('renamesubmit')) {
     $core->request_secure('Control Panel/Rename User', id: '');
-
-    $admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
     $vUserFrom = $validate->postedVar('frmUserFrom', dbescape: false);
     $vUserTo = $validate->postedVar('frmUserTo', dbescape: false);

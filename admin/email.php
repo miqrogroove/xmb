@@ -28,15 +28,11 @@ const ROOT = '../';
 require ROOT . 'header.php';
 
 $services = Services\container();
+$admin = $services->get('admin');
 $core = $services->get('core');
-$db = $services->get('db');
 $email = $services->get('email');
-$session = $services->get('session');
-$settings = $services->get('settings');
-$sql = $services->get('sql');
 $template = $services->get('template');
 $token = $services->get('token');
-$validate = $services->get('validate');
 $vars = $services->get('vars');
 $lang = &$vars->lang;
 
@@ -60,8 +56,6 @@ $auditaction = $vars->onlineip . '|#|' . $vars->url;
 $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');
-
-$admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
 if (noSubmit('settingsubmit')) {
     $template->admin = $admin;

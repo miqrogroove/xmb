@@ -28,12 +28,11 @@ const ROOT = '../';
 require ROOT . 'header.php';
 
 $services = Services\container();
+$admin = $services->get('admin');
 $core = $services->get('core');
 $db = $services->get('db');
 $observer = $services->get('observer');
-$session = $services->get('session');
 $settings = $services->get('settings');
-$sql = $services->get('sql');
 $template = $services->get('template');
 $themeMgr = $services->get('theme');
 $token = $services->get('token');
@@ -64,8 +63,6 @@ $auditaction = $vars->onlineip . '|#|' . $vars->url;
 $core->audit($vars->self['username'], $auditaction);
 
 $table = $template->process('admin_table.php');
-
-$admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
 if (noSubmit('settingsubmit')) {
     $admin->fixTickerLinks();

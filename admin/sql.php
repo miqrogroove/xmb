@@ -26,15 +26,12 @@ const ROOT = '../';
 require ROOT . 'header.php';
 
 $services = Services\container();
+$admin = $services->get('admin');
 $attach = $services->get('attach');
 $core = $services->get('core');
 $db = $services->get('db');
-$session = $services->get('session');
-$settings = $services->get('settings');
-$sql = $services->get('sql');
 $template = $services->get('template');
 $token = $services->get('token');
-$validate = $services->get('validate');
 $vars = $services->get('vars');
 $lang = &$vars->lang;
 
@@ -62,8 +59,6 @@ $table = $template->process('admin_table.php');
 
 if (onSubmit('upgradesubmit')) {
     $core->request_secure('Control Panel/Insert Raw SQL', id: '');
-
-    $admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
     $upgrade = getPhpInput('upgrade');
     if (isset($_FILES['sql_file'])) {

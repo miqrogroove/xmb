@@ -26,19 +26,14 @@ const ROOT = '../';
 require ROOT . 'header.php';
 
 $services = Services\container();
+$admin = $services->get('admin');
 $core = $services->get('core');
 $db = $services->get('db');
-$session = $services->get('session');
-$settings = $services->get('settings');
-$sql = $services->get('sql');
+$schema = $services->get('schema');
 $template = $services->get('template');
 $token = $services->get('token');
-$validate = $services->get('validate');
 $vars = $services->get('vars');
 $lang = &$vars->lang;
-
-$admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
-$schema = new Schema($db, $vars->tablepre);
 
 header('X-Robots-Tag: noindex');
 

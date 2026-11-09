@@ -33,6 +33,7 @@ function create_container(): Container
 {
     $container = new Container();
 
+    $container->set(\XMB\admin::class, create_admin(...), ['admin']);
     $container->set(\XMB\Attach::class, create_attach(...), ['attach']);
     $container->set(\XMB\BBCode::class, create_bbcode(...), ['bbcode']);
     $container->set(\XMB\Bootup::class, create_bootup(...), ['bootup']);
@@ -46,6 +47,7 @@ function create_container(): Container
     $container->set(\XMB\Login::class, create_login(...), ['login']);
     $container->set(\XMB\Observer::class, create_observer(...), ['observer']);
     $container->set(\XMB\Password::class, create_password(...), ['password']);
+    $container->set(\XMB\Schema::class, create_schema(...), ['schema']);
     $container->set(\XMB\Session\Manager::class, create_session(...), ['session']);
     $container->set(\XMB\Settings::class, create_settings(...), ['settings']);
     $container->set(\XMB\SmileAndCensor::class, create_smile(...), ['smile']);
@@ -424,6 +426,24 @@ function create_schema(callable $getService): \XMB\Schema
 {
     return new \XMB\Schema(
         $getService('db'),
+        $getService('vars')->tablepre,
+    );
+}
+
+/**
+ * Builds the admin service.
+ *
+ * @since 1.12.00
+ */
+function create_admin(callable $getService): \XMB\admin
+{
+    return new \XMB\admin(
+        $getService('core'),
+        $getService('db'),
+        $getService('session'),
+        $getService('settings'),
+        $getService('sql'),
+        $getService('validate'),
         $getService('vars'),
     );
 }

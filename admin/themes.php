@@ -26,10 +26,9 @@ const ROOT = '../';
 require ROOT . 'header.php';
 
 $services = Services\container();
+$admin = $services->get('admin');
 $core = $services->get('core');
 $db = $services->get('db');
-$session = $services->get('session');
-$settings = $services->get('settings');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $themeMgr = $services->get('theme');
@@ -71,8 +70,6 @@ if ($getThemeId) {
 }
 
 $table = $template->process('admin_table.php');
-
-$admin = new admin($core, $db, $session, $settings, $sql, $validate, $vars);
 
 $single = '';
 $single_str = getPhpInput('single', 'g');
