@@ -719,6 +719,21 @@ class SQL
     /**
      * SQL command
      *
+     * @since 1.12.00
+     */
+    public function getSettingsTable()
+    {
+        $query = $this->db->query("SELECT * FROM " . $this->tablepre . "settings");
+
+        $result = $this->db->fetch_all($query);
+        $this->db->free_result($query);
+
+        return $result;
+    }
+
+    /**
+     * SQL command
+     *
      * @since 1.9.12
      */
     public function getTemplateByID(int $id): array

@@ -59,6 +59,7 @@ require ROOT . 'include/BBCode.php';
 require ROOT . 'include/Bootup.php';
 require ROOT . 'include/BootupLoader.php';
 require ROOT . 'include/buddy.inc.php';
+require ROOT . 'include/Cache.php';
 require ROOT . 'include/captcha.inc.php';
 require ROOT . 'include/CartesianSize.php';
 require ROOT . 'include/debug.inc.php';
@@ -85,6 +86,7 @@ require ROOT . 'include/Session/FormsAndCookies.php';
 require ROOT . 'include/Session/Manager.php';
 require ROOT . 'include/Session/Registry.php';
 require ROOT . 'include/Settings.php';
+require ROOT . 'include/SettingsFactory.php';
 require ROOT . 'include/SmileAndCensor.php';
 require ROOT . 'include/sql.inc.php';
 require ROOT . 'include/Template.php';
@@ -105,7 +107,7 @@ require_once ROOT . 'include/version.php';
 
 /* Create base services */
 
-container($services = create_container());
+container($services = create_container(defined('XMB\INSTALL')));
 
 $bootup = $services->get('bootup');
 $observer = $services->get('observer');

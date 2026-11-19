@@ -28,8 +28,9 @@ use const XMB\ROOT;
  * Builds and configures the XMB service container.
  *
  * @since 1.12.00
+ * @param bool $installMode In case XMB installation is in progress, some services may need to be informed.
  */
-function create_container(): Container
+function create_container(bool $installMode): Container
 {
     $container = new Container();
 
@@ -38,6 +39,7 @@ function create_container(): Container
     $container->set(\XMB\BBCode::class, create_bbcode(...), ['bbcode']);
     $container->set(\XMB\Bootup::class, create_bootup(...), ['bootup']);
     $container->set(\XMB\BootupLoader::class, create_loader(...), ['loader']);
+    $container->set(\XMB\Cache::class, create_cache(...), ['cache']);
     $container->set(\XMB\Core::class, create_core(...), ['core']);
     $container->set(\XMB\DBStuff::class, create_db(...), ['db']);
     $container->set(\XMB\Debug::class, create_debug(...), ['debug']);
@@ -49,7 +51,6 @@ function create_container(): Container
     $container->set(\XMB\Password::class, create_password(...), ['password']);
     $container->set(\XMB\Schema::class, create_schema(...), ['schema']);
     $container->set(\XMB\Session\Manager::class, create_session(...), ['session']);
-    $container->set(\XMB\Settings::class, create_settings(...), ['settings']);
     $container->set(\XMB\SmileAndCensor::class, create_smile(...), ['smile']);
     $container->set(\XMB\SQL::class, create_sql(...), ['sql']);
     $container->set(\XMB\Template::class, create_template(...), ['template']);
@@ -58,6 +59,9 @@ function create_container(): Container
     $container->set(\XMB\ThemeManager::class, create_theme(...), ['theme']);
     $container->set(\XMB\Validation::class, create_validate(...), ['validate']);
     $container->set(\XMB\Variables::class, create_vars(...), ['vars']);
+
+    $factory = new \XMB\SettingsFactory($installMode);
+    $container->set(\XMB\Settings::class, $factory, ['settings']);
 
     return $container;
 }
@@ -208,20 +212,6 @@ function create_forums(callable $getService): \XMB\Forums
 {
     return new \XMB\Forums(
         $getService('sql'),
-    );
-}
-
-/**
- * Builds the settings service.
- *
- * @since 1.12.00
- */
-function create_settings(callable $getService): \XMB\Settings
-{
-    return new \XMB\Settings(
-        $getService('db'),
-        $getService('sql'),
-        $getService('vars'),
     );
 }
 
@@ -445,5 +435,17 @@ function create_admin(callable $getService): \XMB\admin
         $getService('sql'),
         $getService('validate'),
         $getService('vars'),
+    );
+}
+
+/**
+ * Builds the cache service.
+ *
+ * @since 1.12.00
+ */
+function create_cache(callable $getService): \XMB\Cache
+{
+    return new \XMB\Cache(
+        $getService('sql'),
     );
 }

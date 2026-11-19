@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * XMB eXtreme Message Board
+ *
+ * Copyright (c) The XMB Group
+ * https://www.xmbforum2.com/
+ *
+ * XMB is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * XMB is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with XMB.
+ * If not, see https://www.gnu.org/licenses/
+ */
+
+declare(strict_types=1);
+
+namespace XMB;
+
+use LogicException;
+
+/**
+ * Responsible for temporary data storage between requests.
+ *
+ * APCu is the preferred storage method.  The XMB database is the fallback storage method.
+ *
+ * @since 1.12.00
+ */
+class Cache
+{
+    private const DURATION_SECONDS = 3600;
+
+    private bool $apcEnabled = false;
+
+    public function __construct(private SQL $sql)
+    {
+        if (function_exists('apcu_enabled')) {
+            $this->apcEnabled = apcu_enabled();
+        }
+    }
+
+    public function read(string $key): mixed
+    {
+        $value = null;
+
+        if ($this->apcEnabled) {
+            $value = apcu_fetch($key);
+            if ($value === false) {
+                $value = null;
+            }
+        }
+
+        return $value;
+    }
+
+    public function write(string $key, object|array|string|float|int $value)
+    {
+        if ($this->apcEnabled) {
+            apcu_store($key, $value, self::DURATION_SECONDS);
+        }
+    }
+
+    public function delete(string $key)
+    {
+        if ($this->apcEnabled) {
+            apcu_store($key);
+        }
+    }
+
+    public function tableRead(string $name): array
+    {
+        // For now, we only need to support the settings table.
+        if ('settings' != $name) throw new LogicException('Arbitrary table names are not supported here.');
+
+        $key = 'table_' . $name;
+        $value = $this->read($key);
+        if ($value === null) {
+            switch ($name) {
+                case 'settings':
+                    $value = $this->sql->getSettingsTable();
+            }
+            $this->write($key, $value);
+        }
+
+        return $value;
+    }
+
+    public function tableDelete(string $name)
+    {
+        $key = 'table_' . $name;
+        $this->delete($key);
+    }
+}

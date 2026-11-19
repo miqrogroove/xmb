@@ -29,7 +29,7 @@ namespace XMB;
  */
 class Settings
 {
-    public function __construct(private DBStuff $db, private SQL $sql, private Variables $vars, bool $installMode = false)
+    public function __construct(private Cache $cache, private SQL $sql, private Variables $vars, bool $installMode)
     {
         if (! $installMode) {
             $this->readToVars();
@@ -38,14 +38,14 @@ class Settings
 
     private function readToVars()
     {
-        $squery = $this->db->query("SELECT * FROM " . $this->vars->tablepre . "settings");
+        $table = $this->cache->tableRead('settings');
 
-        if ($this->db->num_rows($squery) == 0) {
+        if (count($table) == 0) {
             header('HTTP/1.0 500 Internal Server Error');
             exit('Fatal Error: The XMB settings table is empty.');
         }
         // Check schema for upgrade compatibility back to 1.8 SP2.
-        $row = $this->db->fetch_array($squery);
+        $row = $table[0];
         if (isset($row['langfile'])) {
             // Schema version <= 4 has only one row.
             foreach ($row as $key => $val) {
@@ -56,11 +56,10 @@ class Settings
             }
         } else {
             // Current schema uses a separate row for each setting.
-            do {
+            foreach ($table as $row) {
                 $this->vars->settings[$row['name']] = $row['value'];
-            } while ($row = $this->db->fetch_array($squery));
+            }
         }
-        $this->db->free_result($squery);
         unset($row);
 
         if ((int) $this->vars->settings['postperpage'] < 5) {
@@ -122,10 +121,12 @@ class Settings
     {
         if (! isset($this->vars->settings[$name])) {
             $this->sql->addSetting($name, $value);
+            $this->cache->tableDelete('settings');
         } elseif ($this->vars->settings[$name] === $value) {
             return;
         } else {
             $this->sql->updateSetting($name, $value);
+            $this->cache->tableDelete('settings');
         }
         $this->vars->settings[$name] = $value;
     }
