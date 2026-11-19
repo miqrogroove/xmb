@@ -68,7 +68,7 @@ class Cache
     public function delete(string $key)
     {
         if ($this->apcEnabled) {
-            apcu_store($key);
+            apcu_delete($key);
         }
     }
 
