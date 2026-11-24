@@ -213,10 +213,9 @@ class Login
             $newtime = $vars->onlinetime - $vars::ONLINE_TIMER;
             if (X_MEMBER) {
                 if ($staleTimestamp) {
-                    $rows = $this->sql->getWhosonline(username: $vars->self['username']);
-                    $rowcount = count($rows);
+                    $rowcount = 0;
                 } else {
-                    // Flag to skip queries.
+                    // Flag to skip queries. We've already retrieved the member record.
                     $rowcount = 1;
                 }
             } elseif (X_GUEST) {
