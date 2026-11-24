@@ -316,7 +316,7 @@ switch ($action) {
                         $self['status'] = ($count1 != 0) ? 'Member' : 'Super Administrator';
 
                         $self['regdate'] = $vars->onlinetime;
-                        if (strlen($vars->onlineip) > 39) {
+                        if (strlen($vars->onlineip) > $vars::IP_ADDRESS_MAX_LENGTH) {
                             $self['regip'] = '';
                         } else {
                             $self['regip'] = $vars->onlineip;

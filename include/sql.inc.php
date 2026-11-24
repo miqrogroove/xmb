@@ -2170,6 +2170,34 @@ class SQL
     }
 
     /**
+     * Get the whosonline records.
+     *
+     * @since 1.12.00
+     */
+    public function getWhosonline(?string $address = null, ?string $username = null): array
+    {
+        $where = [];
+        if ($address !== null) {
+            $where[] = "ip = '" . $this->db->escape($address) . "'";
+        }
+        if ($username !== null) {
+            $where[] = "username = '" . $this->db->escape($username) . "'";
+        }
+        if (empty($where)) {
+            $where = '';
+        } else {
+            $where = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "whosonline $where");
+
+        $rows = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+        
+        return $rows;
+    }
+
+    /**
      * Remove a user's guest record and any other stale records.
      *
      * @since 1.9.12.04

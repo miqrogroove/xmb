@@ -127,7 +127,8 @@ class Login
                 define('XMB\X_GUEST', false);
             }
             // Save some write locks by updating in 60-second intervals.
-            if (abs(time() - (int) $vars->self['lastvisit']) > 60) {
+            $staleTimestamp = abs(time() - (int) $vars->self['lastvisit']) > 60;
+            if ($staleTimestamp) {
                 $this->sql->setLastvisit((int) $vars->self['uid'], $vars->onlinetime);
                 // Important: Don't update $self['lastvisit'] until the next hit, otherwise we won't actually know when the last visit happened.
             }
@@ -136,6 +137,7 @@ class Login
                 define('XMB\X_MEMBER', false);
                 define('XMB\X_GUEST', true);
             }
+            $staleTimestamp = false;
         }
 
         // Enumerate status
@@ -202,15 +204,37 @@ class Login
             && basename($_SERVER['SCRIPT_NAME']) != 'files.php'
             && (X_ADMIN || $serror == '' || $serror == 'guest' && X_MEMBER)
         ) {
-            if (strlen($vars->onlineip) > 15 && (! $this->features->schemaHasIPv6() || strlen($vars->onlineip) > 39)) {
+            if (strlen($vars->onlineip) > 15 && (! $this->features->schemaHasIPv6() || strlen($vars->onlineip) > $vars::IP_ADDRESS_MAX_LENGTH)) {
                 $useip = '';
             } else {
                 $useip = $vars->onlineip;
             }
             $wollocation = htmlEsc(substr($vars->url, 0, $maxurl));
             $newtime = $vars->onlinetime - $vars::ONLINE_TIMER;
-            $this->sql->deleteOldWhosonline($useip, $vars->self['username'], $newtime);
-            $this->sql->addWhosonline($useip, $onlineuser, $vars->onlinetime, $wollocation, $invisible);
+            if (X_MEMBER) {
+                if ($staleTimestamp) {
+                    $rows = $this->sql->getWhosonline(username: $vars->self['username']);
+                    $rowcount = count($rows);
+                } else {
+                    // Flag to skip queries.
+                    $rowcount = 1;
+                }
+            } elseif (X_GUEST) {
+                $rows = $this->sql->getWhosonline(address: $useip);
+                $rowcount = count($rows);
+                if ($rowcount == 1) {
+                    // Save some write locks by updating in 60-second intervals.
+                    $staleTimestamp = abs(time() - (int) $rows[0]['time']) > 60;
+                } elseif ($rowcount > 1) {
+                    $staleTimestamp = true;
+                }
+            }
+            if ($staleTimestamp) {
+                $this->sql->deleteOldWhosonline($useip, $vars->self['username'], $newtime);
+            }
+            if ($rowcount == 0 || $staleTimestamp) {
+                $this->sql->addWhosonline($useip, $onlineuser, $vars->onlinetime, $wollocation, $invisible);
+            }
         }
     }
 

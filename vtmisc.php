@@ -164,7 +164,7 @@ if ($action == 'report') {
 
     $core->request_secure('View Thread/Poll Vote', (string) $vote_id);
 
-    if (strlen($vars->onlineip) > 39) {
+    if (strlen($vars->onlineip) > $vars::IP_ADDRESS_MAX_LENGTH) {
         $userip = '';
     } else {
         $userip = $vars->onlineip;
