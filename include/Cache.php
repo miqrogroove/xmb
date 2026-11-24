@@ -46,6 +46,9 @@ class Cache
         }
     }
 
+    /**
+     * Get a value from the cache.
+     */
     public function read(string $key): mixed
     {
         $value = null;
@@ -60,6 +63,9 @@ class Cache
         return $value;
     }
 
+    /**
+     * Save a value to the cache.
+     */
     public function write(string $key, object|array|string|float|int $value)
     {
         if ($this->apcEnabled) {
@@ -67,6 +73,9 @@ class Cache
         }
     }
 
+    /**
+     * Delete a value from the cache.
+     */
     public function delete(string $key)
     {
         if ($this->apcEnabled) {
@@ -74,13 +83,21 @@ class Cache
         }
     }
 
+    /**
+     * Delete multiple cache values.
+     *
+     * @param string $regex The key search pattern, using PCRE syntax.
+     */
     public function deleteByRegex(string $regex)
     {
         if ($this->apcEnabled) {
-            apcu_delete(new APCUIterator($regex));
+            apcu_delete(new APCUIterator($regex, APC_ITER_KEY));
         }
     }
 
+    /**
+     * Fetch a whole table from the XMB database and cache it.
+     */
     public function tableRead(string $name): array
     {
         // For now, we only need to support the settings table.
@@ -99,6 +116,9 @@ class Cache
         return $value;
     }
 
+    /**
+     * Invalidate a cached database table.
+     */
     public function tableDelete(string $name)
     {
         $key = 'table_' . $name;
