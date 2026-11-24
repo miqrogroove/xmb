@@ -311,12 +311,7 @@ class ThemeManager
         $this->sql->raiseThemeVersions();
 
         // Server cache
-        $list = $this->sql->getThemeNames();
-        $ids = array_column($list, 'themeid');
-        $keys = [];
-        foreach ($ids as $id) {
-            $keys[] = $this->sql->tablepre . 'themes_' . $id;
-        }
-        $this->cache->delete($keys);
+        $regex = '/^' . preg_quote($this->sql->tablepre . 'themes_') . '\\d++$/';
+        $this->cache->deleteByRegex($regex);
     }
 }

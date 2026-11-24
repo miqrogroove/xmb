@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use APCUIterator;
 use LogicException;
 
 /**
@@ -66,10 +67,17 @@ class Cache
         }
     }
 
-    public function delete(string|array $key)
+    public function delete(string $key)
     {
         if ($this->apcEnabled) {
             apcu_delete($key);
+        }
+    }
+
+    public function deleteByRegex(string $regex)
+    {
+        if ($this->apcEnabled) {
+            apcu_delete(new APCUIterator($regex));
         }
     }
 
