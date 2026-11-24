@@ -201,7 +201,6 @@ if ($single_int > 0) {
 
     $body = $template->process('admin_themes_single.php');
 } elseif ($single_str == "bump") {
-    $sql->raiseThemeVersions();
     $themeMgr->invalidateCache();
     $core->message($lang['themes_bump_done']);
 } elseif ($single_str == "anewtheme1") {

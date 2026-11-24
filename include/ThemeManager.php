@@ -271,7 +271,7 @@ class ThemeManager
     }
 
     /**
-     * Get a theme by ID, and try the cache
+     * Get a theme by ID, and try the server cache
      *
      * @since 1.12.00
      */
@@ -290,7 +290,7 @@ class ThemeManager
     }
 
     /**
-     * Clear one theme from the cache
+     * Clear one theme from the server cache
      *
      * @since 1.12.00
      */
@@ -301,12 +301,16 @@ class ThemeManager
     }
 
     /**
-     * Clear all themes from the cache
+     * Clear all themes from all caches
      *
      * @since 1.12.00
      */
     public function invalidateCache()
     {
+        // Client cache
+        $this->sql->raiseThemeVersions();
+
+        // Server cache
         $list = $this->sql->getThemeNames();
         $ids = array_column($list, 'themeid');
         $keys = [];
