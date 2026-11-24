@@ -97,19 +97,23 @@ class Cache
 
     /**
      * Fetch a whole table from the XMB database and cache it.
+     *
+     * The forums table will be filtered for efficiency.
      */
     public function tableRead(string $name): array
     {
-        // For now, we only need to support the settings table.
-        if ('settings' != $name) throw new LogicException('Arbitrary table names are not supported here.');
+        $allowedTables = [
+            'forums' => 'getForums',
+            'settings' => 'getSettingsTable',
+        ];
+
+        if (! isset($allowedTables[$name])) throw new LogicException('Arbitrary table names are not supported here.');
 
         $key = 'table_' . $this->sql->tablepre . $name;
         $value = $this->read($key);
         if ($value === null) {
-            switch ($name) {
-                case 'settings':
-                    $value = $this->sql->getSettingsTable();
-            }
+            $method = $allowedTables[$name];
+            $value = $this->sql->$method();
             $this->write($key, $value);
         }
 
@@ -121,7 +125,7 @@ class Cache
      */
     public function tableDelete(string $name)
     {
-        $key = 'table_' . $name;
+        $key = 'table_' . $this->sql->tablepre . $name;
         $this->delete($key);
     }
 }
