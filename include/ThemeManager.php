@@ -290,13 +290,29 @@ class ThemeManager
     }
 
     /**
-     * Clear a theme from the cache
+     * Clear one theme from the cache
      *
      * @since 1.12.00
      */
     public function invalidateCachedTheme(int $id)
     {
         $key = $this->sql->tablepre . 'themes_' . $id;
-        $value = $this->cache->delete($key);
+        $this->cache->delete($key);
+    }
+
+    /**
+     * Clear all themes from the cache
+     *
+     * @since 1.12.00
+     */
+    public function invalidateCache()
+    {
+        $list = $this->sql->getThemeNames();
+        $ids = array_column($list, 'themeid');
+        $keys = [];
+        foreach ($ids as $id) {
+            $keys[] = $this->sql->tablepre . 'themes_' . $id;
+        }
+        $this->cache->delete($keys);
     }
 }

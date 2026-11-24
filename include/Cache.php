@@ -66,7 +66,7 @@ class Cache
         }
     }
 
-    public function delete(string $key)
+    public function delete(string|array $key)
     {
         if ($this->apcEnabled) {
             apcu_delete($key);

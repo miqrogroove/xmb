@@ -180,6 +180,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
         $name = trim($name);
         if ('' != $name) {
             $sql->setThemeName((int) $themeid, $name);
+            $themeMgr->invalidateCachedTheme((int) $themeid);
         }
     }
     $body = '<div class="ctrtablerow">' . $lang['themeupdate'] . '</div>';
@@ -201,6 +202,7 @@ if ($single_int > 0) {
     $body = $template->process('admin_themes_single.php');
 } elseif ($single_str == "bump") {
     $sql->raiseThemeVersions();
+    $themeMgr->invalidateCache();
     $core->message($lang['themes_bump_done']);
 } elseif ($single_str == "anewtheme1") {
     $template->token = $token->create('Control Panel/Themes', 'New Theme', $vars::NONCE_FORM_EXP);
