@@ -39,7 +39,8 @@ class Cache
 
     public function __construct(private SQL $sql)
     {
-        if (function_exists('apcu_enabled')) {
+        // Cache invalidation is somewhat impossible for the Windows implementation of apcu, so we support non-Windows environments only.
+        if (function_exists('apcu_enabled') && PHP_OS_FAMILY !== 'Windows') {
             $this->apcEnabled = apcu_enabled();
         }
     }
