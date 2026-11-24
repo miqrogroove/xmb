@@ -24,8 +24,14 @@ namespace XMB;
 
 class ThemeManager
 {
-    public function __construct(private Forums $forums, private Settings $settings, private SQL $sql, private Template $template, private Variables $vars)
-    {
+    public function __construct(
+        private Cache $cache,
+        private Forums $forums,
+        private Settings $settings,
+        private SQL $sql,
+        private Template $template,
+        private Variables $vars, 
+    ) {
         // Property promotion.
     }
     
@@ -64,21 +70,21 @@ class ThemeManager
         $themeuser = (int) arrayCoalesce($this->vars->self, 'theme');
         if (! $validtheme && $themeuser > 0) {
             $theme = $themeuser;
-            $row = $this->sql->getThemeByID($theme);
+            $row = $this->getCachedTheme($theme);
             if (! ($validtheme = (! empty($row)))) {
                 $this->sql->resetUserTheme((int) $this->vars->self['uid']);
             }
         }
         if (! $validtheme && $forumtheme > 0) {
             $theme = $forumtheme;
-            $row = $this->sql->getThemeByID($theme);
+            $row = $this->getCachedTheme($theme);
             if (! ($validtheme = (! empty($row)))) {
                 $this->sql->resetForumTheme($fid);
             }
         }
         if (! $validtheme) {
             $theme = (int) $this->settings->get('theme');
-            $row = $this->sql->getThemeByID($theme);
+            $row = $this->getCachedTheme($theme);
             $validtheme = (! empty($row));
         }
         if (! $validtheme) {
@@ -262,5 +268,35 @@ class ThemeManager
             }
         }
         return $fontSize;
+    }
+
+    /**
+     * Get a theme by ID, and try the cache
+     *
+     * @since 1.12.00
+     */
+    public function getCachedTheme(int $id): array
+    {
+        $key = $this->sql->tablepre . 'themes_' . $id;
+        $value = $this->cache->read($key);
+        if ($value === null) {
+            $value = $this->sql->getThemeByID($id);
+            if (! empty($value)) {
+                $this->cache->write($key, $value);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Clear a theme from the cache
+     *
+     * @since 1.12.00
+     */
+    public function invalidateCachedTheme(int $id)
+    {
+        $key = $this->sql->tablepre . 'themes_' . $id;
+        $value = $this->cache->delete($key);
     }
 }

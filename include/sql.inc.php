@@ -27,7 +27,7 @@ use LogicException;
 
 class SQL
 {
-    public function __construct(public readonly DBStuff $db, private string $tablepre)
+    public function __construct(public readonly DBStuff $db, public readonly string $tablepre)
     {
         // Property promotion.
     }

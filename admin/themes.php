@@ -55,8 +55,7 @@ $core->audit($vars->self['username'], $auditaction);
 $getThemeId = getInt('download');
 if ($getThemeId) {
     $contents = [];
-    $query = $db->query("SELECT * FROM " . $vars->tablepre . "themes WHERE themeid = $getThemeId");
-    $themebits = $db->fetch_array($query);
+    $themebits = $themeMgr->getCachedTheme($getThemeId);
     foreach ($themebits as $key => $val) {
         if ($key != 'themeid' && $key != 'version') {
             $contents[] = "$key=$val";
@@ -173,6 +172,7 @@ if (onSubmit('importsubmit') && isset($_FILES['themefile']['tmp_name'])) {
             $db->query("UPDATE " . $vars->tablepre . "forums SET theme = 0 WHERE theme = $themeid");
             $db->query("DELETE FROM " . $vars->tablepre . "themes WHERE themeid = $themeid");
             unset($theme_name[$themeid]);
+            $themeMgr->invalidateCachedTheme($themeid);
         }
     }
 
@@ -189,9 +189,7 @@ if ($single_int > 0) {
     $template->token = $token->create('Control Panel/Themes', (string) $single_int, $vars::NONCE_FORM_EXP);
     $template->single_int = $single_int;
 
-    $query = $db->query("SELECT * FROM " . $vars->tablepre . "themes WHERE themeid = $single_int");
-    $themestuff = $db->fetch_array($query);
-    $db->free_result($query);
+    $themestuff = $themeMgr->getCachedTheme($single_int);
 
     $core->nav($themestuff['name']);
 
@@ -240,6 +238,7 @@ if ($single_int > 0) {
     }
 
     $db->query("UPDATE " . $vars->tablepre . "themes SET name='$namenew', bgcolor='$bgcolornew', altbg1='$altbg1new', altbg2='$altbg2new', link='$linknew', bordercolor='$bordercolornew', header='$headernew', headertext='$headertextnew', top='$topnew', catcolor='$catcolornew', tabletext='$tabletextnew', text='$textnew', borderwidth='$borderwidthnew', tablewidth='$tablewidthnew', tablespace='$tablespacenew', fontsize='$fsizenew', font='$fnew', boardimg='$boardlogonew', imgdir='$imgdirnew', smdir='$smdirnew', cattext='$cattextnew', admdir='$admdirnew', version = version + 1 WHERE themeid='$orig'");
+    $themeMgr->invalidateCachedTheme($orig);
 
     $body = '<div class="ctrtablerow">' . $lang['themeupdate'] . '</div>';
 } elseif ($single_str == "submit" && $newtheme) {

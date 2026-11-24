@@ -78,7 +78,7 @@ class Cache
         // For now, we only need to support the settings table.
         if ('settings' != $name) throw new LogicException('Arbitrary table names are not supported here.');
 
-        $key = 'table_' . $name;
+        $key = 'table_' . $this->sql->tablepre . $name;
         $value = $this->read($key);
         if ($value === null) {
             switch ($name) {

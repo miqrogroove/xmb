@@ -272,6 +272,7 @@ function create_features(callable $getService): \XMB\Features
 function create_theme(callable $getService): \XMB\ThemeManager
 {
     return new \XMB\ThemeManager(
+        $getService('cache'),
         $getService('forums'),
         $getService('settings'),
         $getService('sql'),
