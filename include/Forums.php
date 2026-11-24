@@ -71,7 +71,7 @@ class Forums
      *
      * @since 1.12.00
      */
-    private function invalidateCache()
+    public function invalidateCache()
     {
         $this->cache->tableDelete('forums');
     }
