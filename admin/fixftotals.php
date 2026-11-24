@@ -27,6 +27,7 @@ require ROOT . 'header.php';
 
 $services = Services\container();
 $core = $services->get('core');
+$forums = $services->get('forums');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $token = $services->get('token');
@@ -58,6 +59,7 @@ if (onSubmit('nosubmit')) {
 } elseif (onSubmit('yessubmit')) {
     $core->request_secure('Control Panel/Fix Forum Totals', '');
     $sql->fixAllForumCounts();
+    $forums->invalidateCache();
     $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);
     $body = "<div class='ctrtablerow'>{$lang['tool_completed']} - {$lang['tool_forumtotal']}</div>";

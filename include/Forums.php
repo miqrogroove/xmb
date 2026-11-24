@@ -35,7 +35,7 @@ class Forums
 
     private array $forumcache = [];
 
-    public function __construct(private SQL $sql)
+    public function __construct(private Cache $cache)
     {
         // Property promotion.
     }
@@ -48,7 +48,7 @@ class Forums
     private function initCache()
     {
         if (! $this->cacheStatus) {
-            $this->forumcache = $this->sql->getForums();
+            $this->forumcache = $this->cache->tableRead('forums');
             $this->cacheStatus = true;
         }
     }
@@ -64,6 +64,16 @@ class Forums
         if (! $this->cacheStatus) $this->initCache();
 
         return $this->forumcache;
+    }
+
+    /**
+     * Clear the server cache (but not the copy used during this request)
+     *
+     * @since 1.12.00
+     */
+    private function invalidateCache()
+    {
+        $this->cache->tableDelete('forums');
     }
 
     /**

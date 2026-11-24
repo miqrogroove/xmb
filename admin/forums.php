@@ -28,6 +28,7 @@ require ROOT . 'header.php';
 $services = Services\container();
 $core = $services->get('core');
 $db = $services->get('db');
+$forumCache = $services->get('forums');
 $template = $services->get('template');
 $theme = $services->get('theme');
 $token = $services->get('token');
@@ -367,6 +368,8 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
         $db->query("INSERT INTO " . $vars->tablepre . "forums (type, name, status, lastpost, moderator, displayorder, description, allowsmilies, allowbbcode, userlist, theme, posts, threads, fup, postperm, allowimgcode, attachstatus, password) VALUES ('sub', '$newsubname', '$newsubstatus', '', '', $newsuborder, '', 'yes', 'yes', '', 0, 0, 0, $newsubfup, '31,31,31,63', 'yes', 'on', '')");
     }
 
+    $forumCache->invalidateCache();
+
     $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';
     $body .= '<div class="ctrtablerow"><p>' . $lang['textforumupdate'] . $link . '</p></div>';
 } else {
@@ -430,6 +433,8 @@ if (noSubmit('forumsubmit') && ! $fdetails) {
             WHERE fid = '$fdetails'"
         );
     }
+
+    $forumCache->invalidateCache();
 
     if ($success) {
         $link = '</p><p><a href="' . $vars->full_url . 'admin/forums.php">' . $lang['textforumslink'] . '</a>';

@@ -27,6 +27,7 @@ require ROOT . 'header.php';
 
 $services = Services\container();
 $core = $services->get('core');
+$forums = $services->get('forums');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $token = $services->get('token');
@@ -113,6 +114,8 @@ if (onSubmit('nosubmit')) {
             $sql->setForumCounts((int) $loner['fid'], $lastpost);
         }
     }
+
+    $forums->invalidateCache();
 
     $auditaction = $vars->onlineip . '|#|' . $vars->url;
     $core->audit($vars->self['username'], $auditaction);

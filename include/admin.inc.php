@@ -34,6 +34,7 @@ class admin
     public function __construct(
         private Core $core,
         private DBStuff $db,
+        private Forums $forums,
         private SessionMgr $session,
         private Settings $settings,
         private SQL $sql,
@@ -151,6 +152,8 @@ class admin
             $db->query("UPDATE " . $this->vars->tablepre . "threads SET lastpost='$newlastpost' WHERE tid={$result['tid']}");
         }
         $db->free_result($query);
+
+        $this->forums->invalidateCache();
 
         return (($this->vars->self['username'] === $userfrom) ? $lang['admin_rename_warn_self'] . ' ' : '') . $lang['admin_rename_success'];
     }

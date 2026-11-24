@@ -118,6 +118,7 @@ if (noSubmit('modsubmit')) {
                 $sql->setForumMods($fid, $mods);
             }
         }
+        $forums->invalidateCache();
     }
     $body = '<div class="ctrtablerow">' . $lang['textmodupdate'] . '</div>';
 }

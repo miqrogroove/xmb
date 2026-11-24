@@ -833,28 +833,30 @@ class Core
     }
 
     /**
+     * Recalculate stats for a forum
+     *
      * @since 1.5
      * @param int $fid
      * @param int $oldThreadCount Optional.  Specify the last-seen value of forums.threads to help avoid update races.
      */
     public function updateforumcount(int $fid, ?int $oldThreadCount = null)
     {
-        $db = $this->db;
-
         $counts = $this->sql->getForumCounts($fid);
-
         $lastpost = $this->sql->findLastpostByForum($fid);
 
         $this->sql->setForumCounts($fid, $lastpost, $counts['posts'], $counts['threads'], $oldThreadCount);
+
+        $this->forums->invalidateCache();
     }
 
     /**
+     * Recalculate stats for a thread
+     *
      * @since 1.5
      * @param int $tid
      */
     public function updatethreadcount(int $tid, ?int $oldReplyCount = null)
     {
-        $db = $this->db;
         $quarantine = false;
 
         $replycount = $this->sql->countPosts($quarantine, $tid);
@@ -862,24 +864,24 @@ class Core
         if ($replycount === 0) return; // Sanity check: There are no posts in this thraed.
 
         $replycount--;
-        $query = $db->query("SELECT dateline, author, pid FROM " . $this->vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline DESC, pid DESC LIMIT 1");
-        $lp = $db->fetch_array($query);
-        $db->free_result($query);
-        $query = $db->query("SELECT date, username FROM " . $this->vars->tablepre . "logs WHERE tid = $tid AND action = 'bump' ORDER BY date DESC LIMIT 1");
-        if ($db->num_rows($query) == 1) {
-            $lb = $db->fetch_array($query);
+        $query = $this->db->query("SELECT dateline, author, pid FROM " . $this->vars->tablepre . "posts WHERE tid = $tid ORDER BY dateline DESC, pid DESC LIMIT 1");
+        $lp = $this->db->fetch_array($query);
+        $this->db->free_result($query);
+        $query = $this->db->query("SELECT date, username FROM " . $this->vars->tablepre . "logs WHERE tid = $tid AND action = 'bump' ORDER BY date DESC LIMIT 1");
+        if ($this->db->num_rows($query) == 1) {
+            $lb = $this->db->fetch_array($query);
             $lp['dateline'] = $lb['date'];
             $lp['author'] = $lb['username'];
         }
-        $db->free_result($query);
+        $this->db->free_result($query);
         $lastpost = $lp['dateline'].'|'.$lp['author'].'|'.$lp['pid'];
-        $db->escape_fast($lastpost);
+        $this->db->escape_fast($lastpost);
 
         $where = "WHERE tid = $tid";
 
         if (! is_null($oldReplyCount)) $where .= " AND replies = $oldReplyCount";
 
-        $db->query("UPDATE " . $this->vars->tablepre . "threads SET replies = $replycount, lastpost = '$lastpost' $where");
+        $this->db->query("UPDATE " . $this->vars->tablepre . "threads SET replies = $replycount, lastpost = '$lastpost' $where");
     }
 
     /**

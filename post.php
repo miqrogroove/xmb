@@ -638,6 +638,9 @@ if ($validForSave && $errors == '') {
                 $core->updateforumcount($fid);
             }
     }
+    if (! $quarantine) {
+        $forums->invalidateCache();
+    }
 
     // Attachment post-processing
     if ($action != 'edit' && $forum['attachstatus'] == 'on') {

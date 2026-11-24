@@ -80,6 +80,7 @@ class ThemeManager
             $row = $this->getCachedTheme($theme);
             if (! ($validtheme = (! empty($row)))) {
                 $this->sql->resetForumTheme($fid);
+                $this->forums->invalidateCache();
             }
         }
         if (! $validtheme) {

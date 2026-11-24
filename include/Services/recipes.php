@@ -211,7 +211,7 @@ function create_validate(callable $getService): \XMB\Validation
 function create_forums(callable $getService): \XMB\Forums
 {
     return new \XMB\Forums(
-        $getService('sql'),
+        $getService('cache'),
     );
 }
 
@@ -431,6 +431,7 @@ function create_admin(callable $getService): \XMB\admin
     return new \XMB\admin(
         $getService('core'),
         $getService('db'),
+        $getService('forums'),
         $getService('session'),
         $getService('settings'),
         $getService('sql'),
