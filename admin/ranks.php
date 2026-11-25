@@ -27,6 +27,7 @@ require ROOT . 'header.php';
 
 $services = Services\container();
 $core = $services->get('core');
+$ranksLogic = $services->get('ranks');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $token = $services->get('token');
@@ -58,7 +59,7 @@ if (noSubmit('rankssubmit')) {
     $body = $template->process('admin_ranks_start.php');
 
     $default_found = false;
-    $ranks = $sql->getRanks();
+    $ranks = $ranksLogic->getAll();
 
     foreach ($ranks as $rank) {
         $template->deleteable = true;
@@ -99,7 +100,7 @@ if (noSubmit('rankssubmit')) {
     $newavaurl = $validate->postedVar('newavaurl', word: 'javascript');
 
     // Disabled fields are not submitted with form data, so staff rank IDs have to be retrieved again from the database.
-    $ranks = $sql->getRanks();
+    $ranks = $ranksLogic->getAll();
 
     foreach ($ranks as $rank) {
         if ($rank['title'] == 'Super Administrator' || $rank['title'] == 'Administrator' || $rank['title'] == 'Super Moderator' || $rank['title'] == 'Moderator') {
@@ -125,6 +126,9 @@ if (noSubmit('rankssubmit')) {
     if ($newtitle) {
         $sql->saveRank($newtitle, $newposts, $newstars, $newallowavatars == 'yes', $newavaurl);
     }
+
+    $ranksLogic->invalidateCache();
+
     $body = '<div class="ctrtablerow">' . $lang['rankingsupdate'] . '</div>';
 }
 

@@ -26,6 +26,7 @@ require './header.php';
 
 $services = Services\container();
 $core = $services->get('core');
+$ranksLogic = $services->get('ranks');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $vars = $services->get('vars');
@@ -61,7 +62,7 @@ switch ($page) {
         }
         $template->stars = '';
         $template->rankrows = '';
-        $ranks = $sql->getRanks(noStaff: true);
+        $ranks = $ranksLogic->getAll(noStaff: true);
         foreach ($ranks as $rank) {
             $rank['title'] = rawHTML($rank['title']);
             $template->ranks = $rank;

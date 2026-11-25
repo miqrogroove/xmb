@@ -29,6 +29,7 @@ $attachSvc = $services->get('attach');
 $core = $services->get('core');
 $db = $services->get('db');
 $forums = $services->get('forums');
+$render = $services->get('threadRender');
 $sqlSvc = $services->get('sql');
 $smile = $services->get('smile');
 $template = $services->get('template');
@@ -207,9 +208,6 @@ $subTemplate->tid = $tid;
 $status1 = $core->modcheck($vars->self['username'], $forum['moderator']);
 
 if ($action == '') {
-    $ranks = new Ranks($sqlSvc, $vars);
-    $render = new ThreadRender($core, $ranks, $sqlSvc, $vars);
-
     $mpage = $core->multipage((int) $thread['postcount'], $vars->ppp, "{$full_url}viewthread.php?tid=$tid");
     $template->multipage = '';
     if (strlen($mpage['html']) != 0) {

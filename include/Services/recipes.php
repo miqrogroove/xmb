@@ -49,6 +49,7 @@ function create_container(bool $installMode): Container
     $container->set(\XMB\Login::class, create_login(...), ['login']);
     $container->set(\XMB\Observer::class, create_observer(...), ['observer']);
     $container->set(\XMB\Password::class, create_password(...), ['password']);
+    $container->set(\XMB\Ranks::class, create_ranks(...), ['ranks']);
     $container->set(\XMB\Schema::class, create_schema(...), ['schema']);
     $container->set(\XMB\Session\Manager::class, create_session(...), ['session']);
     $container->set(\XMB\SmileAndCensor::class, create_smile(...), ['smile']);
@@ -57,6 +58,7 @@ function create_container(bool $installMode): Container
     $container->set(\XMB\Token::class, create_token(...), ['token']);
     $container->set(\XMB\Translation::class, create_translation(...), ['translation']);
     $container->set(\XMB\ThemeManager::class, create_theme(...), ['theme']);
+    $container->set(\XMB\ThreadRender::class, create_thread_render(...), ['threadRender']);
     $container->set(\XMB\Validation::class, create_validate(...), ['validate']);
     $container->set(\XMB\Variables::class, create_vars(...), ['vars']);
 
@@ -449,5 +451,33 @@ function create_cache(callable $getService): \XMB\Cache
 {
     return new \XMB\Cache(
         $getService('sql'),
+    );
+}
+
+/**
+ * Builds the ranks service.
+ *
+ * @since 1.12.00
+ */
+function create_ranks(callable $getService): \XMB\Ranks
+{
+    return new \XMB\Ranks(
+        $getService('cache'),
+        $getService('vars'),
+    );
+}
+
+/**
+ * Builds the threadRender service.
+ *
+ * @since 1.12.00
+ */
+function create_thread_render(callable $getService): \XMB\ThreadRender
+{
+    return new \XMB\ThreadRender(
+        $getService('core'),
+        $getService('ranks'),
+        $getService('sql'),
+        $getService('vars'),
     );
 }

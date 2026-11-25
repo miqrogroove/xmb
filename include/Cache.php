@@ -104,6 +104,7 @@ class Cache
     {
         $allowedTables = [
             'forums' => 'getForums',
+            'ranks' => 'getRanks',
             'settings' => 'getSettingsTable',
         ];
 

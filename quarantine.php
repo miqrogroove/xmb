@@ -30,6 +30,7 @@ $core = $services->get('core');
 $db = $services->get('db');
 $email = $services->get('email');
 $forums = $services->get('forums');
+$render = $services->get('threadRender');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $tokenSvc = $services->get('token');
@@ -57,9 +58,6 @@ $template->process('quarantine_wrap.php', echo: true);
 $action = getPhpInput('action', sourcearray: 'g');
 
 if ($action == 'viewforum' || $action == 'viewuser') {
-    $ranks = new Ranks($sql, $vars);
-    $render = new ThreadRender($core, $ranks, $sql, $vars);
-
     if ('viewuser' == $action) {
         $user = $validate->postedVar('u', dbescape: false, sourcearray: 'g');
         $dbuser = $db->escape($user);

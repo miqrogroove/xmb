@@ -29,6 +29,8 @@ namespace XMB;
  */
 class Ranks
 {
+    private bool $initialized = false;
+
     private array $specialrank = []; // The records for built-in staff ranks.
     private array $rankposts = []; // The records for non-staff ranks.
     private array $staffranks = [
@@ -38,9 +40,19 @@ class Ranks
         'Moderator',
     ];
 
-    public function __construct(private SQL $sql, private Variables $vars)
+    public function __construct(private Cache $cache, private Variables $vars)
     {
-        $queryranks = $sql->getRanks();
+        // Property promotion
+    }
+
+    /**
+     * Lazy load logic
+     *
+     * @since 1.12.00
+     */
+    private function init()
+    {
+        $queryranks = $this->getAll();
         foreach ($queryranks as $query) {
             $posts = (int) $query['posts'];
             if (in_array($query['title'], $this->staffranks)) {
@@ -50,6 +62,42 @@ class Ranks
             }
             unset($query);
         }
+        $this->initialized = true;
+    }
+
+    /**
+     * Retrieve the whole ranks table
+     *
+     * @since 1.12.00
+     * @param bool $noStaff Optional. When true, none of the staff ranks will be included.
+     */
+    public function getAll(bool $noStaff = false): array
+    {
+        $rows = $this->cache->tableRead('ranks');
+        if ($noStaff) {
+            $rows = array_filter($rows, $this->noStaffFilter(...));
+        }
+        return $rows;
+    }
+
+    /**
+     * Callback for use with array_filter()
+     *
+     * @since 1.12.00
+     */
+    private function noStaffFilter(array $value): bool
+    {
+        return ! in_array($value['title'], $this->staffranks);
+    }
+
+    /**
+     * Clears the server cache (but not the copy for this request)
+     *
+     * @since 1.12.00
+     */
+    public function invalidateCache()
+    {
+        $this->cache->tableDelete('ranks');
     }
 
     /**
@@ -61,6 +109,8 @@ class Ranks
      */
     public function find(string $status, int $postCount): array
     {
+        if (! $this->initialized) $this->init();
+
         if (in_array($status, $this->staffranks)) {
             // Specify the staff rank.
             $rank = [
