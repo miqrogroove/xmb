@@ -11,7 +11,12 @@
      <?= $lang['postip'] ?><br /><input type="text" name="postip" /><br /><br />
      <?= $lang['profileword'] ?><br /><input type="text" name="profileword" /><br /><br />
      <?= $lang['postword'] ?><br />
-     <?= $select ?>
+     <select name="postword">
+      <option value=""></option>
+<?php foreach ($censors as $censor) { ?>
+      <option value='<?= $censor['find']?>'><?= $censor['find']?></option>
+<?php } ?>
+     </select>
      <br />
      <br />
      <br />

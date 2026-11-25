@@ -28,6 +28,7 @@ require ROOT . 'header.php';
 $services = Services\container();
 $core = $services->get('core');
 $db = $services->get('db');
+$smile = $services->get('smile');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $token = $services->get('token');
@@ -58,14 +59,14 @@ if (noSubmit('smiliesubmit')) {
     $template->token = $token->create('Control Panel/Smilies', 'mass-edit', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_smilies_start.php');
 
-    $rows = $sql->getSmilies();
+    $rows = $smile->getSmilies();
     foreach ($rows as $template->smilie) {
         $body .= $template->process('admin_smilies_srow.php');
     }
 
     $body .= $template->process('admin_smilies_middle.php');
 
-    $rows = $sql->getPostIcons();
+    $rows = $smile->getPostIcons();
     foreach ($rows as $template->smilie) {
         $body .= $template->process('admin_smilies_prow.php');
     }
@@ -96,7 +97,7 @@ if (noSubmit('smiliesubmit')) {
         }
     }
 
-    $allsmilies = $sql->getSmilies();
+    $allsmilies = $smile->getSmilies();
     foreach ($allsmilies as $smilie) {
         $id = (int) $smilie['id'];
         if (isset($smdelete[$id]) && $smdelete[$id] == 1) {
@@ -114,7 +115,7 @@ if (noSubmit('smiliesubmit')) {
         }
     }
 
-    $allicons = $sql->getPostIcons();
+    $allicons = $smile->getPostIcons();
     foreach ($allicons as $picon) {
         $id = (int) $picon['id'];
         if (isset($pidelete[$id]) && $pidelete[$id] == 1) {
@@ -206,6 +207,8 @@ if (noSubmit('smiliesubmit')) {
         $body .= '<div class="ctrtablerow">'.$newposticons_count.' / '.$posticons_count.' '.$lang['posticonsadded'].'</div>';
     }
     $body .= '<div class="ctrtablerow">'.$lang['smilieupdate'].'</div>';
+
+    $smile->invalidateSmilieCache();
 }
 
 $endTable = $template->process('admin_table_end.php');

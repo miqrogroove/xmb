@@ -31,6 +31,7 @@ $db = $services->get('db');
 $email = $services->get('email');
 $forums = $services->get('forums');
 $settings = $services->get('settings');
+$smile = $services->get('smile');
 $sql = $services->get('sql');
 $template = $services->get('template');
 $tran = $services->get('translation');
@@ -211,7 +212,7 @@ if ($posticon != '') {
         $posticon = '';
     } elseif (! file_exists(ROOT . $vars->theme['smdir'] . '/' . $posticon)) {
         $posticon = '';
-    } elseif (! $sql->iconExists($posticon)) {
+    } elseif (! $smile->iconExists($posticon)) {
         $posticon = '';
     }
 }
@@ -967,15 +968,15 @@ if ($posticon != '') {
         $posticon = '';
     } elseif (! file_exists(ROOT . $vars->theme['smdir'] . '/' . $posticon)) {
         $posticon = '';
-    } elseif (! $sql->iconExists($posticon)) {
+    } elseif (! $smile->iconExists($posticon)) {
         $posticon = '';
     }
 }
 
 $listed_icons = 0;
 $icons = '<input type="radio" name="posticon" value="" /> <img src="' . $vars->full_url . $vars->theme['imgdir'] . '/default_icon.gif" alt="[*]" border="0" />';
-$querysmilie = $db->query("SELECT url, code FROM " . $vars->tablepre . "smilies WHERE type = 'picon'");
-while ($smilie = $db->fetch_array($querysmilie)) {
+$rows = $smile->getPostIcons();
+foreach ($rows as $smilie) {
     $icons .= ' <input type="radio" name="posticon" value="' . $smilie['url'] . '" /><img src="' . $vars->full_url . $vars->theme['smdir'] . '/' . $smilie['url'] . '" alt="' . $smilie['code'] . '" border="0" />';
     $listed_icons++;
     if ($listed_icons == 9) {
@@ -983,7 +984,6 @@ while ($smilie = $db->fetch_array($querysmilie)) {
         $listed_icons = 0;
     }
 }
-$db->free_result($querysmilie);
 
 $icons = str_replace('<input type="radio" name="posticon" value="'.$posticon.'" />', '<input type="radio" name="posticon" value="'.$posticon.'" checked="checked" />', $icons);
 $template->icons = $icons;

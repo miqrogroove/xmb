@@ -28,7 +28,7 @@ require ROOT . 'header.php';
 $services = Services\container();
 $core = $services->get('core');
 $db = $services->get('db');
-$sql = $services->get('sql');
+$smile = $services->get('smile');
 $template = $services->get('template');
 $token = $services->get('token');
 $validate = $services->get('validate');
@@ -58,7 +58,7 @@ if (noSubmit('censorsubmit')) {
     $template->token = $token->create('Control Panel/Censors', 'mass-edit', $vars::NONCE_FORM_EXP);
     $body = $template->process('admin_censor_start.php');
 
-    $rows = $sql->getCensors();
+    $rows = $smile->getCensors();
     foreach ($rows as $template->censor) {
         $body .= $template->process('admin_censor_row.php');
     }
@@ -66,7 +66,7 @@ if (noSubmit('censorsubmit')) {
 } else {
     $newfind = $validate->postedVar('newfind');
     $newreplace = $validate->postedVar('newreplace');
-    $censors = $sql->getCensors();
+    $censors = $smile->getCensors();
     foreach ($censors as $censor) {
         $id = (int) $censor['id'];
         $find = $validate->postedVar('find' . $id);
@@ -84,6 +84,8 @@ if (noSubmit('censorsubmit')) {
         $db->query("INSERT INTO " . $vars->tablepre . "words (find, replace1) VALUES ('$newfind', '$newreplace')");
     }
     $body = '<div class="ctrtablerow">' . $lang['censorupdate'] . '</div>';
+
+    $smile->invalidateCensorCache();
 }
 
 $endTable = $template->process('admin_table_end.php');

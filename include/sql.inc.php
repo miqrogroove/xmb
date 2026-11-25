@@ -2350,6 +2350,22 @@ class SQL
     }
 
     /**
+     * Retrieve the whole smilies table.
+     *
+     * @since 1.12.00
+     * @return array of associative table rows.
+     */
+    public function getSmiliesTable(): array
+    {
+        $result = $this->db->query("SELECT * FROM " . $this->tablepre . "smilies");
+
+        $smilies = $this->db->fetch_all($result);
+        $this->db->free_result($result);
+
+        return $smilies;
+    }
+
+    /**
      * Add multiple smilies records.
      *
      * @since 1.10.00

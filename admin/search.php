@@ -28,6 +28,7 @@ require ROOT . 'header.php';
 $services = Services\container();
 $core = $services->get('core');
 $db = $services->get('db');
+$smile = $services->get('smile');
 $template = $services->get('template');
 $validate = $services->get('validate');
 $vars = $services->get('vars');
@@ -112,14 +113,7 @@ if (onSubmit('searchsubmit')) {
     $template->userList = $userList;
     $body = $template->process('admin_search_result.php');
 } else {
-    $query = $db->query("SELECT find FROM " . $vars->tablepre . "words");
-    $select = '<select name="postword"><option value=""></option>';
-    while ($temp = $db->fetch_array($query)) {
-        $select .= "<option value='{$temp['find']}'>{$temp['find']}</option>";
-    }
-    $select .= '</select>';
-    $template->select = $select;
-
+    $template->censors = $smile->getCensors();
     $body = $template->process('admin_search_form.php');
 }
 

@@ -116,7 +116,12 @@
 <td width="25%"><?= $lang['textsmiliecode'] ?></td>
 <td width="75%"><?= $lang['smiliepreview'] ?></td>
 </tr>
-<?= $smilierows ?>
+<?php foreach ($smilies as $code => $url) { ?>
+<tr class="tablerow">
+<td width="25%" bgcolor="<?= $THEME['altbg2'] ?>"><?= $code ?></td>
+<td width="75%" bgcolor="<?= $THEME['altbg2'] ?>" align="center"><img src="<?= $full_url ?><?= $THEME['smdir'] ?>/<?= $url ?>" alt="" /></td>
+</tr>
+<?php } ?>
 </table>
 </td>
 </tr>

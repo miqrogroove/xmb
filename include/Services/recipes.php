@@ -225,7 +225,7 @@ function create_forums(callable $getService): \XMB\Forums
 function create_smile(callable $getService): \XMB\SmileAndCensor
 {
     return new \XMB\SmileAndCensor(
-        $getService('sql'),
+        $getService('cache'),
     );
 }
 

@@ -34,9 +34,10 @@ class SmileAndCensor
     private bool $cacheStatus = false;
 
     private array $censorcache = [];
+    private array $piconcache = [];
     private array $smiliecache = [];
 
-    public function __construct(private SQL $sql)
+    public function __construct(private Cache $cache)
     {
         // Property promotion.
     }
@@ -51,13 +52,41 @@ class SmileAndCensor
     {
         if ($this->cacheStatus) return;
 
-        $table = $this->sql->getSmilies();
-        $this->smiliecache = array_combine(array_column($table, 'code'), array_column($table, 'url'));
+        $rows = $this->cache->tableRead('smilies');
+        foreach ($rows as $row) {
+            switch ($row['type']) {
+                case 'smiley':
+                    $this->smiliecache[$row['code']] = $row['url'];
+                    break;
+                case 'picon':
+                    $this->piconcache[] = $row;
+            }
+        }
 
-        $table = $this->sql->getCensors();
+        $table = $this->cache->tableRead('words');
         $this->censorcache = array_combine(array_column($table, 'find'), array_column($table, 'replace1'));
 
         $this->cacheStatus = true;
+    }
+
+    /**
+     * Clears the server cache (but not the copy used for this request)
+     *
+     * @since 1.12.00
+     */
+    public function invalidateSmilieCache()
+    {
+        $this->cache->tableDelete('smilies');
+    }
+
+    /**
+     * Clears the server cache (but not the copy used for this request)
+     *
+     * @since 1.12.00
+     */
+    public function invalidateCensorCache()
+    {
+        $this->cache->tableDelete('words');
     }
 
     /**
@@ -66,11 +95,58 @@ class SmileAndCensor
      * @since 1.9.11
      * @return array
      */
-    public function smilieCache()
+    public function smilieCache(): array
     {
         if (! $this->cacheStatus) $this->initCache();
 
         return $this->smiliecache;
+    }
+
+    /**
+     * Provides an array containing all type='smiley' rows from the smilies table.
+     *
+     * This is rarely needed, intended for the admin panel.  An extra cache miss is acceptable here.
+     *
+     * @since 1.12.00
+     * @return array
+     */
+    public function getSmilies(): array
+    {
+        $result = [];
+        $rows = $this->cache->tableRead('smilies');
+        foreach ($rows as $row) {
+            if ($row['type'] == 'smiley') {
+                $result[] = $row;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Provides an array containing all type='picon' rows from the smilies table.
+     *
+     * @since 1.12.00
+     * @return array
+     */
+    public function getPostIcons(): array
+    {
+        if (! $this->cacheStatus) $this->initCache();
+
+        return $this->piconcache;
+    }
+
+    /**
+     * Provides a copy of the words table.
+     *
+     * This is rarely needed, intended for the admin panel.  An extra cache miss is acceptable here.
+     *
+     * @since 1.12.00
+     * @return array
+     */
+    public function getCensors(): array
+    {
+        return $this->cache->tableRead('words');
     }
 
     /**
@@ -84,6 +160,19 @@ class SmileAndCensor
         if (! $this->cacheStatus) $this->initCache();
         
         return count($this->smiliecache) > 0;
+    }
+
+    /**
+     * Check if the user-provided post icon string matches a configured icon.
+     *
+     * @since 1.12.00
+     * @return bool
+     */
+    public function iconExists(string $filename): bool
+    {
+        if (! $this->cacheStatus) $this->initCache();
+        
+        return in_array($filename, array_column($this->piconcache, 'url'));
     }
 
     /**

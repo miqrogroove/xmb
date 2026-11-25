@@ -103,9 +103,11 @@ class Cache
     public function tableRead(string $name): array
     {
         $allowedTables = [
-            'forums' => 'getForums',
-            'ranks' => 'getRanks',
+            'forums'   => 'getForums',
+            'ranks'    => 'getRanks',
             'settings' => 'getSettingsTable',
+            'smilies'  => 'getSmiliesTable',
+            'words'    => 'getCensors',
         ];
 
         if (! isset($allowedTables[$name])) throw new LogicException('Arbitrary table names are not supported here.');

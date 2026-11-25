@@ -27,7 +27,7 @@ require './header.php';
 $services = Services\container();
 $core = $services->get('core');
 $ranksLogic = $services->get('ranks');
-$sql = $services->get('sql');
+$smile = $services->get('smile');
 $template = $services->get('template');
 $vars = $services->get('vars');
 
@@ -77,12 +77,7 @@ switch ($page) {
         if ($vars->settings['subject_in_title'] == 'on') {
             $template->threadSubject = $vars->lang['textpostread'] . ' - ';
         }
-        $template->smilierows = '';
-        $smilies = $sql->getSmilies();
-        foreach ($smilies as $smilie) {
-            $template->smilie = $smilie;
-            $template->smilierows .= $template->process('faq_messages_smilierow.php');
-        }
+        $template->smilies = $smile->smilieCache();
         $faq = $template->process('faq_messages.php');
         break;
     case 'forumrules':
