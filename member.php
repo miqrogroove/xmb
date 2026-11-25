@@ -32,6 +32,7 @@ $db = $services->get('db');
 $email = $services->get('email');
 $forums = $services->get('forums');
 $passMan = $services->get('password');
+$ranks = $services->get('ranks');
 $session = $services->get('session');
 $smile = $services->get('smile');
 $sql = $services->get('sql');
@@ -573,41 +574,15 @@ switch ($action) {
         $template->username = $memberinfo['username'];
         $template->postnum = $memberinfo['postnum'];
 
-        null_string($memberinfo['avatar']);
-
         $member = $db->escape($member);
+
+        $rank = $ranks->find($memberinfo['status'], (int) $memberinfo['postnum']);
+
+        null_string($rank['avatarrank']);
+        null_string($memberinfo['avatar']);
 
         if ($memberinfo['status'] == 'Banned') {
             $memberinfo['avatar'] = '';
-            $rank = [
-                'title' => 'Banned',
-                'posts' => 0,
-                'id' => 0,
-                'stars' => 0,
-                'allowavatars' => 'no',
-                'avatarrank' => '',
-            ];
-        } else {
-            if ($memberinfo['status'] == 'Administrator' || $memberinfo['status'] == 'Super Administrator' || $memberinfo['status'] == 'Super Moderator' || $memberinfo['status'] == 'Moderator') {
-                $limit = "title = '$memberinfo[status]'";
-            } else {
-                $limit = "posts <= '$memberinfo[postnum]' AND title != 'Super Administrator' AND title != 'Administrator' AND title != 'Super Moderator' AND title != 'Moderator'";
-            }
-
-            $rank = $db->fetch_array($db->query("SELECT * FROM " . $vars->tablepre . "ranks WHERE $limit ORDER BY posts DESC LIMIT 1"));
-            if (null === $rank) {
-                $memberinfo['avatar'] = '';
-                $rank = [
-                    'title' => '',
-                    'posts' => 0,
-                    'id' => 0,
-                    'stars' => 0,
-                    'allowavatars' => 'no',
-                    'avatarrank' => '',
-                ];
-            } else {
-                null_string($rank['avatarrank']);
-            }
         }
 
         $encodeuser = recodeOut($memberinfo['username']);
