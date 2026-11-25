@@ -76,19 +76,19 @@ class Container implements ContainerInterface
             }
             $context->stack[] = $class;
 
-            // Invoke the factory and pass a closure to allow resolution of dependencies.
+            // Assign a factory and a closure for readability.
             $factory = $this->factories[$class];
-            $closure = function (string $id) use ($context): object
-            {
+            $closure = function (string $id) use ($context): object {
                 // Pass the context into the next get() call.
                 return $this->get($id, $context);
             };
             try {
+                // Invoke the factory and pass the closure to allow resolution of dependencies.
                 $service = $factory($closure);
             } finally {
                 // Due to the recursive nature of this method, we have to account for the possibility
-                // that any Exception thrown by dependency resolution could be caught by a parent caller
-                // and we would continue to use the context in that situation, so it must be cleaned up here.
+                // that any Exception thrown by dependency resolution could be caught by a parent caller.
+                // We would continue to use the context in that situation.  It must be updated here.
                 array_pop($context->stack);
             }
             $this->services[$class] = $service;
