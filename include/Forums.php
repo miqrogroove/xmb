@@ -31,6 +31,8 @@ namespace XMB;
  */
 class Forums
 {
+    private const STATS_INTERVAL_SECONDS = 5;
+
     private bool $cacheStatus = false;
 
     private array $forumcache = [];
@@ -74,6 +76,19 @@ class Forums
     public function invalidateCache()
     {
         $this->cache->tableDelete('forums');
+    }
+
+    /**
+     * Clear the server cache with rate limiting
+     *
+     * @since 1.12.00
+     */
+    public function invalidateStatsCache()
+    {
+        $age = $this->cache->tableAge('forums') ?? $this::STATS_INTERVAL_SECONDS;
+        if ($age >= $this::STATS_INTERVAL_SECONDS) {
+            $this->cache->tableDelete('forums');
+        }
     }
 
     /**

@@ -640,7 +640,7 @@ if ($validForSave && $errors == '') {
             }
     }
     if (! $quarantine) {
-        $forums->invalidateCache();
+        $forums->invalidateStatsCache();
     }
 
     // Attachment post-processing

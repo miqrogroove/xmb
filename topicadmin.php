@@ -458,7 +458,7 @@ switch ($action) {
                 }
                 $db->free_result($query);
             }
-            $forums->invalidateCache();
+            $forums->invalidateStatsCache();
 
             $core->message($lang['bumpthreadmsg'], redirect: $full_url . 'forumdisplay.php?fid=' . $fid);
         }

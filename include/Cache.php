@@ -96,6 +96,21 @@ class Cache
     }
 
     /**
+     * Get the age of a value in the cache.
+     */
+    public function age(string $key): ?int
+    {
+        $age = null;
+        if ($this->apcEnabled) {
+            $info = apcu_key_info($key);
+            if ($info['deletion_time'] === 0) {
+                $age = time() - $info['mtime'];
+            }
+        }
+        return $age;
+    }
+
+    /**
      * Fetch a whole table from the XMB database and cache it.
      *
      * The forums table will be filtered for efficiency.
@@ -112,7 +127,7 @@ class Cache
 
         if (! isset($allowedTables[$name])) throw new LogicException('Arbitrary table names are not supported here.');
 
-        $key = 'table_' . $this->sql->tablepre . $name;
+        $key = $this->tableKey($name);
         $value = $this->read($key);
         if ($value === null) {
             $method = $allowedTables[$name];
@@ -128,7 +143,24 @@ class Cache
      */
     public function tableDelete(string $name)
     {
-        $key = 'table_' . $this->sql->tablepre . $name;
+        $key = $this->tableKey($name);
         $this->delete($key);
+    }
+
+    /**
+     * Get the age of a cached table, in seconds
+     */
+    public function tableAge(string $name): ?int
+    {
+        $key = $this->tableKey($name);
+        return $this->age($key);
+    }
+
+    /**
+     * Create a uniform key string based on a table name.
+     */
+    private function tableKey(string $name): string
+    {
+        return 'table_' . $this->sql->tablepre . $name;
     }
 }
