@@ -56,17 +56,7 @@ if ($SETTINGS['subject_in_title'] == 'on') {
 // Search-link
 $template->searchlink = $core->makeSearchLink((int) $forum['fid']);
 
-$threadcount = $sql->countThreadsByForum($fid);
-
-// Perform automatic maintenance
-if ($threadcount != (int) $forum['threads']) {
-    if ($threadcount > (int) $forum['threads'] || $forum['type'] == 'sub') {
-        // Also verify the value that we expect to overwrite.
-        $core->updateforumcount($fid, oldThreadCount: (int) $forum['threads']);
-    }
-}
-
-$mpage = $core->multipage($threadcount, $vars->tpp, $vars->full_url . "forumdisplay.php?fid=$fid");
+$mpage = $core->multipage((int) $forum['threads'], $vars->tpp, $vars->full_url . "forumdisplay.php?fid=$fid");
 
 $header = $template->process('header.php');
 

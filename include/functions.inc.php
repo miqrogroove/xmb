@@ -846,7 +846,7 @@ class Core
 
         $this->sql->setForumCounts($fid, $lastpost, $counts['posts'], $counts['threads'], $oldThreadCount);
 
-        $this->forums->invalidateCache();
+        $this->forums->invalidateStatsCache();
     }
 
     /**
