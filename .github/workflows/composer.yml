@@ -51,18 +51,21 @@ jobs:
       - name: Verify release package build
         run: composer run-script xmb:build
 
-      - name: Set build metadata
+      - name: Set build metadata and unpack archive
         if: matrix.php-version == '8.4'
         id: build-meta
         env:
           FULL_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: echo "name=xmb-build-$(date -u +%Y%m%d)-${FULL_SHA:0:7}" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "name=xmb-build-$(date -u +%Y%m%d)-${FULL_SHA:0:7}" >> "$GITHUB_OUTPUT"
+          mkdir -p artifact_staging
+          unzip -q xmb-*.zip -d artifact_staging
 
       - name: Upload build artifact
         if: matrix.php-version == '8.4'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-meta.outputs.name }}
-          path: xmb-*.zip
+          path: artifact_staging/
           if-no-files-found: error
           retention-days: 14
