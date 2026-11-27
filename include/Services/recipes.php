@@ -73,7 +73,7 @@ function create_container(bool $installMode): Container
  *
  * @since 1.12.00
  */
-function register_installer(Container $container, SiteData $site, UpgradeOutput $outputInterface)
+function register_installer(Container $container, \XMB\SiteData $site, \XMB\UpgradeOutput $outputInterface)
 {
     $factory = new \XMB\InstallFactory($site, $outputInterface);
     $container->set(\XMB\Install::class, $factory, ['install']);
@@ -84,7 +84,7 @@ function register_installer(Container $container, SiteData $site, UpgradeOutput 
  *
  * @since 1.12.00
  */
-function register_upgrader(Container $container, UpgradeOutput $outputInterface)
+function register_upgrader(Container $container, \XMB\UpgradeOutput $outputInterface)
 {
     $factory = new \XMB\UpgradeFactory($outputInterface);
     $container->set(\XMB\Upgrade::class, $factory, ['upgrade']);
