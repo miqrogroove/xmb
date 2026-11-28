@@ -75,12 +75,12 @@ require ROOT . 'include/online.inc.php';
 require ROOT . 'include/Password.php';
 require ROOT . 'include/Ranks.php';
 require ROOT . 'include/schema.inc.php';
+require ROOT . 'include/ServiceRecipes.php';
 require ROOT . 'include/Services/Container.php';
 require ROOT . 'include/Services/ContainerException.php';
 require ROOT . 'include/Services/container-cache.php';
 require ROOT . 'include/Services/DependencyContext.php';
 require ROOT . 'include/Services/NotFoundException.php';
-require ROOT . 'include/Services/recipes.php';
 require ROOT . 'include/Session/Data.php';
 require ROOT . 'include/Session/FormsAndCookies.php';
 require ROOT . 'include/Session/Manager.php';
@@ -107,7 +107,8 @@ require_once ROOT . 'include/version.php';
 
 /* Create base services */
 
-container($services = create_container(defined('XMB\INSTALL')));
+$services = new \XMB\ServiceRecipes()->create_container(defined('XMB\INSTALL'));
+container($services);
 
 $bootup = $services->get('bootup');
 $observer = $services->get('observer');
