@@ -33,6 +33,7 @@ $render = $services->get('threadRender');
 $sqlSvc = $services->get('sql');
 $smile = $services->get('smile');
 $template = $services->get('template');
+$theme = $services->get('theme');
 $token = $services->get('token');
 $vars = $services->get('vars');
 $full_url = $vars->full_url;
@@ -207,6 +208,8 @@ $subTemplate->tid = $tid;
 
 $status1 = $core->modcheck($vars->self['username'], $forum['moderator']);
 
+$themeFileList = $theme->getFileList();
+
 if ($action == '') {
     $mpage = $core->multipage((int) $thread['postcount'], $vars->ppp, "{$full_url}viewthread.php?tid=$tid");
     $template->multipage = '';
@@ -221,6 +224,7 @@ if ($action == '') {
     $header = $template->process('header.php');
 
     if ($perms[$vars::PERMS_REPLY] && ($thread['closed'] == '' || X_SADMIN)) {
+        $subTemplate->src = $theme->makeImgSrc('reply', $themeFileList);
         $template->replylink = $subTemplate->process('viewthread_reply.php');
         if ($SETTINGS['quickreply_status'] == 'on') {
             $quickTemplate = new Template($vars);

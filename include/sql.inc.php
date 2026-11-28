@@ -719,6 +719,19 @@ class SQL
     /**
      * SQL command
      *
+     * @since 1.9.12
+     */
+    public function deleteSettingsByPrefix(string $prefix)
+    {
+        $sqlPrefix = $this->db->like_escape($prefix);
+        $search = $sqlPrefix . '%';
+
+        $this->db->query("DELETE FROM " . $this->tablepre . "settings WHERE name LIKE '$search'");
+    }
+
+    /**
+     * SQL command
+     *
      * @since 1.12.00
      */
     public function getSettingsTable()

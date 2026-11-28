@@ -22,6 +22,13 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use RuntimeException;
+
+/**
+ * Responsible for loading, caching, and general logic needed by all themes.
+ *
+ * @since 1.10.00
+ */
 class ThemeManager
 {
     public function __construct(
@@ -37,8 +44,6 @@ class ThemeManager
     
     /**
      * Determines which theme to use for the current request.
-     *
-     * @since 1.10.00
      */
     public function setTheme()
     {
@@ -194,6 +199,39 @@ class ThemeManager
     }
 
     /**
+     * Create HTML attributes to represent any HiDPI image resources in the active theme.
+     *
+     * Resources are expected to be named like reply.gif and reply-2x.jpg to match the logic here.
+     *
+     * @since 1.12.00
+     */
+    public function makeImgSrc(string $name, array $fileList): string
+    {
+        $resources = $this->getResourcesFromFileList($name, $fileList);
+        $parts = [];
+        $srcset = [];
+        foreach ($resources as $filename) {
+            if (str_starts_with($filename, $name . '.')) {
+                $parts[] = 'src="' . $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $filename . '"';
+            } elseif (str_starts_with($filename, $name . '-')) {
+                // Find the x-descriptor.
+                $pos = strlen($name) + 1; // Advance past the '-'.
+                $endpos = strpos($filename, 'x.', $pos);
+                if ($endpos !== false) {
+                    $xValue = (float) substr($filename, $pos, $endpos - $pos);
+                    if ($xValue > 1) {
+                        $srcset[] = $this->vars->full_url . $this->vars->theme['imgdir'] . '/' . $filename . ' ' . $xValue . 'x';
+                    }
+                }
+            }
+        }
+        if (! empty($srcset)) {
+            $parts[] = 'srcset="' . implode(' ', $srcset) . '"';
+        };
+        return implode(' ', $parts);
+    }
+
+    /**
      * Adds relative font size values to the theme's font size.
      *
      * @since 1.9.12.07
@@ -227,7 +265,6 @@ class ThemeManager
     /**
      * Generates the HTML for a theme select control based on all available themes.
      *
-     * @since 1.10.00
      * @param string $nameAttr The HTML name attribute for the selector element. Must be HTML encoded.
      * @param ?int $selection The previously selected value, or null.
      * @param bool $allowDefault Optional. When true, an extra value is provided to represent the default theme.
@@ -299,6 +336,7 @@ class ThemeManager
     {
         $key = $this->sql->tablepre . 'themes_' . $id;
         $this->cache->delete($key);
+        $this->invalidateFileList($id);
     }
 
     /**
@@ -314,5 +352,103 @@ class ThemeManager
         // Server cache
         $regex = '/^' . preg_quote($this->sql->tablepre . 'themes_') . '\\d++$/';
         $this->cache->deleteByRegex($regex);
+        $this->invalidateAllFileLists();
+    }
+
+    /**
+     * Retrieve the list of files in the active theme.
+     *
+     * Each list for each theme will be cached separately in Settings.
+     *
+     * @since 1.12.00
+     */
+    public function getFileList(): array
+    {
+        $id = (int) $this->vars->theme['themeid'];
+        $key = $this->fileListKey($id);
+        $text = $this->settings->get($key);
+        if ('' === $text) {
+            $list = $this->generateFileList();
+        } else {
+            $text = base64_decode($text, strict: true);
+            if (is_string($text)) {
+                $list = unserialize($text);
+            } else {
+                $list = false;
+            }
+            if (empty($list) || ! is_array($list)) {
+                $text = '';
+                $this->invalidateFileList((int) $id);
+                $list = $this->generateFileList();
+            }
+        }
+        if ('' === $text && ! empty($list)) {
+            $value = base64_encode(serialize($list));
+            if (strlen($value) > $this->settings::VALUE_BYTE_LIMIT) throw new RuntimeException('There are too many files in ' . $this->vars->theme['imgdir']);
+            $this->settings->put($key, $value);
+        }
+        return $list;
+    }
+
+    /**
+     * Retrieve the list of files matching a specific name, from a file list.
+     *
+     * The caller should first grab the result of getFileList() to help avoid repeated filesystem operations.
+     *
+     * @since 1.12.00
+     */
+    public function getResourcesFromFileList(string $name, array $list): array
+    {
+        $result = [];
+        foreach ($list as $filename) {
+            if (str_starts_with($filename, $name)) {
+                $result[] = $filename;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Create the key string used for storing a file list as a setting.
+     *
+     * @since 1.12.00
+     */
+    private function fileListKey(int $id): string
+    {
+        return 'theme_file_list_' . $id;
+    }
+
+    /**
+     * Remove the cached copy of a theme's file list.
+     *
+     * @since 1.12.00
+     */
+    public function invalidateFileList(int $id)
+    {
+        $key = $this->fileListKey($id);
+        $this->settings->delete($key);
+    }
+
+    /**
+     * Remove all cached file lists.
+     *
+     * @since 1.12.00
+     */
+    public function invalidateAllFileLists()
+    {
+        $this->settings->deleteByPrefix('theme_file_list_');
+    }
+
+    /**
+     * Create a list of files in the active theme.
+     *
+     * @since 1.12.00
+     */
+    private function generateFileList(): array
+    {
+        $path = ROOT . $this->vars->theme['imgdir'];
+        $list = glob($path . '/*.*');
+        if (false === $list) $list = [];
+        return array_map('basename', $list);
     }
 }

@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace XMB;
 
+use LengthException;
+
 /**
  * Provides some of the procedural logic formerly in header.php, plus getters and setters.
  *
@@ -29,6 +31,9 @@ namespace XMB;
  */
 class Settings
 {
+    public const NAME_BYTE_LIMIT = 32;
+    public const VALUE_BYTE_LIMIT = 65536;
+
     public function __construct(private Cache $cache, private SQL $sql, private Variables $vars, bool $installMode)
     {
         if (! $installMode) {
@@ -111,6 +116,8 @@ class Settings
      */
     public function get(string $name): string
     {
+        if (strlen($name) > $this::NAME_BYTE_LIMIT) throw new LengthException('The "name" argument was longer than allowed.');
+
         return $this->vars->settings[$name] ?? '';
     }
 
@@ -119,6 +126,9 @@ class Settings
      */
     public function put(string $name, string $value)
     {
+        if (strlen($name) > $this::NAME_BYTE_LIMIT) throw new LengthException('The "name" argument was longer than allowed.');
+        if (strlen($name) > $this::VALUE_BYTE_LIMIT) throw new LengthException('The "value" argument was longer than allowed.');
+
         if (! isset($this->vars->settings[$name])) {
             $this->sql->addSetting($name, $value);
             $this->cache->tableDelete('settings');
@@ -129,5 +139,47 @@ class Settings
             $this->cache->tableDelete('settings');
         }
         $this->vars->settings[$name] = $value;
+    }
+
+    /**
+     * Remove a setting
+     *
+     * @since 1.12.00
+     */
+    public function delete(string $name)
+    {
+        if (strlen($name) > $this::NAME_BYTE_LIMIT) throw new LengthException('The "name" argument was longer than allowed.');
+
+        if (isset($this->vars->settings[$name])) {
+            $this->sql->deleteSetting($name);
+            $this->cache->tableDelete('settings');
+            unset($this->vars->settings[$name]);
+        }
+    }
+
+    /**
+     * Remove multiple settings
+     *
+     * @since 1.12.00
+     */
+    public function deleteByPrefix(string $prefix)
+    {
+        $length = strlen($prefix);
+        if ($length > $this::NAME_BYTE_LIMIT) throw new LengthException('The "prefix" argument was longer than allowed.');
+        if ($length == 0) throw new LengthException('The "prefix" argument was empty.');
+
+        $count = 0;
+        $names = array_keys($this->vars->settings);
+        foreach ($names as $name) {
+            if (str_starts_with($name, $prefix)) {
+                unset($this->vars->settings[$name]);
+                $count++;
+            }
+        }
+
+        if ($count > 0) {
+            $this->sql->deleteSettingsByPrefix($prefix);
+            $this->cache->tableDelete('settings');
+        }
     }
 }

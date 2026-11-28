@@ -137,7 +137,7 @@ if (defined('XMB\INSTALL')) {
     return;
 }
 
-$services->get('bootup')->loadConfig();
+$bootup->loadConfig();
 $observer->assertEmptyOutputStream('config.php');
 if ($vars->debug) {
     if (error_reporting() !== -1) {
@@ -193,7 +193,11 @@ unset($params);
 
 if (defined('XMB\UPGRADE') || PHP_SAPI == 'cli') {
     return;
-} elseif ((int) $services->get('settings')->get('schema_version') < \XMB\Schema::VER) {
+}
+
+$settings = $services->get('settings');
+
+if ((int) $settings->get('schema_version') < \XMB\Schema::VER) {
     if (X_SADMIN) {
         $services->get('core')->redirect($vars->full_url . 'install/', timeout: 0);
     } else {
@@ -216,7 +220,7 @@ $login->sendErrors();
 
 /* Finish HTML Templates */
 
-if ((X_ADMIN || $services->get('settings')->get('bbstatus') == 'on') && (X_MEMBER || $services->get('settings')->get('regviewonly') == 'off')) {
+if ((X_ADMIN || $settings->get('bbstatus') == 'on') && (X_MEMBER || $settings->get('regviewonly') == 'off')) {
     $loader->createNavbarLinks();
     $loader->makePlugLinks();
     $loader->makeQuickJump();
@@ -235,4 +239,4 @@ $loader->adminFirewall();
 
 $observer->assertEmptyOutputStream('header.php');
 
-unset($bootup, $loader, $login, $observer, $services, $vars);
+unset($bootup, $loader, $login, $observer, $services, $settings, $vars);
